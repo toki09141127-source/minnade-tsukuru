@@ -1,92 +1,101 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase/client'
 
 export default function ProfilePage() {
-  const [email, setEmail] = useState('')
-  const [username, setUsername] = useState('')
-  const [newPassword, setNewPassword] = useState('')
+  const [email, setEmail] = useState<string>('')
+  const [userId, setUserId] = useState<string>('')
+  const [username, setUsername] = useState<string>('')
+  const [newUsername, setNewUsername] = useState<string>('')
+  const [newPassword, setNewPassword] = useState<string>('')
+
   const [loading, setLoading] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [msg, setMsg] = useState<string>('')
 
   useEffect(() => {
-    const init = async () => {
-      setMsg('')
-
+    const boot = async () => {
       const { data } = await supabase.auth.getUser()
-      const user = data.user
-      if (!user) return
+      const u = data.user
+      if (!u) return
 
-      setEmail(user.email ?? '')
+      setEmail(u.email ?? '')
+      setUserId(u.id)
 
+      // まず profiles を正として読む（metadataより確実）
       const { data: prof } = await supabase
         .from('profiles')
         .select('username')
-        .eq('id', user.id)
+        .eq('id', u.id)
         .maybeSingle()
 
-      setUsername(prof?.username ?? '')
+      const name = (prof?.username ?? '').trim()
+      setUsername(name)
+      setNewUsername(name)
     }
-
-    init()
+    boot()
   }, [])
 
-  // -------------------------
-  // ユーザー名保存
-  // -------------------------
+  const canSaveName = useMemo(() => newUsername.trim().length > 0 && newUsername.trim().length <= 20 && !loading, [
+    newUsername,
+    loading,
+  ])
+
   const saveUsername = async () => {
     setMsg('')
-    const newName = username.trim()
-
-    if (!newName) return setMsg('ユーザー名を入力してください')
-    if (newName.length > 24) return setMsg('ユーザー名は24文字以内')
+    const name = newUsername.trim()
+    if (!name) return
 
     setLoading(true)
     try {
       const { data: s } = await supabase.auth.getSession()
       const token = s.session?.access_token
-      if (!token) return setMsg('ログインしてください')
+      if (!token) {
+        setMsg('ログインしてください')
+        return
+      }
 
-      const res = await fetch('/api/profile/update', {
+      const res = await fetch('/profile/set-username', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ username: newName }),
+        body: JSON.stringify({ username: name }),
       })
 
       const json = await res.json()
-      if (!json.ok) return setMsg(json.error ?? '更新失敗')
+      if (!json.ok) {
+        setMsg(json.error ?? '保存に失敗しました')
+        return
+      }
 
-      setMsg('ユーザー名を更新しました（過去投稿も反映）')
+      setUsername(json.username)
+      setMsg('ユーザー名を保存しました ✅')
     } finally {
       setLoading(false)
     }
   }
 
-  // -------------------------
-  // パスワード変更
-  // -------------------------
+  const canSavePw = useMemo(() => newPassword.length >= 8 && !loading, [newPassword, loading])
+
   const changePassword = async () => {
     setMsg('')
-
-    if (!newPassword) return setMsg('新しいパスワードを入力してください')
-    if (newPassword.length < 6)
-      return setMsg('パスワードは6文字以上にしてください')
+    if (newPassword.length < 8) {
+      setMsg('パスワードは8文字以上にしてください')
+      return
+    }
 
     setLoading(true)
     try {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
-      })
-
-      if (error) return setMsg(error.message)
-
+      const { error } = await supabase.auth.updateUser({ password: newPassword })
+      if (error) {
+        setMsg(error.message)
+        return
+      }
       setNewPassword('')
-      setMsg('パスワードを変更しました')
+      setMsg('パスワードを変更しました ✅')
     } finally {
       setLoading(false)
     }
@@ -95,92 +104,92 @@ export default function ProfilePage() {
   return (
     <div style={{ padding: 24, maxWidth: 720 }}>
       <p>
-        <Link href="/">← 一覧に戻る</Link>
+        <Link href="/">← トップへ</Link>
       </p>
 
-      <h1>プロフィール</h1>
+      <h1 style={{ marginTop: 8 }}>プロフィール</h1>
 
-      {/* メール表示 */}
-      <div style={{ marginTop: 16 }}>
-        <div style={{ fontSize: 14, color: '#555' }}>メールアドレス</div>
-        <div style={{ fontWeight: 700 }}>{email || '未ログイン'}</div>
+      <div style={{ marginTop: 12, fontSize: 14, color: '#444' }}>
+        <div><strong>UserID:</strong> {userId || '—'}</div>
+        <div style={{ marginTop: 6 }}><strong>Email:</strong> {email || '—'}</div>
       </div>
 
-      {/* ユーザー名変更 */}
-      <div style={{ marginTop: 20 }}>
-        <div style={{ fontSize: 14, color: '#555' }}>ユーザー名</div>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          style={{
-            width: '100%',
-            padding: 10,
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            marginTop: 6,
-          }}
-        />
-        <button
-          onClick={saveUsername}
-          disabled={loading}
-          style={{
-            marginTop: 10,
-            padding: '10px 14px',
-            borderRadius: 8,
-            background: '#111',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          {loading ? '保存中…' : 'ユーザー名を保存'}
-        </button>
+      <hr style={{ margin: '18px 0' }} />
+
+      <h2>ユーザー名</h2>
+      <p style={{ color: '#666', fontSize: 13 }}>
+        掲示板や参加者一覧に表示されます（最大20文字）
+      </p>
+
+      <input
+        value={newUsername}
+        onChange={(e) => setNewUsername(e.target.value)}
+        placeholder="例：ねーそ"
+        style={{
+          width: '100%',
+          border: '1px solid #ccc',
+          borderRadius: 10,
+          padding: '10px 12px',
+        }}
+      />
+
+      <button
+        onClick={saveUsername}
+        disabled={!canSaveName}
+        style={{
+          marginTop: 12,
+          padding: '10px 14px',
+          border: '1px solid #111',
+          borderRadius: 10,
+          cursor: canSaveName ? 'pointer' : 'not-allowed',
+          background: '#111',
+          color: '#fff',
+          opacity: canSaveName ? 1 : 0.5,
+        }}
+      >
+        {loading ? '保存中…' : 'ユーザー名を保存'}
+      </button>
+
+      <div style={{ marginTop: 10, fontSize: 13, color: '#444' }}>
+        現在の表示名：<strong>{username || '未設定'}</strong>
       </div>
 
-      {/* パスワード変更 */}
-      <div style={{ marginTop: 28 }}>
-        <div style={{ fontSize: 14, color: '#555' }}>新しいパスワード</div>
-        <input
-          type="password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          placeholder="6文字以上"
-          style={{
-            width: '100%',
-            padding: 10,
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            marginTop: 6,
-          }}
-        />
+      <hr style={{ margin: '18px 0' }} />
 
-        <button
-          onClick={changePassword}
-          disabled={loading}
-          style={{
-            marginTop: 10,
-            padding: '10px 14px',
-            borderRadius: 8,
-            background: '#0b6',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
-          {loading ? '変更中…' : 'パスワードを変更'}
-        </button>
-      </div>
+      <h2>パスワード変更</h2>
+      <p style={{ color: '#666', fontSize: 13 }}>8文字以上</p>
 
-      {msg && (
-        <p
-          style={{
-            marginTop: 16,
-            color: msg.includes('失敗') || msg.includes('入力') ? '#b00020' : '#0b6',
-          }}
-        >
-          {msg}
-        </p>
-      )}
+      <input
+        type="password"
+        value={newPassword}
+        onChange={(e) => setNewPassword(e.target.value)}
+        placeholder="新しいパスワード"
+        style={{
+          width: '100%',
+          border: '1px solid #ccc',
+          borderRadius: 10,
+          padding: '10px 12px',
+        }}
+      />
+
+      <button
+        onClick={changePassword}
+        disabled={!canSavePw}
+        style={{
+          marginTop: 12,
+          padding: '10px 14px',
+          border: '1px solid #111',
+          borderRadius: 10,
+          cursor: canSavePw ? 'pointer' : 'not-allowed',
+          background: '#111',
+          color: '#fff',
+          opacity: canSavePw ? 1 : 0.5,
+        }}
+      >
+        {loading ? '変更中…' : 'パスワードを変更'}
+      </button>
+
+      {msg && <p style={{ marginTop: 12, color: msg.includes('✅') ? '#0b6' : '#b00020' }}>{msg}</p>}
     </div>
   )
 }
