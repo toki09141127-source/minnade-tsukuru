@@ -10,11 +10,16 @@ export default function JoinButton({
   roomId: string
   roomStatus: string
 }) {
-  const [msg, setMsg] = useState('')
   const [loading, setLoading] = useState(false)
+  const [msg, setMsg] = useState('')
 
   const join = async () => {
     setMsg('')
+    if (roomStatus !== 'open') {
+      setMsg('このルームは現在参加できません')
+      return
+    }
+
     setLoading(true)
     try {
       const { data: s } = await supabase.auth.getSession()
@@ -32,39 +37,36 @@ export default function JoinButton({
         },
         body: JSON.stringify({ roomId }),
       })
-
       const json = await res.json()
+
       if (!json.ok) {
         setMsg(json.error ?? '参加失敗')
         return
       }
 
-      setMsg(json.message ?? '参加しました。リロードしてください。')
+      setMsg('参加しました！ページを更新してください（F5）')
     } finally {
       setLoading(false)
     }
   }
 
-  const disabled = roomStatus !== 'open' || loading
-
   return (
     <div>
       <button
         onClick={join}
-        disabled={disabled}
+        disabled={loading}
         style={{
           padding: '10px 14px',
           border: '1px solid #111',
           borderRadius: 8,
-          cursor: disabled ? 'not-allowed' : 'pointer',
-          background: disabled ? '#aaa' : '#111',
+          cursor: 'pointer',
+          background: '#111',
           color: '#fff',
         }}
       >
         {loading ? '参加中…' : '参加する'}
       </button>
-
-      {msg && <div style={{ marginTop: 8, fontSize: 13, color: msg.includes('失') ? '#b00020' : '#0b6' }}>{msg}</div>}
+      {msg && <p style={{ marginTop: 8, color: msg.includes('参加しました') ? '#0b6' : '#b00020' }}>{msg}</p>}
     </div>
   )
 }

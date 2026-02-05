@@ -28,7 +28,6 @@ type MemberRow = {
 export default async function RoomDetailPage({
   params,
 }: {
-  // Next 16で Promise になるケースがあるため両対応
   params: Promise<{ id: string }> | { id: string }
 }) {
   const p = await Promise.resolve(params)
@@ -38,7 +37,7 @@ export default async function RoomDetailPage({
     return (
       <div style={{ padding: 24 }}>
         <p style={{ color: '#b00020' }}>URLの id が取得できませんでした。</p>
-        <Link href="/rooms">← 一覧に戻る</Link>
+        <Link href="/">← 一覧に戻る</Link>
       </div>
     )
   }
@@ -55,7 +54,7 @@ export default async function RoomDetailPage({
         <p style={{ color: '#b00020' }}>
           取得エラー: {roomErr?.message ?? 'room not found'}
         </p>
-        <Link href="/rooms">← 一覧に戻る</Link>
+        <Link href="/">← 一覧に戻る</Link>
       </div>
     )
   }
@@ -71,7 +70,8 @@ export default async function RoomDetailPage({
 
   return (
     <div style={{ padding: 24 }}>
-      <Link href="/rooms">← 一覧に戻る</Link>
+      {/* ✅ ここが / に戻る */}
+      <Link href="/">← 一覧に戻る</Link>
 
       <h1 style={{ marginTop: 8 }}>{room.title}</h1>
 
@@ -96,7 +96,6 @@ export default async function RoomDetailPage({
         期限を過ぎると自動で forced_publish になります。
       </div>
 
-      {/* 残り秒（JoinButtonの上） */}
       <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} />
       </div>
@@ -106,7 +105,6 @@ export default async function RoomDetailPage({
         <LikeButton roomId={room.id} />
       </div>
 
-      {/* 参加者 */}
       <section style={{ marginTop: 18 }}>
         <h2>参加者（最大50人 / コア5人）</h2>
 
@@ -128,7 +126,6 @@ export default async function RoomDetailPage({
         )}
       </section>
 
-      {/* 掲示板（client） */}
       <BoardClient roomId={room.id} roomStatus={room.status} />
     </div>
   )

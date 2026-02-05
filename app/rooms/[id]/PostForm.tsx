@@ -1,90 +1,111 @@
+// app/rooms/[id]/PostForm.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '../../../lib/supabase/client'
 
-type Props = {
+export default function PostForm({
+  roomId,
+  roomStatus,
+  onPosted,
+}: {
   roomId: string
-  disabled?: boolean
-}
-
-export default function PostForm({ roomId, disabled }: Props) {
+  roomStatus: string
+  onPosted?: () => void
+}) {
   const [content, setContent] = useState('')
+  const [joined, setJoined] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    const init = async () => {
+      setError('')
+      const { data: userData } = await supabase.auth.getUser()
+      const uid = userData.user?.id
+      if (!uid) return
+
+      const { data: mem } = await supabase
+        .from('room_members')
+        .select('id')
+        .eq('room_id', roomId)
+        .eq('user_id', uid)
+        .maybeSingle()
+
+      setJoined(!!mem)
+    }
+    init()
+  }, [roomId])
+
+  const post = async () => {
+    setError('')
+    if (roomStatus !== 'open') return setError('現在は投稿できません（status=open のときのみ）')
+    if (!joined) return setError('参加者のみ投稿できます')
     if (!content.trim()) return
 
     setLoading(true)
-    setError('')
+    try {
+      const { data: s } = await supabase.auth.getSession()
+      const token = s.session?.access_token
+      if (!token) return setError('ログインしてください')
 
-    const {
-      data: { user },
-      error: userErr,
-    } = await supabase.auth.getUser()
+      const res = await fetch('/api/posts/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ roomId, content }),
+      })
 
-    if (userErr || !user) {
-      setError('ログイン情報が取得できません')
-      setLoading(false)
-      return
-    }
+      const json = await res.json()
+      if (!json.ok) return setError(json.error ?? '投稿失敗')
 
-    const { error: insertErr } = await supabase.from('posts').insert({
-      room_id: roomId,
-      user_id: user.id,
-      content,
-    })
-
-    if (insertErr) {
-      setError(insertErr.message)
-    } else {
       setContent('')
+      onPosted?.()
+    } finally {
+      setLoading(false)
     }
+  }
 
-    setLoading(false)
+  if (roomStatus !== 'open') {
+    return <p style={{ color: '#b00020' }}>現在は投稿できません。（status=open のときのみ）</p>
+  }
+  if (!joined) {
+    return <p style={{ color: '#666' }}>投稿するには参加してください。</p>
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: 12 }}>
+    <div style={{ marginBottom: 12 }}>
       <textarea
+        rows={3}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="アイデア・意見・思いつきを自由に書いてください"
-        disabled={disabled || loading}
-        rows={4}
+        placeholder="アイデア・案・メモを投げよう"
         style={{
           width: '100%',
-          padding: 10,
-          borderRadius: 8,
           border: '1px solid #ccc',
-          resize: 'vertical',
+          borderRadius: 10,
+          padding: 10,
         }}
       />
+      <button
+        onClick={post}
+        disabled={loading}
+        style={{
+          marginTop: 8,
+          padding: '10px 14px',
+          border: '1px solid #111',
+          borderRadius: 8,
+          cursor: 'pointer',
+          background: '#111',
+          color: '#fff',
+        }}
+      >
+        {loading ? '投稿中…' : '投稿'}
+      </button>
 
-      {error && (
-        <p style={{ marginTop: 6, color: '#b00020', fontSize: 13 }}>
-          {error}
-        </p>
-      )}
-
-      <div style={{ marginTop: 8 }}>
-        <button
-          type="submit"
-          disabled={disabled || loading || !content.trim()}
-          style={{
-            padding: '6px 12px',
-            borderRadius: 8,
-            border: 'none',
-            background: disabled ? '#aaa' : '#2563eb',
-            color: '#fff',
-            cursor: disabled ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {loading ? '投稿中…' : '投稿する'}
-        </button>
-      </div>
-    </form>
+      {error && <p style={{ color: '#b00020', marginTop: 8 }}>{error}</p>}
+    </div>
   )
 }
