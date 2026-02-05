@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
 
 export default function JoinButton({
@@ -10,22 +11,70 @@ export default function JoinButton({
   roomId: string
   roomStatus: string
 }) {
+  const [joined, setJoined] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [error, setError] = useState('')
+  const [needProfile, setNeedProfile] = useState(false)
+
+  useEffect(() => {
+    const init = async () => {
+      setError('')
+      setNeedProfile(false)
+
+      const { data: userRes } = await supabase.auth.getUser()
+      const u = userRes.user
+      if (!u) return
+
+      const { data: mem } = await supabase
+        .from('room_members')
+        .select('id')
+        .eq('room_id', roomId)
+        .eq('user_id', u.id)
+        .maybeSingle()
+
+      setJoined(!!mem)
+    }
+
+    init()
+  }, [roomId])
 
   const join = async () => {
-    setMsg('')
+    setError('')
+    setNeedProfile(false)
+
     if (roomStatus !== 'open') {
-      setMsg('このルームは現在参加できません')
+      setError('このルームは現在参加できません（status=open のときのみ）')
       return
     }
+    if (joined) return
 
     setLoading(true)
     try {
-      const { data: s } = await supabase.auth.getSession()
-      const token = s.session?.access_token
+      const { data: userRes } = await supabase.auth.getUser()
+      const user = userRes.user
+      if (!user) {
+        setError('ログインしてください')
+        return
+      }
+
+      // ✅ username 未設定チェック
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      const uname = (prof?.username ?? '').trim()
+      if (!uname) {
+        setNeedProfile(true)
+        setError('参加するにはユーザー名の設定が必要です')
+        return
+      }
+
+      const { data: sess } = await supabase.auth.getSession()
+      const token = sess.session?.access_token
       if (!token) {
-        setMsg('ログインしてください')
+        setError('ログインしてください')
         return
       }
 
@@ -37,14 +86,16 @@ export default function JoinButton({
         },
         body: JSON.stringify({ roomId }),
       })
-      const json = await res.json()
 
+      const json = await res.json()
       if (!json.ok) {
-        setMsg(json.error ?? '参加失敗')
+        setError(json.error ?? '参加に失敗しました')
         return
       }
 
-      setMsg('参加しました！ページを更新してください（F5）')
+      setJoined(true)
+    } catch (e: any) {
+      setError(e?.message ?? '参加に失敗しました')
     } finally {
       setLoading(false)
     }
@@ -54,19 +105,29 @@ export default function JoinButton({
     <div>
       <button
         onClick={join}
-        disabled={loading}
+        disabled={loading || joined}
         style={{
           padding: '10px 14px',
           border: '1px solid #111',
           borderRadius: 8,
-          cursor: 'pointer',
-          background: '#111',
-          color: '#fff',
+          cursor: joined ? 'default' : 'pointer',
+          background: joined ? '#ddd' : '#111',
+          color: joined ? '#333' : '#fff',
         }}
       >
-        {loading ? '参加中…' : '参加する'}
+        {joined ? '参加済み' : loading ? '参加中…' : '参加する'}
       </button>
-      {msg && <p style={{ marginTop: 8, color: msg.includes('参加しました') ? '#0b6' : '#b00020' }}>{msg}</p>}
+
+      {error && (
+        <p style={{ marginTop: 8, color: '#b00020' }}>
+          {error}{' '}
+          {needProfile && (
+            <>
+              <Link href="/profile">→ プロフィールへ</Link>
+            </>
+          )}
+        </p>
+      )}
     </div>
   )
 }

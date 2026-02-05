@@ -1,62 +1,98 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../../lib/supabase/admin'
-import { createClient } from '@supabase/supabase-js'
 
-function userClientFromToken(token: string) {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  )
-}
+export const dynamic = 'force-dynamic'
+
+type WorkType = 'novel' | 'manga' | 'game' | 'music' | 'video' | 'other'
 
 export async function POST(req: Request) {
   try {
-    const token = req.headers.get('authorization')?.replace('Bearer ', '')
-    if (!token) return NextResponse.json({ ok: false, error: 'no token' }, { status: 401 })
+    // --- auth ---
+    const auth = req.headers.get('authorization') ?? ''
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
+    if (!token) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 
-    const supaUser = userClientFromToken(token)
-    const { data: u } = await supaUser.auth.getUser()
-    const uid = u.user?.id
-    if (!uid) return NextResponse.json({ ok: false, error: 'no user' }, { status: 401 })
+    const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
+    if (userErr || !userRes.user) {
+      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+    }
+    const user = userRes.user
 
+    // --- body ---
     const body = await req.json()
     const title = String(body.title ?? '').trim()
-    const workType = String(body.workType ?? 'novel')
+    const workType = String(body.workType ?? 'novel') as WorkType
     const timeLimitHours = Number(body.timeLimitHours ?? 50)
 
-    if (!title) return NextResponse.json({ ok: false, error: 'title required' }, { status: 400 })
+    if (!title) return NextResponse.json({ ok: false, error: 'title is required' }, { status: 400 })
+    if (title.length > 60)
+      return NextResponse.json({ ok: false, error: 'title is too long (max 60)' }, { status: 400 })
 
-    // host_ids を必ず入れる（NOT NULL対策の決定打）
-    const { data: room, error } = await supabaseAdmin
+    const allowedTypes: WorkType[] = ['novel', 'manga', 'game', 'music', 'video', 'other']
+    if (!allowedTypes.includes(workType)) {
+      return NextResponse.json({ ok: false, error: 'invalid workType' }, { status: 400 })
+    }
+
+    const allowedHours = [1, 3, 6, 12, 24, 48, 50, 72, 100]
+    if (!Number.isFinite(timeLimitHours) || !allowedHours.includes(timeLimitHours)) {
+      return NextResponse.json({ ok: false, error: 'invalid timeLimitHours' }, { status: 400 })
+    }
+
+    // expires_at を正しく計算
+    const expiresAt = new Date(Date.now() + timeLimitHours * 60 * 60 * 1000).toISOString()
+
+    // username（なければ名無し）
+    let username = (user.user_metadata?.username as string | undefined) ?? null
+    if (!username) {
+      const { data: prof } = await supabaseAdmin
+        .from('profiles')
+        .select('username')
+        .eq('id', user.id)
+        .maybeSingle()
+      username = (prof?.username ?? '').trim() || null
+    }
+    const safeUsername = username ?? '名無し'
+
+    /**
+     * ✅ ここ重要：
+     * あなたのDBで rooms.host_ids が NOT NULL になっているので必ず入れる
+     * （DBが host_id / host_user_id 方式でも壊れないように、存在しないカラムは無視される）
+     */
+    const insertPayload: any = {
+      title,
+      work_type: workType,
+      time_limit_hours: timeLimitHours,
+      status: 'open',
+      expires_at: expiresAt,
+
+      // ここが NOT NULL 対策（配列カラム想定）
+      host_ids: [user.id],
+
+      // よくある設計の保険（DBに無ければ無視されるだけ）
+      host_id: user.id,
+      host_user_id: user.id,
+      host_username: safeUsername,
+    }
+
+    const { data: room, error: insErr } = await supabaseAdmin
       .from('rooms')
-      .insert({
-        title,
-        work_type: workType,
-        status: 'open',
-        time_limit_hours: timeLimitHours,
-        host_ids: [uid],  // ★ここ重要
-      })
-      .select('id')
+      .insert(insertPayload)
+      .select('id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count')
       .single()
 
-    if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
+    if (insErr || !room) {
+      return NextResponse.json({ ok: false, error: insErr?.message ?? 'insert failed' }, { status: 400 })
+    }
 
-    // 作成者はコアで参加させる
-    const { data: prof } = await supabaseAdmin
-      .from('profiles')
-      .select('username')
-      .eq('id', uid)
-      .maybeSingle()
-
+    // 作成者をコアとして自動参加（あなたのルール：コア先着5のうち制作者含む）
     await supabaseAdmin.from('room_members').insert({
       room_id: room.id,
-      user_id: uid,
-      username: prof?.username ?? null,
+      user_id: user.id,
+      username: safeUsername,
       is_core: true,
     })
 
-    return NextResponse.json({ ok: true, roomId: room.id })
+    return NextResponse.json({ ok: true, room })
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
   }

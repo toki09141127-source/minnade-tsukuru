@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
 
 type PostRow = {
@@ -24,6 +25,7 @@ export default function BoardClient({
   const [joined, setJoined] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [needProfile, setNeedProfile] = useState(false)
 
   const refresh = async () => {
     const { data: p } = await supabase
@@ -31,12 +33,15 @@ export default function BoardClient({
       .select('id, user_id, username, content, created_at')
       .eq('room_id', roomId)
       .order('created_at', { ascending: true })
+
     setPosts((p ?? []) as PostRow[])
   }
 
   useEffect(() => {
     const init = async () => {
       setError('')
+      setNeedProfile(false)
+
       const { data: userData } = await supabase.auth.getUser()
       const uid = userData.user?.id ?? null
       setUserId(uid)
@@ -44,6 +49,7 @@ export default function BoardClient({
       await refresh()
 
       if (!uid) return
+
       const { data: mem } = await supabase
         .from('room_members')
         .select('id')
@@ -53,14 +59,34 @@ export default function BoardClient({
 
       setJoined(!!mem)
     }
+
     init()
   }, [roomId])
 
   const post = async () => {
     setError('')
+    setNeedProfile(false)
+
     if (roomStatus !== 'open') return setError('現在は投稿できません（closed）')
     if (!joined) return setError('参加者のみ投稿できます')
     if (!content.trim()) return
+
+    // ✅ username 未設定ガード
+    const { data: u } = await supabase.auth.getUser()
+    const uid = u.user?.id
+    if (uid) {
+      const { data: prof } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', uid)
+        .maybeSingle()
+
+      const uname = (prof?.username ?? '').trim()
+      if (!uname) {
+        setNeedProfile(true)
+        return setError('投稿するにはユーザー名の設定が必要です')
+      }
+    }
 
     setLoading(true)
     try {
@@ -141,6 +167,7 @@ export default function BoardClient({
               padding: 10,
             }}
           />
+
           <button
             onClick={post}
             disabled={loading}
@@ -159,7 +186,16 @@ export default function BoardClient({
         </div>
       )}
 
-      {error && <p style={{ color: '#b00020' }}>{error}</p>}
+      {error && (
+        <p style={{ color: '#b00020' }}>
+          {error}{' '}
+          {needProfile && (
+            <>
+              <Link href="/profile">→ プロフィールへ</Link>
+            </>
+          )}
+        </p>
+      )}
 
       {posts.length === 0 ? (
         <p style={{ color: '#666' }}>まだ投稿がありません。</p>
@@ -170,6 +206,7 @@ export default function BoardClient({
               <div style={{ fontSize: 12, color: '#666' }}>
                 <strong>{p.username ?? '名無し'}</strong> / {new Date(p.created_at).toLocaleString()}
               </div>
+
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap' }}>{p.content}</div>
 
               {p.user_id === userId && (

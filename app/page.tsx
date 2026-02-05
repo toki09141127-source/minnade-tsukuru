@@ -1,4 +1,3 @@
-// app/page.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -22,7 +21,6 @@ export default function HomePage() {
   useEffect(() => {
     const fetchRooms = async () => {
       setError('')
-
       const { data, error } = await supabase
         .from('rooms')
         .select('id, title, work_type, status, time_limit_hours, created_at, like_count')
@@ -62,6 +60,11 @@ export default function HomePage() {
       <h1>制作ルーム一覧</h1>
 
       {helpText}
+
+      {/* ✅ ユーザー名設定導線（事故防止） */}
+      <p style={{ marginTop: 8 }}>
+        <Link href="/profile">ユーザー名を設定</Link>
+      </p>
 
       <p style={{ marginTop: 12 }}>
         <Link href="/rooms/new">＋ ルームを作成</Link>

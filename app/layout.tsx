@@ -1,12 +1,17 @@
 import './globals.css'
+import type { ReactNode } from 'react'
 import AuthHeader from '../components/AuthHeader'
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata = {
+  title: 'みんなで作ろう（仮）',
+}
+
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <body>
         <AuthHeader />
-        {children}
+        <main>{children}</main>
       </body>
     </html>
   )

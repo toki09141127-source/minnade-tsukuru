@@ -1,3 +1,4 @@
+// app/rooms/[id]/page.tsx
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
@@ -6,6 +7,7 @@ import JoinButton from './JoinButton'
 import RemainingTimer from './RemainingTimer'
 import BoardClient from './BoardClient'
 import LikeButton from './LikeButton'
+import DeleteRoomButton from './DeleteRoomButton'
 
 type RoomRow = {
   id: string
@@ -16,6 +18,7 @@ type RoomRow = {
   created_at: string
   expires_at: string | null
   like_count: number | null
+  user_id: string
 }
 
 type MemberRow = {
@@ -42,9 +45,12 @@ export default async function RoomDetailPage({
     )
   }
 
+  // ルーム取得
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select('id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count')
+    .select(
+      'id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count, user_id'
+    )
     .eq('id', roomId)
     .single<RoomRow>()
 
@@ -59,6 +65,7 @@ export default async function RoomDetailPage({
     )
   }
 
+  // 参加者取得
   const { data: members } = await supabase
     .from('room_members')
     .select('id, user_id, username, is_core')
@@ -68,15 +75,23 @@ export default async function RoomDetailPage({
 
   const memberCount = members?.length ?? 0
 
+  // 現在ユーザー（削除ボタン表示用）
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  const isOwner = user?.id === room.user_id
+
   return (
     <div style={{ padding: 24 }}>
-      {/* ✅ ここが / に戻る */}
-      <Link href="/">← 一覧に戻る</Link>
+      {/* ← 一覧に戻る（トップ） */}
+      <Link href="/">← 制作ルーム一覧に戻る</Link>
 
       <h1 style={{ marginTop: 8 }}>{room.title}</h1>
 
       <div style={{ marginTop: 10, fontSize: 14, color: '#444' }}>
-        {room.work_type} / status: {room.status} / ❤️ {room.like_count ?? 0} / 👥 {memberCount}
+        {room.work_type} / status: {room.status} / ❤️ {room.like_count ?? 0} / 👥{' '}
+        {memberCount}
       </div>
 
       <div
@@ -96,15 +111,28 @@ export default async function RoomDetailPage({
         期限を過ぎると自動で forced_publish になります。
       </div>
 
+      {/* 残り時間 */}
       <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} />
       </div>
 
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
+      {/* 操作ボタン */}
+      <div
+        style={{
+          marginTop: 12,
+          display: 'flex',
+          gap: 10,
+          alignItems: 'center',
+        }}
+      >
         <JoinButton roomId={room.id} roomStatus={room.status} />
         <LikeButton roomId={room.id} />
+
+        {/* 作成者のみ削除可能 */}
+        {isOwner && <DeleteRoomButton roomId={room.id} />}
       </div>
 
+      {/* 参加者一覧 */}
       <section style={{ marginTop: 18 }}>
         <h2>参加者（最大50人 / コア5人）</h2>
 
@@ -116,7 +144,13 @@ export default async function RoomDetailPage({
               <li key={m.id}>
                 <strong>{m.username ?? '名無し'}</strong>
                 {m.is_core && (
-                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>
+                  <span
+                    style={{
+                      marginLeft: 6,
+                      fontSize: 12,
+                      color: '#0b6',
+                    }}
+                  >
                     （CORE）
                   </span>
                 )}
@@ -126,6 +160,7 @@ export default async function RoomDetailPage({
         )}
       </section>
 
+      {/* 掲示板 */}
       <BoardClient roomId={room.id} roomStatus={room.status} />
     </div>
   )
