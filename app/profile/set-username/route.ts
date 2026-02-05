@@ -1,4 +1,3 @@
-// app/api/rooms/delete/route.ts
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../lib/supabase/admin'
 
@@ -12,31 +11,29 @@ export async function POST(req: Request) {
 
     const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
     if (userErr || !userRes.user) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
-
-    const uid = userRes.user.id
+    const user = userRes.user
 
     const body = await req.json()
-    const roomId = String(body.roomId ?? '')
-    if (!roomId) return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
+    const username = String(body.username ?? '').trim()
 
-    // ✅ rooms.user_id は見ない。room_members の core だけ削除できる
-    const { data: mem } = await supabaseAdmin
-      .from('room_members')
-      .select('id, is_core')
-      .eq('room_id', roomId)
-      .eq('user_id', uid)
-      .maybeSingle()
+    if (username.length < 2 || username.length > 20) {
+      return NextResponse.json({ ok: false, error: 'username must be 2-20 chars' }, { status: 400 })
+    }
 
-    if (!mem) return NextResponse.json({ ok: false, error: '参加者のみ削除できます' }, { status: 403 })
-    if (!mem.is_core) return NextResponse.json({ ok: false, error: 'コア参加者のみ削除できます' }, { status: 403 })
+    // profiles 更新（存在しなければ insert、あれば update）
+    const { error: upsertErr } = await supabaseAdmin
+      .from('profiles')
+      .upsert({ id: user.id, username }, { onConflict: 'id' })
 
-    // 依存テーブルを消してから rooms を消す（FKがある場合の安全策）
-    await supabaseAdmin.from('posts').delete().eq('room_id', roomId)
-    await supabaseAdmin.from('room_likes').delete().eq('room_id', roomId)
-    await supabaseAdmin.from('room_members').delete().eq('room_id', roomId)
+    if (upsertErr) {
+      return NextResponse.json({ ok: false, error: upsertErr.message }, { status: 400 })
+    }
 
-    const { error: delErr } = await supabaseAdmin.from('rooms').delete().eq('id', roomId)
-    if (delErr) return NextResponse.json({ ok: false, error: delErr.message }, { status: 400 })
+    // 過去投稿の username を一括更新（任意だが体験が良くなる）
+    await supabaseAdmin.from('posts').update({ username }).eq('user_id', user.id)
+
+    // 参加者表示も一括更新
+    await supabaseAdmin.from('room_members').update({ username }).eq('user_id', user.id)
 
     return NextResponse.json({ ok: true })
   } catch (e: any) {
