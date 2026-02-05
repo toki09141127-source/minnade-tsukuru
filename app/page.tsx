@@ -1,4 +1,4 @@
-// app/rooms/page.tsx
+// app/page.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -15,7 +15,7 @@ type RoomRow = {
   like_count: number | null
 }
 
-export default function RoomsPage() {
+export default function HomePage() {
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [error, setError] = useState('')
 
@@ -23,7 +23,6 @@ export default function RoomsPage() {
     const fetchRooms = async () => {
       setError('')
 
-      
       const { data, error } = await supabase
         .from('rooms')
         .select('id, title, work_type, status, time_limit_hours, created_at, like_count')
@@ -75,9 +74,9 @@ export default function RoomsPage() {
           <li key={room.id} style={{ marginBottom: 10 }}>
             <Link href={`/rooms/${room.id}`}>
               <strong>{room.title}</strong>
-            </Link>
-            {' '}
-            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️ {room.like_count ?? 0}）
+            </Link>{' '}
+            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️{' '}
+            {room.like_count ?? 0}）
           </li>
         ))}
       </ul>
