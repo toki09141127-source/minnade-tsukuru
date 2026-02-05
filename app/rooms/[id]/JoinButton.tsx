@@ -1,7 +1,8 @@
+// app/rooms/[id]/JoinButton.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase/client'
 
 export default function JoinButton({
@@ -11,68 +12,63 @@ export default function JoinButton({
   roomId: string
   roomStatus: string
 }) {
-  const [joined, setJoined] = useState(false)
+  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [needProfile, setNeedProfile] = useState(false)
+  const [joined, setJoined] = useState(false)
+  const [username, setUsername] = useState<string>('')
+
+  const canJoin = useMemo(() => roomStatus === 'open' && !loading, [roomStatus, loading])
 
   useEffect(() => {
     const init = async () => {
       setError('')
-      setNeedProfile(false)
 
-      const { data: userRes } = await supabase.auth.getUser()
-      const u = userRes.user
-      if (!u) return
+      const { data: userData } = await supabase.auth.getUser()
+      const uid = userData.user?.id
+      if (!uid) return
 
+      // username確認（profiles）
+      const { data: prof } = await supabase.from('profiles').select('username').eq('id', uid).maybeSingle()
+      setUsername((prof?.username ?? '').trim())
+
+      // 参加済み確認
       const { data: mem } = await supabase
         .from('room_members')
         .select('id')
         .eq('room_id', roomId)
-        .eq('user_id', u.id)
+        .eq('user_id', uid)
         .maybeSingle()
-
       setJoined(!!mem)
     }
-
     init()
   }, [roomId])
 
   const join = async () => {
     setError('')
-    setNeedProfile(false)
 
     if (roomStatus !== 'open') {
-      setError('このルームは現在参加できません（status=open のときのみ）')
+      setError('このルームは現在参加できません')
       return
     }
-    if (joined) return
+
+    const { data: userData } = await supabase.auth.getUser()
+    const uid = userData.user?.id
+    if (!uid) {
+      setError('ログインしてください')
+      return
+    }
+
+    // ✅ username未設定なら profile へ
+    if (!username.trim()) {
+      router.push('/profile')
+      return
+    }
 
     setLoading(true)
     try {
-      const { data: userRes } = await supabase.auth.getUser()
-      const user = userRes.user
-      if (!user) {
-        setError('ログインしてください')
-        return
-      }
-
-      // ✅ username 未設定チェック
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', user.id)
-        .maybeSingle()
-
-      const uname = (prof?.username ?? '').trim()
-      if (!uname) {
-        setNeedProfile(true)
-        setError('参加するにはユーザー名の設定が必要です')
-        return
-      }
-
-      const { data: sess } = await supabase.auth.getSession()
-      const token = sess.session?.access_token
+      const { data: s } = await supabase.auth.getSession()
+      const token = s.session?.access_token
       if (!token) {
         setError('ログインしてください')
         return
@@ -94,8 +90,8 @@ export default function JoinButton({
       }
 
       setJoined(true)
-    } catch (e: any) {
-      setError(e?.message ?? '参加に失敗しました')
+      // 表示更新用にリロード
+      router.refresh()
     } finally {
       setLoading(false)
     }
@@ -103,31 +99,33 @@ export default function JoinButton({
 
   return (
     <div>
-      <button
-        onClick={join}
-        disabled={loading || joined}
-        style={{
-          padding: '10px 14px',
-          border: '1px solid #111',
-          borderRadius: 8,
-          cursor: joined ? 'default' : 'pointer',
-          background: joined ? '#ddd' : '#111',
-          color: joined ? '#333' : '#fff',
-        }}
-      >
-        {joined ? '参加済み' : loading ? '参加中…' : '参加する'}
-      </button>
+      {joined ? (
+        <div style={{ fontSize: 13, color: '#0b6' }}>参加済み</div>
+      ) : (
+        <button
+          onClick={join}
+          disabled={!canJoin}
+          style={{
+            padding: '10px 14px',
+            border: '1px solid #111',
+            borderRadius: 10,
+            cursor: canJoin ? 'pointer' : 'not-allowed',
+            background: '#111',
+            color: '#fff',
+            opacity: canJoin ? 1 : 0.5,
+          }}
+        >
+          {loading ? '参加中…' : '参加する'}
+        </button>
+      )}
 
-      {error && (
-        <p style={{ marginTop: 8, color: '#b00020' }}>
-          {error}{' '}
-          {needProfile && (
-            <>
-              <Link href="/profile">→ プロフィールへ</Link>
-            </>
-          )}
+      {!username.trim() && (
+        <p style={{ marginTop: 6, fontSize: 12, color: '#b00020' }}>
+          参加するには <a href="/profile">ユーザー名を設定</a> してください。
         </p>
       )}
+
+      {error && <p style={{ marginTop: 6, color: '#b00020' }}>{error}</p>}
     </div>
   )
 }

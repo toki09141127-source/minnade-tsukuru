@@ -1,7 +1,8 @@
+// app/rooms/[id]/BoardClient.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
-import Link from 'next/link'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase/client'
 
 type PostRow = {
@@ -19,13 +20,20 @@ export default function BoardClient({
   roomId: string
   roomStatus: string
 }) {
+  const router = useRouter()
+
   const [posts, setPosts] = useState<PostRow[]>([])
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState<string | null>(null)
   const [joined, setJoined] = useState(false)
+  const [username, setUsername] = useState<string>('')
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [needProfile, setNeedProfile] = useState(false)
+
+  const canPost = useMemo(() => {
+    return roomStatus === 'open' && joined && !!userId && username.trim().length > 0 && !loading
+  }, [roomStatus, joined, userId, username, loading])
 
   const refresh = async () => {
     const { data: p } = await supabase
@@ -33,14 +41,12 @@ export default function BoardClient({
       .select('id, user_id, username, content, created_at')
       .eq('room_id', roomId)
       .order('created_at', { ascending: true })
-
     setPosts((p ?? []) as PostRow[])
   }
 
   useEffect(() => {
     const init = async () => {
       setError('')
-      setNeedProfile(false)
 
       const { data: userData } = await supabase.auth.getUser()
       const uid = userData.user?.id ?? null
@@ -50,43 +56,37 @@ export default function BoardClient({
 
       if (!uid) return
 
+      // username（profiles）
+      const { data: prof } = await supabase.from('profiles').select('username').eq('id', uid).maybeSingle()
+      setUsername((prof?.username ?? '').trim())
+
+      // 参加済み確認
       const { data: mem } = await supabase
         .from('room_members')
         .select('id')
         .eq('room_id', roomId)
         .eq('user_id', uid)
         .maybeSingle()
-
       setJoined(!!mem)
     }
-
     init()
   }, [roomId])
 
   const post = async () => {
     setError('')
-    setNeedProfile(false)
-
     if (roomStatus !== 'open') return setError('現在は投稿できません（closed）')
     if (!joined) return setError('参加者のみ投稿できます')
-    if (!content.trim()) return
+    if (!userId) return setError('ログインしてください')
 
-    // ✅ username 未設定ガード
-    const { data: u } = await supabase.auth.getUser()
-    const uid = u.user?.id
-    if (uid) {
-      const { data: prof } = await supabase
-        .from('profiles')
-        .select('username')
-        .eq('id', uid)
-        .maybeSingle()
-
-      const uname = (prof?.username ?? '').trim()
-      if (!uname) {
-        setNeedProfile(true)
-        return setError('投稿するにはユーザー名の設定が必要です')
-      }
+    // ✅ username未設定なら /profile へ
+    if (!username.trim()) {
+      router.push('/profile')
+      return
     }
+
+    const text = content.trim()
+    if (!text) return
+    if (text.length > 500) return setError('500文字以内にしてください')
 
     setLoading(true)
     try {
@@ -103,7 +103,7 @@ export default function BoardClient({
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ roomId, content }),
+        body: JSON.stringify({ roomId, content: text }),
       })
 
       const json = await res.json()
@@ -114,6 +114,7 @@ export default function BoardClient({
 
       setPosts((prev) => [...prev, json.post as PostRow])
       setContent('')
+      router.refresh()
     } finally {
       setLoading(false)
     }
@@ -143,6 +144,7 @@ export default function BoardClient({
     }
 
     setPosts((prev) => prev.filter((p) => p.id !== postId))
+    router.refresh()
   }
 
   return (
@@ -151,6 +153,12 @@ export default function BoardClient({
 
       {roomStatus !== 'open' ? (
         <p style={{ color: '#b00020' }}>現在は投稿できません。（status=open のときのみ）</p>
+      ) : !userId ? (
+        <p style={{ color: '#666' }}>投稿するにはログインしてください。</p>
+      ) : !username.trim() ? (
+        <p style={{ color: '#b00020' }}>
+          投稿するには <a href="/profile">ユーザー名を設定</a> してください。
+        </p>
       ) : !joined ? (
         <p style={{ color: '#666' }}>投稿するには参加してください。</p>
       ) : (
@@ -159,7 +167,7 @@ export default function BoardClient({
             rows={3}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="アイデア・案・メモを投げよう"
+            placeholder="アイデア・案・メモを投げよう（500文字まで）"
             style={{
               width: '100%',
               border: '1px solid #ccc',
@@ -167,18 +175,18 @@ export default function BoardClient({
               padding: 10,
             }}
           />
-
           <button
             onClick={post}
-            disabled={loading}
+            disabled={!canPost}
             style={{
               marginTop: 8,
               padding: '10px 14px',
               border: '1px solid #111',
               borderRadius: 8,
-              cursor: 'pointer',
+              cursor: canPost ? 'pointer' : 'not-allowed',
               background: '#111',
               color: '#fff',
+              opacity: canPost ? 1 : 0.5,
             }}
           >
             {loading ? '投稿中…' : '投稿'}
@@ -186,16 +194,7 @@ export default function BoardClient({
         </div>
       )}
 
-      {error && (
-        <p style={{ color: '#b00020' }}>
-          {error}{' '}
-          {needProfile && (
-            <>
-              <Link href="/profile">→ プロフィールへ</Link>
-            </>
-          )}
-        </p>
-      )}
+      {error && <p style={{ color: '#b00020' }}>{error}</p>}
 
       {posts.length === 0 ? (
         <p style={{ color: '#666' }}>まだ投稿がありません。</p>
@@ -206,7 +205,6 @@ export default function BoardClient({
               <div style={{ fontSize: 12, color: '#666' }}>
                 <strong>{p.username ?? '名無し'}</strong> / {new Date(p.created_at).toLocaleString()}
               </div>
-
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap' }}>{p.content}</div>
 
               {p.user_id === userId && (
