@@ -25,8 +25,9 @@ export async function POST(req: Request) {
     const timeLimitHours = Number(body.timeLimitHours ?? 50)
 
     if (!title) return NextResponse.json({ ok: false, error: 'title is required' }, { status: 400 })
-    if (title.length > 60)
+    if (title.length > 60) {
       return NextResponse.json({ ok: false, error: 'title is too long (max 60)' }, { status: 400 })
+    }
 
     const allowedTypes: WorkType[] = ['novel', 'manga', 'game', 'music', 'video', 'other']
     if (!allowedTypes.includes(workType)) {
@@ -38,10 +39,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'invalid timeLimitHours' }, { status: 400 })
     }
 
-    // expires_at を正しく計算
     const expiresAt = new Date(Date.now() + timeLimitHours * 60 * 60 * 1000).toISOString()
 
-    // username（なければ名無し）
+    // username（無ければ名無し）
     let username = (user.user_metadata?.username as string | undefined) ?? null
     if (!username) {
       const { data: prof } = await supabaseAdmin
@@ -53,25 +53,17 @@ export async function POST(req: Request) {
     }
     const safeUsername = username ?? '名無し'
 
-    /**
-     * ✅ ここ重要：
-     * あなたのDBで rooms.host_ids が NOT NULL になっているので必ず入れる
-     * （DBが host_id / host_user_id 方式でも壊れないように、存在しないカラムは無視される）
-     */
-    const insertPayload: any = {
+    // ✅ rooms の実在カラムだけ送る（host_id 系は送らない）
+    const insertPayload = {
       title,
       work_type: workType,
       time_limit_hours: timeLimitHours,
       status: 'open',
       expires_at: expiresAt,
+      like_count: 0,
 
-      // ここが NOT NULL 対策（配列カラム想定）
+      // ✅ あなたのDBは host_ids NOT NULL
       host_ids: [user.id],
-
-      // よくある設計の保険（DBに無ければ無視されるだけ）
-      host_id: user.id,
-      host_user_id: user.id,
-      host_username: safeUsername,
     }
 
     const { data: room, error: insErr } = await supabaseAdmin
@@ -84,13 +76,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: insErr?.message ?? 'insert failed' }, { status: 400 })
     }
 
-    // 作成者をコアとして自動参加（あなたのルール：コア先着5のうち制作者含む）
-    await supabaseAdmin.from('room_members').insert({
+    // 作成者をコア参加にする
+    const { error: memErr } = await supabaseAdmin.from('room_members').insert({
       room_id: room.id,
       user_id: user.id,
       username: safeUsername,
       is_core: true,
     })
+    if (memErr) {
+      // ルーム作成は成功してるので、参加失敗はエラーにしてもいいけど一旦返す
+      return NextResponse.json({ ok: true, room, warn: memErr.message })
+    }
 
     return NextResponse.json({ ok: true, room })
   } catch (e: any) {
