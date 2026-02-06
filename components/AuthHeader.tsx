@@ -19,33 +19,28 @@ export default function AuthHeader() {
 
   const signOut = async () => {
     await supabase.auth.signOut()
-    // ここでリロードしておくと表示のズレが起きにくい
     location.href = '/'
   }
 
   return (
     <header
       style={{
-        padding: 16,
+        padding: 12,
         borderBottom: '1px solid #ddd',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        gap: 12,
       }}
     >
-      <Link href="/">みんなで作ろう（仮）</Link>
+      <Link href="/">トップ</Link>
 
       {email ? (
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <Link href="/profile">プロフィール</Link>
-          <span>{email}</span>
+          <span style={{ fontSize: 12, color: '#555' }}>{email}</span>
           <button onClick={signOut}>ログアウト</button>
         </div>
       ) : (
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <Link href="/login">ログイン</Link>
-        </div>
+        <Link href="/login">ログイン</Link>
       )}
     </header>
   )

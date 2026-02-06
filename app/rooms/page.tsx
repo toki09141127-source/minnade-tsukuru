@@ -1,3 +1,4 @@
+// app/rooms/page.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -24,9 +25,7 @@ export default function RoomsPage() {
 
       const { data, error } = await supabase
         .from('rooms')
-        .select(
-          'id, title, work_type, status, time_limit_hours, created_at, like_count'
-        )
+        .select('id, title, work_type, status, time_limit_hours, created_at, like_count')
         .order('like_count', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false })
 
@@ -62,7 +61,7 @@ export default function RoomsPage() {
     <div style={{ padding: 24 }}>
       <h1>制作ルーム一覧</h1>
 
-      {/* ★ユーザー名設定導線（追加部分） */}
+      {/* ✅ 追加導線（ここ） */}
       <p style={{ marginTop: 8 }}>
         <Link href="/profile">ユーザー名を設定</Link>
       </p>
@@ -81,8 +80,7 @@ export default function RoomsPage() {
             <Link href={`/rooms/${room.id}`}>
               <strong>{room.title}</strong>
             </Link>{' '}
-            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️{' '}
-            {room.like_count ?? 0}）
+            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️ {room.like_count ?? 0}）
           </li>
         ))}
       </ul>

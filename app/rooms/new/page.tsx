@@ -58,6 +58,8 @@ export default function NewRoomPage() {
       }
 
       router.push(`/rooms/${json.room.id}`)
+    } catch (e: any) {
+      setError(e?.message ?? '作成に失敗しました')
     } finally {
       setLoading(false)
     }
@@ -66,7 +68,7 @@ export default function NewRoomPage() {
   return (
     <div style={{ padding: 24, maxWidth: 720 }}>
       <p>
-        <Link href="/rooms">← 一覧に戻る</Link>
+        <Link href="/">← 一覧に戻る</Link>
       </p>
 
       <h1 style={{ marginTop: 8 }}>ルーム作成</h1>
