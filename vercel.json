@@ -1,0 +1,6 @@
+{
+    "crons": [
+      { "path": "/api/cron/publish?key=@CRON_SECRET", "schedule": "*/5 * * * *" }
+    ]
+  }
+  
