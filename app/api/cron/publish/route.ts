@@ -6,22 +6,41 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
   try {
-    // ?key=... で受ける
     const url = new URL(req.url)
     const key = url.searchParams.get('key')
 
     const secret = process.env.CRON_SECRET
-    if (!secret) {
-      return NextResponse.json({ ok: false, error: 'CRON_SECRET is not set' }, { status: 500 })
-    }
 
-    if (!key || key !== secret) {
-      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // 期限切れのルームを forced_publish にする例
+    // ===== デバッグ情報 =====
     const nowIso = new Date().toISOString()
+    const isVercel = !!process.env.VERCEL
+    const hasServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY
 
+    // secret 未設定
+    if (!secret) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'CRON_SECRET is not set',
+          debug: { nowIso, isVercel, hasServiceRole },
+        },
+        { status: 500 }
+      )
+    }
+
+    // 認証失敗
+    if (!key || key !== secret) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: 'Unauthorized',
+          debug: { nowIso, isVercel, hasServiceRole },
+        },
+        { status: 401 }
+      )
+    }
+
+    // ===== 期限切れルームを forced_publish に更新 =====
     const { data, error } = await supabaseAdmin
       .from('rooms')
       .update({ status: 'forced_publish' })
@@ -31,11 +50,35 @@ export async function GET(req: Request) {
       .select('id')
 
     if (error) {
-      return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
+      return NextResponse.json(
+        {
+          ok: false,
+          error: error.message,
+          debug: { nowIso, isVercel, hasServiceRole },
+        },
+        { status: 400 }
+      )
     }
 
-    return NextResponse.json({ ok: true, updated: data?.length ?? 0 })
+    // ===== 成功レスポンス（デバッグ付き）=====
+    return NextResponse.json({
+      ok: true,
+      updated: data?.length ?? 0,
+      debug: {
+        nowIso,
+        isVercel,
+        hasServiceRole,
+        checkedStatus: 'open',
+        condition: 'expires_at <= now',
+      },
+    })
   } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+    return NextResponse.json(
+      {
+        ok: false,
+        error: e?.message ?? 'server error',
+      },
+      { status: 500 }
+    )
   }
 }
