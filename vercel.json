@@ -1,6 +1,6 @@
 {
     "crons": [
-      { "path": "/api/cron/publish?key=@CRON_SECRET", "schedule": "*/5 * * * *" }
+      { "path": "/api/cron/publish?key=minnade-super-secret-2026", "schedule": "*/5 * * * *" }
     ]
   }
   
