@@ -1,98 +1,131 @@
 // app/rooms/page.tsx
+'use client'
+
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { supabaseAdmin } from '../../lib/supabase/admin'
+import { supabase } from '../../lib/supabase/client'
 
-export const dynamic = 'force-dynamic'
+type RoomRow = {
+  id: string
+  title: string
+  work_type: string
+  status: string
+  time_limit_hours: number
+  created_at: string
+  like_count: number | null
+  expires_at?: string | null
+}
 
-type SortKey = 'likes' | 'new'
+type SortKey = 'like' | 'new' | 'expires'
 
-export default async function RoomsPage({
-  searchParams,
-}: {
-  searchParams?: { q?: string; sort?: SortKey }
-}) {
-  const q = (searchParams?.q ?? '').trim()
-  const sort: SortKey = (searchParams?.sort === 'new' ? 'new' : 'likes')
+export default function RoomsPage() {
+  const [rooms, setRooms] = useState<RoomRow[]>([])
+  const [error, setError] = useState('')
+  const [sort, setSort] = useState<SortKey>('like')
+  const [q, setQ] = useState('')
 
-  // ✅ 必ず id を取る。deleted_at も見る。
-  let query = supabaseAdmin
-    .from('rooms')
-    .select('id, title, work_type, status, time_limit_hours, like_count, created_at, deleted_at, is_adult')
-    .is('deleted_at', null)
+  useEffect(() => {
+    const fetchRooms = async () => {
+      setError('')
 
-  if (q) query = query.ilike('title', `%${q}%`)
+      let query = supabase
+        .from('rooms')
+        .select('id, title, work_type, status, time_limit_hours, created_at, like_count, expires_at')
 
-  if (sort === 'new') query = query.order('created_at', { ascending: false })
-  else query = query.order('like_count', { ascending: false }).order('created_at', { ascending: false })
+      // 検索（タイトル部分一致）
+      const keyword = q.trim()
+      if (keyword) query = query.ilike('title', `%${keyword}%`)
 
-  const { data: rooms, error } = await query
+      // ソート
+      if (sort === 'like') {
+        query = query
+          .order('like_count', { ascending: false, nullsFirst: false })
+          .order('created_at', { ascending: false })
+      } else if (sort === 'new') {
+        query = query.order('created_at', { ascending: false })
+      } else if (sort === 'expires') {
+        query = query.order('expires_at', { ascending: true, nullsFirst: false })
+      }
 
-  if (error) {
+      const { data, error } = await query
+
+      if (error) setError(error.message)
+      else setRooms((data ?? []) as RoomRow[])
+    }
+
+    fetchRooms()
+  }, [sort, q])
+
+  const helpText = useMemo(() => {
     return (
-      <div style={{ padding: 24 }}>
-        <h1>制作ルーム一覧</h1>
-        <p style={{ color: 'crimson' }}>取得エラー: {error.message}</p>
-        <p style={{ marginTop: 12 }}>
-          <Link href="/">トップへ</Link>
-        </p>
+      <div
+        style={{
+          marginTop: 12,
+          padding: 14,
+          background: '#eef3ff',
+          borderRadius: 10,
+          fontSize: 14,
+          lineHeight: 1.7,
+        }}
+      >
+        <strong>このページについて</strong>
+        <br />
+        時間制限付きの合作ルーム一覧です。検索＆並び替えができます。
       </div>
     )
-  }
+  }, [])
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, maxWidth: 980, margin: '0 auto' }}>
       <h1>制作ルーム一覧</h1>
 
-      {/* 検索・並び替え */}
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-        <form action="/rooms" method="get" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="ルーム名で検索"
-            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)', minWidth: 240 }}
-          />
+      <p style={{ marginTop: 8 }}>
+        <Link href="/profile">ユーザー名を設定</Link>
+      </p>
+
+      {helpText}
+
+      <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+        <Link href="/rooms/new">＋ ルームを作成</Link>
+
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span style={{ fontSize: 12, opacity: 0.75 }}>並び替え</span>
           <select
-            name="sort"
-            defaultValue={sort}
-            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)' }}
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            style={{ padding: '8px 10px', borderRadius: 10, border: '1px solid #ccc' }}
           >
-            <option value="likes">いいね順</option>
-            <option value="new">作成順（新しい順）</option>
+            <option value="like">いいね順</option>
+            <option value="new">新着順</option>
+            <option value="expires">期限が近い順</option>
           </select>
-          <button
-            type="submit"
-            style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)', cursor: 'pointer' }}
-          >
-            検索
-          </button>
-        </form>
+        </div>
 
-        <Link href="/rooms/new" style={{ marginLeft: 'auto' }}>
-          ＋ ルームを作成
-        </Link>
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="ルーム名で検索"
+          style={{
+            padding: '8px 10px',
+            borderRadius: 10,
+            border: '1px solid #ccc',
+            minWidth: 220,
+          }}
+        />
       </div>
 
-      <div style={{ marginTop: 16 }}>
-        {(rooms ?? []).length === 0 ? (
-          <p style={{ opacity: 0.8 }}>該当するルームがありません。</p>
-        ) : (
-          <ul style={{ paddingLeft: 18, lineHeight: 1.9 }}>
-            {(rooms ?? []).map((r) => (
-              <li key={r.id}>
-                {/* ✅ ここが超重要：/rooms/${r.id} であること */}
-                <Link href={`/rooms/${r.id}`} style={{ fontWeight: 700 }}>
-                  {r.title}
-                </Link>{' '}
-                <span style={{ opacity: 0.85 }}>
-                  （{r.work_type} / {r.time_limit_hours}h / {r.status} / ❤️ {r.like_count ?? 0}
-                  {r.is_adult ? ' / 🔞' : ''}）
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      {error && <p style={{ color: '#b00020', marginTop: 10 }}>{error}</p>}
+
+      <ul style={{ marginTop: 12, paddingLeft: 18 }}>
+        {rooms.map((room) => (
+          <li key={room.id} style={{ marginBottom: 10 }}>
+            <Link href={`/rooms/${room.id}`}>
+              <strong>{room.title}</strong>
+            </Link>{' '}
+            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️ {room.like_count ?? 0}）
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
