@@ -2,7 +2,6 @@
 import './globals.css'
 import Link from 'next/link'
 import { ReactNode } from 'react'
-import AuthHeader from '../components/AuthHeader'
 
 export const metadata = {
   title: 'みんなで作ろう（仮）',
@@ -12,29 +11,35 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
       <body>
-        {/* ログイン状態も見えるヘッダー */}
-        <AuthHeader />
-
-        {/* 共通ナビ */}
-        <div
+        {/* 共通ヘッダー */}
+        <header
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            padding: '10px 18px',
-            borderBottom: '1px solid #eee',
+            padding: '14px 18px',
+            borderBottom: '1px solid rgba(0,0,0,0.08)',
+            position: 'sticky',
+            top: 0,
+            background: 'rgba(255,255,255,0.92)',
+            backdropFilter: 'blur(8px)',
+            zIndex: 50,
           }}
         >
           <Link href="/" style={{ textDecoration: 'none', color: '#111' }}>
             <strong>みんなで作ろう（仮）</strong>
           </Link>
 
-          <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            <Link href="/">制作ルーム一覧</Link>
-            <Link href="/rooms/new">ルーム作成</Link>
-            <Link href="/profile">プロフィール</Link>
-          </div>
-        </div>
+          <nav style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+            {/* ✅ ここが最重要：必ず /rooms */}
+            <Link href="/rooms" prefetch={false}>
+              制作ルーム一覧
+            </Link>
+            <Link href="/profile" prefetch={false}>
+              プロフィール
+            </Link>
+          </nav>
+        </header>
 
         <main>{children}</main>
       </body>

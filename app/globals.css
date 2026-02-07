@@ -74,8 +74,30 @@ body {
 }
 
 /* ===== Mobile layout helpers ===== */
+/* ===== Mobile layout helpers ===== */
 .pageWrap {
   padding: 24px;
+}
+
+/* ✅ PCでも見やすく：常にボタン化＋2列 */
+.linkRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.linkRow a {
+  display: block;
+  padding: 14px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.8);
+  color: inherit;
+}
+
+.linkRow a:hover {
+  background: rgba(255, 255, 255, 1);
 }
 
 @media (max-width: 640px) {
@@ -83,23 +105,19 @@ body {
     padding: 16px;
   }
 
+  /* ✅ スマホは1列 */
   .linkRow {
-    display: grid;
     grid-template-columns: 1fr;
     gap: 10px;
   }
+}
 
+@media (prefers-color-scheme: dark) {
   .linkRow a {
-    display: block;
-    padding: 12px 12px;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 10px;
-    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.18);
   }
-
-  @media (prefers-color-scheme: dark) {
-    .linkRow a {
-      border: 1px solid rgba(255, 255, 255, 0.16);
-    }
+  .linkRow a:hover {
+    background: rgba(0, 0, 0, 0.28);
   }
 }
