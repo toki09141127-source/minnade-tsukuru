@@ -1,65 +1,69 @@
-// app/rooms/[id]/DeleteRoomButton.tsx
 'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase/client'
 
-export default function DeleteRoomButton({ roomId }: { roomId: string }) {
+export default function DeleteRoomButton(props: { roomId: string }) {
+  const { roomId } = props
   const router = useRouter()
+  const [msg, setMsg] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
 
   const onDelete = async () => {
-    if (!confirm('このルームを削除しますか？（投稿・参加者も削除されます）')) return
-    setError('')
+    setMsg(null)
+    const ok = window.confirm('このルームを削除（論理削除）します。よろしいですか？\n※ホストのみ実行できます。')
+    if (!ok) return
+
     setLoading(true)
     try {
-      const { data: s } = await supabase.auth.getSession()
-      const token = s.session?.access_token
+      const { data } = await supabase.auth.getSession()
+      const token = data.session?.access_token
       if (!token) {
-        setError('ログインしてください')
+        setMsg('ログインが必要です')
         return
       }
 
       const res = await fetch('/api/rooms/delete', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          'content-type': 'application/json',
+          authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ roomId }),
       })
 
       const json = await res.json()
-      if (!json.ok) {
-        setError(json.error ?? '削除に失敗しました')
-        return
-      }
+      if (!res.ok) throw new Error(json?.error ?? 'delete failed')
 
+      // 削除成功→一覧へ
       router.push('/rooms')
       router.refresh()
+    } catch (e: any) {
+      setMsg(e?.message ?? 'error')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div style={{ display: 'grid', gap: 6 }}>
+    <div>
       <button
         onClick={onDelete}
         disabled={loading}
         style={{
           padding: '10px 12px',
           borderRadius: 10,
-          border: '1px solid #b00020',
-          background: 'transparent',
-          cursor: loading ? 'not-allowed' : 'pointer',
+          border: '1px solid rgba(255,0,0,0.35)',
+          background: 'rgba(255,0,0,0.08)',
+          cursor: 'pointer',
+          fontWeight: 900,
         }}
       >
-        {loading ? '削除中…' : 'このルームを削除（ホストのみ）'}
+        {loading ? '削除中...' : '🗑️ ルームを削除'}
       </button>
-      {error && <p style={{ color: '#b00020', margin: 0 }}>{error}</p>}
+
+      {msg && <p style={{ marginTop: 8, color: 'crimson', fontWeight: 700 }}>{msg}</p>}
     </div>
   )
 }
