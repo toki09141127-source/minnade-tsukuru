@@ -25,16 +25,25 @@ export default async function RoomDetailPage({ params }: { params: { id: string 
     .eq('id', roomId)
     .maybeSingle()
 
-  if (roomErr || !room || room.deleted_at) {
-    return (
-      <div style={{ padding: 24 }}>
-        <p style={{ color: 'crimson', fontWeight: 700 }}>ルームが見つかりません（削除された可能性があります）</p>
-        <p>
-          <Link href="/rooms">ルーム一覧へ戻る</Link>
-        </p>
-      </div>
-    )
-  }
+    if (roomErr || !room || (room as any).deleted_at) {
+      return (
+        <div style={{ padding: 24 }}>
+          <p style={{ color: 'crimson', fontWeight: 700 }}>
+            ルームが見つかりません（削除された可能性があります）
+          </p>
+    
+          <div style={{ marginTop: 10, fontSize: 13, opacity: 0.85, lineHeight: 1.6 }}>
+            <div>roomId: {roomId}</div>
+            <div>roomErr: {roomErr?.message ?? '(none)'}</div>
+          </div>
+    
+          <p style={{ marginTop: 12 }}>
+            <Link href="/rooms">ルーム一覧へ戻る</Link>
+          </p>
+        </div>
+      )
+    }
+    
 
   const isForced = room.status === 'forced_publish'
 
