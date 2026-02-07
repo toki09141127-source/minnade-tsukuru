@@ -6,31 +6,31 @@ import JoinButton from './JoinButton'
 import LikeButton from './LikeButton'
 import BoardClient from './BoardClient'
 import RemainingTimer from './RemainingTimer'
-import BackToRooms from './BackToRooms'
 import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import DeleteRoomButton from './DeleteRoomButton'
 
 export const dynamic = 'force-dynamic'
 
-export default async function RoomDetailPage({ params }: { params: { id?: string } }) {
-  const roomIdRaw = params?.id
-  const roomId = typeof roomIdRaw === 'string' ? roomIdRaw : ''
+export default async function RoomDetailPage({
+  params,
+}: {
+  params: { id?: string }
+}) {
+  const roomId = params?.id
 
-  // ✅ 重要：/rooms/undefined などの壊れたURLをDBに投げない
-  if (!roomId || roomId === 'undefined') {
+  // id が壊れてる/undefined のときは即エラー表示（uuidエラーを防ぐ）
+  if (!roomId) {
     return (
       <div style={{ padding: 24 }}>
-        <p style={{ color: 'crimson', fontWeight: 700 }}>URLが不正です（roomId が空です）</p>
-        <p style={{ marginTop: 8, opacity: 0.85 }}>roomId: {String(roomIdRaw)}</p>
-        <p style={{ marginTop: 12 }}>
+        <p style={{ color: 'crimson', fontWeight: 700 }}>roomId が不正です</p>
+        <p style={{ marginTop: 8 }}>
           <Link href="/rooms">ルーム一覧へ戻る</Link>
         </p>
       </div>
     )
   }
 
-  // ✅ rooms 取得（deleted_at も含めて判定）
   const { data: room, error: roomErr } = await supabaseAdmin
     .from('rooms')
     .select(
@@ -45,9 +45,9 @@ export default async function RoomDetailPage({ params }: { params: { id?: string
         <p style={{ color: 'crimson', fontWeight: 700 }}>
           ルームが見つかりません（削除された可能性があります）
         </p>
-        <div style={{ marginTop: 10, opacity: 0.85, fontSize: 13, lineHeight: 1.7 }}>
+        <div style={{ marginTop: 10, fontSize: 13, opacity: 0.85 }}>
           <div>roomId: {roomId}</div>
-          <div>roomErr: {roomErr?.message ?? ''}</div>
+          <div>roomErr: {roomErr?.message ?? '(none)'}</div>
         </div>
         <p style={{ marginTop: 12 }}>
           <Link href="/rooms">ルーム一覧へ戻る</Link>
@@ -61,12 +61,12 @@ export default async function RoomDetailPage({ params }: { params: { id?: string
   return (
     <div style={{ padding: 24 }}>
       {/* パンくず */}
-      <p style={{ margin: '0 0 8px 0' }}>
-        <Link href="/">← トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
+      <p style={{ margin: 0 }}>
+        <Link href="/">トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
       </p>
 
       {/* タイトル */}
-      <h1 style={{ margin: '8px 0 6px 0' }}>{room.title}</h1>
+      <h1 style={{ margin: '10px 0 6px 0' }}>{room.title}</h1>
 
       {/* サブ情報 */}
       <div style={{ fontSize: 14, opacity: 0.85, lineHeight: 1.7 }}>
@@ -78,9 +78,9 @@ export default async function RoomDetailPage({ params }: { params: { id?: string
                 marginLeft: 10,
                 padding: '2px 8px',
                 borderRadius: 999,
+                border: '1px solid rgba(255,80,80,0.5)',
+                background: 'rgba(255,80,80,0.12)',
                 fontSize: 12,
-                border: '1px solid rgba(255,0,0,0.35)',
-                background: 'rgba(255,0,0,0.08)',
               }}
             >
               🔞 成人向け
@@ -118,22 +118,23 @@ export default async function RoomDetailPage({ params }: { params: { id?: string
 
       {/* 操作ボタン */}
       <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        {/* JoinButton が roomStatus 必須なので渡す */}
         <JoinButton roomId={room.id} roomStatus={room.status} />
         <LikeButton roomId={room.id} />
-        <BackToRooms />
       </div>
 
-      {/* ✅ ここから追加：成人向けゲート / 通報 / 削除 */}
+      {/* 成人向けゲート（表示だけでOK） */}
       <div style={{ marginTop: 12 }}>
         <AdultGate isAdult={!!room.is_adult} />
       </div>
 
+      {/* 通報 */}
       <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <ReportButton targetType="room" targetId={room.id} />
       </div>
 
+      {/* 削除（APIが403ならhost only表示でOK） */}
       <div style={{ marginTop: 12 }}>
-        {/* 最短：表示だけ。APIが403ならhost only表示になる */}
         <DeleteRoomButton roomId={room.id} />
       </div>
 
