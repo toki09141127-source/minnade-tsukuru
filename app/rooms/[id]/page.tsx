@@ -7,6 +7,7 @@ import JoinButton from './JoinButton'
 import RemainingTimer from './RemainingTimer'
 import BoardClient from './BoardClient'
 import LikeButton from './LikeButton'
+import DeleteRoomButton from './DeleteRoomButton'
 
 type RoomRow = {
   id: string
@@ -38,11 +39,12 @@ export default async function RoomDetailPage({
     return (
       <div style={{ padding: 24 }}>
         <p style={{ color: '#b00020' }}>URLの id が取得できませんでした。</p>
-        <Link href="/">← トップへ</Link>
+        <Link href="/rooms">← 一覧に戻る</Link>
       </div>
     )
   }
 
+  // ルーム取得
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
     .select('id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count')
@@ -52,12 +54,15 @@ export default async function RoomDetailPage({
   if (roomErr || !room) {
     return (
       <div style={{ padding: 24 }}>
-        <p style={{ color: '#b00020' }}>取得エラー: {roomErr?.message ?? 'room not found'}</p>
-        <Link href="/">← トップへ</Link>
+        <p style={{ color: '#b00020' }}>
+          取得エラー: {roomErr?.message ?? 'room not found'}
+        </p>
+        <Link href="/rooms">← 一覧に戻る</Link>
       </div>
     )
   }
 
+  // 参加者取得
   const { data: members } = await supabase
     .from('room_members')
     .select('id, user_id, username, is_core')
@@ -66,44 +71,18 @@ export default async function RoomDetailPage({
     .returns<MemberRow[]>()
 
   const memberCount = members?.length ?? 0
-  const isOpen = room.status === 'open'
-  const isPublished = room.status !== 'open' // forced_publish / closed を「公開済み扱い」
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* ✅ 常にトップへ戻れる */}
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-        <Link href="/">← トップへ</Link>
-        <Link href="/rooms">ルーム一覧</Link>
-      </div>
+    <div style={{ padding: 24, maxWidth: 880, margin: '0 auto' }}>
+      <Link href="/rooms">← 一覧に戻る</Link>
 
-      <h1 style={{ marginTop: 10 }}>{room.title}</h1>
+      <h1 style={{ marginTop: 8 }}>{room.title}</h1>
 
       <div style={{ marginTop: 10, fontSize: 14, color: '#444' }}>
-        {room.work_type} / status: <strong>{room.status}</strong> / ❤️ {room.like_count ?? 0} / 👥{' '}
-        {memberCount}
+        {room.work_type} / status: {room.status} / ❤️ {room.like_count ?? 0} / 👥 {memberCount}
       </div>
 
-      {/* ✅ 公開済みなら強い案内 */}
-      {isPublished && (
-        <div
-          style={{
-            marginTop: 12,
-            padding: 14,
-            borderRadius: 12,
-            background: '#fff3cd',
-            border: '1px solid #ffeeba',
-            lineHeight: 1.7,
-          }}
-        >
-          <strong>このルームは公開済みです</strong>
-          <br />
-          参加・投稿はできません。作品ページで完成物を読めます。
-          <br />
-          <Link href={`/works/${room.id}`}>→ 作品ページへ</Link>
-        </div>
-      )}
-
+      {/* 説明 */}
       <div
         style={{
           marginTop: 12,
@@ -121,19 +100,31 @@ export default async function RoomDetailPage({
         期限を過ぎると自動で forced_publish になります。
       </div>
 
-      {/* 残り秒（JoinButtonの上） */}
+      {/* 残り時間 */}
       <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} />
       </div>
 
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-        {/* ✅ openのときだけ参加させる（JoinButton側でも弾くが、ここでもUXで分かりやすく） */}
+      {/* アクションボタン */}
+      <div
+        style={{
+          marginTop: 12,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 10,
+          alignItems: 'center',
+        }}
+      >
         <JoinButton roomId={room.id} roomStatus={room.status} />
         <LikeButton roomId={room.id} />
-        {isPublished && <Link href={`/works/${room.id}`}>作品ページを見る</Link>}
       </div>
 
-      {/* 参加者 */}
+      {/* ★ 削除ボタン（ホストのみ成功） */}
+      <div style={{ marginTop: 12 }}>
+        <DeleteRoomButton roomId={room.id} />
+      </div>
+
+      {/* 参加者一覧 */}
       <section style={{ marginTop: 18 }}>
         <h2>参加者（最大50人 / コア5人）</h2>
 
@@ -145,7 +136,9 @@ export default async function RoomDetailPage({
               <li key={m.id}>
                 <strong>{m.username ?? '名無し'}</strong>
                 {m.is_core && (
-                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>（CORE）</span>
+                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>
+                    （CORE）
+                  </span>
                 )}
               </li>
             ))}
@@ -154,7 +147,9 @@ export default async function RoomDetailPage({
       </section>
 
       {/* 掲示板 */}
-      <BoardClient roomId={room.id} roomStatus={room.status} />
+      <div style={{ marginTop: 24 }}>
+        <BoardClient roomId={room.id} roomStatus={room.status} />
+      </div>
     </div>
   )
 }

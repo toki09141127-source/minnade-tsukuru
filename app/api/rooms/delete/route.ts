@@ -11,30 +11,34 @@ export async function POST(req: Request) {
     if (!token) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
 
     const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
-    if (userErr || !userRes.user) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
-
+    if (userErr || !userRes.user) {
+      return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+    }
     const uid = userRes.user.id
 
     const body = await req.json()
-    const roomId = String(body.roomId ?? '')
+    const roomId = String(body.roomId ?? '').trim()
     if (!roomId) return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
 
-    // ✅ rooms.user_id は見ない。room_members の core だけ削除できる
-    const { data: mem } = await supabaseAdmin
-      .from('room_members')
-      .select('id, is_core')
-      .eq('room_id', roomId)
-      .eq('user_id', uid)
+    // ルーム取得（ホスト判定）
+    const { data: room, error: roomErr } = await supabaseAdmin
+      .from('rooms')
+      .select('id, host_ids')
+      .eq('id', roomId)
       .maybeSingle()
 
-    if (!mem) return NextResponse.json({ ok: false, error: '参加者のみ削除できます' }, { status: 403 })
-    if (!mem.is_core) return NextResponse.json({ ok: false, error: 'コア参加者のみ削除できます' }, { status: 403 })
+    if (roomErr || !room) return NextResponse.json({ ok: false, error: 'room not found' }, { status: 404 })
 
-    // 依存テーブルを消してから rooms を消す（FKがある場合の安全策）
+    const hostIds = (room as any).host_ids as string[] | null
+    const isHost = Array.isArray(hostIds) && hostIds.includes(uid)
+    if (!isHost) return NextResponse.json({ ok: false, error: 'host only' }, { status: 403 })
+
+    // 関連を先に消す（FKが無い想定でも安全）
     await supabaseAdmin.from('posts').delete().eq('room_id', roomId)
-    await supabaseAdmin.from('room_likes').delete().eq('room_id', roomId)
     await supabaseAdmin.from('room_members').delete().eq('room_id', roomId)
+    await supabaseAdmin.from('room_likes').delete().eq('room_id', roomId)
 
+    // ルーム本体
     const { error: delErr } = await supabaseAdmin.from('rooms').delete().eq('id', roomId)
     if (delErr) return NextResponse.json({ ok: false, error: delErr.message }, { status: 400 })
 
