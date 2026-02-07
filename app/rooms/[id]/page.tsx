@@ -1,5 +1,4 @@
 // app/rooms/[id]/page.tsx
-
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
@@ -39,12 +38,11 @@ export default async function RoomDetailPage({
     return (
       <div style={{ padding: 24 }}>
         <p style={{ color: '#b00020' }}>URLの id が取得できませんでした。</p>
-        <Link href="/">← 一覧に戻る</Link>
+        <Link href="/">← トップへ</Link>
       </div>
     )
   }
 
-  // ✅ rooms には user_id 列が無い前提で、存在する列だけ select する
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
     .select('id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count')
@@ -54,10 +52,8 @@ export default async function RoomDetailPage({
   if (roomErr || !room) {
     return (
       <div style={{ padding: 24 }}>
-        <p style={{ color: '#b00020' }}>
-          取得エラー: {roomErr?.message ?? 'room not found'}
-        </p>
-        <Link href="/">← 一覧に戻る</Link>
+        <p style={{ color: '#b00020' }}>取得エラー: {roomErr?.message ?? 'room not found'}</p>
+        <Link href="/">← トップへ</Link>
       </div>
     )
   }
@@ -70,17 +66,43 @@ export default async function RoomDetailPage({
     .returns<MemberRow[]>()
 
   const memberCount = members?.length ?? 0
+  const isOpen = room.status === 'open'
+  const isPublished = room.status !== 'open' // forced_publish / closed を「公開済み扱い」
 
   return (
     <div style={{ padding: 24 }}>
-      {/* ✅ ここを "/" に統一（トップのルーム一覧へ戻す） */}
-      <Link href="/">← 一覧に戻る</Link>
+      {/* ✅ 常にトップへ戻れる */}
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <Link href="/">← トップへ</Link>
+        <Link href="/rooms">ルーム一覧</Link>
+      </div>
 
-      <h1 style={{ marginTop: 8 }}>{room.title}</h1>
+      <h1 style={{ marginTop: 10 }}>{room.title}</h1>
 
       <div style={{ marginTop: 10, fontSize: 14, color: '#444' }}>
-        {room.work_type} / status: {room.status} / ❤️ {room.like_count ?? 0} / 👥 {memberCount}
+        {room.work_type} / status: <strong>{room.status}</strong> / ❤️ {room.like_count ?? 0} / 👥{' '}
+        {memberCount}
       </div>
+
+      {/* ✅ 公開済みなら強い案内 */}
+      {isPublished && (
+        <div
+          style={{
+            marginTop: 12,
+            padding: 14,
+            borderRadius: 12,
+            background: '#fff3cd',
+            border: '1px solid #ffeeba',
+            lineHeight: 1.7,
+          }}
+        >
+          <strong>このルームは公開済みです</strong>
+          <br />
+          参加・投稿はできません。作品ページで完成物を読めます。
+          <br />
+          <Link href={`/works/${room.id}`}>→ 作品ページへ</Link>
+        </div>
+      )}
 
       <div
         style={{
@@ -99,15 +121,19 @@ export default async function RoomDetailPage({
         期限を過ぎると自動で forced_publish になります。
       </div>
 
+      {/* 残り秒（JoinButtonの上） */}
       <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} />
       </div>
 
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center' }}>
+      <div style={{ marginTop: 12, display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        {/* ✅ openのときだけ参加させる（JoinButton側でも弾くが、ここでもUXで分かりやすく） */}
         <JoinButton roomId={room.id} roomStatus={room.status} />
         <LikeButton roomId={room.id} />
+        {isPublished && <Link href={`/works/${room.id}`}>作品ページを見る</Link>}
       </div>
 
+      {/* 参加者 */}
       <section style={{ marginTop: 18 }}>
         <h2>参加者（最大50人 / コア5人）</h2>
 
@@ -119,9 +145,7 @@ export default async function RoomDetailPage({
               <li key={m.id}>
                 <strong>{m.username ?? '名無し'}</strong>
                 {m.is_core && (
-                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>
-                    （CORE）
-                  </span>
+                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>（CORE）</span>
                 )}
               </li>
             ))}
@@ -129,6 +153,7 @@ export default async function RoomDetailPage({
         )}
       </section>
 
+      {/* 掲示板 */}
       <BoardClient roomId={room.id} roomStatus={room.status} />
     </div>
   )
