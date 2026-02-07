@@ -4,8 +4,6 @@ import Link from 'next/link'
 import { ReactNode } from 'react'
 
 export const metadata = {
-  metadataBase: new URL('https://minnade-tsukuru.vercel.app'),
-
   title: 'みんなで作ろう（仮）',
   description:
     '時間制限つきの制作ルームで、複数人が集まり作品を完成させる共同創作サービス。',
@@ -21,7 +19,6 @@ export const metadata = {
         url: '/ogp.png',
         width: 1200,
         height: 630,
-        alt: 'みんなで作ろう（仮）',
       },
     ],
     locale: 'ja_JP',
@@ -35,22 +32,12 @@ export const metadata = {
       '時間制限つきの制作ルームで、複数人が集まり作品を完成させる共同創作サービス。',
     images: ['/ogp.png'],
   },
-
-  icons: {
-    icon: '/favicon.ico',
-  },
 }
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ja">
-      <body
-        style={{
-          margin: 0,
-          background: '#ffffff',
-          color: '#111',
-        }}
-      >
+      <body>
         {/* 共通ヘッダー */}
         <header
           style={{
@@ -71,11 +58,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </Link>
 
           <nav style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            {/* 必ず /rooms に遷移 */}
             <Link href="/rooms" prefetch={false}>
               制作ルーム一覧
             </Link>
-
             <Link href="/profile" prefetch={false}>
               プロフィール
             </Link>
