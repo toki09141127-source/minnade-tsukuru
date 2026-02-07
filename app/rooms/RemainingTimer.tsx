@@ -1,37 +1,38 @@
+// app/rooms/[id]/RemainingTimer.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
 
-function formatMs(ms: number) {
-  if (ms <= 0) return '終了'
-  const totalSec = Math.floor(ms / 1000)
-  const h = Math.floor(totalSec / 3600)
-  const m = Math.floor((totalSec % 3600) / 60)
-  const s = totalSec % 60
-  return `${h}h ${m}m ${s}s`
+type Props = {
+  expiresAt: string | null
+  status?: string
 }
 
-export default function RemainingTimer({ expiresAt }: { expiresAt: string | null }) {
-  const target = useMemo(() => {
-    if (!expiresAt) return null
-    const t = new Date(expiresAt).getTime()
-    return Number.isFinite(t) ? t : null
-  }, [expiresAt])
+function format(ms: number) {
+  const s = Math.max(0, Math.floor(ms / 1000))
+  const hh = Math.floor(s / 3600)
+  const mm = Math.floor((s % 3600) / 60)
+  const ss = s % 60
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${hh}:${pad(mm)}:${pad(ss)}`
+}
 
-  const [label, setLabel] = useState(() => {
-    if (!target) return '（期限未設定）'
-    return formatMs(target - Date.now())
-  })
+export default function RemainingTimer({ expiresAt, status }: Props) {
+  const target = useMemo(() => (expiresAt ? new Date(expiresAt).getTime() : null), [expiresAt])
+  const [now, setNow] = useState(() => Date.now())
 
   useEffect(() => {
-    if (!target) return
+    const t = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(t)
+  }, [])
 
-    const id = setInterval(() => {
-      setLabel(formatMs(target - Date.now()))
-    }, 1000)
+  if (!expiresAt || !target) return <span>期限なし</span>
 
-    return () => clearInterval(id)
-  }, [target])
+  // 公開済みはタイマーより状態を優先して見せる
+  if (status === 'forced_publish') return <span>公開済み</span>
 
-  return <span>{label}</span>
+  const diff = target - now
+  if (diff <= 0) return <span>期限切れ</span>
+
+  return <span>残り {format(diff)}</span>
 }
