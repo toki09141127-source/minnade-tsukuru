@@ -6,45 +6,33 @@ export const dynamic = 'force-dynamic'
 
 type SortKey = 'likes' | 'new'
 
-function clampSort(v: string | null): SortKey {
-  return v === 'new' ? 'new' : 'likes'
-}
-
 export default async function RoomsPage({
   searchParams,
 }: {
-  searchParams: { q?: string; sort?: string }
+  searchParams?: { q?: string; sort?: SortKey }
 }) {
-  const qRaw = (searchParams?.q ?? '').trim()
-  const q = qRaw.slice(0, 60) // 念のため長さ制限
-  const sort = clampSort(searchParams?.sort ?? null)
+  const q = (searchParams?.q ?? '').trim()
+  const sort: SortKey = (searchParams?.sort === 'new' ? 'new' : 'likes')
 
-  // ---- query builder ----
+  // ✅ 必ず id を取る。deleted_at も見る。
   let query = supabaseAdmin
     .from('rooms')
-    .select('id, title, work_type, status, time_limit_hours, created_at, expires_at, like_count')
+    .select('id, title, work_type, status, time_limit_hours, like_count, created_at, deleted_at, is_adult')
+    .is('deleted_at', null)
 
-  // 検索（タイトル部分一致。大文字小文字はDB設定に依存）
-  if (q) {
-    // 例: title ILIKE '%abc%' になる
-    query = query.ilike('title', `%${q}%`)
-  }
+  if (q) query = query.ilike('title', `%${q}%`)
 
-  // 並び替え
-  if (sort === 'new') {
-    query = query.order('created_at', { ascending: false })
-  } else {
-    query = query.order('like_count', { ascending: false }).order('created_at', { ascending: false })
-  }
+  if (sort === 'new') query = query.order('created_at', { ascending: false })
+  else query = query.order('like_count', { ascending: false }).order('created_at', { ascending: false })
 
-  const { data: rooms, error } = await query.limit(200)
+  const { data: rooms, error } = await query
 
   if (error) {
     return (
       <div style={{ padding: 24 }}>
         <h1>制作ルーム一覧</h1>
         <p style={{ color: 'crimson' }}>取得エラー: {error.message}</p>
-        <p>
+        <p style={{ marginTop: 12 }}>
           <Link href="/">トップへ</Link>
         </p>
       </div>
@@ -55,70 +43,54 @@ export default async function RoomsPage({
     <div style={{ padding: 24 }}>
       <h1>制作ルーム一覧</h1>
 
-      {/* controls */}
-      <div style={{ marginTop: 12, display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-        <div>
-          <span style={{ marginRight: 8 }}>並び替え：</span>
-          <Link
-            href={`/rooms?sort=likes${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-            style={{
-              marginRight: 10,
-              fontWeight: sort === 'likes' ? 'bold' : 'normal',
-              textDecoration: sort === 'likes' ? 'underline' : 'none',
-            }}
-          >
-            いいね順
-          </Link>
-          <Link
-            href={`/rooms?sort=new${q ? `&q=${encodeURIComponent(q)}` : ''}`}
-            style={{
-              fontWeight: sort === 'new' ? 'bold' : 'normal',
-              textDecoration: sort === 'new' ? 'underline' : 'none',
-            }}
-          >
-            作成順（新しい）
-          </Link>
-        </div>
-
-        <form action="/rooms" method="get" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <input type="hidden" name="sort" value={sort} />
+      {/* 検索・並び替え */}
+      <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <form action="/rooms" method="get" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <input
             name="q"
             defaultValue={q}
-            placeholder="ルーム名で検索（部分一致）"
-            style={{ padding: '6px 10px', width: 280 }}
+            placeholder="ルーム名で検索"
+            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)', minWidth: 240 }}
           />
-          <button type="submit" style={{ padding: '6px 10px' }}>
+          <select
+            name="sort"
+            defaultValue={sort}
+            style={{ padding: '10px 12px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)' }}
+          >
+            <option value="likes">いいね順</option>
+            <option value="new">作成順（新しい順）</option>
+          </select>
+          <button
+            type="submit"
+            style={{ padding: '10px 14px', borderRadius: 8, border: '1px solid rgba(0,0,0,0.2)', cursor: 'pointer' }}
+          >
             検索
           </button>
-          {q && (
-            <Link href={`/rooms?sort=${sort}`} style={{ marginLeft: 6 }}>
-              クリア
-            </Link>
-          )}
         </form>
+
+        <Link href="/rooms/new" style={{ marginLeft: 'auto' }}>
+          ＋ ルームを作成
+        </Link>
       </div>
 
-      <p style={{ marginTop: 16 }}>
-        <Link href="/rooms/new">＋ ルームを作成</Link>
-      </p>
-
       <div style={{ marginTop: 16 }}>
-        {rooms?.length ? (
-          <ul style={{ paddingLeft: 18 }}>
-            {rooms.map((r) => (
-              <li key={r.id} style={{ marginBottom: 10 }}>
-                <Link href={`/rooms/${r.id}`} style={{ fontWeight: 'bold' }}>
+        {(rooms ?? []).length === 0 ? (
+          <p style={{ opacity: 0.8 }}>該当するルームがありません。</p>
+        ) : (
+          <ul style={{ paddingLeft: 18, lineHeight: 1.9 }}>
+            {(rooms ?? []).map((r) => (
+              <li key={r.id}>
+                {/* ✅ ここが超重要：/rooms/${r.id} であること */}
+                <Link href={`/rooms/${r.id}`} style={{ fontWeight: 700 }}>
                   {r.title}
                 </Link>{' '}
-                <span style={{ opacity: 0.8 }}>
-                  （{r.work_type} / {r.time_limit_hours}h / {r.status} / ❤️ {r.like_count ?? 0}）
+                <span style={{ opacity: 0.85 }}>
+                  （{r.work_type} / {r.time_limit_hours}h / {r.status} / ❤️ {r.like_count ?? 0}
+                  {r.is_adult ? ' / 🔞' : ''}）
                 </span>
               </li>
             ))}
           </ul>
-        ) : (
-          <p style={{ marginTop: 18 }}>{q ? '該当するルームが見つかりません。' : 'ルームがありません。'}</p>
         )}
       </div>
     </div>
