@@ -22,7 +22,6 @@ function isUuid(v: unknown) {
 export default async function RoomDetailPage({
   params,
 }: {
-  // ✅ Next 16系だと params が Promise のことがある
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
@@ -45,7 +44,8 @@ export default async function RoomDetailPage({
 
   const { data: room, error: roomErr } = await supabaseAdmin
     .from('rooms')
-    .select('id, host_id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at')
+    // ✅ host_id は存在しないので select しない
+    .select('id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at')
     .eq('id', roomId)
     .maybeSingle()
 
