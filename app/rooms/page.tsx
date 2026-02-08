@@ -36,7 +36,7 @@ export default function RoomsPage() {
       const runWithHidden = async () => {
         let query = supabase
           .from('rooms')
-          .select('id, title, work_type, status, time_limit_hours, created_at, like_count, is_hidden, deleted_at')
+          .select('id, title, work_type, status, time_limit_hours, created_at, like_count, member_count, is_hidden, deleted_at')
           .eq('is_hidden', false)
           .is('deleted_at', null)
 

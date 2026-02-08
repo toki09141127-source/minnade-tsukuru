@@ -1,4 +1,3 @@
-// app/rooms/[id]/BoardClient.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -11,8 +10,6 @@ type PostRow = {
   username: string | null
   content: string
   created_at: string
-  is_hidden?: boolean
-  deleted_at?: string | null
 }
 
 export default function BoardClient({
@@ -31,10 +28,8 @@ export default function BoardClient({
 
       const { data, error } = await supabase
         .from('posts')
-        .select('id, user_id, username, content, created_at, is_hidden, deleted_at')
+        .select('id, user_id, username, content, created_at')
         .eq('room_id', roomId)
-        .eq('is_hidden', false) // ✅ 非表示除外
-        .is('deleted_at', null) // ✅ 論理削除除外（あってもなくてもOK）
         .order('created_at', { ascending: true })
 
       if (error) setError(error.message)
@@ -62,7 +57,6 @@ export default function BoardClient({
                   {new Date(p.created_at).toLocaleString()}
                 </span>
 
-                {/* ✅ 投稿の通報（必要なら残す） */}
                 <span style={{ marginLeft: 'auto' }}>
                   <ReportButton targetType="post" targetId={p.id} />
                 </span>

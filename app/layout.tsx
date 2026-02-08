@@ -1,76 +1,49 @@
 // app/layout.tsx
-import './globals.css'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ReactNode } from 'react'
+import './globals.css'
+import LogoutButton from './components/LogoutButton'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'みんなで作ろう（仮）',
-  description:
-    '時間制限つきの制作ルームで、複数人が集まり作品を完成させる共同創作サービス。',
-
-  openGraph: {
-    title: 'みんなで作ろう（仮）',
-    description:
-      '時間制限つきの制作ルームで、複数人が集まり作品を完成させる共同創作サービス。',
-    url: 'https://minnade-tsukuru.vercel.app',
-    siteName: 'みんなで作ろう（仮）',
-    images: [
-      {
-        url: '/ogp.png',
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: 'ja_JP',
-    type: 'website',
-  },
-
-  twitter: {
-    card: 'summary_large_image',
-    title: 'みんなで作ろう（仮）',
-    description:
-      '時間制限つきの制作ルームで、複数人が集まり作品を完成させる共同創作サービス。',
-    images: ['/ogp.png'],
-  },
+  description: '時間制限つき共同創作サービス',
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja">
       <body>
-        {/* 共通ヘッダー */}
         <header
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             padding: '14px 18px',
-            borderBottom: '1px solid rgba(0,0,0,0.08)',
-            position: 'sticky',
-            top: 0,
-            background: 'rgba(255,255,255,0.92)',
-            backdropFilter: 'blur(8px)',
-            zIndex: 50,
+            borderBottom: '1px solid #eee',
           }}
         >
-          <Link href="/" style={{ textDecoration: 'none', color: '#111' }}>
-            <strong>みんなで作ろう（仮）</strong>
-          </Link>
+          <div style={{ fontWeight: 700 }}>
+            <Link href="/rooms" style={{ color: 'inherit', textDecoration: 'none' }}>
+              みんなで作ろう（仮）
+            </Link>
+          </div>
 
           <nav style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-            <Link href="/rooms" prefetch={false}>
+            <Link href="/rooms" style={{ textDecoration: 'none' }}>
               制作ルーム一覧
             </Link>
-            <Link href="/profile" prefetch={false}>
+            <Link href="/profile" style={{ textDecoration: 'none' }}>
               プロフィール
             </Link>
-            <Link href="/rankings" prefetch={false}>
+            <Link href="/rankings" style={{ textDecoration: 'none' }}>
               ランキング
             </Link>
-            <Link href="/works" prefetch={false}>
+            <Link href="/works" style={{ textDecoration: 'none' }}>
               完成作品
             </Link>
 
+            {/* ✅ ログアウトボタン復活 */}
+            <LogoutButton />
           </nav>
         </header>
 
