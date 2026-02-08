@@ -20,11 +20,12 @@ function isUuidLike(v: string) {
 export default async function RoomDetailPage({
   params,
 }: {
-  params: { id?: string }
+  params: Promise<{ id?: string }>
 }) {
-  // ✅ params.id を安全に取り出す（URLエンコード対策）
-  const raw = typeof params?.id === 'string' ? params.id : ''
+  const p = await params
+  const raw = typeof p?.id === 'string' ? p.id : ''
   const roomId = decodeURIComponent(raw).trim()
+
 
   // ✅ ここで弾く（ただし誤判定しないUUIDチェック）
   if (!roomId || !isUuidLike(roomId)) {
