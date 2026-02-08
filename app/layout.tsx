@@ -67,6 +67,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link href="/rankings" prefetch={false}>
               ランキング
             </Link>
+            <Link href="/works" prefetch={false}>
+              完成作品
+            </Link>
 
           </nav>
         </header>
