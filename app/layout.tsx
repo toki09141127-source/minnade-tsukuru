@@ -64,6 +64,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <Link href="/profile" prefetch={false}>
               プロフィール
             </Link>
+            <Link href="/rankings" prefetch={false}>
+              ランキング
+            </Link>
+
           </nav>
         </header>
 
