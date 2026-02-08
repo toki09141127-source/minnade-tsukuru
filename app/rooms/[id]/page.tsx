@@ -1,53 +1,38 @@
 // app/rooms/[id]/page.tsx
 import Link from 'next/link'
-import { supabaseAdmin } from '../../../lib/supabase/admin'
+import { supabaseAdmin } from '../../../lib/supabase/admin' // ←あなたの環境に合わせて（既存のままでOK）
 
 import JoinButton from './JoinButton'
 import LikeButton from './LikeButton'
 import BoardClient from './BoardClient'
 import RemainingTimer from './RemainingTimer'
+import BackToRooms from '../BackToRooms'
+
 import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import DeleteRoomButton from './DeleteRoomButton'
 
 export const dynamic = 'force-dynamic'
 
-function isUuidLike(v: string) {
-  // UUID v1-v5 を広く許容（大文字小文字OK）
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v)
+function isUuid(s: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    s
+  )
 }
 
 export default async function RoomDetailPage({
   params,
 }: {
-  params: Promise<{ id?: string }>
+  params: { id?: string }
 }) {
-  const p = await params
-  const raw = typeof p?.id === 'string' ? p.id : ''
-  const roomId = decodeURIComponent(raw).trim()
+  const roomId = params?.id ?? ''
 
-
-  // ✅ ここで弾く（ただし誤判定しないUUIDチェック）
-  if (!roomId || !isUuidLike(roomId)) {
+  // ✅ roomId ガード（ここは壊れやすいので強め）
+  if (!roomId || !isUuid(roomId)) {
     return (
       <div style={{ padding: 24 }}>
-        <p style={{ color: 'crimson', fontWeight: 800 }}>roomId が不正です</p>
-
-        {/* デバッグ（原因が掴めたら消してOK） */}
-        <pre
-          style={{
-            marginTop: 12,
-            padding: 12,
-            background: '#f6f7fb',
-            borderRadius: 10,
-            overflowX: 'auto',
-            fontSize: 12,
-            lineHeight: 1.5,
-          }}
-        >
-{JSON.stringify({ params, raw, roomId }, null, 2)}
-        </pre>
-
+        <p style={{ color: 'crimson', fontWeight: 700 }}>roomId が不正です</p>
+        <p style={{ opacity: 0.8 }}>roomId: {String(roomId)}</p>
         <p style={{ marginTop: 12 }}>
           <Link href="/rooms">ルーム一覧へ戻る</Link>
         </p>
@@ -64,28 +49,19 @@ export default async function RoomDetailPage({
     .eq('id', roomId)
     .maybeSingle()
 
-  if (roomErr || !room || (room as any).deleted_at) {
+  if (roomErr || !room || room.deleted_at) {
     return (
       <div style={{ padding: 24 }}>
-        <p style={{ color: 'crimson', fontWeight: 800 }}>
+        <p style={{ color: 'crimson', fontWeight: 700 }}>
           ルームが見つかりません（削除された可能性があります）
         </p>
-
-        {/* デバッグ（原因が掴めたら消してOK） */}
-        <pre
-          style={{
-            marginTop: 12,
-            padding: 12,
-            background: '#f6f7fb',
-            borderRadius: 10,
-            overflowX: 'auto',
-            fontSize: 12,
-            lineHeight: 1.5,
-          }}
-        >
-{JSON.stringify({ roomId, roomErr: roomErr?.message ?? null, room }, null, 2)}
-        </pre>
-
+        <p style={{ marginTop: 8, opacity: 0.85 }}>
+          roomId: {roomId}
+          <br />
+          roomErr: {roomErr?.message ?? '(null)'}
+          <br />
+          deleted_at: {room?.deleted_at ?? '(null)'}
+        </p>
         <p style={{ marginTop: 12 }}>
           <Link href="/rooms">ルーム一覧へ戻る</Link>
         </p>
@@ -95,15 +71,8 @@ export default async function RoomDetailPage({
 
   const isForced = room.status === 'forced_publish'
 
-  // --- members（表示だけ。無ければ空でOK） ---
-  const { data: members } = await supabaseAdmin
-    .from('room_members')
-    .select('id, username, is_core')
-    .eq('room_id', roomId)
-    .order('created_at', { ascending: true })
-
   return (
-    <div style={{ padding: 24, maxWidth: 920, margin: '0 auto' }}>
+    <div style={{ padding: 24 }}>
       <p style={{ marginTop: 0 }}>
         <Link href="/">トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
       </p>
@@ -121,7 +90,8 @@ export default async function RoomDetailPage({
                 padding: '2px 8px',
                 borderRadius: 999,
                 background: 'rgba(255,80,80,0.12)',
-                border: '1px solid rgba(255,80,80,0.25)',
+                color: '#b00020',
+                fontWeight: 700,
                 fontSize: 12,
               }}
             >
@@ -131,26 +101,33 @@ export default async function RoomDetailPage({
         </div>
       </div>
 
-      {/* 残り時間 */}
-      <div style={{ marginTop: 10 }}>
+      {/* ✅ 成人向けゲート（TSエラー対策：isAdult を必ず渡す） */}
+      {room.is_adult ? (
+        <div style={{ marginTop: 12 }}>
+          <AdultGate isAdult={!!room.is_adult} />
+        </div>
+      ) : null}
+
+      {/* ✅ 残り時間（TSエラー対策：status を必ず渡す） */}
+      <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} status={room.status} />
       </div>
 
-      {/* 自動公開済み案内 */}
+      {/* 公開済み案内 */}
       {isForced && (
         <div
           style={{
             marginTop: 12,
             padding: 14,
             borderRadius: 10,
-            border: '1px solid rgba(255, 193, 7, 0.45)',
-            background: 'rgba(255, 193, 7, 0.18)',
+            border: '1px solid rgba(255,193,7,0.45)',
+            background: 'rgba(255,193,7,0.18)',
             lineHeight: 1.7,
           }}
         >
           <p style={{ margin: 0, fontWeight: 800 }}>このルームは公開済みです</p>
           <p style={{ margin: '6px 0 0 0' }}>
-            参加・投稿はできません。作品ページで完成物を読めます。
+            参加・投稿はできません。作品ページで完成物を閲覧できます。
           </p>
           <p style={{ margin: '6px 0 0 0' }}>
             <Link href={`/works/${room.id}`}>→ 作品ページへ</Link>
@@ -159,49 +136,35 @@ export default async function RoomDetailPage({
       )}
 
       {/* 操作ボタン */}
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: 12,
+          display: 'flex',
+          gap: 10,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
         <JoinButton roomId={room.id} roomStatus={room.status} />
         <LikeButton roomId={room.id} />
+
+        {/* 通報（表示だけ / API側で非表示処理） */}
+        <ReportButton targetType="room" targetId={room.id} />
       </div>
 
-      {/* 成人向けゲート（成人向けルームのみ表示） */}
-      {room.is_adult ? (
-        <div style={{ marginTop: 12 }}>
-          <AdultGate isAdult={true} />
-        </div>
-      ) : null}
-
-      {/* 通報 + 削除（表示だけ。APIが403ならhost onlyでOK） */}
-      <div style={{ marginTop: 12, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <ReportButton targetType="room" targetId={room.id} />
+      {/* ✅ 削除ボタン（表示だけ / 403なら host only 表示でOK） */}
+      <div style={{ marginTop: 12 }}>
         <DeleteRoomButton roomId={room.id} />
       </div>
 
-      {/* 参加者 */}
-      <section style={{ marginTop: 20 }}>
-        <h3 style={{ margin: '0 0 8px 0' }}>参加者</h3>
-        {!members || members.length === 0 ? (
-          <p style={{ color: '#666' }}>まだ参加者がいません。</p>
-        ) : (
-          <ul style={{ paddingLeft: 18 }}>
-            {members.map((m: any) => (
-              <li key={m.id} style={{ marginBottom: 6 }}>
-                <strong>{m.username ?? '名無し'}</strong>
-                {m.is_core ? (
-                  <span style={{ marginLeft: 6, fontSize: 12, color: '#0b6' }}>[CORE]</span>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
       {/* 掲示板 */}
-      {!isForced ? (
-        <div style={{ marginTop: 24 }}>
-          <BoardClient roomId={room.id} roomStatus={room.status} />
-        </div>
-      ) : null}
+      <div style={{ marginTop: 20 }}>
+        <BoardClient roomId={room.id} roomStatus={room.status} />
+      </div>
+
+      <div style={{ marginTop: 16 }}>
+        <BackToRooms />
+      </div>
     </div>
   )
 }
