@@ -8,6 +8,7 @@ import DeleteRoomButton from './DeleteRoomButton'
 import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import BoardClient from './BoardClient'
+import PostFormClient from './PostFormClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -135,7 +136,7 @@ export default async function RoomDetailPage({
       {!isForced && (
         <div style={{ marginTop: 28 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />
-          <PostFormClient roomId={room.id} roomStatus={room.status} onPosted={() => window.location.reload()} />
+          <PostFormClient roomId={room.id} roomStatus={room.status} />
         </div>
       )}
     </div>

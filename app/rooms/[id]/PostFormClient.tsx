@@ -1,4 +1,3 @@
-// app/rooms/[id]/PostFormClient.tsx
 'use client'
 
 import { useState } from 'react'
@@ -7,11 +6,9 @@ import { supabase } from '../../../lib/supabase/client'
 export default function PostFormClient({
   roomId,
   roomStatus,
-  onPosted,
 }: {
   roomId: string
   roomStatus: string
-  onPosted?: () => void
 }) {
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
@@ -55,8 +52,8 @@ export default function PostFormClient({
       }
 
       setContent('')
-      setInfo('投稿しました')
-      onPosted?.()
+      setInfo('投稿しました。更新します…')
+      window.location.reload()
     } catch (e: any) {
       setError(e?.message ?? '投稿に失敗しました')
     } finally {
@@ -84,6 +81,8 @@ export default function PostFormClient({
             border: '1px solid #111',
             background: '#111',
             color: '#fff',
+            cursor: loading || roomStatus !== 'open' ? 'not-allowed' : 'pointer',
+            opacity: loading || roomStatus !== 'open' ? 0.6 : 1,
           }}
         >
           {loading ? '送信中…' : '投稿する'}
