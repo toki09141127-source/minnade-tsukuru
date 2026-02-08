@@ -1,7 +1,6 @@
 // app/api/posts/create/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createSupabaseServerClient } from '../../../../lib/supabase/server'
 
 export async function POST(req: Request) {
   try {
@@ -13,54 +12,61 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'roomId / content is required' }, { status: 400 })
     }
 
-    // Cookieベースのログインユーザー
-    const supabase = await createSupabaseServerClient()
-    const { data: userRes, error: userErr } = await supabase.auth.getUser()
-    const user = userRes?.user
-    if (userErr || !user) {
+    const authHeader = req.headers.get('authorization') ?? ''
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+    if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Service Role
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseAuth = createClient(url, anonKey, { auth: { persistSession: false } })
+
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token)
+    if (userErr || !userData?.user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+    const user = userData.user
+
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    // username（NULL禁止なら必須）
-    const { data: prof, error: profErr } = await admin
+    // ルームがopenか確認
+    const { data: room, error: roomErr } = await admin
+      .from('rooms')
+      .select('id, status')
+      .eq('id', roomId)
+      .maybeSingle()
+
+    if (roomErr) return NextResponse.json({ error: roomErr.message }, { status: 500 })
+    if (!room) return NextResponse.json({ error: 'ルームが見つかりません' }, { status: 404 })
+    if (room.status !== 'open') {
+      return NextResponse.json({ error: `このルームは ${room.status} のため投稿できません` }, { status: 400 })
+    }
+
+    // username（null禁止対策）
+    const { data: profile, error: profErr } = await admin
       .from('profiles')
       .select('username')
       .eq('id', user.id)
       .maybeSingle()
 
     if (profErr) return NextResponse.json({ error: profErr.message }, { status: 500 })
-
-    const username = prof?.username ?? '名無し'
-
-    // 参加してないユーザーは投稿禁止（room_members 必須）
-    const { data: member, error: memErr } = await admin
-      .from('room_members')
-      .select('id')
-      .eq('room_id', roomId)
-      .eq('user_id', user.id)
-      .maybeSingle()
-
-    if (memErr) return NextResponse.json({ error: memErr.message }, { status: 500 })
-    if (!member?.id) {
-      return NextResponse.json({ error: 'Not joined this room' }, { status: 403 })
-    }
+    const username = profile?.username ?? '名無し'
 
     const { error: insErr } = await admin.from('posts').insert({
       room_id: roomId,
       user_id: user.id,
       username,
       content,
+      is_hidden: false,
+      deleted_at: null,
     })
 
-    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 400 })
+    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 })
 
     return NextResponse.json({ ok: true })
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? 'Unexpected error' }, { status: 500 })
+    return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
   }
 }

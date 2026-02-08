@@ -135,6 +135,7 @@ export default async function RoomDetailPage({
       {!isForced && (
         <div style={{ marginTop: 28 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />
+          <PostFormClient roomId={room.id} roomStatus={room.status} onPosted={() => window.location.reload()} />
         </div>
       )}
     </div>
