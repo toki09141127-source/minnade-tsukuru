@@ -1,123 +1,107 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root{
+  --bg:#ffffff;
+  --fg:#111111;
+  --muted:#5b5b5b;
+  --card:#ffffff;
+  --border:#e6e6e6;
+  --link:#111111;
+  --danger:#b00020;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c0c0c;
+    --fg:#f3f3f3;
+    --muted:#bdbdbd;
+    --card:#141414;
+    --border:#2a2a2a;
+    --link:#f3f3f3;
+    --danger:#ff6b81;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+*{ box-sizing:border-box; }
+html,body{ padding:0; margin:0; background:var(--bg); color:var(--fg); }
+a{ color:var(--link); text-decoration:none; }
+
+.header{
+  position:sticky; top:0; z-index:10;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
 }
-/* ===== Home Hero (Top説明ブロック) ===== */
-.homeHero {
-  margin-top: 12px;
-  padding: 14px;
-  border-radius: 10px;
-  line-height: 1.75;
-  border: 1px solid rgba(20, 40, 120, 0.08);
-  background: #f3f6ff;
-  color: #111;
+.headerInner{
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px 16px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
 }
+.brand{ font-weight:800; }
+.nav{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.navLink{ padding:8px 10px; border-radius:10px; border:1px solid transparent; }
+.navLink:hover{ border-color:var(--border); }
 
-.homeHeroAccent {
-  margin-top: 12px;
-  padding-left: 12px;
-  border-left: 4px solid rgba(60, 90, 255, 0.35);
-}
-
-.homeHeroCallout {
-  margin-top: 14px;
-  padding: 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-@media (prefers-color-scheme: dark) {
-  .homeHero {
-    background: rgba(20, 24, 40, 0.7);
-    color: rgba(255, 255, 255, 0.92);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .homeHeroAccent {
-    border-left: 4px solid rgba(120, 160, 255, 0.45);
-  }
-
-  .homeHeroCallout {
-    background: rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .homeHero code {
-    color: rgba(255, 255, 255, 0.92);
-    background: rgba(255, 255, 255, 0.08);
-    padding: 2px 6px;
-    border-radius: 6px;
-  }
+.main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px 16px 40px;
 }
 
-/* ===== Mobile layout helpers ===== */
-/* ===== Mobile layout helpers ===== */
-.pageWrap {
-  padding: 24px;
+.container{ display:flex; flex-direction:column; gap:12px; }
+.h1{ font-size:22px; margin:0; }
+.stack{ display:flex; flex-direction:column; gap:12px; }
+
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
 }
 
-/* ✅ PCでも見やすく：常にボタン化＋2列 */
-.linkRow {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+.input,.select{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--fg);
 }
 
-.linkRow a {
-  display: block;
-  padding: 14px 14px;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 12px;
-  text-decoration: none;
-  background: rgba(255, 255, 255, 0.8);
-  color: inherit;
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+@media (max-width: 900px){
+  .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 600px){
+  .grid{ grid-template-columns: 1fr; }
+  .headerInner{ align-items:flex-start; }
+  .nav{ justify-content:flex-end; }
 }
 
-.linkRow a:hover {
-  background: rgba(255, 255, 255, 1);
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
 }
+.linkCard:hover{ transform: translateY(-1px); transition: 0.12s; }
 
-@media (max-width: 640px) {
-  .pageWrap {
-    padding: 16px;
-  }
+.row{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
+.title{ font-size:16px; font-weight:700; }
 
-  /* ✅ スマホは1列 */
-  .linkRow {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
+.muted{ color:var(--muted); font-size:13px; }
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  font-size:12px;
 }
-
-@media (prefers-color-scheme: dark) {
-  .linkRow a {
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    background: rgba(0, 0, 0, 0.18);
-  }
-  .linkRow a:hover {
-    background: rgba(0, 0, 0, 0.28);
-  }
-}
+.badge.ok{ border-color: rgba(0,0,0,0.15); }
+.badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }

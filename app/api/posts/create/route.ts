@@ -7,6 +7,8 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
     const roomId = body?.roomId as string | undefined
     const content = (body?.content as string | undefined)?.trim()
+    const attachment_url = (body?.attachment_url as string | null | undefined) ?? null
+    const attachment_type = (body?.attachment_type as string | null | undefined) ?? null
 
     if (!roomId || !content) {
       return NextResponse.json({ error: 'roomId / content is required' }, { status: 400 })
@@ -31,7 +33,6 @@ export async function POST(req: Request) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    // ルームがopenか確認
     const { data: room, error: roomErr } = await admin
       .from('rooms')
       .select('id, status')
@@ -44,7 +45,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: `このルームは ${room.status} のため投稿できません` }, { status: 400 })
     }
 
-    // username（null禁止対策）
     const { data: profile, error: profErr } = await admin
       .from('profiles')
       .select('username')
@@ -59,6 +59,8 @@ export async function POST(req: Request) {
       user_id: user.id,
       username,
       content,
+      attachment_url,
+      attachment_type,
       is_hidden: false,
       deleted_at: null,
     })
