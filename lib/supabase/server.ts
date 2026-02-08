@@ -19,7 +19,7 @@ export async function createSupabaseServerClient() {
             cookieStore.set(name, value, options)
           })
         } catch {
-          // Server Component などで set できない状況は無視してOK
+          // Server Components から呼ばれた場合などは無視でOK
         }
       },
     },

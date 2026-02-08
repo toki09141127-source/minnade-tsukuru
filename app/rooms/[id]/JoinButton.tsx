@@ -30,11 +30,15 @@ export default function JoinButton({
     setError('')
 
     try {
+      // app/rooms/[id]/JoinButton.tsx（join() の fetch 部分だけ差し替え）
       const res = await fetch('/api/rooms/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        cache: 'no-store',
         body: JSON.stringify({ roomId }),
       })
+
       const json = await res.json().catch(() => ({}))
 
       if (!res.ok) {
