@@ -2,43 +2,29 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { supabase } from '../../lib/supabase/client'
 
 export default function LogoutButton() {
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
 
   const onLogout = async () => {
-    if (loading) return
-    setLoading(true)
-
-    try {
-      const res = await fetch('/api/auth/logout', { method: 'POST' })
-      if (res.redirected) {
-        window.location.href = res.url
-        return
-      }
-      router.push('/rooms')
-      router.refresh()
-    } finally {
-      setLoading(false)
-    }
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
   }
 
   return (
     <button
       onClick={onLogout}
-      disabled={loading}
       style={{
-        padding: '6px 10px',
-        borderRadius: 8,
-        border: '1px solid #ddd',
+        padding: '8px 12px',
+        borderRadius: 10,
+        border: '1px solid #111',
         background: '#fff',
-        cursor: loading ? 'not-allowed' : 'pointer',
-        fontSize: 14,
+        cursor: 'pointer',
       }}
     >
-      {loading ? 'ログアウト中…' : 'ログアウト'}
+      ログアウト
     </button>
   )
 }

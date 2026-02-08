@@ -1,8 +1,9 @@
+// lib/supabase/server.ts
 import { cookies } from 'next/headers'
 import { createServerClient } from '@supabase/ssr'
 
-export function createSupabaseServerClient() {
-  const cookieStore = cookies()
+export async function createSupabaseServerClient() {
+  const cookieStore = await cookies()
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -18,7 +19,7 @@ export function createSupabaseServerClient() {
             cookieStore.set(name, value, options)
           })
         } catch {
-          // Server Components 以外から呼ばれた場合などは無視
+          // Server Component などで set できない状況は無視してOK
         }
       },
     },
