@@ -37,7 +37,7 @@ export default async function RoomDetailPage({
   const { data: room, error: roomErr } = await supabaseAdmin
     .from('rooms')
     .select(
-      'id, host_id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden'
+      'id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden'
     )
     .eq('id', roomId)
     .maybeSingle()
