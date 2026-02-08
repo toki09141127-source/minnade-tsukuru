@@ -1,7 +1,7 @@
-// app/rooms/[id]/JoinButton.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../../lib/supabase/client'
 
 export default function JoinButton({
   roomId,
@@ -14,6 +14,15 @@ export default function JoinButton({
 }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [me, setMe] = useState<string>('checking...')
+
+  useEffect(() => {
+    const run = async () => {
+      const { data } = await supabase.auth.getUser()
+      setMe(data.user?.id ? `logged-in: ${data.user.id}` : 'logged-out')
+    }
+    run()
+  }, [])
 
   const join = async () => {
     if (roomStatus !== 'open') return
@@ -42,6 +51,9 @@ export default function JoinButton({
 
   return (
     <div>
+      {/* デバッグ表示 */}
+      <p style={{ fontSize: 12, opacity: 0.7, marginBottom: 6 }}>auth: {me}</p>
+
       <button
         onClick={join}
         disabled={loading || roomStatus !== 'open'}
