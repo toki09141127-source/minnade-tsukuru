@@ -13,48 +13,34 @@ type RoomRow = {
   time_limit_hours: number
   created_at: string
   like_count: number | null
-  expires_at?: string | null
+  is_hidden: boolean
+  deleted_at: string | null
 }
-
-type SortKey = 'like' | 'new' | 'expires'
 
 export default function RoomsPage() {
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [error, setError] = useState('')
-  const [sort, setSort] = useState<SortKey>('like')
-  const [q, setQ] = useState('')
 
   useEffect(() => {
     const fetchRooms = async () => {
       setError('')
 
-      let query = supabase
+      const { data, error } = await supabase
         .from('rooms')
-        .select('id, title, work_type, status, time_limit_hours, created_at, like_count, expires_at')
-
-      // 検索（タイトル部分一致）
-      const keyword = q.trim()
-      if (keyword) query = query.ilike('title', `%${keyword}%`)
-
-      // ソート
-      if (sort === 'like') {
-        query = query
-          .order('like_count', { ascending: false, nullsFirst: false })
-          .order('created_at', { ascending: false })
-      } else if (sort === 'new') {
-        query = query.order('created_at', { ascending: false })
-      } else if (sort === 'expires') {
-        query = query.order('expires_at', { ascending: true, nullsFirst: false })
-      }
-
-      const { data, error } = await query
+        .select(
+          'id, title, work_type, status, time_limit_hours, created_at, like_count, is_hidden, deleted_at'
+        )
+        .eq('is_hidden', false) // ✅ 非表示ルームを除外
+        .is('deleted_at', null) // ✅ 論理削除を除外（存在しない環境でもOK）
+        .order('like_count', { ascending: false, nullsFirst: false })
+        .order('created_at', { ascending: false })
 
       if (error) setError(error.message)
       else setRooms((data ?? []) as RoomRow[])
     }
 
     fetchRooms()
-  }, [sort, q])
+  }, [])
 
   const helpText = useMemo(() => {
     return (
@@ -70,59 +56,38 @@ export default function RoomsPage() {
       >
         <strong>このページについて</strong>
         <br />
-        時間制限付きの合作ルーム一覧です。検索＆並び替えができます。
+        時間制限付きの合作ルーム一覧です。
+        <br />
+        いまは「いいね順」で表示しています。
       </div>
     )
   }, [])
 
   return (
-    <div style={{ padding: 24, maxWidth: 980, margin: '0 auto' }}>
+    <div style={{ padding: 24 }}>
       <h1>制作ルーム一覧</h1>
 
+      {/* ✅ ユーザー名導線（あなたの仕様） */}
       <p style={{ marginTop: 8 }}>
         <Link href="/profile">ユーザー名を設定</Link>
       </p>
 
       {helpText}
 
-      <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+      <p style={{ marginTop: 12 }}>
         <Link href="/rooms/new">＋ ルームを作成</Link>
+      </p>
 
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <span style={{ fontSize: 12, opacity: 0.75 }}>並び替え</span>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
-            style={{ padding: '8px 10px', borderRadius: 10, border: '1px solid #ccc' }}
-          >
-            <option value="like">いいね順</option>
-            <option value="new">新着順</option>
-            <option value="expires">期限が近い順</option>
-          </select>
-        </div>
+      {error && <p style={{ color: '#b00020' }}>{error}</p>}
 
-        <input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="ルーム名で検索"
-          style={{
-            padding: '8px 10px',
-            borderRadius: 10,
-            border: '1px solid #ccc',
-            minWidth: 220,
-          }}
-        />
-      </div>
-
-      {error && <p style={{ color: '#b00020', marginTop: 10 }}>{error}</p>}
-
-      <ul style={{ marginTop: 12, paddingLeft: 18 }}>
+      <ul style={{ marginTop: 12 }}>
         {rooms.map((room) => (
           <li key={room.id} style={{ marginBottom: 10 }}>
-            <Link href={`/rooms/${room.id}`}>
+            <Link href={`/rooms/${room.id}`} prefetch={false}>
               <strong>{room.title}</strong>
             </Link>{' '}
-            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️ {room.like_count ?? 0}）
+            （{room.work_type} / {room.time_limit_hours}h / {room.status} / ❤️{' '}
+            {room.like_count ?? 0}）
           </li>
         ))}
       </ul>
