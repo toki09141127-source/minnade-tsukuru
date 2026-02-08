@@ -1,7 +1,6 @@
 // app/api/rooms/join/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { createSupabaseServerClient } from '../../../../lib/supabase/server'
 
 export async function POST(req: Request) {
   try {
@@ -12,22 +11,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'roomId is required' }, { status: 400 })
     }
 
-    // Cookieベースのログインユーザー取得
-    const supabase = await createSupabaseServerClient()
-    const { data: userRes, error: userErr } = await supabase.auth.getUser()
-    const user = userRes?.user
+    // ✅ Authorization: Bearer <token> からユーザー検証
+    const authHeader = req.headers.get('authorization') ?? ''
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
 
-    if (userErr || !user) {
+    if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    // Service Role で insert（RLSを確実に回避）
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseAuth = createClient(url, anonKey, { auth: { persistSession: false } })
+
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token)
+    if (userErr || !userData?.user) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    const user = userData.user
+
+    // ✅ Service Role（RLS回避して insert）
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    // usernameを profiles から取る（NULL禁止対策）
-    const { data: prof, error: profErr } = await admin
+    // username を profiles から取得（null対策）
+    const { data: profile, error: profErr } = await admin
       .from('profiles')
       .select('username')
       .eq('id', user.id)
@@ -37,9 +45,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: profErr.message }, { status: 500 })
     }
 
-    const username = prof?.username ?? '名無し'
+    const username = profile?.username ?? '名無し'
 
-    // すでに参加済みなら何もしない（多重参加ボタン連打対策）
+    // 既に参加済みならOK（連打対策）
     const { data: existing, error: existErr } = await admin
       .from('room_members')
       .select('id')
@@ -47,26 +55,25 @@ export async function POST(req: Request) {
       .eq('user_id', user.id)
       .maybeSingle()
 
-    if (existErr) {
+    if (existErr && existErr.code !== 'PGRST116') {
       return NextResponse.json({ error: existErr.message }, { status: 500 })
     }
 
-    if (existing?.id) {
-      return NextResponse.json({ ok: true, already: true })
-    }
+    if (!existing) {
+      const { error: insErr } = await admin.from('room_members').insert({
+        room_id: roomId,
+        user_id: user.id,
+        username,
+        role: 'supporter',
+      })
 
-    const { error: insErr } = await admin.from('room_members').insert({
-      room_id: roomId,
-      user_id: user.id,
-      username,
-    })
-
-    if (insErr) {
-      return NextResponse.json({ error: insErr.message }, { status: 400 })
+      if (insErr) {
+        return NextResponse.json({ error: insErr.message }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ ok: true })
   } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? 'Unexpected error' }, { status: 500 })
+    return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
   }
 }

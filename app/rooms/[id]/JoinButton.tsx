@@ -1,6 +1,7 @@
+// app/rooms/[id]/JoinButton.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { supabase } from '../../../lib/supabase/client'
 
 export default function JoinButton({
@@ -14,15 +15,6 @@ export default function JoinButton({
 }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [me, setMe] = useState<string>('checking...')
-
-  useEffect(() => {
-    const run = async () => {
-      const { data } = await supabase.auth.getUser()
-      setMe(data.user?.id ? `logged-in: ${data.user.id}` : 'logged-out')
-    }
-    run()
-  }, [])
 
   const join = async () => {
     if (roomStatus !== 'open') return
@@ -30,15 +22,26 @@ export default function JoinButton({
     setError('')
 
     try {
-      // app/rooms/[id]/JoinButton.tsx（join() の fetch 部分だけ差し替え）
+      // ✅ クライアントでアクセストークン取得（Cookieに頼らない）
+      const { data: sessionData, error: sessErr } = await supabase.auth.getSession()
+      if (sessErr) {
+        setError(sessErr.message)
+        return
+      }
+      const accessToken = sessionData.session?.access_token
+      if (!accessToken) {
+        setError('Not authenticated')
+        return
+      }
+
       const res = await fetch('/api/rooms/join', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({ roomId }),
       })
-
       const json = await res.json().catch(() => ({}))
 
       if (!res.ok) {
@@ -55,9 +58,6 @@ export default function JoinButton({
 
   return (
     <div>
-      {/* デバッグ表示 */}
-      <p style={{ fontSize: 12, opacity: 0.7, marginBottom: 6 }}>auth: {me}</p>
-
       <button
         onClick={join}
         disabled={loading || roomStatus !== 'open'}
