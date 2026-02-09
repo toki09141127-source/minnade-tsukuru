@@ -105,3 +105,35 @@ a{ color:var(--link); text-decoration:none; }
 }
 .badge.ok{ border-color: rgba(0,0,0,0.15); }
 .badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
+.prose { line-height: 1.85; }
+.lead { font-size: 14px; font-weight: 800; margin: 0 0 8px; }
+.h3 { font-size: 14px; margin: 14px 0 6px; }
+.cardSub { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.quote { margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--card) 75%, var(--bg)); }
+/* ---- readable long text block (home description etc) ---- */
+.readableBox{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.readableBox p,
+.readableBox li{
+  color: var(--fg);
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.readableBox .mutedLine{
+  color: var(--muted);
+}
+
+.readableBox h2{
+  margin: 18px 0 8px;
+  font-size: 16px;
+}
+
+.readableBox ul{
+  margin: 8px 0 0 18px;
+}

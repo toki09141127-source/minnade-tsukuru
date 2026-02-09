@@ -27,13 +27,10 @@ function formatRemaining(ms: number) {
 
 function Remaining({ expiresAt }: { expiresAt: string | null }) {
   const [now, setNow] = useState(() => Date.now())
-
-  // 1秒ごと更新（軽量）
   useMemo(() => {
     const t = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(t)
   }, [])
-
   if (!expiresAt) return <span className="muted">—</span>
   const end = new Date(expiresAt).getTime()
   return <span className="badge">{formatRemaining(end - now)}</span>
@@ -43,22 +40,31 @@ export default function RoomsListClient({ initialRooms }: { initialRooms: RoomRo
   const [q, setQ] = useState('')
   const [adult, setAdult] = useState<'safe' | 'all' | 'adult'>('safe')
   const [status, setStatus] = useState<'all' | 'open' | 'closed' | 'published'>('all')
+  const [kind, setKind] = useState<string>('all')
+
+  const kinds = useMemo(() => {
+    const s = new Set<string>()
+    for (const r of initialRooms) if (r.kind) s.add(r.kind)
+    return ['all', ...Array.from(s)]
+  }, [initialRooms])
 
   const filtered = useMemo(() => {
     return initialRooms.filter((r) => {
       const text = `${r.title ?? ''} ${r.kind ?? ''}`.toLowerCase()
       const okQ = !q.trim() || text.includes(q.trim().toLowerCase())
       const okStatus = status === 'all' || r.status === status
-      const isAdult = !!r.is_adult
 
+      const isAdult = !!r.is_adult
       const okAdult =
         adult === 'all' ? true :
         adult === 'adult' ? isAdult :
         !isAdult
 
-      return okQ && okStatus && okAdult
+      const okKind = kind === 'all' || (r.kind ?? '') === kind
+
+      return okQ && okStatus && okAdult && okKind
     })
-  }, [initialRooms, q, adult, status])
+  }, [initialRooms, q, adult, status, kind])
 
   return (
     <div className="stack">
@@ -75,6 +81,12 @@ export default function RoomsListClient({ initialRooms }: { initialRooms: RoomRo
           <option value="open">open</option>
           <option value="closed">closed</option>
           <option value="published">published</option>
+        </select>
+
+        <select className="select" value={kind} onChange={(e) => setKind(e.target.value)}>
+          {kinds.map((k) => (
+            <option key={k} value={k}>{k === 'all' ? '全カテゴリ' : k}</option>
+          ))}
         </select>
 
         <select className="select" value={adult} onChange={(e) => setAdult(e.target.value as any)}>

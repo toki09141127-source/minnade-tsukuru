@@ -1,44 +1,28 @@
+// app/rooms/new/page.tsx
 'use client'
 
-import { useMemo, useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { supabase } from '../../../lib/supabase/client'
-
-type WorkType = 'novel' | 'manga' | 'game' | 'music' | 'video' | 'other'
-
-const WORK_TYPES: { value: WorkType; label: string }[] = [
-  { value: 'novel', label: '小説' },
-  { value: 'manga', label: '漫画' },
-  { value: 'game', label: 'ゲーム' },
-  { value: 'music', label: '音楽' },
-  { value: 'video', label: '動画' },
-  { value: 'other', label: 'その他' },
-]
-
-const HOURS = [1, 3, 6, 12, 24, 48, 50, 72, 100] as const
+import { useRouter } from 'next/navigation'
 
 export default function NewRoomPage() {
   const router = useRouter()
   const [title, setTitle] = useState('')
-  const [workType, setWorkType] = useState<WorkType>('novel')
-  const [timeLimitHours, setTimeLimitHours] = useState<number>(50)
+  const [kind, setKind] = useState('novel')
+  const [isAdult, setIsAdult] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const canSubmit = useMemo(() => title.trim().length > 0 && !loading, [title, loading])
-
-  const createRoom = async () => {
-    setError('')
-    const t = title.trim()
-    if (!t) return
-
+  const create = async () => {
+    if (loading) return
     setLoading(true)
+    setError('')
+
     try {
-      const { data: s } = await supabase.auth.getSession()
-      const token = s.session?.access_token
+      const { data: sessionData } = await supabase.auth.getSession()
+      const token = sessionData.session?.access_token
       if (!token) {
-        setError('ログインしてください')
+        setError('Not authenticated')
         return
       }
 
@@ -48,16 +32,20 @@ export default function NewRoomPage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: t, workType, timeLimitHours }),
+        body: JSON.stringify({
+          title: title.trim() || '（無題）',
+          kind,
+          is_adult: isAdult,
+        }),
       })
 
-      const json = await res.json()
-      if (!json.ok) {
-        setError(json.error ?? '作成に失敗しました')
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(json?.error ?? `作成に失敗しました (status=${res.status})`)
         return
       }
 
-      router.push(`/rooms/${json.room.id}`)
+      router.push(`/rooms/${json.roomId}`)
     } catch (e: any) {
       setError(e?.message ?? '作成に失敗しました')
     } finally {
@@ -66,91 +54,51 @@ export default function NewRoomPage() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 720 }}>
-      <p>
-        <Link href="/">← 一覧に戻る</Link>
-      </p>
+    <div className="container">
+      <h1 className="h1">ルーム作成</h1>
 
-      <h1 style={{ marginTop: 8 }}>ルーム作成</h1>
+      <div className="card">
+        <div className="stack">
+          <label>
+            <div className="muted">タイトル</div>
+            <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="例：短編を仕上げる" />
+          </label>
 
-      <div style={{ marginTop: 14 }}>
-        <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>タイトル</label>
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="例：30人で作る四コマ漫画"
-          style={{
-            width: '100%',
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            padding: '10px 12px',
-          }}
-        />
-        <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>最大60文字</div>
-      </div>
+          <label>
+            <div className="muted">カテゴリ</div>
+            <select className="select" value={kind} onChange={(e) => setKind(e.target.value)}>
+              <option value="novel">novel</option>
+              <option value="manga">manga</option>
+              <option value="anime">anime</option>
+              <option value="illustration">illustration</option>
+              <option value="other">other</option>
+            </select>
+          </label>
 
-      <div style={{ marginTop: 14 }}>
-        <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>形式</label>
-        <select
-          value={workType}
-          onChange={(e) => setWorkType(e.target.value as WorkType)}
-          style={{
-            width: '100%',
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            padding: '10px 12px',
-          }}
-        >
-          {WORK_TYPES.map((w) => (
-            <option key={w.value} value={w.value}>
-              {w.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <label style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <input type="checkbox" checked={isAdult} onChange={(e) => setIsAdult(e.target.checked)} />
+            <span>成人向け（R18）として作成する</span>
+          </label>
 
-      <div style={{ marginTop: 14 }}>
-        <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>制限時間</label>
-        <select
-          value={timeLimitHours}
-          onChange={(e) => setTimeLimitHours(Number(e.target.value))}
-          style={{
-            width: '100%',
-            border: '1px solid #ccc',
-            borderRadius: 10,
-            padding: '10px 12px',
-          }}
-        >
-          {HOURS.map((h) => (
-            <option key={h} value={h}>
-              {h}時間
-            </option>
-          ))}
-        </select>
+          <button
+            onClick={create}
+            disabled={loading}
+            style={{
+              padding: '10px 16px',
+              borderRadius: 10,
+              border: '1px solid #111',
+              background: '#111',
+              color: '#fff',
+              cursor: 'pointer',
+              opacity: loading ? 0.6 : 1,
+            }}
+          >
+            {loading ? '作成中…' : '作成する'}
+          </button>
 
-        <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>
-          期限を過ぎると自動で forced_publish になります
+          {error && <p style={{ color: '#b00020' }}>{error}</p>}
         </div>
       </div>
-
-      {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error}</p>}
-
-      <button
-        onClick={createRoom}
-        disabled={!canSubmit}
-        style={{
-          marginTop: 16,
-          padding: '10px 14px',
-          border: '1px solid #111',
-          borderRadius: 10,
-          cursor: canSubmit ? 'pointer' : 'not-allowed',
-          background: '#111',
-          color: '#fff',
-          opacity: canSubmit ? 1 : 0.5,
-        }}
-      >
-        {loading ? '作成中…' : '作成'}
-      </button>
     </div>
   )
 }
