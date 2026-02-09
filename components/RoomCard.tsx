@@ -8,8 +8,8 @@ type RoomCardProps = {
   category: string
   memberCount: number
   likeCount: number
-  remainingLabel: string // 例: "23時間 21分" / "終了" など
-  createdLabel: string // 例: "2026/2/8"
+  remainingLabel: string
+  createdLabel: string
 }
 
 function statusLabel(status: string) {
@@ -40,7 +40,7 @@ export default function RoomCard(props: RoomCardProps) {
 
   return (
     <Link href={href} className="roomCardLink" style={{ textDecoration: 'none' }}>
-      <div className="roomCard">
+      <div className="roomCard" data-noinvert>
         <div className="roomCardTop">
           <div className="badges">
             <span className={`badge ${statusClass(status)}`}>{statusLabel(status)}</span>
@@ -48,21 +48,27 @@ export default function RoomCard(props: RoomCardProps) {
           </div>
         </div>
 
-        <div className="roomCardTitle">{title}</div>
+        <div className="roomCardTitle" data-noinvert-text>
+          {title}
+        </div>
 
-        <div className="roomCardMeta">
+        <div className="roomCardMeta" data-noinvert-text>
           <div className="metaItem">
             <span className="metaIcon" aria-hidden>👥</span>
             <span className="metaText">参加者：{memberCount}</span>
           </div>
+
           <div className="metaItem">
             <span className="metaIcon" aria-hidden>💗</span>
             <span className="metaText">いいね：{likeCount}</span>
           </div>
+
           <div className="metaItem">
             <span className="metaIcon" aria-hidden>⏳</span>
             <span className="metaText">残り：{remainingLabel}</span>
           </div>
+
+          {/* ← ここが壊れてた */}
           <div className="metaItem">
             <span className="metaIcon" aria-hidden>🕒</span>
             <span className="metaText">作成：{createdLabel}</span>

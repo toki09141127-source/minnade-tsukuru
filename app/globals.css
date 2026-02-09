@@ -577,3 +577,31 @@ header a:hover,
 .nav a:hover {
   opacity: 0.7;
 }
+/* --- Fix: header nav link color (戻す) --- */
+header a,
+header nav a {
+  color: #111 !important; /* 元の黒 */
+  text-decoration: none;
+}
+
+/* ダークモードではヘッダーは白寄りでOK（青リンク化を防ぐ） */
+@media (prefers-color-scheme: dark) {
+  header a,
+  header nav a {
+    color: #e5e7eb !important;
+  }
+}
+
+/* --- Fix: cards text readable even when browser auto-inverts text color --- */
+/* RoomCard（カード）側に className を付ける前提。付けたらここが効く */
+.roomCard {
+  color: #111 !important;
+}
+
+.roomCard .roomTitle {
+  color: #111 !important;
+}
+
+.roomCard .roomMeta {
+  color: rgba(0, 0, 0, 0.72) !important;
+}
