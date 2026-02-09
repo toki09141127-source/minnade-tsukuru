@@ -239,3 +239,25 @@ a{ color:var(--link); text-decoration:none; }
     color: var(--fg);
   }
 }
+.input{
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+}
+.cardLink{
+  display:block;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  text-decoration: none;
+}
+.cardLink:hover{
+  filter: brightness(0.98);
+}
+@media (prefers-color-scheme: dark){
+  .cardLink:hover{ filter: brightness(1.06); }
+}
