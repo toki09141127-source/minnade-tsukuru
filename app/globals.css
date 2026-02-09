@@ -425,4 +425,144 @@ body {
   hr {
     border-color: var(--border);
   }
-  
+  /* ===== Room/Work Card theme (light) ===== */
+:root {
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.10);
+  --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  --text-main: rgba(0, 0, 0, 0.92);
+  --text-muted: rgba(0, 0, 0, 0.62);
+
+  --badge-bg: rgba(0, 0, 0, 0.06);
+  --badge-border: rgba(0, 0, 0, 0.10);
+  --badge-text: rgba(0, 0, 0, 0.80);
+
+  /* status badge */
+  --status-open-bg: rgba(16, 185, 129, 0.14);
+  --status-open-border: rgba(16, 185, 129, 0.28);
+  --status-open-text: rgba(5, 120, 87, 1);
+
+  --status-forced-bg: rgba(59, 130, 246, 0.14);
+  --status-forced-border: rgba(59, 130, 246, 0.28);
+  --status-forced-text: rgba(29, 78, 216, 1);
+
+  --status-closed-bg: rgba(107, 114, 128, 0.16);
+  --status-closed-border: rgba(107, 114, 128, 0.30);
+  --status-closed-text: rgba(55, 65, 81, 1);
+}
+
+/* ===== Dark mode: improve contrast ONLY for card area ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg: rgba(255, 255, 255, 0.06);
+    --card-border: rgba(255, 255, 255, 0.14);
+    --card-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    --text-main: rgba(255, 255, 255, 0.92);
+    --text-muted: rgba(255, 255, 255, 0.72);
+
+    --badge-bg: rgba(255, 255, 255, 0.10);
+    --badge-border: rgba(255, 255, 255, 0.16);
+    --badge-text: rgba(255, 255, 255, 0.88);
+
+    --status-open-bg: rgba(16, 185, 129, 0.22);
+    --status-open-border: rgba(16, 185, 129, 0.34);
+    --status-open-text: rgba(167, 243, 208, 1);
+
+    --status-forced-bg: rgba(59, 130, 246, 0.22);
+    --status-forced-border: rgba(59, 130, 246, 0.34);
+    --status-forced-text: rgba(191, 219, 254, 1);
+
+    --status-closed-bg: rgba(156, 163, 175, 0.18);
+    --status-closed-border: rgba(156, 163, 175, 0.28);
+    --status-closed-text: rgba(229, 231, 235, 1);
+  }
+}
+
+/* ===== Components: RoomCard ===== */
+.roomCardLink { display: block; }
+
+.roomCard {
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+  box-shadow: var(--card-shadow);
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.roomCard:hover {
+  transform: translateY(-1px);
+}
+
+.roomCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.badgeCategory {
+  font-weight: 800;
+}
+
+/* status */
+.badgeStatus { font-weight: 900; }
+.badgeStatusOpen {
+  background: var(--status-open-bg);
+  border-color: var(--status-open-border);
+  color: var(--status-open-text);
+}
+.badgeStatusForced {
+  background: var(--status-forced-bg);
+  border-color: var(--status-forced-border);
+  color: var(--status-forced-text);
+}
+.badgeStatusClosed {
+  background: var(--status-closed-bg);
+  border-color: var(--status-closed-border);
+  color: var(--status-closed-text);
+}
+
+.roomCardTitle {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 2px 0 10px;
+  line-height: 1.35;
+}
+
+.roomCardMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.metaItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+.metaIcon { font-size: 13px; opacity: 0.95; }
+.metaText { font-size: 13px; color: var(--text-muted); font-weight: 700; }
