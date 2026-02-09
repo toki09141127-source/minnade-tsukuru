@@ -2,40 +2,73 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
+const CATEGORY_VALUES = [
+  '小説',
+  '漫画',
+  'アニメ',
+  'ゲーム',
+  'イラスト',
+  '音楽',
+  '動画',
+  'その他',
+] as const
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
-    const title = (body?.title as string | undefined)?.trim()
-    const category = (body?.category as string | undefined)?.trim() ?? 'その他'
-    const audience = (body?.audience as string | undefined)?.trim() ?? 'general'
-    const durationMinutes = Number(body?.duration_minutes ?? 60)
+
+    const title = String(body?.title ?? '').trim()
+    const type = String(body?.type ?? 'novel').trim() // 例: novel/manga/anime/game
+    const categoryRaw = String(body?.category ?? 'その他').trim()
+    const category = (CATEGORY_VALUES as readonly string[]).includes(categoryRaw) ? categoryRaw : 'その他'
+    const isAdult = Boolean(body?.isAdult ?? false)
+
+    const hoursNum = Number(body?.hours ?? 48)
+    const hours = Math.max(1, Math.min(150, Math.floor(hoursNum))) // ★ 最大150時間
 
     if (!title) return NextResponse.json({ error: 'title is required' }, { status: 400 })
-    if (!Number.isFinite(durationMinutes) || durationMinutes <= 0) {
-      return NextResponse.json({ error: 'duration_minutes is invalid' }, { status: 400 })
-    }
+
+    // --- Auth: Bearer token ---
+    const authHeader = req.headers.get('authorization') ?? ''
+    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+    if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
 
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    const supabaseAuth = createClient(url, anonKey, { auth: { persistSession: false } })
+
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token)
+    if (userErr || !userData?.user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    const user = userData.user
+
+    // --- Admin (service role) ---
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    const expiresAt = new Date(Date.now() + durationMinutes * 60 * 1000).toISOString()
+    const now = new Date()
+    const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
 
-    const { data, error } = await admin
+    const { data: room, error: insErr } = await admin
       .from('rooms')
       .insert({
         title,
+        type,
         category,
-        audience, // general / adult
+        is_adult: isAdult,
         status: 'open',
-        expires_at: expiresAt,
+        started_at: now.toISOString(),
+        expires_at: expiresAt.toISOString(),
+        created_by: user.id,
+        host_ids: [user.id],
+        is_hidden: false,
+        deleted_at: null,
       })
       .select('*')
       .single()
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 })
 
-    return NextResponse.json({ ok: true, room: data })
+    return NextResponse.json({ ok: true, room })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
   }

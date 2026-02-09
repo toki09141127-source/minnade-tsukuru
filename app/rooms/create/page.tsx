@@ -1,100 +1,128 @@
 // app/rooms/create/page.tsx
-'use client'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-import { useState } from 'react'
+const CATEGORY_OPTIONS: { value: string; label: string }[] = [
+  { value: '小説', label: '小説' },
+  { value: '漫画', label: '漫画' },
+  { value: 'アニメ', label: 'アニメ' },
+  { value: 'イラスト', label: 'イラスト' },
+  { value: 'ゲーム', label: 'ゲーム' },
+  { value: '企画', label: '企画' },
+  { value: '雑談', label: '雑談' },
+  { value: 'その他', label: 'その他' },
+]
 
-export default function CreateRoomPage() {
-  const [title, setTitle] = useState('')
-  const [kind, setKind] = useState('novel')
-  const [isAdult, setIsAdult] = useState<'safe' | 'adult'>('safe')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const submit = async () => {
-    if (loading) return
-    setLoading(true)
-    setError('')
-
-    try {
-      const res = await fetch('/api/rooms/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: title.trim() || null,
-          kind,
-          isAdult: isAdult === 'adult',
-        }),
-      })
-      const json = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        setError(json?.error ?? '作成に失敗しました')
-        return
-      }
-
-      // 作成後、ルーム詳細に飛ぶ想定
-      if (json?.roomId) {
-        window.location.href = `/rooms/${json.roomId}`
-      } else {
-        window.location.href = `/rooms`
-      }
-    } catch (e: any) {
-      setError(e?.message ?? '作成に失敗しました')
-    } finally {
-      setLoading(false)
-    }
-  }
+export default async function RoomCreatePage() {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase.auth.getUser()
+  if (!data?.user) redirect('/login')
 
   return (
-    <div className="container">
-      <h1 className="h1">ルーム作成</h1>
+    <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>ルーム作成</h1>
+        <Link href="/rooms" style={{ textDecoration: 'none' }}>← ルーム一覧へ</Link>
+      </div>
 
-      <div className="card stack">
-        <div className="stack">
-          <label className="muted">タイトル</label>
-          <input className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="例：短編小説を完成させる" />
-        </div>
+      <form
+        action="/api/rooms/create"
+        method="post"
+        style={{
+          marginTop: 16,
+          border: '1px solid rgba(0,0,0,0.12)',
+          borderRadius: 16,
+          padding: 16,
+          background: 'rgba(255,255,255,0.8)',
+        }}
+      >
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>タイトル</label>
+        <input
+          name="title"
+          required
+          maxLength={60}
+          placeholder="例：少年漫画のネーム作る"
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.2)',
+            marginBottom: 14,
+          }}
+        />
 
-        <div className="stack">
-          <label className="muted">カテゴリ</label>
-          <select className="select" value={kind} onChange={(e) => setKind(e.target.value)}>
-            <option value="novel">novel</option>
-            <option value="manga">manga</option>
-            <option value="anime">anime</option>
-            <option value="game">game</option>
-            <option value="other">other</option>
-          </select>
-        </div>
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>カテゴリ</label>
+        <select
+          name="category"
+          defaultValue="その他"
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.2)',
+            marginBottom: 14,
+          }}
+        >
+          {CATEGORY_OPTIONS.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
+            </option>
+          ))}
+        </select>
 
-        <div className="stack">
-          <label className="muted">対象</label>
-          <select className="select" value={isAdult} onChange={(e) => setIsAdult(e.target.value as any)}>
-            <option value="safe">一般向け</option>
-            <option value="adult">成人向け</option>
-          </select>
-          <div className="muted" style={{ fontSize: 12 }}>
-            成人向けにすると、一覧の「一般のみ」では非表示になります。
-          </div>
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>対象</label>
+        <select
+          name="is_adult"
+          defaultValue="false"
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.2)',
+            marginBottom: 14,
+          }}
+        >
+          <option value="false">一般向け</option>
+          <option value="true">成人向け</option>
+        </select>
+
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>制限時間（時間）</label>
+        <input
+          name="hours"
+          type="number"
+          min={1}
+          max={150}
+          step={1}
+          defaultValue={48}
+          required
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.2)',
+            marginBottom: 6,
+          }}
+        />
+        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>
+          1〜150時間まで選べます（例：48 = 2日）
         </div>
 
         <button
-          onClick={submit}
-          disabled={loading}
+          type="submit"
           style={{
             padding: '10px 16px',
             borderRadius: 12,
             border: '1px solid #111',
             background: '#111',
             color: '#fff',
-            opacity: loading ? 0.7 : 1,
-            cursor: loading ? 'not-allowed' : 'pointer',
+            cursor: 'pointer',
+            fontWeight: 800,
           }}
         >
-          {loading ? '作成中…' : '作成する'}
+          ルームを作成
         </button>
-
-        {error && <p style={{ color: '#b00020', marginTop: 8 }}>{error}</p>}
-      </div>
+      </form>
     </div>
   )
 }
