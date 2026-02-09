@@ -137,3 +137,105 @@ a{ color:var(--link); text-decoration:none; }
 .readableBox ul{
   margin: 8px 0 0 18px;
 }
+/* ---- Home Hero (dark-mode friendly decoration) ---- */
+.heroWrap{
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 18px;
+  overflow: hidden;
+}
+
+.heroWrap::before{
+  content: "";
+  position: absolute;
+  inset: -60px -60px auto auto;
+  width: 220px;
+  height: 220px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+.heroWrap::after{
+  content: "";
+  position: absolute;
+  inset: auto auto -90px -90px;
+  width: 260px;
+  height: 260px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%);
+  pointer-events: none;
+}
+
+.heroTopRow{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.heroBadge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+  font-size: 12px;
+}
+
+.heroActions{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btnPrimary{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.btnGhost{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+/* Dark mode: keep primary readable */
+@media (prefers-color-scheme: dark){
+  .btnPrimary{
+    border-color: rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.10);
+    color: var(--fg);
+  }
+}
