@@ -1,607 +1,413 @@
-:root{
-  --bg:#ffffff;
-  --fg:#111111;
-  --muted:#5b5b5b;
-  --card:#ffffff;
-  --border:#e6e6e6;
-  --link:#111111;
-  --danger:#b00020;
-}
+/* app/globals.css */
 
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg:#0c0c0c;
-    --fg:#f3f3f3;
-    --muted:#bdbdbd;
-    --card:#141414;
-    --border:#2a2a2a;
-    --link:#f3f3f3;
-    --danger:#ff6b81;
-  }
-}
-
-*{ box-sizing:border-box; }
-html,body{ padding:0; margin:0; background:var(--bg); color:var(--fg); }
-a{ color:var(--link); text-decoration:none; }
-
-.header{
-  position:sticky; top:0; z-index:10;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-}
-.headerInner{
-  max-width:1100px;
-  margin:0 auto;
-  padding:12px 16px;
-  display:flex;
-  gap:12px;
-  align-items:center;
-  justify-content:space-between;
-}
-.brand{ font-weight:800; }
-.nav{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-.navLink{ padding:8px 10px; border-radius:10px; border:1px solid transparent; }
-.navLink:hover{ border-color:var(--border); }
-
-.main{
-  max-width:1100px;
-  margin:0 auto;
-  padding:18px 16px 40px;
-}
-
-.container{ display:flex; flex-direction:column; gap:12px; }
-.h1{ font-size:22px; margin:0; }
-.stack{ display:flex; flex-direction:column; gap:12px; }
-
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.input,.select{
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--fg);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap:12px;
-}
-@media (max-width: 900px){
-  .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-@media (max-width: 600px){
-  .grid{ grid-template-columns: 1fr; }
-  .headerInner{ align-items:flex-start; }
-  .nav{ justify-content:flex-end; }
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px;
-}
-.linkCard:hover{ transform: translateY(-1px); transition: 0.12s; }
-
-.row{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
-.title{ font-size:16px; font-weight:700; }
-
-.muted{ color:var(--muted); font-size:13px; }
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  padding:4px 8px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  font-size:12px;
-}
-.badge.ok{ border-color: rgba(0,0,0,0.15); }
-.badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
-.prose { line-height: 1.85; }
-.lead { font-size: 14px; font-weight: 800; margin: 0 0 8px; }
-.h3 { font-size: 14px; margin: 14px 0 6px; }
-.cardSub { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
-.quote { margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--card) 75%, var(--bg)); }
-/* ---- readable long text block (home description etc) ---- */
-.readableBox{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-}
-
-.readableBox p,
-.readableBox li{
-  color: var(--fg);
-  line-height: 1.9;
-  font-size: 14px;
-}
-
-.readableBox .mutedLine{
-  color: var(--muted);
-}
-
-.readableBox h2{
-  margin: 18px 0 8px;
-  font-size: 16px;
-}
-
-.readableBox ul{
-  margin: 8px 0 0 18px;
-}
-/* ---- Home Hero (dark-mode friendly decoration) ---- */
-.heroWrap{
-  position: relative;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 18px;
-  overflow: hidden;
-}
-
-.heroWrap::before{
-  content: "";
-  position: absolute;
-  inset: -60px -60px auto auto;
-  width: 220px;
-  height: 220px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%);
-  pointer-events: none;
-}
-
-.heroWrap::after{
-  content: "";
-  position: absolute;
-  inset: auto auto -90px -90px;
-  width: 260px;
-  height: 260px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%);
-  pointer-events: none;
-}
-
-.heroTopRow{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
-}
-
-.heroTitle{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.heroBadge{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--fg);
-  font-size: 12px;
-}
-
-.heroActions{
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.btnPrimary{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid #111;
-  background: #111;
-  color: #fff;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.btnGhost{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--fg);
-  text-decoration: none;
-  font-weight: 700;
-}
-
-/* Dark mode: keep primary readable */
-@media (prefers-color-scheme: dark){
-  .btnPrimary{
-    border-color: rgba(255,255,255,0.16);
-    background: rgba(255,255,255,0.10);
-    color: var(--fg);
-  }
-}
-.input{
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--fg);
-}
-.cardLink{
-  display:block;
-  padding: 14px;
-  border-radius: 16px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--fg);
-  text-decoration: none;
-}
-.cardLink:hover{
-  filter: brightness(0.98);
-}
-@media (prefers-color-scheme: dark){
-  .cardLink:hover{ filter: brightness(1.06); }
-}
-:root{
-  --bg: #ffffff;
-  --fg: #111827;
-  --muted: rgba(17,24,39,.65);
-  --panel: #ffffff;
-  --btn: #111827;
-  --btnfg: #ffffff;
-}
-
-@media (prefers-color-scheme: dark){
-  :root{
-    --bg: #0b1020;
-    --fg: #e5e7eb;
-    --muted: rgba(229,231,235,.65);
-    --panel: rgba(255,255,255,.06);
-    --btn: rgba(255,255,255,.14);
-    --btnfg: #e5e7eb;
-  }
-}
-
-body{
-  background: var(--bg);
-  color: var(--fg);
-}
-/* ===== Light / Dark theme colors ===== */
-
-:root {
-  --bg-main: #f7f7f8;
-  --bg-card: #ffffff;
-  --text-main: #111111;
-  --text-sub: #555555;
-  --border-main: rgba(0, 0, 0, 0.12);
-  --btn-main: #111111;
-  --btn-text: #ffffff;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-main: #0f1115;
-    --bg-card: #171a21;
-    --text-main: #e6e8ee;
-    --text-sub: #9aa3b2;
-    --border-main: rgba(255, 255, 255, 0.12);
-    --btn-main: #e6e
-  }
-}
-/* ===== Dark mode color tuning (layout unchanged) ===== */
-:root {
-  --bg: #ffffff;
-  --fg: #111111;
-  --muted: rgba(0,0,0,0.65);
-  --card: #ffffff;
-  --cardBorder: rgba(0,0,0,0.12);
-  --inputBg: #ffffff;
-  --inputBorder: rgba(0,0,0,0.18);
-  --btnBg: #111111;
-  --btnFg: #ffffff;
-  --chipBg: rgba(0,0,0,0.06);
-  --chipFg: #111111;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0b0d10;              /* スマホで黒が潰れない黒 */
-    --fg: #f2f5f7;              /* 文字のコントラスト */
-    --muted: rgba(242,245,247,0.72);
-    --card: #12161c;            /* カード背景 */
-    --cardBorder: rgba(255,255,255,0.10);
-    --inputBg: #0f1318;
-    --inputBorder: rgba(255,255,255,0.14);
-    --btnBg: #f2f5f7;           /* ダークでボタンは明るめに */
-    --btnFg: #0b0d10;
-    --chipBg: rgba(255,255,255,0.10);
-    --chipFg: #f2f5f7;
-  }
-}
-
-/* 既存のUIが background/ color を直指定している場合の保険 */
-body {
-  background: var(--bg);
-  color: var(--fg);
-}
 /* ============================
-   Dark mode tuning (NO layout changes)
+   Theme tokens (single source)
    ============================ */
-
-   :root {
+   :root{
     /* base */
-    --bg: #ffffff;
-    --fg: #0b0d10;
-  
-    /* surfaces */
-    --card: rgba(255, 255, 255, 0.92);
-    --cardSolid: #ffffff;
-    --border: rgba(0, 0, 0, 0.12);
-  
-    /* text */
-    --muted: rgba(11, 13, 16, 0.70);
+    --bg:#ffffff;
+    --fg:#111111;
+    --muted:rgba(0,0,0,0.65);
+    --card:#ffffff;
+    --border:#e6e6e6;
+    --link:#111111;
+    --danger:#b00020;
   
     /* controls */
-    --inputBg: rgba(255, 255, 255, 0.95);
-    --inputBorder: rgba(0, 0, 0, 0.18);
+    --inputBg: var(--card);
+    --inputBorder: rgba(0,0,0,0.18);
   
     /* chips/badges */
-    --chipBg: rgba(0, 0, 0, 0.06);
-    --chipBorder: rgba(0, 0, 0, 0.12);
-    --chipFg: #0b0d10;
+    --chipBg: rgba(0,0,0,0.06);
+    --chipBorder: rgba(0,0,0,0.12);
+    --chipFg: #111111;
   
     /* button */
-    --btnBg: #0b0d10;
+    --btnBg: #111111;
     --btnFg: #ffffff;
   
-    /* links */
-    --link: #0b5fff;
+    /* Room/Work Card (light) */
+    --rc-bg:#ffffff;
+    --rc-border:rgba(0,0,0,0.10);
+    --rc-shadow:0 6px 18px rgba(0,0,0,0.06);
+    --rc-text:#111111;
+    --rc-muted:rgba(0,0,0,0.62);
+  
+    --badge-bg:rgba(0,0,0,0.06);
+    --badge-border:rgba(0,0,0,0.10);
+    --badge-text:rgba(0,0,0,0.80);
+  
+    /* status badge */
+    --status-open-bg:rgba(16,185,129,0.14);
+    --status-open-border:rgba(16,185,129,0.28);
+    --status-open-text:rgb(5,120,87);
+  
+    --status-forced-bg:rgba(59,130,246,0.14);
+    --status-forced-border:rgba(59,130,246,0.28);
+    --status-forced-text:rgb(29,78,216);
+  
+    --status-closed-bg:rgba(107,114,128,0.16);
+    --status-closed-border:rgba(107,114,128,0.30);
+    --status-closed-text:rgb(55,65,81);
   }
   
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0b0d10;
-      --fg: #f2f5f7;
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0b0d10;
+      --fg:#f2f5f7;
+      --muted:rgba(242,245,247,0.72);
+      --card:#12161c;
+      --border:rgba(255,255,255,0.12);
+      --link:#f2f5f7;
+      --danger:#ff6b81;
   
-      --card: rgba(18, 22, 28, 0.92);
-      --cardSolid: #12161c;
-      --border: rgba(255, 255, 255, 0.12);
+      --inputBg: rgba(15,19,24,0.96);
+      --inputBorder: rgba(255,255,255,0.16);
   
-      --muted: rgba(242, 245, 247, 0.72);
-  
-      --inputBg: rgba(15, 19, 24, 0.96);
-      --inputBorder: rgba(255, 255, 255, 0.16);
-  
-      --chipBg: rgba(255, 255, 255, 0.10);
-      --chipBorder: rgba(255, 255, 255, 0.14);
+      --chipBg: rgba(255,255,255,0.10);
+      --chipBorder: rgba(255,255,255,0.14);
       --chipFg: #f2f5f7;
   
-      /* ダーク時はボタンを明るくして視認性UP（背景に埋もれない） */
+      /* ダーク時：ボタンは明るめにして背景に埋もれないように */
       --btnBg: #f2f5f7;
       --btnFg: #0b0d10;
   
-      --link: #8ab4ff;
+      /* Room/Work Card (dark) - 画像の「見にくい部分」対策 */
+      --rc-bg:rgba(255,255,255,0.06);
+      --rc-border:rgba(255,255,255,0.14);
+      --rc-shadow:0 10px 26px rgba(0,0,0,0.35);
+      --rc-text:rgba(255,255,255,0.92);
+      --rc-muted:rgba(255,255,255,0.72);
+  
+      --badge-bg:rgba(255,255,255,0.10);
+      --badge-border:rgba(255,255,255,0.16);
+      --badge-text:rgba(255,255,255,0.88);
+  
+      --status-open-bg:rgba(16,185,129,0.22);
+      --status-open-border:rgba(16,185,129,0.34);
+      --status-open-text:rgb(167,243,208);
+  
+      --status-forced-bg:rgba(59,130,246,0.22);
+      --status-forced-border:rgba(59,130,246,0.34);
+      --status-forced-text:rgb(191,219,254);
+  
+      --status-closed-bg:rgba(156,163,175,0.18);
+      --status-closed-border:rgba(156,163,175,0.28);
+      --status-closed-text:rgb(229,231,235);
     }
   }
   
-  /* site-wide base */
-  body {
-    background: var(--bg);
-    color: var(--fg);
-  }
+  /* ============================
+     Base
+     ============================ */
+  *{ box-sizing:border-box; }
+  html,body{ padding:0; margin:0; background:var(--bg); color:var(--fg); }
+  a{ color:var(--link); text-decoration:none; }
+  a:hover{ opacity:0.8; }
   
-  /* common elements (safe, no layout) */
-  a {
-    color: var(--link);
-  }
-  
-  input,
-  select,
-  textarea {
+  input, select, textarea{
     background: var(--inputBg);
     color: var(--fg);
     border-color: var(--inputBorder);
   }
   
-  hr {
-    border-color: var(--border);
+  hr{ border-color: var(--border); }
+  
+  /* ============================
+     Layout helpers (既存UI維持)
+     ============================ */
+  .header{
+    position:sticky; top:0; z-index:10;
+    background:var(--bg);
+    border-bottom:1px solid var(--border);
   }
-  /* ===== Room/Work Card theme (light) ===== */
-:root {
-  --card-bg: #ffffff;
-  --card-border: rgba(0, 0, 0, 0.10);
-  --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  --text-main: rgba(0, 0, 0, 0.92);
-  --text-muted: rgba(0, 0, 0, 0.62);
-
-  --badge-bg: rgba(0, 0, 0, 0.06);
-  --badge-border: rgba(0, 0, 0, 0.10);
-  --badge-text: rgba(0, 0, 0, 0.80);
-
-  /* status badge */
-  --status-open-bg: rgba(16, 185, 129, 0.14);
-  --status-open-border: rgba(16, 185, 129, 0.28);
-  --status-open-text: rgba(5, 120, 87, 1);
-
-  --status-forced-bg: rgba(59, 130, 246, 0.14);
-  --status-forced-border: rgba(59, 130, 246, 0.28);
-  --status-forced-text: rgba(29, 78, 216, 1);
-
-  --status-closed-bg: rgba(107, 114, 128, 0.16);
-  --status-closed-border: rgba(107, 114, 128, 0.30);
-  --status-closed-text: rgba(55, 65, 81, 1);
-}
-
-/* ===== Dark mode: improve contrast ONLY for card area ===== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --card-bg: rgba(255, 255, 255, 0.06);
-    --card-border: rgba(255, 255, 255, 0.14);
-    --card-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
-    --text-main: rgba(255, 255, 255, 0.92);
-    --text-muted: rgba(255, 255, 255, 0.72);
-
-    --badge-bg: rgba(255, 255, 255, 0.10);
-    --badge-border: rgba(255, 255, 255, 0.16);
-    --badge-text: rgba(255, 255, 255, 0.88);
-
-    --status-open-bg: rgba(16, 185, 129, 0.22);
-    --status-open-border: rgba(16, 185, 129, 0.34);
-    --status-open-text: rgba(167, 243, 208, 1);
-
-    --status-forced-bg: rgba(59, 130, 246, 0.22);
-    --status-forced-border: rgba(59, 130, 246, 0.34);
-    --status-forced-text: rgba(191, 219, 254, 1);
-
-    --status-closed-bg: rgba(156, 163, 175, 0.18);
-    --status-closed-border: rgba(156, 163, 175, 0.28);
-    --status-closed-text: rgba(229, 231, 235, 1);
+  .headerInner{
+    max-width:1100px;
+    margin:0 auto;
+    padding:12px 16px;
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
   }
-}
-
-/* ===== Components: RoomCard ===== */
-.roomCardLink { display: block; }
-
-.roomCard {
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 14px 14px 12px;
-  box-shadow: var(--card-shadow);
-  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
-}
-
-.roomCard:hover {
-  transform: translateY(-1px);
-}
-
-.roomCardTop {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 6px;
-}
-
-.badges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 10px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  border: 1px solid var(--badge-border);
-  background: var(--badge-bg);
-  color: var(--badge-text);
-}
-
-.badgeCategory {
-  font-weight: 800;
-}
-
-/* status */
-.badgeStatus { font-weight: 900; }
-.badgeStatusOpen {
-  background: var(--status-open-bg);
-  border-color: var(--status-open-border);
-  color: var(--status-open-text);
-}
-.badgeStatusForced {
-  background: var(--status-forced-bg);
-  border-color: var(--status-forced-border);
-  color: var(--status-forced-text);
-}
-.badgeStatusClosed {
-  background: var(--status-closed-bg);
-  border-color: var(--status-closed-border);
-  color: var(--status-closed-text);
-}
-
-.roomCardTitle {
-  font-size: 16px;
-  font-weight: 900;
-  color: var(--text-main);
-  margin: 2px 0 10px;
-  line-height: 1.35;
-}
-
-.roomCardMeta {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 12px;
-}
-
-.metaItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 18px;
-}
-
-.metaIcon { font-size: 13px; opacity: 0.95; }
-.metaText { font-size: 13px; color: var(--text-muted); font-weight: 700; }
-/* ===== Header nav color fix ===== */
-header a,
-.nav a {
-  color: var(--text-main) !important;
-  text-decoration: none;
-}
-
-header a:hover,
-.nav a:hover {
-  opacity: 0.7;
-}
-/* --- Fix: header nav link color (戻す) --- */
-header a,
-header nav a {
-  color: #111 !important; /* 元の黒 */
-  text-decoration: none;
-}
-
-/* ダークモードではヘッダーは白寄りでOK（青リンク化を防ぐ） */
-@media (prefers-color-scheme: dark) {
+  .brand{ font-weight:800; }
+  .nav{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .navLink{ padding:8px 10px; border-radius:10px; border:1px solid transparent; }
+  .navLink:hover{ border-color:var(--border); }
+  
+  /* ✅ ヘッダーのリンクが青くなるのを防止（黒/白に戻す） */
   header a,
-  header nav a {
-    color: #e5e7eb !important;
+  header nav a{
+    color: var(--fg);
+    text-decoration:none;
   }
-}
-
-/* --- Fix: cards text readable even when browser auto-inverts text color --- */
-/* RoomCard（カード）側に className を付ける前提。付けたらここが効く */
-.roomCard {
-  color: #111 !important;
-}
-
-.roomCard .roomTitle {
-  color: #111 !important;
-}
-
-.roomCard .roomMeta {
-  color: rgba(0, 0, 0, 0.72) !important;
-}
+  header a:hover,
+  header nav a:hover{ opacity:0.7; }
+  
+  .main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:18px 16px 40px;
+  }
+  
+  .container{ display:flex; flex-direction:column; gap:12px; }
+  .h1{ font-size:22px; margin:0; }
+  .stack{ display:flex; flex-direction:column; gap:12px; }
+  
+  .toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  
+  .input,.select{
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:var(--card);
+    color:var(--fg);
+  }
+  
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap:12px;
+  }
+  @media (max-width: 900px){
+    .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+  @media (max-width: 600px){
+    .grid{ grid-template-columns: 1fr; }
+    .headerInner{ align-items:flex-start; }
+    .nav{ justify-content:flex-end; }
+  }
+  
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:14px;
+  }
+  .linkCard:hover{ transform: translateY(-1px); transition: 0.12s; }
+  
+  .row{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .title{ font-size:16px; font-weight:700; }
+  .muted{ color:var(--muted); font-size:13px; }
+  
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    padding:4px 8px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    font-size:12px;
+  }
+  .badge.ok{ border-color: rgba(0,0,0,0.15); }
+  .badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
+  
+  /* Long text (home description etc) */
+  .prose { line-height: 1.85; }
+  .lead { font-size: 14px; font-weight: 800; margin: 0 0 8px; }
+  .h3 { font-size: 14px; margin: 14px 0 6px; }
+  .cardSub { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .quote { margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--card) 75%, var(--bg)); }
+  
+  .readableBox{
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+  }
+  .readableBox p,
+  .readableBox li{
+    color: var(--fg);
+    line-height: 1.9;
+    font-size: 14px;
+  }
+  .readableBox .mutedLine{ color: var(--muted); }
+  .readableBox h2{
+    margin: 18px 0 8px;
+    font-size: 16px;
+  }
+  .readableBox ul{ margin: 8px 0 0 18px; }
+  
+  /* Home Hero decoration (dark-mode friendly, layout unchanged) */
+  .heroWrap{
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    padding: 18px;
+    overflow: hidden;
+  }
+  .heroWrap::before{
+    content: "";
+    position: absolute;
+    inset: -60px -60px auto auto;
+    width: 220px;
+    height: 220px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%);
+    pointer-events: none;
+  }
+  .heroWrap::after{
+    content: "";
+    position: absolute;
+    inset: auto auto -90px -90px;
+    width: 260px;
+    height: 260px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%);
+    pointer-events: none;
+  }
+  .heroTopRow{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .heroTitle{ display: flex; align-items: center; gap: 10px; }
+  .heroBadge{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    font-size: 12px;
+  }
+  .heroActions{ display: flex; gap: 10px; flex-wrap: wrap; }
+  
+  .btnPrimary{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--btnBg);
+    background: var(--btnBg);
+    color: var(--btnFg);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .btnGhost{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--fg);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  
+  /* generic card link */
+  .cardLink{
+    display:block;
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--fg);
+    text-decoration: none;
+  }
+  .cardLink:hover{ filter: brightness(0.98); }
+  @media (prefers-color-scheme: dark){
+    .cardLink:hover{ filter: brightness(1.06); }
+  }
+  
+  /* ============================
+     Components: RoomCard
+     ============================ */
+  .roomCardLink{ display:block; }
+  
+  .roomCard{
+    border:1px solid var(--rc-border);
+    background:var(--rc-bg);
+    border-radius:16px;
+    padding:14px 14px 12px;
+    box-shadow:var(--rc-shadow);
+    transition:transform 120ms ease, border-color 120ms ease, background 120ms ease;
+    color:var(--rc-text);
+  }
+  .roomCard:hover{ transform:translateY(-1px); }
+  
+  .roomCardTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  
+  .badges{ display:flex; flex-wrap:wrap; gap:8px; }
+  
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    height:26px;
+    padding:0 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    border:1px solid var(--badge-border);
+    background:var(--badge-bg);
+    color:var(--badge-text);
+  }
+  
+  .badgeCategory{ font-weight:800; }
+  .badgeStatus{ font-weight:900; }
+  
+  .badgeStatusOpen{
+    background:var(--status-open-bg);
+    border-color:var(--status-open-border);
+    color:var(--status-open-text);
+  }
+  .badgeStatusForced{
+    background:var(--status-forced-bg);
+    border-color:var(--status-forced-border);
+    color:var(--status-forced-text);
+  }
+  .badgeStatusClosed{
+    background:var(--status-closed-bg);
+    border-color:var(--status-closed-border);
+    color:var(--status-closed-text);
+  }
+  
+  .roomCardTitle{
+    font-size:16px;
+    font-weight:900;
+    color:var(--rc-text);
+    margin:2px 0 10px;
+    line-height:1.35;
+  }
+  
+  .roomCardMeta{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:6px 12px;
+  }
+  
+  .metaItem{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-height:18px;
+  }
+  .metaIcon{ font-size:13px; opacity:0.95; }
+  .metaText{ font-size:13px; color:var(--rc-muted); font-weight:700; }
+  
+  /* もしスマホの「強制ダーク化」でまだ崩れるなら保険（必要時だけON）
+  .roomCard, .roomCardTitle, .metaText { color: inherit !important; }
+  */
+  
