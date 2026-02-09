@@ -17,7 +17,7 @@ export default function HomePage() {
 
           {/* ★ボタン群（ルーム作成を復活） */}
           <div className="heroActions">
-            <Link href="/rooms/new" className="btnPrimary">
+            <Link href="/rooms/create" className="btnPrimary">
               ＋ ルームを作成
             </Link>
             <Link href="/rooms" className="btnGhost">
