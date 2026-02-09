@@ -410,4 +410,29 @@
   /* もしスマホの「強制ダーク化」でまだ崩れるなら保険（必要時だけON）
   .roomCard, .roomCardTitle, .metaText { color: inherit !important; }
   */
-  
+  /* ============================
+   Force-darkmode cancel (重要)
+   ============================ */
+
+/* Chrome Android / 一部ブラウザの自動色反転を止める */
+html {
+  color-scheme: light dark;
+}
+
+/* カード内部はブラウザに色をいじらせない */
+.roomCard,
+.roomCard * {
+  forced-color-adjust: none;
+}
+/* テキスト色をテーマ変数に完全固定 */
+.roomCard {
+  color: var(--rc-text);
+}
+
+.roomCardTitle {
+  color: var(--rc-text);
+}
+
+.metaText {
+  color: var(--rc-muted);
+}
