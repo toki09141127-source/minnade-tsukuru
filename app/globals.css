@@ -307,3 +307,39 @@ body{
     --btn-main: #e6e
   }
 }
+/* ===== Dark mode color tuning (layout unchanged) ===== */
+:root {
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: rgba(0,0,0,0.65);
+  --card: #ffffff;
+  --cardBorder: rgba(0,0,0,0.12);
+  --inputBg: #ffffff;
+  --inputBorder: rgba(0,0,0,0.18);
+  --btnBg: #111111;
+  --btnFg: #ffffff;
+  --chipBg: rgba(0,0,0,0.06);
+  --chipFg: #111111;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b0d10;              /* スマホで黒が潰れない黒 */
+    --fg: #f2f5f7;              /* 文字のコントラスト */
+    --muted: rgba(242,245,247,0.72);
+    --card: #12161c;            /* カード背景 */
+    --cardBorder: rgba(255,255,255,0.10);
+    --inputBg: #0f1318;
+    --inputBorder: rgba(255,255,255,0.14);
+    --btnBg: #f2f5f7;           /* ダークでボタンは明るめに */
+    --btnFg: #0b0d10;
+    --chipBg: rgba(255,255,255,0.10);
+    --chipFg: #f2f5f7;
+  }
+}
+
+/* 既存のUIが background/ color を直指定している場合の保険 */
+body {
+  background: var(--bg);
+  color: var(--fg);
+}
