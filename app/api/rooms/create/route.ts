@@ -1,3 +1,4 @@
+// app/api/rooms/create/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -7,17 +8,31 @@ const CATEGORY_VALUES = [
   'アニメ',
   'ゲーム',
   'イラスト',
-  '音楽',
-  '動画',
+  '企画',
+  '雑談',
   'その他',
 ] as const
 
-function toBool(v: any) {
-  if (v === true) return true
-  if (v === false) return false
-  if (typeof v === 'string') return v.toLowerCase() === 'true'
-  if (typeof v === 'number') return v === 1
-  return false
+function categoryToWorkType(category: string) {
+  // DBの rooms.work_type が NOT NULL なので、必ず値を返す
+  switch (category) {
+    case '小説':
+      return 'novel'
+    case '漫画':
+      return 'manga'
+    case 'アニメ':
+      return 'anime'
+    case 'ゲーム':
+      return 'game'
+    case 'イラスト':
+      return 'illustration'
+    case '企画':
+      return 'plan'
+    case '雑談':
+      return 'chat'
+    default:
+      return 'other'
+  }
 }
 
 export async function POST(req: Request) {
@@ -25,16 +40,18 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
 
     const title = String(body?.title ?? '').trim()
-    const type = String(body?.type ?? 'novel').trim()
+
     const categoryRaw = String(body?.category ?? 'その他').trim()
     const category = (CATEGORY_VALUES as readonly string[]).includes(categoryRaw) ? categoryRaw : 'その他'
-    const isAdult = toBool(body?.isAdult)
+
+    const isAdult = Boolean(body?.isAdult ?? body?.is_adult ?? false)
 
     const hoursNum = Number(body?.hours ?? 48)
     const hours = Math.max(1, Math.min(150, Math.floor(hoursNum)))
 
     if (!title) return NextResponse.json({ error: 'title is required' }, { status: 400 })
 
+    // --- Auth: Bearer token ---
     const authHeader = req.headers.get('authorization') ?? ''
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
     if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -47,19 +64,27 @@ export async function POST(req: Request) {
     if (userErr || !userData?.user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     const user = userData.user
 
+    // --- Admin (service role) ---
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
     const now = new Date()
     const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
 
+    // ★ DB必須の work_type をここで確定
+    const workType = String(body?.workType ?? body?.work_type ?? '').trim() || categoryToWorkType(category)
+
     const { data: room, error: insErr } = await admin
       .from('rooms')
       .insert({
         title,
-        type,
         category,
         is_adult: isAdult,
+
+        // ★ 必須
+        work_type: workType,
+
+        // 既存項目
         status: 'open',
         started_at: now.toISOString(),
         expires_at: expiresAt.toISOString(),
