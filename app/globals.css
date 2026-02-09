@@ -343,3 +343,86 @@ body {
   background: var(--bg);
   color: var(--fg);
 }
+/* ============================
+   Dark mode tuning (NO layout changes)
+   ============================ */
+
+   :root {
+    /* base */
+    --bg: #ffffff;
+    --fg: #0b0d10;
+  
+    /* surfaces */
+    --card: rgba(255, 255, 255, 0.92);
+    --cardSolid: #ffffff;
+    --border: rgba(0, 0, 0, 0.12);
+  
+    /* text */
+    --muted: rgba(11, 13, 16, 0.70);
+  
+    /* controls */
+    --inputBg: rgba(255, 255, 255, 0.95);
+    --inputBorder: rgba(0, 0, 0, 0.18);
+  
+    /* chips/badges */
+    --chipBg: rgba(0, 0, 0, 0.06);
+    --chipBorder: rgba(0, 0, 0, 0.12);
+    --chipFg: #0b0d10;
+  
+    /* button */
+    --btnBg: #0b0d10;
+    --btnFg: #ffffff;
+  
+    /* links */
+    --link: #0b5fff;
+  }
+  
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b0d10;
+      --fg: #f2f5f7;
+  
+      --card: rgba(18, 22, 28, 0.92);
+      --cardSolid: #12161c;
+      --border: rgba(255, 255, 255, 0.12);
+  
+      --muted: rgba(242, 245, 247, 0.72);
+  
+      --inputBg: rgba(15, 19, 24, 0.96);
+      --inputBorder: rgba(255, 255, 255, 0.16);
+  
+      --chipBg: rgba(255, 255, 255, 0.10);
+      --chipBorder: rgba(255, 255, 255, 0.14);
+      --chipFg: #f2f5f7;
+  
+      /* ダーク時はボタンを明るくして視認性UP（背景に埋もれない） */
+      --btnBg: #f2f5f7;
+      --btnFg: #0b0d10;
+  
+      --link: #8ab4ff;
+    }
+  }
+  
+  /* site-wide base */
+  body {
+    background: var(--bg);
+    color: var(--fg);
+  }
+  
+  /* common elements (safe, no layout) */
+  a {
+    color: var(--link);
+  }
+  
+  input,
+  select,
+  textarea {
+    background: var(--inputBg);
+    color: var(--fg);
+    border-color: var(--inputBorder);
+  }
+  
+  hr {
+    border-color: var(--border);
+  }
+  
