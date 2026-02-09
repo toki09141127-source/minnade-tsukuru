@@ -1,18 +1,23 @@
 // app/rooms/create/page.tsx
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 import RoomCreateClient from './RoomCreateClient'
 
-export default function RoomCreatePage() {
+export default async function RoomCreatePage() {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase.auth.getUser()
+  if (!data?.user) redirect('/login')
+
   return (
     <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>ルーム作成</h1>
-        <Link href="/rooms" style={{ textDecoration: 'none' }}>
-          ← ルーム一覧へ
-        </Link>
+      {/* ← ここだけ残す */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800 }}>ルーム作成</h1>
+        <Link href="/rooms">← ルーム一覧へ</Link>
       </div>
 
-      {/* ✅ サーバ側redirectはしない。ログイン判定はクライアント側で行う */}
+      {/* フォーム本体 */}
       <RoomCreateClient />
     </div>
   )
