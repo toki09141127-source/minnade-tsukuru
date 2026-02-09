@@ -285,3 +285,25 @@ body{
   background: var(--bg);
   color: var(--fg);
 }
+/* ===== Light / Dark theme colors ===== */
+
+:root {
+  --bg-main: #f7f7f8;
+  --bg-card: #ffffff;
+  --text-main: #111111;
+  --text-sub: #555555;
+  --border-main: rgba(0, 0, 0, 0.12);
+  --btn-main: #111111;
+  --btn-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-main: #0f1115;
+    --bg-card: #171a21;
+    --text-main: #e6e8ee;
+    --text-sub: #9aa3b2;
+    --border-main: rgba(255, 255, 255, 0.12);
+    --btn-main: #e6e
+  }
+}
