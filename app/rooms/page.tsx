@@ -1,173 +1,146 @@
-// app/rooms/page.tsx
 import Link from 'next/link'
-import { createSupabaseServerClient } from '@/lib/supabase/server'
-import RemainingTimer from './RemainingTimer'
+import { createClient } from '@supabase/supabase-js'
+import { RoomCard } from '../../components/RoomCard'
 
-const CATEGORY_OPTIONS: { value: string; label: string }[] = [
-  { value: 'all', label: '全カテゴリー' },
-  { value: '小説', label: '小説' },
-  { value: '漫画', label: '漫画' },
-  { value: 'アニメ', label: 'アニメ' },
-  { value: 'イラスト', label: 'イラスト' },
-  { value: 'ゲーム', label: 'ゲーム' },
-  { value: '企画', label: '企画' },
-  { value: '雑談', label: '雑談' },
-  { value: 'その他', label: 'その他' },
-]
-
-type RoomRow = {
-  id: string
-  title: string
-  status: string
-  category: string
-  is_adult: boolean
-  expires_at: string | null
-  like_count: number | null
-  member_count: number | null
-}
+const CATEGORY_OPTIONS = ['all','小説','漫画','アニメ','ゲーム','イラスト','音楽','動画','その他'] as const
+const ADULT_OPTIONS = ['all','general','adult'] as const
 
 export default async function RoomsPage({
   searchParams,
 }: {
-  searchParams: { category?: string; adult?: string }
+  searchParams: { q?: string; category?: string; adult?: string }
 }) {
-  const category = searchParams.category ?? 'all'
-  const adult = searchParams.adult ?? 'all' // all | general | adult
+  const q = (searchParams.q ?? '').trim()
+  const category = (searchParams.category ?? 'all').trim()
+  const adult = (searchParams.adult ?? 'all').trim()
 
-  const supabase = await createSupabaseServerClient()
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  const supabase = createClient(url, anonKey, { auth: { persistSession: false } })
 
-  // open のみ（制作中）
-  const { data, error } = await supabase
+  let query = supabase
     .from('rooms_with_counts')
-    .select('id,title,status,category,is_adult,expires_at,like_count,member_count')
-    .eq('status', 'open')
+    .select('id,title,type,status,category,is_adult,expires_at,member_count,like_count,created_at')
     .eq('is_hidden', false)
     .is('deleted_at', null)
     .order('created_at', { ascending: false })
 
-  if (error) {
-    return (
-      <div style={{ maxWidth: 980, margin: '24px auto', padding: '0 16px' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>制作ルーム一覧</h1>
-        <p style={{ color: '#b00020' }}>{error.message}</p>
-      </div>
-    )
-  }
+  if (category !== 'all') query = query.eq('category', category)
+  if (adult === 'adult') query = query.eq('is_adult', true)
+  if (adult === 'general') query = query.eq('is_adult', false)
+  if (q) query = query.ilike('title', `%${q}%`)
 
-  let rooms = (data ?? []) as RoomRow[]
-
-  // カテゴリフィルタ
-  if (category !== 'all') rooms = rooms.filter((r) => r.category === category)
-
-  // 成人向けフィルタ
-  if (adult === 'general') rooms = rooms.filter((r) => !r.is_adult)
-  if (adult === 'adult') rooms = rooms.filter((r) => r.is_adult)
+  const { data: rooms, error } = await query
 
   return (
-    <div style={{ maxWidth: 980, margin: '24px auto', padding: '0 16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>制作ルーム一覧</h1>
+    <div style={{ maxWidth: 1100, margin: '0 auto', padding: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end', gap: 12, flexWrap: 'wrap' }}>
+        <div>
+          <h1 style={{ fontSize: 24, fontWeight: 900, margin: 0 }}>制作ルーム一覧</h1>
+          <p style={{ marginTop: 6, color: 'var(--muted)', fontSize: 13 }}>
+            参加人数・残り時間を見ながら、勢いのあるルームに飛び込める。
+          </p>
+        </div>
+
         <Link
           href="/rooms/create"
           style={{
-            textDecoration: 'none',
             padding: '10px 14px',
             borderRadius: 12,
-            border: '1px solid #111',
-            background: '#111',
-            color: '#fff',
-            fontWeight: 800,
+            background: 'var(--btn)',
+            color: 'var(--btnfg)',
+            fontWeight: 900,
+            textDecoration: 'none',
+            border: '1px solid rgba(0,0,0,.14)',
           }}
         >
           ＋ ルーム作成
         </Link>
       </div>
 
-      {/* フィルタ */}
-      <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-        <form style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-          <label style={{ fontWeight: 700 }}>カテゴリ</label>
-          <select name="category" defaultValue={category} style={{ padding: '8px 10px', borderRadius: 10 }}>
-            {CATEGORY_OPTIONS.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+      {/* 検索/フィルタ */}
+      <form
+        style={{
+          marginTop: 14,
+          display: 'grid',
+          gridTemplateColumns: '1fr 200px 200px',
+          gap: 10,
+        }}
+      >
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="タイトル検索…"
+          style={{ padding: 10, borderRadius: 12, border: '1px solid rgba(0,0,0,.14)', background: 'var(--panel)', color: 'var(--fg)' }}
+        />
 
-          <label style={{ fontWeight: 700 }}>対象</label>
-          <select name="adult" defaultValue={adult} style={{ padding: '8px 10px', borderRadius: 10 }}>
-            <option value="all">すべて</option>
-            <option value="general">一般向け</option>
-            <option value="adult">成人向け</option>
-          </select>
+        <select
+          name="category"
+          defaultValue={category}
+          style={{ padding: 10, borderRadius: 12, border: '1px solid rgba(0,0,0,.14)', background: 'var(--panel)', color: 'var(--fg)' }}
+        >
+          {CATEGORY_OPTIONS.map((c) => (
+            <option key={c} value={c}>
+              {c === 'all' ? '全カテゴリー' : c}
+            </option>
+          ))}
+        </select>
 
+        <select
+          name="adult"
+          defaultValue={adult}
+          style={{ padding: 10, borderRadius: 12, border: '1px solid rgba(0,0,0,.14)', background: 'var(--panel)', color: 'var(--fg)' }}
+        >
+          {ADULT_OPTIONS.map((a) => (
+            <option key={a} value={a}>
+              {a === 'all' ? '全年齢/成人向け' : a === 'general' ? '全年齢のみ' : '成人向けのみ'}
+            </option>
+          ))}
+        </select>
+
+        <div style={{ gridColumn: '1 / -1', display: 'flex', gap: 10 }}>
           <button
             type="submit"
             style={{
-              padding: '8px 12px',
-              borderRadius: 10,
-              border: '1px solid rgba(0,0,0,0.2)',
-              background: 'rgba(255,255,255,0.9)',
+              padding: '10px 14px',
+              borderRadius: 12,
+              background: 'var(--btn)',
+              color: 'var(--btnfg)',
+              fontWeight: 900,
+              border: '1px solid rgba(0,0,0,.14)',
               cursor: 'pointer',
-              fontWeight: 700,
             }}
           >
             絞り込む
           </button>
-
-          <Link href="/rooms" style={{ marginLeft: 8, textDecoration: 'none', fontWeight: 700 }}>
+          <Link href="/rooms" style={{ alignSelf: 'center', color: 'var(--muted)', fontSize: 13 }}>
             リセット
           </Link>
-        </form>
-      </div>
+        </div>
+      </form>
 
-      {/* 一覧（見やすかった方の “カード縦並び” に戻す） */}
-      <div style={{ marginTop: 16, display: 'grid', gap: 12 }}>
-        {rooms.map((r) => (
-          <Link
-            key={r.id}
-            href={`/rooms/${r.id}`}
-            style={{
-              textDecoration: 'none',
-              color: 'inherit',
-              border: '1px solid rgba(0,0,0,0.12)',
-              borderRadius: 16,
-              padding: 14,
-              background: 'rgba(255,255,255,0.85)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 900 }}>{r.title}</div>
-                <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
-                  {r.category} / status: {r.status}
-                  {r.is_adult ? ' / 🔞成人向け' : ''}
-                  {' / '}❤ {r.like_count ?? 0}
-                  {' / '}参加 {r.member_count ?? 0}人
-                </div>
-              </div>
+      {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error.message}</p>}
 
-              <div style={{ fontSize: 12, opacity: 0.9 }}>
-                {r.expires_at ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span>⌛ 残り</span>
-                    <RemainingTimer expiresAt={r.expires_at} />
-                  </div>
-                ) : (
-                  <span>⌛ 残り時間：未設定</span>
-                )}
-              </div>
-            </div>
-          </Link>
+      {/* カードグリッド */}
+      <div
+        style={{
+          marginTop: 16,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 12,
+        }}
+      >
+        {(rooms ?? []).map((r: any) => (
+          <RoomCard key={r.id} room={r} mode="rooms" />
         ))}
-
-        {rooms.length === 0 && (
-          <div style={{ padding: 16, borderRadius: 16, border: '1px solid rgba(0,0,0,0.12)', opacity: 0.8 }}>
-            該当するルームがありません。
-          </div>
-        )}
       </div>
+
+      {!rooms?.length && (
+        <div style={{ marginTop: 18, padding: 16, borderRadius: 16, background: 'var(--panel)', border: '1px solid rgba(0,0,0,.10)' }}>
+          <b>まだルームがありません。</b>
+          <div style={{ marginTop: 6, color: 'var(--muted)' }}>右上の「ルーム作成」から始めよう。</div>
+        </div>
+      )}
     </div>
   )
 }

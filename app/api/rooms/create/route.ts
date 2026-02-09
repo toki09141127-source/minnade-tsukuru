@@ -1,4 +1,3 @@
-// app/api/rooms/create/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -13,22 +12,29 @@ const CATEGORY_VALUES = [
   'その他',
 ] as const
 
+function toBool(v: any) {
+  if (v === true) return true
+  if (v === false) return false
+  if (typeof v === 'string') return v.toLowerCase() === 'true'
+  if (typeof v === 'number') return v === 1
+  return false
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
 
     const title = String(body?.title ?? '').trim()
-    const type = String(body?.type ?? 'novel').trim() // 例: novel/manga/anime/game
+    const type = String(body?.type ?? 'novel').trim()
     const categoryRaw = String(body?.category ?? 'その他').trim()
     const category = (CATEGORY_VALUES as readonly string[]).includes(categoryRaw) ? categoryRaw : 'その他'
-    const isAdult = Boolean(body?.isAdult ?? false)
+    const isAdult = toBool(body?.isAdult)
 
     const hoursNum = Number(body?.hours ?? 48)
-    const hours = Math.max(1, Math.min(150, Math.floor(hoursNum))) // ★ 最大150時間
+    const hours = Math.max(1, Math.min(150, Math.floor(hoursNum)))
 
     if (!title) return NextResponse.json({ error: 'title is required' }, { status: 400 })
 
-    // --- Auth: Bearer token ---
     const authHeader = req.headers.get('authorization') ?? ''
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
     if (!token) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
@@ -41,7 +47,6 @@ export async function POST(req: Request) {
     if (userErr || !userData?.user) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     const user = userData.user
 
-    // --- Admin (service role) ---
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 

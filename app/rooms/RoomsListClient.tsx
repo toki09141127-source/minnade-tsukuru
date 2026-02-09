@@ -1,120 +1,226 @@
-// app/rooms/RoomsListClient.tsx
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { useMemo, useState } from 'react'
+import { supabase } from '@/lib/supabase/client'
+
+const CATEGORY_OPTIONS = ['全カテゴリー', '小説', '漫画', 'アニメ', 'ゲーム', 'イラスト', '音楽', '動画', 'その他'] as const
 
 type RoomRow = {
   id: string
-  title: string | null
-  kind: string | null
+  title: string
   status: string
-  created_at: string
   expires_at: string | null
-  member_count: number
-  is_adult: boolean | null
+  started_at: string | null
+  is_adult?: boolean | null
+  category?: string | null
+  member_count?: number | null
+  like_count?: number | null
 }
 
-function formatRemaining(ms: number) {
-  if (ms <= 0) return '終了'
-  const s = Math.floor(ms / 1000)
-  const hh = Math.floor(s / 3600)
-  const mm = Math.floor((s % 3600) / 60)
-  const ss = s % 60
-  const pad = (n: number) => String(n).padStart(2, '0')
-  return `${pad(hh)}:${pad(mm)}:${pad(ss)}`
+function msLeft(iso: string | null) {
+  if (!iso) return null
+  const t = new Date(iso).getTime()
+  const now = Date.now()
+  return Math.max(0, t - now)
 }
 
-function Remaining({ expiresAt }: { expiresAt: string | null }) {
-  const [now, setNow] = useState(() => Date.now())
-  useMemo(() => {
-    const t = setInterval(() => setNow(Date.now()), 1000)
+function fmtRemain(ms: number) {
+  const total = Math.floor(ms / 1000)
+  const d = Math.floor(total / 86400)
+  const h = Math.floor((total % 86400) / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
+  if (d > 0) return `${d}日${h}時間${m}分`
+  if (h > 0) return `${h}時間${m}分`
+  if (m > 0) return `${m}分${s}秒`
+  return `${s}秒`
+}
+
+function Badge({ children }: { children: any }) {
+  return (
+    <span
+      style={{
+        fontSize: 12,
+        fontWeight: 900,
+        padding: '4px 8px',
+        borderRadius: 999,
+        border: '1px solid rgba(0,0,0,0.16)',
+        background: 'rgba(0,0,0,0.04)',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
+export default function RoomsListClient() {
+  const [rows, setRows] = useState<RoomRow[]>([])
+  const [loading, setLoading] = useState(true)
+  const [q, setQ] = useState('')
+  const [category, setCategory] = useState<(typeof CATEGORY_OPTIONS)[number]>('全カテゴリー')
+  const [adult, setAdult] = useState<'all' | 'general' | 'adult'>('all')
+  const [, forceTick] = useState(0)
+
+  useEffect(() => {
+    const t = setInterval(() => forceTick((x) => x + 1), 1000)
     return () => clearInterval(t)
   }, [])
-  if (!expiresAt) return <span className="muted">—</span>
-  const end = new Date(expiresAt).getTime()
-  return <span className="badge">{formatRemaining(end - now)}</span>
-}
 
-export default function RoomsListClient({ initialRooms }: { initialRooms: RoomRow[] }) {
-  const [q, setQ] = useState('')
-  const [adult, setAdult] = useState<'safe' | 'all' | 'adult'>('safe')
-  const [status, setStatus] = useState<'all' | 'open' | 'closed' | 'published'>('all')
-  const [kind, setKind] = useState<string>('all')
+  useEffect(() => {
+    const run = async () => {
+      setLoading(true)
 
-  const kinds = useMemo(() => {
-    const s = new Set<string>()
-    for (const r of initialRooms) if (r.kind) s.add(r.kind)
-    return ['all', ...Array.from(s)]
-  }, [initialRooms])
+      // できるだけ壊れにくいように：rooms_with_counts があれば優先、なければ rooms
+      // rooms_with_counts: id,title,status,expires_at,started_at,is_adult,category,member_count,like_count を想定
+      let data: any[] | null = null
+
+      const tryView = await supabase
+        .from('rooms_with_counts')
+        .select('id,title,status,expires_at,started_at,is_adult,category,member_count,like_count')
+        .eq('is_hidden', false)
+        .eq('status', 'open')
+        .order('expires_at', { ascending: true })
+
+      if (!tryView.error) data = tryView.data as any[]
+      if (!data) {
+        const r = await supabase
+          .from('rooms')
+          .select('id,title,status,expires_at,started_at,is_adult,like_count')
+          .eq('is_hidden', false)
+          .eq('status', 'open')
+          .order('expires_at', { ascending: true })
+        data = (r.data as any[]) ?? []
+      }
+
+      setRows(data as RoomRow[])
+      setLoading(false)
+    }
+    run()
+  }, [])
 
   const filtered = useMemo(() => {
-    return initialRooms.filter((r) => {
-      const text = `${r.title ?? ''} ${r.kind ?? ''}`.toLowerCase()
-      const okQ = !q.trim() || text.includes(q.trim().toLowerCase())
-      const okStatus = status === 'all' || r.status === status
-
-      const isAdult = !!r.is_adult
-      const okAdult =
-        adult === 'all' ? true :
-        adult === 'adult' ? isAdult :
-        !isAdult
-
-      const okKind = kind === 'all' || (r.kind ?? '') === kind
-
-      return okQ && okStatus && okAdult && okKind
+    const kw = q.trim().toLowerCase()
+    return rows.filter((r) => {
+      if (kw && !String(r.title ?? '').toLowerCase().includes(kw)) return false
+      if (adult === 'general' && r.is_adult) return false
+      if (adult === 'adult' && !r.is_adult) return false
+      if (category !== '全カテゴリー') {
+        // categoryがDBに無い環境でも落ちないようにガード
+        if ((r.category ?? '') !== category) return false
+      }
+      return true
     })
-  }, [initialRooms, q, adult, status, kind])
+  }, [rows, q, adult, category])
 
   return (
-    <div className="stack">
-      <div className="toolbar">
+    <div style={{ marginTop: 16 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1.4fr 0.8fr 0.8fr',
+          gap: 10,
+          alignItems: 'center',
+        }}
+      >
         <input
-          className="input"
-          placeholder="検索（タイトル/カテゴリ）"
           value={q}
           onChange={(e) => setQ(e.target.value)}
+          placeholder="検索（例：ネーム / プロット / 企画）"
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.18)',
+          }}
         />
 
-        <select className="select" value={status} onChange={(e) => setStatus(e.target.value as any)}>
-          <option value="all">全ステータス</option>
-          <option value="open">open</option>
-          <option value="closed">closed</option>
-          <option value="published">published</option>
-        </select>
-
-        <select className="select" value={kind} onChange={(e) => setKind(e.target.value)}>
-          {kinds.map((k) => (
-            <option key={k} value={k}>{k === 'all' ? '全カテゴリ' : k}</option>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value as any)}
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.18)',
+          }}
+        >
+          {CATEGORY_OPTIONS.map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
           ))}
         </select>
 
-        <select className="select" value={adult} onChange={(e) => setAdult(e.target.value as any)}>
-          <option value="safe">一般のみ</option>
-          <option value="adult">成人のみ</option>
-          <option value="all">全部</option>
+        <select
+          value={adult}
+          onChange={(e) => setAdult(e.target.value as any)}
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.18)',
+          }}
+        >
+          <option value="all">対象：すべて</option>
+          <option value="general">対象：一般向け</option>
+          <option value="adult">対象：成人向け</option>
         </select>
       </div>
 
-      <div className="grid">
-        {filtered.map((r) => (
-          <Link key={r.id} href={`/rooms/${r.id}`} className="card linkCard">
-            <div className="row">
-              <div className="title">{r.title ?? '（無題）'}</div>
-              {r.is_adult ? <span className="badge danger">成人</span> : <span className="badge ok">一般</span>}
-            </div>
+      {loading ? (
+        <p style={{ marginTop: 14, opacity: 0.7 }}>読み込み中…</p>
+      ) : filtered.length === 0 ? (
+        <div style={{ marginTop: 16, border: '1px dashed rgba(0,0,0,0.2)', borderRadius: 16, padding: 16 }}>
+          <p style={{ margin: 0, fontWeight: 900 }}>条件に一致するルームがありません</p>
+          <p style={{ margin: '6px 0 0', opacity: 0.8, fontSize: 13 }}>検索条件を変えるか、新しくルームを作ってみよう。</p>
+        </div>
+      ) : (
+        <div
+          style={{
+            marginTop: 16,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: 12,
+          }}
+        >
+          {filtered.map((r) => {
+            const left = msLeft(r.expires_at ?? null)
+            const remain = left == null ? '—' : fmtRemain(left)
+            return (
+              <Link
+                key={r.id}
+                href={`/rooms/${r.id}`}
+                style={{
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  border: '1px solid rgba(0,0,0,0.12)',
+                  borderRadius: 18,
+                  padding: 14,
+                  background: 'rgba(255,255,255,0.85)',
+                }}
+              >
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  {r.category ? <Badge>{r.category}</Badge> : <Badge>カテゴリ未設定</Badge>}
+                  <Badge>{r.is_adult ? '成人向け' : '一般向け'}</Badge>
+                  <Badge>残り：{remain}</Badge>
+                  {typeof r.member_count === 'number' && <Badge>参加 {r.member_count}人</Badge>}
+                </div>
 
-            <div className="muted">カテゴリ: {r.kind ?? '—'} / status: {r.status}</div>
+                <div style={{ marginTop: 10, fontWeight: 950, fontSize: 16, lineHeight: 1.35 }}>
+                  {r.title}
+                </div>
 
-            <div className="row" style={{ marginTop: 10 }}>
-              <div className="muted">参加: <b>{r.member_count}</b> 人</div>
-              <div className="muted">残り: <Remaining expiresAt={r.expires_at} /></div>
-            </div>
-          </Link>
-        ))}
-      </div>
-
-      {filtered.length === 0 && <div className="card">該当するルームがありません</div>}
+                <div style={{ marginTop: 10, display: 'flex', justifyContent: 'space-between', opacity: 0.8, fontSize: 12 }}>
+                  <span>ステータス：{r.status}</span>
+                  {typeof r.like_count === 'number' && <span>♥ {r.like_count}</span>}
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
