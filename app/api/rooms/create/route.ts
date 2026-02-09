@@ -14,7 +14,6 @@ const CATEGORY_VALUES = [
 ] as const
 
 function categoryToWorkType(category: string) {
-  // DBの rooms.work_type が NOT NULL なので、必ず値を返す
   switch (category) {
     case '小説':
       return 'novel'
@@ -40,16 +39,16 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
 
     const title = String(body?.title ?? '').trim()
+    if (!title) return NextResponse.json({ error: 'title is required' }, { status: 400 })
 
     const categoryRaw = String(body?.category ?? 'その他').trim()
     const category = (CATEGORY_VALUES as readonly string[]).includes(categoryRaw) ? categoryRaw : 'その他'
 
     const isAdult = Boolean(body?.isAdult ?? body?.is_adult ?? false)
 
+    // ★ hours: 1〜150
     const hoursNum = Number(body?.hours ?? 48)
     const hours = Math.max(1, Math.min(150, Math.floor(hoursNum)))
-
-    if (!title) return NextResponse.json({ error: 'title is required' }, { status: 400 })
 
     // --- Auth: Bearer token ---
     const authHeader = req.headers.get('authorization') ?? ''
@@ -71,7 +70,7 @@ export async function POST(req: Request) {
     const now = new Date()
     const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
 
-    // ★ DB必須の work_type をここで確定
+    // ★ DB必須の work_type
     const workType = String(body?.workType ?? body?.work_type ?? '').trim() || categoryToWorkType(category)
 
     const { data: room, error: insErr } = await admin
@@ -81,10 +80,13 @@ export async function POST(req: Request) {
         category,
         is_adult: isAdult,
 
-        // ★ 必須
+        // ★ 必須（NOT NULL）
         work_type: workType,
 
-        // 既存項目
+        // ★ 必須（NOT NULL）
+        time_limit_hours: hours,
+
+        // 既存
         status: 'open',
         started_at: now.toISOString(),
         expires_at: expiresAt.toISOString(),
@@ -97,7 +99,6 @@ export async function POST(req: Request) {
       .single()
 
     if (insErr) return NextResponse.json({ error: insErr.message }, { status: 500 })
-
     return NextResponse.json({ ok: true, room })
   } catch (e: any) {
     return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
