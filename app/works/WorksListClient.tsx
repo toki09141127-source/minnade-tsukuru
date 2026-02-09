@@ -4,103 +4,127 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase/client'
 
-const CATEGORY_OPTIONS = ['全カテゴリー', '小説', '漫画', 'アニメ', 'ゲーム', 'イラスト', '音楽', '動画', 'その他'] as const
-
-type WorkRow = {
+type RoomRow = {
   id: string
   title: string
   status: string
-  ended_at?: string | null
-  expires_at?: string | null
-  is_adult?: boolean | null
-  category?: string | null
-  like_count?: number | null
+  type: string | null
+  category: string | null
+  is_adult: boolean | null
+  created_at: string
+  expires_at: string | null
+  like_count: number | null
+  member_count: number | null
+  is_hidden: boolean | null
+  deleted_at: string | null
 }
 
-function Badge({ children }: { children: any }) {
-  return (
-    <span
-      style={{
-        fontSize: 12,
-        fontWeight: 900,
-        padding: '4px 8px',
-        borderRadius: 999,
-        border: '1px solid rgba(0,0,0,0.16)',
-        background: 'rgba(0,0,0,0.04)',
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {children}
-    </span>
-  )
+const CATEGORY_OPTIONS = [
+  '全カテゴリー',
+  '小説',
+  '漫画',
+  'アニメ',
+  'イラスト',
+  'ゲーム',
+  '企画',
+  '雑談',
+  '音楽',
+  '動画',
+  'その他',
+] as const
+
+type SortKey = 'like' | 'new'
+
+function badgeStyle(bg: string, fg: string): React.CSSProperties {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    padding: '4px 10px',
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 800,
+    background: bg,
+    color: fg,
+    border: '1px solid rgba(0,0,0,0.06)',
+  }
 }
 
 export default function WorksListClient() {
-  const [rows, setRows] = useState<WorkRow[]>([])
+  const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
   const [q, setQ] = useState('')
   const [category, setCategory] = useState<(typeof CATEGORY_OPTIONS)[number]>('全カテゴリー')
-  const [adult, setAdult] = useState<'all' | 'general' | 'adult'>('all')
+  const [adultOnly, setAdultOnly] = useState(false)
+  const [sort, setSort] = useState<SortKey>('like')
 
   useEffect(() => {
-    const run = async () => {
+    const fetchWorks = async () => {
       setLoading(true)
+      setError('')
 
-      // rooms_with_counts がある場合はそこから（category等が揃ってる前提）
-      const tryView = await supabase
-        .from('rooms_with_counts')
-        .select('id,title,status,ended_at,expires_at,is_adult,category,like_count')
+      const base = supabase
+        .from('rooms_with_counts_v2')
+        .select('id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at')
+        .eq('status', 'forced_publish')
         .eq('is_hidden', false)
-        .in('status', ['forced_publish', 'closed', 'done'])
-        .order('expires_at', { ascending: false })
+        .is('deleted_at', null)
 
-      if (!tryView.error) {
-        setRows((tryView.data as any[]) ?? [])
-        setLoading(false)
-        return
-      }
+      const sorted =
+        sort === 'like'
+          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+          : base.order('created_at', { ascending: false })
 
-      // view が無い/壊れてる場合は rooms から最低限（category無い環境でも落ちない）
-      const r = await supabase
-        .from('rooms')
-        .select('id,title,status,ended_at,expires_at,is_adult,like_count')
-        .eq('is_hidden', false)
-        .in('status', ['forced_publish', 'closed', 'done'])
-        .order('expires_at', { ascending: false })
+      const { data, error } = await sorted
 
-      setRows(((r.data as any[]) ?? []) as WorkRow[])
+      if (error) setError(error.message)
+      else setRooms((data ?? []) as RoomRow[])
+
       setLoading(false)
     }
-    run()
-  }, [])
+
+    fetchWorks()
+  }, [sort])
 
   const filtered = useMemo(() => {
-    const kw = q.trim().toLowerCase()
-    return rows.filter((r) => {
-      if (kw && !String(r.title ?? '').toLowerCase().includes(kw)) return false
-      if (adult === 'general' && r.is_adult) return false
-      if (adult === 'adult' && !r.is_adult) return false
+    const query = q.trim().toLowerCase()
+    return rooms.filter((r) => {
+      if (adultOnly && !r.is_adult) return false
+
       if (category !== '全カテゴリー') {
-        if ((r.category ?? '') !== category) return false
+        const c = (r.category ?? r.type ?? '').trim()
+        if (c !== category) return false
       }
+
+      if (query) {
+        const title = (r.title ?? '').toLowerCase()
+        if (!title.includes(query)) return false
+      }
+
       return true
     })
-  }, [rows, q, adult, category])
+  }, [rooms, q, category, adultOnly])
 
   return (
-    <div style={{ marginTop: 16 }}>
+    <div style={{ marginTop: 14 }}>
+      {/* Controls */}
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: '1.4fr 0.8fr 0.8fr',
+          gridTemplateColumns: '1fr',
           gap: 10,
-          alignItems: 'center',
+          padding: 14,
+          border: '1px solid rgba(0,0,0,0.10)',
+          borderRadius: 16,
+          background: 'rgba(255,255,255,0.85)',
         }}
       >
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="検索（タイトル）"
+          placeholder="作品（ルーム）名で検索…"
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -109,87 +133,117 @@ export default function WorksListClient() {
           }}
         />
 
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as any)}
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            borderRadius: 12,
-            border: '1px solid rgba(0,0,0,0.18)',
-          }}
-        >
-          {CATEGORY_OPTIONS.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value as any)}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid rgba(0,0,0,0.18)',
+              background: '#fff',
+            }}
+          >
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
 
-        <select
-          value={adult}
-          onChange={(e) => setAdult(e.target.value as any)}
-          style={{
-            width: '100%',
-            padding: '10px 12px',
-            borderRadius: 12,
-            border: '1px solid rgba(0,0,0,0.18)',
-          }}
-        >
-          <option value="all">対象：すべて</option>
-          <option value="general">対象：一般向け</option>
-          <option value="adult">対象：成人向け</option>
-        </select>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortKey)}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid rgba(0,0,0,0.18)',
+              background: '#fff',
+            }}
+          >
+            <option value="like">いいね順</option>
+            <option value="new">新着順</option>
+          </select>
+        </div>
+
+        <label style={{ display: 'flex', gap: 10, alignItems: 'center', userSelect: 'none' }}>
+          <input type="checkbox" checked={adultOnly} onChange={(e) => setAdultOnly(e.target.checked)} />
+          <span style={{ fontWeight: 800 }}>成人向けのみ表示</span>
+          <span style={{ fontSize: 12, opacity: 0.7 }}>（閲覧は自己責任）</span>
+        </label>
       </div>
 
-      {loading ? (
-        <p style={{ marginTop: 14, opacity: 0.7 }}>読み込み中…</p>
-      ) : filtered.length === 0 ? (
-        <div style={{ marginTop: 16, border: '1px dashed rgba(0,0,0,0.2)', borderRadius: 16, padding: 16 }}>
-          <p style={{ margin: 0, fontWeight: 900 }}>まだ完成作品がありません</p>
-          <p style={{ margin: '6px 0 0', opacity: 0.8, fontSize: 13 }}>
-            forced_publish が走っているのに出ない場合は、一覧の取得元（view/rooms）を次で確認します。
-          </p>
-        </div>
-      ) : (
-        <div
-          style={{
-            marginTop: 16,
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: 12,
-          }}
-        >
-          {filtered.map((r) => (
+      <div style={{ marginTop: 12, fontSize: 13, opacity: 0.75 }}>
+        表示：<b>{filtered.length}</b> / {rooms.length}
+      </div>
+
+      {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
+      {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
+
+      {/* Cards */}
+      <div
+        style={{
+          marginTop: 12,
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gap: 12,
+        }}
+      >
+        {filtered.map((r) => {
+          const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
+          const isAdult = Boolean(r.is_adult)
+          const memberCount = r.member_count ?? 0
+          const likes = r.like_count ?? 0
+
+          return (
             <Link
               key={r.id}
               href={`/works/${r.id}`}
-              style={{
-                textDecoration: 'none',
-                color: 'inherit',
-                border: '1px solid rgba(0,0,0,0.12)',
-                borderRadius: 18,
-                padding: 14,
-                background: 'rgba(255,255,255,0.85)',
-              }}
+              prefetch={false}
+              style={{ textDecoration: 'none', color: 'inherit' }}
             >
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                {r.category ? <Badge>{r.category}</Badge> : <Badge>カテゴリ未設定</Badge>}
-                <Badge>{r.is_adult ? '成人向け' : '一般向け'}</Badge>
-                <Badge>{r.status}</Badge>
-                {typeof r.like_count === 'number' && <Badge>♥ {r.like_count}</Badge>}
-              </div>
+              <div
+                style={{
+                  border: '1px solid rgba(0,0,0,0.10)',
+                  borderRadius: 18,
+                  padding: 14,
+                  background: 'rgba(255,255,255,0.9)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
+                }}
+              >
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={badgeStyle('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
+                  <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>
+                  {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
+                </div>
 
-              <div style={{ marginTop: 10, fontWeight: 950, fontSize: 16, lineHeight: 1.35 }}>
-                {r.title}
-              </div>
+                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>
 
-              <div style={{ marginTop: 10, opacity: 0.75, fontSize: 12 }}>
-                {r.expires_at ? `期限：${new Date(r.expires_at).toLocaleString()}` : '期限：—'}
+                <div
+                  style={{
+                    marginTop: 10,
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 8,
+                    fontSize: 13,
+                    opacity: 0.85,
+                  }}
+                >
+                  <div>👥 参加者：{memberCount}</div>
+                  <div>❤️ いいね：{likes}</div>
+                  <div>🕒 公開：{new Date(r.created_at).toLocaleDateString()}</div>
+                  <div>🔗 詳細へ</div>
+                </div>
               </div>
             </Link>
-          ))}
-        </div>
+          )
+        })}
+      </div>
+
+      {!loading && !error && filtered.length === 0 && (
+        <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>
       )}
     </div>
   )
