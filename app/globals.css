@@ -436,3 +436,51 @@ html {
 .metaText {
   color: var(--rc-muted);
 }
+/* ============================
+   FIX: RoomCard dark-mode readability (色だけ/レイアウト不変)
+   これを globals.css の一番下に置く
+   ============================ */
+
+   @media (prefers-color-scheme: dark) {
+    /* カード本体：暗め背景に固定 */
+    .roomCard {
+      background: #12161c !important;
+      border-color: rgba(255,255,255,0.12) !important;
+    }
+  
+    /* タイトル/メタ文字：白系に固定 */
+    .roomCardTitle {
+      color: rgba(242,245,247,0.96) !important;
+    }
+  
+    .metaText {
+      color: rgba(242,245,247,0.72) !important;
+    }
+  
+    /* バッジ：ダーク用に固定 */
+    .badge {
+      background: rgba(255,255,255,0.10) !important;
+      border-color: rgba(255,255,255,0.16) !important;
+      color: rgba(255,255,255,0.90) !important;
+    }
+  
+    /* ステータス別（open / forced_publish / closed） */
+    .badgeStatusOpen {
+      background: rgba(16,185,129,0.22) !important;
+      border-color: rgba(16,185,129,0.34) !important;
+      color: rgba(167,243,208,1) !important;
+    }
+  
+    .badgeStatusForced {
+      background: rgba(59,130,246,0.22) !important;
+      border-color: rgba(59,130,246,0.34) !important;
+      color: rgba(191,219,254,1) !important;
+    }
+  
+    .badgeStatusClosed {
+      background: rgba(156,163,175,0.18) !important;
+      border-color: rgba(156,163,175,0.28) !important;
+      color: rgba(229,231,235,1) !important;
+    }
+  }
+  
