@@ -261,3 +261,27 @@ a{ color:var(--link); text-decoration:none; }
 @media (prefers-color-scheme: dark){
   .cardLink:hover{ filter: brightness(1.06); }
 }
+:root{
+  --bg: #ffffff;
+  --fg: #111827;
+  --muted: rgba(17,24,39,.65);
+  --panel: #ffffff;
+  --btn: #111827;
+  --btnfg: #ffffff;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #0b1020;
+    --fg: #e5e7eb;
+    --muted: rgba(229,231,235,.65);
+    --panel: rgba(255,255,255,.06);
+    --btn: rgba(255,255,255,.14);
+    --btnfg: #e5e7eb;
+  }
+}
+
+body{
+  background: var(--bg);
+  color: var(--fg);
+}
