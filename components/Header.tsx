@@ -2,10 +2,11 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
+  const supabase = createClient()
 
   useEffect(() => {
     const init = async () => {
@@ -13,55 +14,34 @@ export default function Header() {
       setIsLoggedIn(!!data.session)
     }
     init()
-  }, [])
+  }, [supabase])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     location.href = '/'
   }
 
-  const navBtn =
-    'px-3 py-1.5 rounded-md text-sm font-semibold border border-gray-300 hover:bg-gray-100 transition'
-
   return (
-    <header className="border-b bg-white">
-      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
-
-        {/* ロゴ */}
-        <Link href="/" className="text-lg font-bold">
+    <header className="header">
+      <div className="headerInner">
+        <Link href="/" className="brand">
           みんなで作ろう（仮）
         </Link>
 
-        {/* ナビ */}
-        <nav className="flex items-center gap-2">
+        <nav className="nav">
+          <Link href="/rooms" className="navBtn">制作ルーム一覧</Link>
+          <Link href="/profile" className="navBtn">プロフィール</Link>
+          <Link href="/rankings" className="navBtn">ランキング</Link>
+          <Link href="/works" className="navBtn">完成作品</Link>
+          <Link href="/terms" className="navBtn">利用規約</Link>
 
-          <Link href="/rooms" className={navBtn}>
-            制作ルーム一覧
-          </Link>
-
-          <Link href="/profile" className={navBtn}>
-            プロフィール
-          </Link>
-
-          <Link href="/rankings" className={navBtn}>
-            ランキング
-          </Link>
-
-          <Link href="/works" className={navBtn}>
-            完成作品
-          </Link>
-
-          <Link href="/terms" className={navBtn}>
-            利用規約
-          </Link>
-
-          {/* ログイン状態で切替 */}
+          {/* ログイン状態で出し分け */}
           {isLoggedIn === null ? null : isLoggedIn ? (
-            <button onClick={handleLogout} className={navBtn}>
+            <button type="button" onClick={handleLogout} className="navBtn navBtnPrimary">
               ログアウト
             </button>
           ) : (
-            <Link href="/login" className={navBtn}>
+            <Link href="/login" className="navBtn navBtnPrimary">
               ログイン
             </Link>
           )}
