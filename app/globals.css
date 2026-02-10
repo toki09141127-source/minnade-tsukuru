@@ -576,3 +576,29 @@ textarea {
   border-color: rgba(107, 114, 128, 0.30) !important;
   color: rgba(55, 65, 81, 1) !important;
 }
+/* =========================================
+   FIX: ルーム作成ボタンの文字が見えない問題
+   ========================================= */
+
+/* ルーム作成ボタン（共通 primary ボタン） */
+.btnPrimary,
+button.btnPrimary,
+a.btnPrimary {
+  background: #111111 !important;
+  color: #ffffff !important;   /* ← ここが重要（白文字固定） */
+  border-color: #111111 !important;
+}
+
+/* ホバー時も白文字を維持 */
+.btnPrimary:hover,
+button.btnPrimary:hover,
+a.btnPrimary:hover {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* 「＋ルームを作成」など黒ボタン全般の保険 */
+button,
+a[role="button"] {
+  color: inherit;
+}
