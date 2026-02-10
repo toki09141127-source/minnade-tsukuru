@@ -1,255 +1,379 @@
-/* =========================
-   Base Theme (Light固定寄り)
-   ========================= */
+/* ============================
+   globals.css (FORCE LIGHT)
+   - Light/Dark どちらでも同じ見た目に固定
+   - ルーム一覧の「+ルームを作成」文字が消える問題を確実に修正
+   ============================ */
 
-   :root{
-    --bg:#f7f7f8;
-    --fg:#111111;
-    --muted:#555555;
-  
-    --card:#ffffff;
-    --border:rgba(0,0,0,0.12);
-  
-    --link:#111111;
-  
-    --btnBg:#111111;
-    --btnFg:#ffffff;
-  
-    --badgeBg:rgba(0,0,0,0.06);
-    --badgeBorder:rgba(0,0,0,0.12);
-  }
-  
-  /* ダークモードでも見た目を変えない（←今回の方針） */
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#f7f7f8;
-      --fg:#111111;
-      --muted:#555555;
-  
-      --card:#ffffff;
-      --border:rgba(0,0,0,0.12);
-  
-      --link:#111111;
-  
-      --btnBg:#111111;
-      --btnFg:#ffffff;
-  
-      --badgeBg:rgba(0,0,0,0.06);
-      --badgeBorder:rgba(0,0,0,0.12);
-    }
-  }
-  
-  /* =========================
-     Reset / Base
-     ========================= */
-  
-  *{ box-sizing:border-box; }
-  
-  html,body{
-    margin:0;
-    padding:0;
-    background:var(--bg);
-    color:var(--fg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;
-  }
-  
-  a{
-    color:var(--link);
-    text-decoration:none;
-  }
-  
-  /* =========================
-     Header
-     ========================= */
-  
-  .header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    background:var(--bg);
-    border-bottom:1px solid var(--border);
-  }
-  
-  .headerInner{
-    max-width:1100px;
-    margin:0 auto;
-    padding:12px 16px;
-  
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-  }
-  
-  .brand{
-    font-weight:800;
-  }
-  
-  .nav{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
-  }
-  
-  .navLink{
-    padding:8px 10px;
-    border-radius:10px;
-  }
-  
-  header a,
-  header nav a{
-    color:#111 !important;
-  }
-  
-  /* =========================
-     Layout
-     ========================= */
-  
-  .main{
-    max-width:1100px;
-    margin:0 auto;
-    padding:18px 16px 40px;
-  }
-  
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:12px;
-  }
-  
-  @media (max-width:900px){
-    .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
-  }
-  
-  @media (max-width:600px){
-    .grid{ grid-template-columns:1fr; }
-  }
-  
-  /* =========================
-     Card
-     ========================= */
-  
-  .roomCard{
-    border:1px solid var(--border);
-    background:var(--card);
-    border-radius:16px;
-    padding:14px;
-    transition:transform .12s ease;
-  }
-  
-  .roomCard:hover{
-    transform:translateY(-1px);
-  }
-  
-  .roomCardTitle{
-    font-size:16px;
-    font-weight:900;
-    margin:4px 0 10px;
-    color:#111 !important;
-  }
-  
-  .roomCardMeta{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:6px 12px;
-    font-size:13px;
-    color:var(--muted) !important;
-  }
-  
-  /* =========================
-     Badge
-     ========================= */
-  
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    height:26px;
-    padding:0 10px;
-    border-radius:999px;
-    font-size:12px;
-    font-weight:800;
-  
-    background:var(--badgeBg);
-    border:1px solid var(--badgeBorder);
-  }
-  
-  /* status colors */
-  .badgeStatusOpen{
-    background:rgba(16,185,129,.14);
-    border-color:rgba(16,185,129,.28);
-    color:#047857;
-  }
-  
-  .badgeStatusForced{
-    background:rgba(59,130,246,.14);
-    border-color:rgba(59,130,246,.28);
-    color:#1d4ed8;
-  }
-  
-  .badgeStatusClosed{
-    background:rgba(107,114,128,.16);
-    border-color:rgba(107,114,128,.30);
-    color:#374151;
-  }
-  
-  /* =========================
-     Button Primary
-     ★ 今回の最重要修正
-     ========================= */
-  
-  .btnPrimary{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-  
-    padding:10px 14px;
-    border-radius:12px;
-  
-    background:#111111;
-    border:1px solid #111111;
-  
-    color:#ffffff;
-    font-weight:700;
-    text-decoration:none;
-  }
-  
-  /* Linkとして描画されたときに文字色が消える問題を完全防止 */
-  a.btnPrimary,
-  a.btnPrimary:visited,
-  a.btnPrimary:hover,
-  a.btnPrimary:active{
-    color:#ffffff !important;
-    text-decoration:none;
-  }
-  
-  /* 内部要素も白固定 */
-  .btnPrimary *{
-    color:inherit !important;
-  }
-  
-  /* hover */
-  .btnPrimary:hover{
-    filter:brightness(.92);
-  }
-  
-  /* =========================
-     Form
-     ========================= */
-  
-  .input,
-  .select{
-    padding:10px 12px;
-    border-radius:12px;
-    border:1px solid var(--border);
-    background:#fff;
-    color:#111;
-  }
-  
-  /* =========================
-     Utility
-     ========================= */
-  
-  .muted{ color:var(--muted); }
-  
+/* ブラウザへ「ライトUI前提」を宣言（自動反転対策の本命） */
+:root{
+  color-scheme: light;
+}
+
+/* ===== Base tokens (light fixed) ===== */
+:root{
+  --bg:#ffffff;
+  --fg:#111111;
+  --muted:rgba(0,0,0,0.65);
+
+  --card:#ffffff;
+  --border:rgba(0,0,0,0.12);
+
+  --link:#111111;
+
+  --btnBg:#111111;
+  --btnFg:#ffffff;
+
+  --chipBg:rgba(0,0,0,0.06);
+  --chipBorder:rgba(0,0,0,0.12);
+  --chipFg:#111111;
+
+  --danger:#b00020;
+}
+
+/* ===== Reset ===== */
+*{ box-sizing:border-box; }
+html,body{ padding:0; margin:0; }
+body{
+  background:var(--bg);
+  color:var(--fg);
+}
+
+/* 青リンク化を防ぐ（ヘッダー含む全体） */
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+/* ===== Layout ===== */
+.header{
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+}
+
+.headerInner{
+  max-width:1100px;
+  margin:0 auto;
+  padding:12px 16px;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  font-weight:800;
+}
+
+.nav{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.navLink{
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid transparent;
+}
+.navLink:hover{
+  border-color:var(--border);
+}
+
+.main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:18px 16px 40px;
+}
+
+.container{ display:flex; flex-direction:column; gap:12px; }
+.stack{ display:flex; flex-direction:column; gap:12px; }
+.h1{ font-size:22px; margin:0; }
+
+/* ===== Common UI ===== */
+.toolbar{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.input,.select,textarea{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:var(--fg);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap:12px;
+}
+@media (max-width: 900px){
+  .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 600px){
+  .grid{ grid-template-columns: 1fr; }
+  .headerInner{ align-items:flex-start; }
+  .nav{ justify-content:flex-end; }
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:14px;
+}
+
+.linkCard:hover{
+  transform: translateY(-1px);
+  transition: 0.12s;
+}
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+.title{ font-size:16px; font-weight:700; }
+.muted{ color:var(--muted); font-size:13px; }
+
+/* ===== Badges ===== */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid var(--chipBorder);
+  background:var(--chipBg);
+  color:var(--chipFg);
+  font-size:12px;
+  font-weight:800;
+}
+
+.badge.ok{ border-color: rgba(0,0,0,0.15); }
+.badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
+
+/* ===== Readable content blocks ===== */
+.prose{ line-height: 1.85; }
+.lead{ font-size: 14px; font-weight: 800; margin: 0 0 8px; }
+.h3{ font-size: 14px; margin: 14px 0 6px; }
+.cardSub{ margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+.quote{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.03);
+}
+
+.readableBox{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.readableBox p,
+.readableBox li{
+  color: var(--fg);
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.readableBox .mutedLine{ color: var(--muted); }
+.readableBox h2{ margin: 18px 0 8px; font-size: 16px; }
+.readableBox ul{ margin: 8px 0 0 18px; }
+
+/* ===== Buttons ===== */
+.btnPrimary{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--btnBg);
+  background:var(--btnBg);
+  color:var(--btnFg);
+  text-decoration:none;
+  font-weight:800;
+}
+
+.btnGhost{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--fg);
+  text-decoration:none;
+  font-weight:800;
+}
+
+/* ✅ ここが今回の「制作ルーム一覧のボタン文字が見えない」本命対策
+   /rooms/create へのリンクは必ず黒背景＋白文字に固定 */
+a[href="/rooms/create"]{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid #111;
+  background:#111;
+  color:#fff !important;
+  font-weight:900;
+  text-decoration:none;
+}
+
+/* hover */
+a[href="/rooms/create"]:hover{
+  filter: brightness(0.95);
+}
+
+/* ===== Hero (トップの見た目を読みやすく保つ) ===== */
+.heroWrap{
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 18px;
+  overflow: hidden;
+}
+
+.heroTopRow{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.heroActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* ===== RoomCard theme (light fixed) ===== */
+:root{
+  --card-bg:#ffffff;
+  --card-border: rgba(0, 0, 0, 0.10);
+  --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  --text-main: rgba(0, 0, 0, 0.92);
+  --text-muted: rgba(0, 0, 0, 0.62);
+
+  --badge-bg: rgba(0, 0, 0, 0.06);
+  --badge-border: rgba(0, 0, 0, 0.10);
+  --badge-text: rgba(0, 0, 0, 0.80);
+
+  --status-open-bg: rgba(16, 185, 129, 0.14);
+  --status-open-border: rgba(16, 185, 129, 0.28);
+  --status-open-text: rgba(5, 120, 87, 1);
+
+  --status-forced-bg: rgba(59, 130, 246, 0.14);
+  --status-forced-border: rgba(59, 130, 246, 0.28);
+  --status-forced-text: rgba(29, 78, 216, 1);
+
+  --status-closed-bg: rgba(107, 114, 128, 0.16);
+  --status-closed-border: rgba(107, 114, 128, 0.30);
+  --status-closed-text: rgba(55, 65, 81, 1);
+}
+
+.roomCardLink{ display:block; }
+
+.roomCard{
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+  box-shadow: var(--card-shadow);
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.roomCard:hover{ transform: translateY(-1px); }
+
+.roomCardTop{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:6px;
+}
+
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  height:26px;
+  padding:0 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.badgeCategory{ font-weight:800; }
+
+.badgeStatus{ font-weight:900; }
+.badgeStatusOpen{
+  background: var(--status-open-bg);
+  border-color: var(--status-open-border);
+  color: var(--status-open-text);
+}
+.badgeStatusForced{
+  background: var(--status-forced-bg);
+  border-color: var(--status-forced-border);
+  color: var(--status-forced-text);
+}
+.badgeStatusClosed{
+  background: var(--status-closed-bg);
+  border-color: var(--status-closed-border);
+  color: var(--status-closed-text);
+}
+
+.roomCardTitle{
+  font-size:16px;
+  font-weight:900;
+  color: var(--text-main);
+  margin: 2px 0 10px;
+  line-height:1.35;
+}
+
+.roomCardMeta{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.metaItem{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:18px;
+}
+
+.metaIcon{ font-size:13px; opacity:0.95; }
+.metaText{
+  font-size:13px;
+  color: var(--text-muted);
+  font-weight:700;
+}
