@@ -5,7 +5,13 @@ import LogoutButton from './components/LogoutButton'
 
 export const metadata = {
   title: 'みんなで作ろう（仮）',
-  description: '創作ルームで一緒に作る',
+  description: 'みんなの創作でアイデアいっぱい！',
+  icons: {
+    icon: '/favicon-32x32.png',
+  },
+  openGraph: {
+    images: ['/ogp.png'],
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
