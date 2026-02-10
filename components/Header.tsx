@@ -1,40 +1,24 @@
+// components/Header.tsx
 'use client'
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { supabase } from '@/lib/supabase/client'
 
 export default function Header() {
-  const supabase = createClient()
-  const router = useRouter()
-
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
-  // セッション取得
   useEffect(() => {
-    const getSession = async () => {
+    const check = async () => {
       const { data } = await supabase.auth.getSession()
       setIsLoggedIn(!!data.session)
     }
+    check()
+  }, [])
 
-    getSession()
-
-    // ログイン状態変化監視
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase])
-
-  // ログアウト処理
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    router.push('/login')
-    router.refresh()
+    location.reload()
   }
 
   return (
@@ -51,20 +35,19 @@ export default function Header() {
           <Link href="/works">完成作品</Link>
           <Link href="/terms">利用規約</Link>
 
-          {/* ← ここが今回の核心 */}
           {isLoggedIn === null ? null : isLoggedIn ? (
             <button
               onClick={handleLogout}
               className="rounded border px-3 py-1 text-sm hover:bg-gray-100"
             >
-              ログイン/アウト
+              ログイン/ログアウト
             </button>
           ) : (
             <Link
               href="/login"
               className="rounded border px-3 py-1 text-sm hover:bg-gray-100"
             >
-              ログイン
+              ログイン/ログアウト
             </Link>
           )}
         </nav>
