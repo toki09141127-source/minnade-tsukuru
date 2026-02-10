@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: '小説', label: '小説' },
@@ -16,17 +16,15 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: 'その他', label: 'その他' },
 ]
 
-// ✅ 24h制限の原因になりがちな固定配列を廃止して、1〜150を選べるUIにする
 const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
 
 export default function RoomCreateClient() {
   const router = useRouter()
+  const supabase = createClient()
 
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('その他')
   const [isAdult, setIsAdult] = useState(false)
-
-  // ✅ 1〜150
   const [hours, setHours] = useState<number>(48)
 
   const [loading, setLoading] = useState(false)
@@ -44,12 +42,13 @@ export default function RoomCreateClient() {
     try {
       const { data: sessionData } = await supabase.auth.getSession()
       const token = sessionData.session?.access_token
+
       if (!token) {
         setError('ログインしてください')
+        setLoading(false)
         return
       }
 
-      // ✅ hours は必ず 1〜150 に丸める
       const h = Math.max(1, Math.min(150, Math.floor(Number(hours) || 1)))
 
       const res = await fetch('/api/rooms/create', {
@@ -63,18 +62,17 @@ export default function RoomCreateClient() {
           category,
           isAdult,
           hours: h,
-          // type を使ってる実装なら必要に応じて送る（いまは無くてもOK）
-          // type: 'novel',
         }),
       })
 
       const json = await res.json().catch(() => ({}))
+
       if (!res.ok) {
         setError(json?.error ?? `作成に失敗しました (status=${res.status})`)
+        setLoading(false)
         return
       }
 
-      // ✅ 作成したルームへ
       const roomId = json?.room?.id
       if (roomId) router.push(`/rooms/${roomId}`)
       else router.push('/rooms')
@@ -83,6 +81,11 @@ export default function RoomCreateClient() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleHoursChange = (v: number) => {
+    if (Number.isNaN(v)) return
+    setHours(Math.max(1, Math.min(150, v)))
   }
 
   return (
@@ -105,7 +108,6 @@ export default function RoomCreateClient() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          required
           maxLength={60}
           placeholder="例：少年漫画のネーム作る"
           style={{
@@ -154,14 +156,13 @@ export default function RoomCreateClient() {
 
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>制限時間（時間）</label>
 
-        {/* ✅ 直入力（1〜150） */}
         <input
           type="number"
           min={1}
           max={150}
           step={1}
           value={hours}
-          onChange={(e) => setHours(Number(e.target.value))}
+          onChange={(e) => handleHoursChange(Number(e.target.value))}
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -171,7 +172,6 @@ export default function RoomCreateClient() {
           }}
         />
 
-        {/* ✅ よく使う候補（ワンタップ） */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 14 }}>
           {PRESET_HOURS.map((h) => (
             <button
