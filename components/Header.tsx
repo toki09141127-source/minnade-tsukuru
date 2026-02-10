@@ -57,7 +57,7 @@ export default function Header() {
               onClick={handleLogout}
               className="rounded border px-3 py-1 text-sm hover:bg-gray-100"
             >
-              ログアウト
+              ログイン/アウト
             </button>
           ) : (
             <Link
