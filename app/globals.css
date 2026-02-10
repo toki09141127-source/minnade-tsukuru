@@ -1,148 +1,110 @@
-/* app/globals.css */
+/* =========================
+   Base Theme (Light固定寄り)
+   ========================= */
 
-/* ============================
-   Theme tokens (single source)
-   ============================ */
    :root{
-    /* base */
-    --bg:#ffffff;
+    --bg:#f7f7f8;
     --fg:#111111;
-    --muted:rgba(0,0,0,0.65);
+    --muted:#555555;
+  
     --card:#ffffff;
-    --border:#e6e6e6;
+    --border:rgba(0,0,0,0.12);
+  
     --link:#111111;
-    --danger:#b00020;
   
-    /* controls */
-    --inputBg: var(--card);
-    --inputBorder: rgba(0,0,0,0.18);
+    --btnBg:#111111;
+    --btnFg:#ffffff;
   
-    /* chips/badges */
-    --chipBg: rgba(0,0,0,0.06);
-    --chipBorder: rgba(0,0,0,0.12);
-    --chipFg: #111111;
-  
-    /* button */
-    --btnBg: #111111;
-    --btnFg: #ffffff;
-  
-    /* Room/Work Card (light) */
-    --rc-bg:#ffffff;
-    --rc-border:rgba(0,0,0,0.10);
-    --rc-shadow:0 6px 18px rgba(0,0,0,0.06);
-    --rc-text:#111111;
-    --rc-muted:rgba(0,0,0,0.62);
-  
-    --badge-bg:rgba(0,0,0,0.06);
-    --badge-border:rgba(0,0,0,0.10);
-    --badge-text:rgba(0,0,0,0.80);
-  
-    /* status badge */
-    --status-open-bg:rgba(16,185,129,0.14);
-    --status-open-border:rgba(16,185,129,0.28);
-    --status-open-text:rgb(5,120,87);
-  
-    --status-forced-bg:rgba(59,130,246,0.14);
-    --status-forced-border:rgba(59,130,246,0.28);
-    --status-forced-text:rgb(29,78,216);
-  
-    --status-closed-bg:rgba(107,114,128,0.16);
-    --status-closed-border:rgba(107,114,128,0.30);
-    --status-closed-text:rgb(55,65,81);
+    --badgeBg:rgba(0,0,0,0.06);
+    --badgeBorder:rgba(0,0,0,0.12);
   }
   
+  /* ダークモードでも見た目を変えない（←今回の方針） */
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0b0d10;
-      --fg:#f2f5f7;
-      --muted:rgba(242,245,247,0.72);
-      --card:#12161c;
-      --border:rgba(255,255,255,0.12);
-      --link:#f2f5f7;
-      --danger:#ff6b81;
+      --bg:#f7f7f8;
+      --fg:#111111;
+      --muted:#555555;
   
-      --inputBg: rgba(15,19,24,0.96);
-      --inputBorder: rgba(255,255,255,0.16);
+      --card:#ffffff;
+      --border:rgba(0,0,0,0.12);
   
-      --chipBg: rgba(255,255,255,0.10);
-      --chipBorder: rgba(255,255,255,0.14);
-      --chipFg: #f2f5f7;
+      --link:#111111;
   
-      /* ダーク時：ボタンは明るめにして背景に埋もれないように */
-      --btnBg: #f2f5f7;
-      --btnFg: #0b0d10;
+      --btnBg:#111111;
+      --btnFg:#ffffff;
   
-      /* Room/Work Card (dark) - 画像の「見にくい部分」対策 */
-      --rc-bg:rgba(255,255,255,0.06);
-      --rc-border:rgba(255,255,255,0.14);
-      --rc-shadow:0 10px 26px rgba(0,0,0,0.35);
-      --rc-text:rgba(255,255,255,0.92);
-      --rc-muted:rgba(255,255,255,0.72);
-  
-      --badge-bg:rgba(255,255,255,0.10);
-      --badge-border:rgba(255,255,255,0.16);
-      --badge-text:rgba(255,255,255,0.88);
-  
-      --status-open-bg:rgba(16,185,129,0.22);
-      --status-open-border:rgba(16,185,129,0.34);
-      --status-open-text:rgb(167,243,208);
-  
-      --status-forced-bg:rgba(59,130,246,0.22);
-      --status-forced-border:rgba(59,130,246,0.34);
-      --status-forced-text:rgb(191,219,254);
-  
-      --status-closed-bg:rgba(156,163,175,0.18);
-      --status-closed-border:rgba(156,163,175,0.28);
-      --status-closed-text:rgb(229,231,235);
+      --badgeBg:rgba(0,0,0,0.06);
+      --badgeBorder:rgba(0,0,0,0.12);
     }
   }
   
-  /* ============================
-     Base
-     ============================ */
-  *{ box-sizing:border-box; }
-  html,body{ padding:0; margin:0; background:var(--bg); color:var(--fg); }
-  a{ color:var(--link); text-decoration:none; }
-  a:hover{ opacity:0.8; }
+  /* =========================
+     Reset / Base
+     ========================= */
   
-  input, select, textarea{
-    background: var(--inputBg);
-    color: var(--fg);
-    border-color: var(--inputBorder);
+  *{ box-sizing:border-box; }
+  
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--bg);
+    color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans JP",sans-serif;
   }
   
-  hr{ border-color: var(--border); }
+  a{
+    color:var(--link);
+    text-decoration:none;
+  }
   
-  /* ============================
-     Layout helpers (既存UI維持)
-     ============================ */
+  /* =========================
+     Header
+     ========================= */
+  
   .header{
-    position:sticky; top:0; z-index:10;
+    position:sticky;
+    top:0;
+    z-index:10;
     background:var(--bg);
     border-bottom:1px solid var(--border);
   }
+  
   .headerInner{
     max-width:1100px;
     margin:0 auto;
     padding:12px 16px;
+  
     display:flex;
-    gap:12px;
     align-items:center;
     justify-content:space-between;
+    gap:12px;
   }
-  .brand{ font-weight:800; }
-  .nav{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-  .navLink{ padding:8px 10px; border-radius:10px; border:1px solid transparent; }
-  .navLink:hover{ border-color:var(--border); }
   
-  /* ✅ ヘッダーのリンクが青くなるのを防止（黒/白に戻す） */
+  .brand{
+    font-weight:800;
+  }
+  
+  .nav{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  
+  .navLink{
+    padding:8px 10px;
+    border-radius:10px;
+  }
+  
   header a,
   header nav a{
-    color: var(--fg);
-    text-decoration:none;
+    color:#111 !important;
   }
-  header a:hover,
-  header nav a:hover{ opacity:0.7; }
+  
+  /* =========================
+     Layout
+     ========================= */
   
   .main{
     max-width:1100px;
@@ -150,207 +112,54 @@
     padding:18px 16px 40px;
   }
   
-  .container{ display:flex; flex-direction:column; gap:12px; }
-  .h1{ font-size:22px; margin:0; }
-  .stack{ display:flex; flex-direction:column; gap:12px; }
-  
-  .toolbar{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:center;
-  }
-  
-  .input,.select{
-    padding:10px 12px;
-    border-radius:12px;
-    border:1px solid var(--border);
-    background:var(--card);
-    color:var(--fg);
-  }
-  
   .grid{
     display:grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns:repeat(3,minmax(0,1fr));
     gap:12px;
   }
-  @media (max-width: 900px){
-    .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-  }
-  @media (max-width: 600px){
-    .grid{ grid-template-columns: 1fr; }
-    .headerInner{ align-items:flex-start; }
-    .nav{ justify-content:flex-end; }
+  
+  @media (max-width:900px){
+    .grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   
-  .card{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:16px;
-    padding:14px;
-  }
-  .linkCard:hover{ transform: translateY(-1px); transition: 0.12s; }
-  
-  .row{ display:flex; justify-content:space-between; gap:10px; align-items:center; }
-  .title{ font-size:16px; font-weight:700; }
-  .muted{ color:var(--muted); font-size:13px; }
-  
-  .badge{
-    display:inline-flex;
-    align-items:center;
-    padding:4px 8px;
-    border-radius:999px;
-    border:1px solid var(--border);
-    font-size:12px;
-  }
-  .badge.ok{ border-color: rgba(0,0,0,0.15); }
-  .badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
-  
-  /* Long text (home description etc) */
-  .prose { line-height: 1.85; }
-  .lead { font-size: 14px; font-weight: 800; margin: 0 0 8px; }
-  .h3 { font-size: 14px; margin: 14px 0 6px; }
-  .cardSub { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
-  .quote { margin-top: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); background: color-mix(in srgb, var(--card) 75%, var(--bg)); }
-  
-  .readableBox{
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-  }
-  .readableBox p,
-  .readableBox li{
-    color: var(--fg);
-    line-height: 1.9;
-    font-size: 14px;
-  }
-  .readableBox .mutedLine{ color: var(--muted); }
-  .readableBox h2{
-    margin: 18px 0 8px;
-    font-size: 16px;
-  }
-  .readableBox ul{ margin: 8px 0 0 18px; }
-  
-  /* Home Hero decoration (dark-mode friendly, layout unchanged) */
-  .heroWrap{
-    position: relative;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    padding: 18px;
-    overflow: hidden;
-  }
-  .heroWrap::before{
-    content: "";
-    position: absolute;
-    inset: -60px -60px auto auto;
-    width: 220px;
-    height: 220px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0) 60%);
-    pointer-events: none;
-  }
-  .heroWrap::after{
-    content: "";
-    position: absolute;
-    inset: auto auto -90px -90px;
-    width: 260px;
-    height: 260px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%);
-    pointer-events: none;
-  }
-  .heroTopRow{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 1;
-  }
-  .heroTitle{ display: flex; align-items: center; gap: 10px; }
-  .heroBadge{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--fg);
-    font-size: 12px;
-  }
-  .heroActions{ display: flex; gap: 10px; flex-wrap: wrap; }
-  
-  .btnPrimary{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--btnBg);
-    background: var(--btnBg);
-    color: var(--btnFg);
-    text-decoration: none;
-    font-weight: 700;
-  }
-  .btnGhost{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--fg);
-    text-decoration: none;
-    font-weight: 700;
+  @media (max-width:600px){
+    .grid{ grid-template-columns:1fr; }
   }
   
-  /* generic card link */
-  .cardLink{
-    display:block;
-    padding: 14px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--fg);
-    text-decoration: none;
-  }
-  .cardLink:hover{ filter: brightness(0.98); }
-  @media (prefers-color-scheme: dark){
-    .cardLink:hover{ filter: brightness(1.06); }
-  }
-  
-  /* ============================
-     Components: RoomCard
-     ============================ */
-  .roomCardLink{ display:block; }
+  /* =========================
+     Card
+     ========================= */
   
   .roomCard{
-    border:1px solid var(--rc-border);
-    background:var(--rc-bg);
+    border:1px solid var(--border);
+    background:var(--card);
     border-radius:16px;
-    padding:14px 14px 12px;
-    box-shadow:var(--rc-shadow);
-    transition:transform 120ms ease, border-color 120ms ease, background 120ms ease;
-    color:var(--rc-text);
-  }
-  .roomCard:hover{ transform:translateY(-1px); }
-  
-  .roomCardTop{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    margin-bottom:6px;
+    padding:14px;
+    transition:transform .12s ease;
   }
   
-  .badges{ display:flex; flex-wrap:wrap; gap:8px; }
+  .roomCard:hover{
+    transform:translateY(-1px);
+  }
+  
+  .roomCardTitle{
+    font-size:16px;
+    font-weight:900;
+    margin:4px 0 10px;
+    color:#111 !important;
+  }
+  
+  .roomCardMeta{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:6px 12px;
+    font-size:13px;
+    color:var(--muted) !important;
+  }
+  
+  /* =========================
+     Badge
+     ========================= */
   
   .badge{
     display:inline-flex;
@@ -360,245 +169,87 @@
     border-radius:999px;
     font-size:12px;
     font-weight:800;
-    border:1px solid var(--badge-border);
-    background:var(--badge-bg);
-    color:var(--badge-text);
+  
+    background:var(--badgeBg);
+    border:1px solid var(--badgeBorder);
   }
   
-  .badgeCategory{ font-weight:800; }
-  .badgeStatus{ font-weight:900; }
-  
+  /* status colors */
   .badgeStatusOpen{
-    background:var(--status-open-bg);
-    border-color:var(--status-open-border);
-    color:var(--status-open-text);
+    background:rgba(16,185,129,.14);
+    border-color:rgba(16,185,129,.28);
+    color:#047857;
   }
+  
   .badgeStatusForced{
-    background:var(--status-forced-bg);
-    border-color:var(--status-forced-border);
-    color:var(--status-forced-text);
+    background:rgba(59,130,246,.14);
+    border-color:rgba(59,130,246,.28);
+    color:#1d4ed8;
   }
+  
   .badgeStatusClosed{
-    background:var(--status-closed-bg);
-    border-color:var(--status-closed-border);
-    color:var(--status-closed-text);
+    background:rgba(107,114,128,.16);
+    border-color:rgba(107,114,128,.30);
+    color:#374151;
   }
   
-  .roomCardTitle{
-    font-size:16px;
-    font-weight:900;
-    color:var(--rc-text);
-    margin:2px 0 10px;
-    line-height:1.35;
-  }
+  /* =========================
+     Button Primary
+     ★ 今回の最重要修正
+     ========================= */
   
-  .roomCardMeta{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:6px 12px;
-  }
-  
-  .metaItem{
-    display:flex;
+  .btnPrimary{
+    display:inline-flex;
     align-items:center;
-    gap:6px;
-    min-height:18px;
+    justify-content:center;
+    gap:8px;
+  
+    padding:10px 14px;
+    border-radius:12px;
+  
+    background:#111111;
+    border:1px solid #111111;
+  
+    color:#ffffff;
+    font-weight:700;
+    text-decoration:none;
   }
-  .metaIcon{ font-size:13px; opacity:0.95; }
-  .metaText{ font-size:13px; color:var(--rc-muted); font-weight:700; }
   
-  /* もしスマホの「強制ダーク化」でまだ崩れるなら保険（必要時だけON）
-  .roomCard, .roomCardTitle, .metaText { color: inherit !important; }
-  */
-  /* ============================
-   Force-darkmode cancel (重要)
-   ============================ */
-
-/* Chrome Android / 一部ブラウザの自動色反転を止める */
-html {
-  color-scheme: light dark;
-}
-
-/* カード内部はブラウザに色をいじらせない */
-.roomCard,
-.roomCard * {
-  forced-color-adjust: none;
-}
-/* テキスト色をテーマ変数に完全固定 */
-.roomCard {
-  color: var(--rc-text);
-}
-
-.roomCardTitle {
-  color: var(--rc-text);
-}
-
-.metaText {
-  color: var(--rc-muted);
-}
-/* ============================
-   FIX: RoomCard dark-mode readability (色だけ/レイアウト不変)
-   これを globals.css の一番下に置く
-   ============================ */
-
-   @media (prefers-color-scheme: dark) {
-    /* カード本体：暗め背景に固定 */
-    .roomCard {
-      background: #12161c !important;
-      border-color: rgba(255,255,255,0.12) !important;
-    }
-  
-    /* タイトル/メタ文字：白系に固定 */
-    .roomCardTitle {
-      color: rgba(242,245,247,0.96) !important;
-    }
-  
-    .metaText {
-      color: rgba(242,245,247,0.72) !important;
-    }
-  
-    /* バッジ：ダーク用に固定 */
-    .badge {
-      background: rgba(255,255,255,0.10) !important;
-      border-color: rgba(255,255,255,0.16) !important;
-      color: rgba(255,255,255,0.90) !important;
-    }
-  
-    /* ステータス別（open / forced_publish / closed） */
-    .badgeStatusOpen {
-      background: rgba(16,185,129,0.22) !important;
-      border-color: rgba(16,185,129,0.34) !important;
-      color: rgba(167,243,208,1) !important;
-    }
-  
-    .badgeStatusForced {
-      background: rgba(59,130,246,0.22) !important;
-      border-color: rgba(59,130,246,0.34) !important;
-      color: rgba(191,219,254,1) !important;
-    }
-  
-    .badgeStatusClosed {
-      background: rgba(156,163,175,0.18) !important;
-      border-color: rgba(156,163,175,0.28) !important;
-      color: rgba(229,231,235,1) !important;
-    }
+  /* Linkとして描画されたときに文字色が消える問題を完全防止 */
+  a.btnPrimary,
+  a.btnPrimary:visited,
+  a.btnPrimary:hover,
+  a.btnPrimary:active{
+    color:#ffffff !important;
+    text-decoration:none;
   }
-  /* =========================================================
-   FORCE LIGHT THEME (ignore system dark mode)
-   - ライト/ダークどちらでも同じ見た目に固定
-   - 既存の @media (prefers-color-scheme: dark) を全て無効化する最終上書き
-   - レイアウトは変えない（色だけ）
-   ========================================================= */
-
-/* ブラウザに「このページはライト配色で描画する」と宣言 */
-html {
-  color-scheme: light !important;
-}
-
-/* まず全体のベース色をライト固定 */
-:root {
-  --bg: #ffffff !important;
-  --fg: #111111 !important;
-  --muted: rgba(0, 0, 0, 0.65) !important;
-  --card: #ffffff !important;
-  --border: rgba(0, 0, 0, 0.12) !important;
-  --link: #111111 !important;
-  --danger: #b00020 !important;
-
-  /* もし別名の変数が混在していてもライトに寄せる保険 */
-  --bg-main: #f7f7f8 !important;
-  --bg-card: #ffffff !important;
-  --text-main: #111111 !important;
-  --text-sub: #555555 !important;
-  --border-main: rgba(0, 0, 0, 0.12) !important;
-  --btn-main: #111111 !important;
-  --btn-text: #ffffff !important;
-}
-
-/* ページ全体をライトに固定（ダークで暗くならない） */
-html,
-body {
-  background: #ffffff !important;
-  color: #111111 !important;
-}
-
-/* リンクが青くなるのを止める（ヘッダー含む） */
-a,
-header a,
-header nav a {
-  color: #111111 !important;
-  text-decoration: none;
-}
-
-/* 入力系もライト固定 */
-input,
-select,
-textarea {
-  background: #ffffff !important;
-  color: #111111 !important;
-  border-color: rgba(0, 0, 0, 0.18) !important;
-}
-
-/* ===== RoomCard（カード部分）をライト固定 ===== */
-.roomCard {
-  background: #ffffff !important;
-  border-color: rgba(0, 0, 0, 0.10) !important;
-}
-
-.roomCardTitle {
-  color: rgba(0, 0, 0, 0.92) !important;
-}
-
-.metaText {
-  color: rgba(0, 0, 0, 0.62) !important;
-}
-
-/* バッジ（カテゴリ/ステータス） */
-.badge {
-  background: rgba(0, 0, 0, 0.06) !important;
-  border-color: rgba(0, 0, 0, 0.10) !important;
-  color: rgba(0, 0, 0, 0.80) !important;
-}
-
-/* ステータス別（open/forced/closed） */
-.badgeStatusOpen {
-  background: rgba(16, 185, 129, 0.14) !important;
-  border-color: rgba(16, 185, 129, 0.28) !important;
-  color: rgba(5, 120, 87, 1) !important;
-}
-.badgeStatusForced {
-  background: rgba(59, 130, 246, 0.14) !important;
-  border-color: rgba(59, 130, 246, 0.28) !important;
-  color: rgba(29, 78, 216, 1) !important;
-}
-.badgeStatusClosed {
-  background: rgba(107, 114, 128, 0.16) !important;
-  border-color: rgba(107, 114, 128, 0.30) !important;
-  color: rgba(55, 65, 81, 1) !important;
-}
-/* =========================================
-   FIX: ルーム作成ボタンの文字が見えない問題
-   ========================================= */
-
-/* ルーム作成ボタン（共通 primary ボタン） */
-.btnPrimary,
-button.btnPrimary,
-a.btnPrimary {
-  background: #111111 !important;
-  color: #ffffff !important;   /* ← ここが重要（白文字固定） */
-  border-color: #111111 !important;
-}
-
-/* ホバー時も白文字を維持 */
-.btnPrimary:hover,
-button.btnPrimary:hover,
-a.btnPrimary:hover {
-  background: #000000 !important;
-  color: #ffffff !important;
-}
-
-/* 「＋ルームを作成」など黒ボタン全般の保険 */
-button,
-a[role="button"] {
-  color: inherit;
-}
+  
+  /* 内部要素も白固定 */
+  .btnPrimary *{
+    color:inherit !important;
+  }
+  
+  /* hover */
+  .btnPrimary:hover{
+    filter:brightness(.92);
+  }
+  
+  /* =========================
+     Form
+     ========================= */
+  
+  .input,
+  .select{
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#fff;
+    color:#111;
+  }
+  
+  /* =========================
+     Utility
+     ========================= */
+  
+  .muted{ color:var(--muted); }
+  
