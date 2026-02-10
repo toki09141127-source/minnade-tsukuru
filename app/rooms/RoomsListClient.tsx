@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '../../lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 type RoomRow = {
   id: string
@@ -33,10 +33,10 @@ const CATEGORY_OPTIONS = [
   'その他',
 ] as const
 
-type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
+type StatusFilter = 'all' | 'open' | 'forced_publish'
 
-function badgeStyle(bg: string, fg: string): CSSProperties {
+function badgeStyle(bg: string, fg: string): React.CSSProperties {
   return {
     display: 'inline-flex',
     alignItems: 'center',
@@ -52,25 +52,27 @@ function badgeStyle(bg: string, fg: string): CSSProperties {
 }
 
 export default function RoomsListClient() {
-  /** Supabaseは1回だけ生成（超重要） */
-  const supabase = useMemo(() => createClient(), [])
+  const supabase = createClient()
 
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   const [q, setQ] = useState('')
-  const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
+  const [category, setCategory] = useState<(typeof CATEGORY_OPTIONS)[number]>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
-  const [sort, setSort] = useState<SortKey>('new')
+  const [sort, setSort] = useState<SortKey>('like')
 
-  /** ルーム取得 */
+  // ✅ 追加：ステータスフィルタ
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true)
       setError('')
 
-      const base = supabase
+      // ベース
+      let base = supabase
         .from('rooms_with_counts_v2')
         .select(
           'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at'
@@ -78,32 +80,35 @@ export default function RoomsListClient() {
         .eq('is_hidden', false)
         .is('deleted_at', null)
 
-      const query =
+      // ✅ 追加：status で絞る
+      if (statusFilter === 'open') {
+        base = base.eq('status', 'open')
+      } else if (statusFilter === 'forced_publish') {
+        base = base.eq('status', 'forced_publish')
+      } else {
+        // all = open と forced_publish だけ表示（他の status があるならここで調整）
+        base = base.in('status', ['open', 'forced_publish'])
+      }
+
+      // 並び替え
+      const sorted =
         sort === 'like'
-          ? base
-              .order('like_count', { ascending: false, nullsFirst: false })
-              .order('created_at', { ascending: false })
+          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
-      const { data, error } = await query
+      const { data, error } = await sorted
 
-      if (error) {
-        setError(error.message)
-        setRooms([])
-      } else {
-        setRooms((data ?? []) as RoomRow[])
-      }
+      if (error) setError(error.message)
+      else setRooms((data ?? []) as RoomRow[])
 
       setLoading(false)
     }
 
     fetchRooms()
-  }, [supabase, sort])
+  }, [sort, statusFilter, supabase])
 
-  /** フィルタ */
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
-
     return rooms.filter((r) => {
       if (adultOnly && !r.is_adult) return false
 
@@ -123,7 +128,7 @@ export default function RoomsListClient() {
 
   return (
     <div style={{ marginTop: 14 }}>
-      {/* ===== 検索コントロール ===== */}
+      {/* Controls */}
       <div
         style={{
           display: 'grid',
@@ -147,10 +152,11 @@ export default function RoomsListClient() {
           }}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        {/* ✅ 3列にして「ステータス」を追加 */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as CategoryOption)}
+            onChange={(e) => setCategory(e.target.value as any)}
             style={{
               width: '100%',
               padding: '10px 12px',
@@ -177,8 +183,25 @@ export default function RoomsListClient() {
               background: '#fff',
             }}
           >
-            <option value="new">新着順</option>
             <option value="like">いいね順</option>
+            <option value="new">新着順</option>
+          </select>
+
+          {/* ✅ 追加：ステータス */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid rgba(0,0,0,0.18)',
+              background: '#fff',
+            }}
+          >
+            <option value="all">公開中＋公開済み</option>
+            <option value="open">open（公開中）</option>
+            <option value="forced_publish">forced_publish（公開済み）</option>
           </select>
         </div>
 
@@ -189,7 +212,6 @@ export default function RoomsListClient() {
         </label>
       </div>
 
-      {/* ===== 件数 ===== */}
       <div style={{ marginTop: 12, fontSize: 13, opacity: 0.75 }}>
         表示：<b>{filtered.length}</b> / {rooms.length}
       </div>
@@ -197,7 +219,7 @@ export default function RoomsListClient() {
       {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
       {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
 
-      {/* ===== カード一覧 ===== */}
+      {/* Cards */}
       <div
         style={{
           marginTop: 12,
@@ -212,20 +234,13 @@ export default function RoomsListClient() {
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
 
-          const statusLabel =
+          const statusBadge =
             r.status === 'open'
-              ? '募集中'
-              : r.status === 'forced_publish'
-              ? '公開済み'
-              : '終了'
+              ? { bg: 'rgba(16,185,129,0.14)', fg: '#065f46', label: 'open' }
+              : { bg: 'rgba(59,130,246,0.14)', fg: '#1e40af', label: 'forced_publish' }
 
           return (
-            <Link
-              key={r.id}
-              href={`/rooms/${r.id}`}
-              prefetch={false}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+            <Link key={r.id} href={`/rooms/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
                   border: '1px solid rgba(0,0,0,0.10)',
@@ -236,14 +251,12 @@ export default function RoomsListClient() {
                 }}
               >
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={badgeStyle('rgba(59,130,246,0.14)', '#1e40af')}>{statusLabel}</span>
+                  <span style={badgeStyle(statusBadge.bg, statusBadge.fg)}>{statusBadge.label}</span>
                   <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>
                   {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
                 </div>
 
-                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>
-                  {r.title}
-                </div>
+                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>
 
                 <div
                   style={{
@@ -266,9 +279,7 @@ export default function RoomsListClient() {
         })}
       </div>
 
-      {!loading && !error && filtered.length === 0 && (
-        <p style={{ marginTop: 14, opacity: 0.75 }}>該当するルームがありません。</p>
-      )}
+      {!loading && !error && filtered.length === 0 && <p style={{ marginTop: 14, opacity: 0.75 }}>該当するルームがありません。</p>}
     </div>
   )
 }
