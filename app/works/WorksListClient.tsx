@@ -1,8 +1,8 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/client'
 
 type RoomRow = {
   id: string
@@ -33,9 +33,10 @@ const CATEGORY_OPTIONS = [
   'その他',
 ] as const
 
+type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
 
-function badgeStyle(bg: string, fg: string): React.CSSProperties {
+function badgeStyle(bg: string, fg: string): CSSProperties {
   return {
     display: 'inline-flex',
     alignItems: 'center',
@@ -51,12 +52,14 @@ function badgeStyle(bg: string, fg: string): React.CSSProperties {
 }
 
 export default function WorksListClient() {
+  const supabase = useMemo(() => createClient(), [])
+
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   const [q, setQ] = useState('')
-  const [category, setCategory] = useState<(typeof CATEGORY_OPTIONS)[number]>('全カテゴリー')
+  const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('like')
 
@@ -67,29 +70,38 @@ export default function WorksListClient() {
 
       const base = supabase
         .from('rooms_with_counts_v2')
-        .select('id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at')
+        .select(
+          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at'
+        )
         .eq('status', 'forced_publish')
         .eq('is_hidden', false)
         .is('deleted_at', null)
 
-      const sorted =
+      const query =
         sort === 'like'
-          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+          ? base
+              .order('like_count', { ascending: false, nullsFirst: false })
+              .order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
-      const { data, error } = await sorted
+      const { data, error } = await query
 
-      if (error) setError(error.message)
-      else setRooms((data ?? []) as RoomRow[])
+      if (error) {
+        setError(error.message)
+        setRooms([])
+      } else {
+        setRooms((data ?? []) as RoomRow[])
+      }
 
       setLoading(false)
     }
 
     fetchWorks()
-  }, [sort])
+  }, [supabase, sort])
 
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
+
     return rooms.filter((r) => {
       if (adultOnly && !r.is_adult) return false
 
@@ -136,7 +148,7 @@ export default function WorksListClient() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as any)}
+            onChange={(e) => setCategory(e.target.value as CategoryOption)}
             style={{
               width: '100%',
               padding: '10px 12px',
@@ -219,7 +231,9 @@ export default function WorksListClient() {
                   {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
                 </div>
 
-                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>
+                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>
+                  {r.title}
+                </div>
 
                 <div
                   style={{
