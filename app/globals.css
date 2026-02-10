@@ -483,4 +483,96 @@ html {
       color: rgba(229,231,235,1) !important;
     }
   }
-  
+  /* =========================================================
+   FORCE LIGHT THEME (ignore system dark mode)
+   - ライト/ダークどちらでも同じ見た目に固定
+   - 既存の @media (prefers-color-scheme: dark) を全て無効化する最終上書き
+   - レイアウトは変えない（色だけ）
+   ========================================================= */
+
+/* ブラウザに「このページはライト配色で描画する」と宣言 */
+html {
+  color-scheme: light !important;
+}
+
+/* まず全体のベース色をライト固定 */
+:root {
+  --bg: #ffffff !important;
+  --fg: #111111 !important;
+  --muted: rgba(0, 0, 0, 0.65) !important;
+  --card: #ffffff !important;
+  --border: rgba(0, 0, 0, 0.12) !important;
+  --link: #111111 !important;
+  --danger: #b00020 !important;
+
+  /* もし別名の変数が混在していてもライトに寄せる保険 */
+  --bg-main: #f7f7f8 !important;
+  --bg-card: #ffffff !important;
+  --text-main: #111111 !important;
+  --text-sub: #555555 !important;
+  --border-main: rgba(0, 0, 0, 0.12) !important;
+  --btn-main: #111111 !important;
+  --btn-text: #ffffff !important;
+}
+
+/* ページ全体をライトに固定（ダークで暗くならない） */
+html,
+body {
+  background: #ffffff !important;
+  color: #111111 !important;
+}
+
+/* リンクが青くなるのを止める（ヘッダー含む） */
+a,
+header a,
+header nav a {
+  color: #111111 !important;
+  text-decoration: none;
+}
+
+/* 入力系もライト固定 */
+input,
+select,
+textarea {
+  background: #ffffff !important;
+  color: #111111 !important;
+  border-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* ===== RoomCard（カード部分）をライト固定 ===== */
+.roomCard {
+  background: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+}
+
+.roomCardTitle {
+  color: rgba(0, 0, 0, 0.92) !important;
+}
+
+.metaText {
+  color: rgba(0, 0, 0, 0.62) !important;
+}
+
+/* バッジ（カテゴリ/ステータス） */
+.badge {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+  color: rgba(0, 0, 0, 0.80) !important;
+}
+
+/* ステータス別（open/forced/closed） */
+.badgeStatusOpen {
+  background: rgba(16, 185, 129, 0.14) !important;
+  border-color: rgba(16, 185, 129, 0.28) !important;
+  color: rgba(5, 120, 87, 1) !important;
+}
+.badgeStatusForced {
+  background: rgba(59, 130, 246, 0.14) !important;
+  border-color: rgba(59, 130, 246, 0.28) !important;
+  color: rgba(29, 78, 216, 1) !important;
+}
+.badgeStatusClosed {
+  background: rgba(107, 114, 128, 0.16) !important;
+  border-color: rgba(107, 114, 128, 0.30) !important;
+  color: rgba(55, 65, 81, 1) !important;
+}
