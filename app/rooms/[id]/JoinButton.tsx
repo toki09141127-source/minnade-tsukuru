@@ -1,7 +1,7 @@
 // app/rooms/[id]/JoinButton.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 
 export default function JoinButton({
@@ -13,10 +13,36 @@ export default function JoinButton({
   roomStatus: string
   onJoined?: () => void
 }) {
+  const [joined, setJoined] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // ✅ 初期化：参加済みならボタンを「参加済み」にする
+  useEffect(() => {
+    const init = async () => {
+      setError('')
+      const { data: userData } = await supabase.auth.getUser()
+      const uid = userData.user?.id
+      if (!uid) return
+
+      const { data, error } = await supabase
+        .from('room_members')
+        .select('room_id')
+        .eq('room_id', roomId)
+        .eq('user_id', uid)
+        .is('left_at', null) // left_at がある前提（復帰済みなら null）
+        .maybeSingle()
+
+      if (!error) setJoined(!!data)
+    }
+
+    init()
+  }, [roomId])
+
   const join = async () => {
+    // 参加済みなら何もしない
+    if (joined) return
+
     if (roomStatus !== 'open') return
     setLoading(true)
     setError('')
@@ -39,10 +65,14 @@ export default function JoinButton({
       })
 
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) {
+      if (!res.ok || json?.ok === false) {
         setError(json?.error ?? '参加に失敗しました')
         return
       }
+
+      // ✅ 参加済みに切り替え
+      // APIが { joined: true } を返してても、返してなくても true にしてOK
+      setJoined(json?.joined === false ? false : true)
 
       onJoined?.()
     } catch (e: any) {
@@ -52,23 +82,25 @@ export default function JoinButton({
     }
   }
 
+  const disabled = loading || roomStatus !== 'open' || joined
+
   return (
     <div>
       <button
         onClick={join}
-        disabled={loading || roomStatus !== 'open'}
+        disabled={disabled}
         style={{
           padding: '10px 16px',
           borderRadius: 10,
           border: '1px solid #111',
-          background: '#111',
-          color: '#fff',
-          cursor: loading || roomStatus !== 'open' ? 'not-allowed' : 'pointer',
-          opacity: loading || roomStatus !== 'open' ? 0.6 : 1,
+          background: joined ? '#fff' : '#111',
+          color: joined ? '#111' : '#fff',
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          opacity: disabled ? 0.7 : 1,
           fontWeight: 800,
         }}
       >
-        {loading ? '参加中…' : '参加する'}
+        {loading ? '参加中…' : joined ? '参加済み' : '参加する'}
       </button>
 
       {error && <p style={{ color: '#b00020', marginTop: 8 }}>{error}</p>}
