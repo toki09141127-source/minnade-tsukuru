@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/client'
+import { createClient } from '../../../lib/supabase/client'
 
 const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: '小説', label: '小説' },
@@ -40,12 +40,15 @@ export default function RoomCreateClient() {
     setError('')
 
     try {
-      const { data: sessionData } = await supabase.auth.getSession()
-      const token = sessionData.session?.access_token
+      const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
+      if (sessionErr) {
+        setError(sessionErr.message)
+        return
+      }
 
+      const token = sessionData.session?.access_token
       if (!token) {
         setError('ログインしてください')
-        setLoading(false)
         return
       }
 
@@ -66,10 +69,8 @@ export default function RoomCreateClient() {
       })
 
       const json = await res.json().catch(() => ({}))
-
       if (!res.ok) {
         setError(json?.error ?? `作成に失敗しました (status=${res.status})`)
-        setLoading(false)
         return
       }
 
@@ -83,16 +84,13 @@ export default function RoomCreateClient() {
     }
   }
 
-  const handleHoursChange = (v: number) => {
-    if (Number.isNaN(v)) return
-    setHours(Math.max(1, Math.min(150, v)))
-  }
-
   return (
     <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, margin: 0 }}>ルーム作成</h1>
-        <Link href="/rooms" style={{ textDecoration: 'none' }}>← ルーム一覧へ</Link>
+        <Link href="/rooms" style={{ textDecoration: 'none' }}>
+          ← ルーム一覧へ
+        </Link>
       </div>
 
       <div
@@ -108,6 +106,7 @@ export default function RoomCreateClient() {
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          required
           maxLength={60}
           placeholder="例：少年漫画のネーム作る"
           style={{
@@ -129,6 +128,7 @@ export default function RoomCreateClient() {
             borderRadius: 12,
             border: '1px solid rgba(0,0,0,0.2)',
             marginBottom: 14,
+            background: '#fff',
           }}
         >
           {CATEGORY_OPTIONS.map((c) => (
@@ -148,6 +148,7 @@ export default function RoomCreateClient() {
             borderRadius: 12,
             border: '1px solid rgba(0,0,0,0.2)',
             marginBottom: 14,
+            background: '#fff',
           }}
         >
           <option value="false">一般向け</option>
@@ -162,7 +163,7 @@ export default function RoomCreateClient() {
           max={150}
           step={1}
           value={hours}
-          onChange={(e) => handleHoursChange(Number(e.target.value))}
+          onChange={(e) => setHours(Number(e.target.value))}
           style={{
             width: '100%',
             padding: '10px 12px',
@@ -193,9 +194,7 @@ export default function RoomCreateClient() {
           ))}
         </div>
 
-        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>
-          1〜150時間まで設定できます（例：48 = 2日）
-        </div>
+        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>1〜150時間まで設定できます（例：48 = 2日）</div>
 
         <button
           type="button"
