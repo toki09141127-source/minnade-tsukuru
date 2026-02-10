@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '../../lib/supabase/client'
+import DeleteAccountButton from './DeleteAccountButton'
 
 export default function ProfilePage() {
   const [email, setEmail] = useState<string | null>(null)
@@ -59,7 +60,7 @@ export default function ProfilePage() {
         return
       }
 
-      // ① ユーザー名更新（サーバー側で profiles / posts / room_members も更新）
+      // ① ユーザー名更新
       const res = await fetch('/profile/set-username', {
         method: 'POST',
         headers: {
@@ -172,6 +173,9 @@ export default function ProfilePage() {
           >
             {loading ? '保存中…' : '保存'}
           </button>
+
+          {/* ✅ 退会ボタンはログイン中だけ表示 */}
+          <DeleteAccountButton />
         </>
       )}
     </div>
