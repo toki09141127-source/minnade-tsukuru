@@ -1,4 +1,3 @@
-// components/Header.tsx
 'use client'
 
 import Link from 'next/link'
@@ -9,45 +8,61 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
   useEffect(() => {
-    const check = async () => {
+    const init = async () => {
       const { data } = await supabase.auth.getSession()
       setIsLoggedIn(!!data.session)
     }
-    check()
+    init()
   }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
-    location.reload()
+    location.href = '/'
   }
+
+  const navBtn =
+    'px-3 py-1.5 rounded-md text-sm font-semibold border border-gray-300 hover:bg-gray-100 transition'
 
   return (
     <header className="border-b bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="font-bold text-lg">
+      <div className="max-w-5xl mx-auto flex items-center justify-between px-4 py-3">
+
+        {/* ロゴ */}
+        <Link href="/" className="text-lg font-bold">
           みんなで作ろう（仮）
         </Link>
 
-        <nav className="flex items-center gap-4">
-          <Link href="/rooms">制作ルーム一覧</Link>
-          <Link href="/profile">プロフィール</Link>
-          <Link href="/ranking">ランキング</Link>
-          <Link href="/works">完成作品</Link>
-          <Link href="/terms">利用規約</Link>
+        {/* ナビ */}
+        <nav className="flex items-center gap-2">
 
+          <Link href="/rooms" className={navBtn}>
+            制作ルーム一覧
+          </Link>
+
+          <Link href="/profile" className={navBtn}>
+            プロフィール
+          </Link>
+
+          <Link href="/rankings" className={navBtn}>
+            ランキング
+          </Link>
+
+          <Link href="/works" className={navBtn}>
+            完成作品
+          </Link>
+
+          <Link href="/terms" className={navBtn}>
+            利用規約
+          </Link>
+
+          {/* ログイン状態で切替 */}
           {isLoggedIn === null ? null : isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="rounded border px-3 py-1 text-sm hover:bg-gray-100"
-            >
-              ログイン/ログアウト
+            <button onClick={handleLogout} className={navBtn}>
+              ログアウト
             </button>
           ) : (
-            <Link
-              href="/login"
-              className="rounded border px-3 py-1 text-sm hover:bg-gray-100"
-            >
-              ログイン/ログアウト
+            <Link href="/login" className={navBtn}>
+              ログイン
             </Link>
           )}
         </nav>
