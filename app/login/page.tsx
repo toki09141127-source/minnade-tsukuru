@@ -36,9 +36,8 @@ export default function LoginPage() {
       return
     }
 
-    // ✅ signUp成功時：既存messageとは別に専用UIを表示
     setSignupSuccess(true)
-    setMessage('') // 既存message領域は空でもOK（成功UIは別ボックスで表示）
+    setMessage('')
   }
 
   const resendConfirmation = async () => {
@@ -54,7 +53,6 @@ export default function LoginPage() {
     try {
       const authAny: any = supabase.auth
 
-      // ✅ supabase-js v2 系：auth.resend({ type: 'signup', email })
       if (typeof authAny?.resend === 'function') {
         const { error } = await authAny.resend({ type: 'signup', email: e })
         if (error) {
@@ -65,7 +63,6 @@ export default function LoginPage() {
         return
       }
 
-      // ✅ supabase-js v1 系：auth.api.resendConfirmationEmail(email)
       if (typeof authAny?.api?.resendConfirmationEmail === 'function') {
         const { error } = await authAny.api.resendConfirmationEmail(e)
         if (error) {
@@ -76,7 +73,6 @@ export default function LoginPage() {
         return
       }
 
-      // ✅ どちらも無い場合：SDK仕様の可能性
       setMessage('確認メールの再送に対応していないSDKです。supabase-jsの更新を確認してください。')
     } finally {
       setResending(false)
@@ -99,6 +95,10 @@ export default function LoginPage() {
     message.includes('✅') ||
     message.includes('再送しました') ||
     message.includes('送信しました')
+
+  // ✅ ビルド識別子（まずは手動で確実に判別できるタグを入れる）
+  const BUILD_TAG = '20260212-login-ui-v1'
+  const VERCEL_SHA = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
 
   return (
     <div style={{ padding: 24 }}>
@@ -146,7 +146,6 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => {
             setEmail(e.target.value)
-            // 入力が変わったら「成功状態」を解除（最小）
             setSignupSuccess(false)
           }}
           style={{ border: '1px solid #ccc', padding: 8 }}
@@ -168,7 +167,6 @@ export default function LoginPage() {
         <button onClick={signIn}>ログイン</button>
       </div>
 
-      {/* ✅ 新規登録成功時の専用メッセージUI（signupSuccess のときだけ表示） */}
       {signupSuccess && (
         <div
           style={{
@@ -201,7 +199,6 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* ✅ 既存message表示（成功/失敗の色ルールを踏襲して少し拡張） */}
       {message && (
         <p
           style={{
@@ -217,6 +214,12 @@ export default function LoginPage() {
           {message}
         </p>
       )}
+
+      {/* ✅ 追加：ビルド識別子（UIを崩さない極小表示） */}
+      <div style={{ marginTop: 16, fontSize: 11, color: '#999' }}>
+        build: {BUILD_TAG}
+        {VERCEL_SHA ? ` / sha: ${VERCEL_SHA}` : ''}
+      </div>
     </div>
   )
 }
