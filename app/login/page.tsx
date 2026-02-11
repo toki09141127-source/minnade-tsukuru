@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
 
@@ -9,15 +9,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
-
-  // すでにログイン済みなら / に飛ばす
-  useEffect(() => {
-    const check = async () => {
-      const { data } = await supabase.auth.getSession()
-      if (data.session) router.replace('/')
-    }
-    check()
-  }, [router])
 
   const signUp = async () => {
     setMessage('')
