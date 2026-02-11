@@ -4,273 +4,32 @@
    - ルーム一覧の「+ルームを作成」文字が消える問題を確実に修正
    ============================ */
 
-/* ブラウザへ「ライトUI前提」を宣言（自動反転対策の本命） */
-:root{
+/* ===== Base / Tokens (light fixed) ===== */
+:root {
+  /* ブラウザへ「ライトUI前提」を宣言（自動反転対策の本命） */
   color-scheme: light;
-}
 
-/* ===== Base tokens (light fixed) ===== */
-:root{
-  --bg:#ffffff;
-  --fg:#111111;
-  --muted:rgba(0,0,0,0.65);
+  --bg: #ffffff;
+  --fg: #111111;
+  --muted: rgba(0, 0, 0, 0.65);
+  --card: #ffffff;
+  --border: rgba(0, 0, 0, 0.12);
+  --link: #111111;
 
-  --card:#ffffff;
-  --border:rgba(0,0,0,0.12);
+  --btnBg: #111111;
+  --btnFg: #ffffff;
 
-  --link:#111111;
+  --chipBg: rgba(0, 0, 0, 0.06);
+  --chipBorder: rgba(0, 0, 0, 0.12);
+  --chipFg: #111111;
 
-  --btnBg:#111111;
-  --btnFg:#ffffff;
+  --danger: #b00020;
 
-  --chipBg:rgba(0,0,0,0.06);
-  --chipBorder:rgba(0,0,0,0.12);
-  --chipFg:#111111;
-
-  --danger:#b00020;
-}
-
-/* ===== Reset ===== */
-*{ box-sizing:border-box; }
-html,body{ padding:0; margin:0; }
-body{
-  background:var(--bg);
-  color:var(--fg);
-}
-
-/* 青リンク化を防ぐ（ヘッダー含む全体） */
-a{
-  color:inherit;
-  text-decoration:none;
-}
-
-/* ===== Layout ===== */
-.header{
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
-}
-
-.headerInner{
-  max-width:1100px;
-  margin:0 auto;
-  padding:12px 16px;
-  display:flex;
-  gap:12px;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.brand{
-  font-weight:800;
-}
-
-.nav{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.navLink{
-  padding:8px 10px;
-  border-radius:10px;
-  border:1px solid transparent;
-}
-.navLink:hover{
-  border-color:var(--border);
-}
-
-.main{
-  max-width:1100px;
-  margin:0 auto;
-  padding:18px 16px 40px;
-}
-
-.container{ display:flex; flex-direction:column; gap:12px; }
-.stack{ display:flex; flex-direction:column; gap:12px; }
-.h1{ font-size:22px; margin:0; }
-
-/* ===== Common UI ===== */
-.toolbar{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.input,.select,textarea{
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--card);
-  color:var(--fg);
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap:12px;
-}
-@media (max-width: 900px){
-  .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-}
-@media (max-width: 600px){
-  .grid{ grid-template-columns: 1fr; }
-  .headerInner{ align-items:flex-start; }
-  .nav{ justify-content:flex-end; }
-}
-
-.card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:14px;
-}
-
-.linkCard:hover{
-  transform: translateY(-1px);
-  transition: 0.12s;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  align-items:center;
-}
-.title{ font-size:16px; font-weight:700; }
-.muted{ color:var(--muted); font-size:13px; }
-
-/* ===== Badges ===== */
-.badge{
-  display:inline-flex;
-  align-items:center;
-  height:26px;
-  padding:0 10px;
-  border-radius:999px;
-  border:1px solid var(--chipBorder);
-  background:var(--chipBg);
-  color:var(--chipFg);
-  font-size:12px;
-  font-weight:800;
-}
-
-.badge.ok{ border-color: rgba(0,0,0,0.15); }
-.badge.danger{ border-color: rgba(176,0,32,0.4); color: var(--danger); }
-
-/* ===== Readable content blocks ===== */
-.prose{ line-height: 1.85; }
-.lead{ font-size: 14px; font-weight: 800; margin: 0 0 8px; }
-.h3{ font-size: 14px; margin: 14px 0 6px; }
-.cardSub{ margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
-.quote{
-  margin-top: 10px;
-  padding: 10px 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.03);
-}
-
-.readableBox{
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-}
-
-.readableBox p,
-.readableBox li{
-  color: var(--fg);
-  line-height: 1.9;
-  font-size: 14px;
-}
-
-.readableBox .mutedLine{ color: var(--muted); }
-.readableBox h2{ margin: 18px 0 8px; font-size: 16px; }
-.readableBox ul{ margin: 8px 0 0 18px; }
-
-/* ===== Buttons ===== */
-.btnPrimary{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid var(--btnBg);
-  background:var(--btnBg);
-  color:var(--btnFg);
-  text-decoration:none;
-  font-weight:800;
-}
-
-.btnGhost{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:transparent;
-  color:var(--fg);
-  text-decoration:none;
-  font-weight:800;
-}
-
-/* ✅ ここが今回の「制作ルーム一覧のボタン文字が見えない」本命対策
-   /rooms/create へのリンクは必ず黒背景＋白文字に固定 */
-a[href="/rooms/create"]{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid #111;
-  background:#111;
-  color:#fff !important;
-  font-weight:900;
-  text-decoration:none;
-}
-
-/* hover */
-a[href="/rooms/create"]:hover{
-  filter: brightness(0.95);
-}
-
-/* ===== Hero (トップの見た目を読みやすく保つ) ===== */
-.heroWrap{
-  position: relative;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  padding: 18px;
-  overflow: hidden;
-}
-
-.heroTopRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.heroActions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-/* ===== RoomCard theme (light fixed) ===== */
-:root{
-  --card-bg:#ffffff;
+  /* ===== RoomCard theme (light fixed) ===== */
+  --card-bg: #ffffff;
   --card-border: rgba(0, 0, 0, 0.10);
   --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+
   --text-main: rgba(0, 0, 0, 0.92);
   --text-muted: rgba(0, 0, 0, 0.62);
 
@@ -291,253 +50,120 @@ a[href="/rooms/create"]:hover{
   --status-closed-text: rgba(55, 65, 81, 1);
 }
 
-.roomCardLink{ display:block; }
+/* ===== Reset ===== */
+* { box-sizing: border-box; }
+html, body { padding: 0; margin: 0; }
+body { background: var(--bg); color: var(--fg); }
 
-.roomCard{
-  border: 1px solid var(--card-border);
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 14px 14px 12px;
-  box-shadow: var(--card-shadow);
-  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
-}
+/* 青リンク化を防ぐ（ヘッダー含む全体） */
+a { color: inherit; text-decoration: none; }
 
-.roomCard:hover{ transform: translateY(-1px); }
-
-.roomCardTop{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:6px;
-}
-
-.badges{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-.badge{
-  display:inline-flex;
-  align-items:center;
-  height:26px;
-  padding:0 10px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:800;
-  border: 1px solid var(--badge-border);
-  background: var(--badge-bg);
-  color: var(--badge-text);
-}
-
-.badgeCategory{ font-weight:800; }
-
-.badgeStatus{ font-weight:900; }
-.badgeStatusOpen{
-  background: var(--status-open-bg);
-  border-color: var(--status-open-border);
-  color: var(--status-open-text);
-}
-.badgeStatusForced{
-  background: var(--status-forced-bg);
-  border-color: var(--status-forced-border);
-  color: var(--status-forced-text);
-}
-.badgeStatusClosed{
-  background: var(--status-closed-bg);
-  border-color: var(--status-closed-border);
-  color: var(--status-closed-text);
-}
-
-.roomCardTitle{
-  font-size:16px;
-  font-weight:900;
-  color: var(--text-main);
-  margin: 2px 0 10px;
-  line-height:1.35;
-}
-
-.roomCardMeta{
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px 12px;
-}
-
-.metaItem{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  min-height:18px;
-}
-
-.metaIcon{ font-size:13px; opacity:0.95; }
-.metaText{
-  font-size:13px;
-  color: var(--text-muted);
-  font-weight:700;
-}
 /* ============================
-   Top page readability boost
-   - 説明文はそのまま（文章は触らない）
-   - 見やすさだけ改善（余白/行間/幅/カード化）
+   Layout
    ============================ */
-
-/* トップの本文を「読みやすい幅」にする（全ページに効くのが嫌なら main のみ） */
 .main {
-  max-width: 980px;          /* 1100→少し狭くして読みやすく */
+  /* ※現状の勝ち定義：Top readability boostの max-width: 980 を採用 */
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 18px 16px 40px;
 }
 
-/* トップの見出し周りの余白 */
-.main h1, .main .h1 {
-  margin-top: 6px;
-  margin-bottom: 10px;
-  line-height: 1.25;
-}
+.container { display: flex; flex-direction: column; gap: 12px; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
 
-/* 説明文エリアをカードっぽくまとめて読みやすく（既存の readableBox があるならそれを強化） */
-.readableBox {
-  background: #fff;
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 18px 18px 16px;
-}
+.h1 { font-size: 22px; margin: 0; }
 
-/* readableBox が使われてない場合でも、本文の段落を読みやすく */
-.main p {
-  line-height: 1.95;
-  font-size: 15px;
-  margin: 10px 0;
-}
-
-/* 箇条書きを読みやすく */
-.main ul {
-  margin: 10px 0 0 18px;
-}
-.main li {
-  line-height: 1.9;
-  margin: 6px 0;
-}
-
-/* 章見出し（h2/h3相当）の視認性UP */
-.main h2 {
-  margin: 22px 0 10px;
-  font-size: 18px;
-  line-height: 1.35;
-}
-.main h3 {
-  margin: 18px 0 8px;
-  font-size: 16px;
-  line-height: 1.35;
-}
-
-/* “上のボタン群”が詰まって見える問題を緩和（btnPrimary/btnGhost が使われていれば効く） */
-.heroActions,
-.toolbar {
-  gap: 12px;
-}
-.btnPrimary, .btnGhost, a[href="/rooms/create"] {
-  min-height: 40px;
-  padding: 10px 16px;
-}
-
-/* スマホ時はボタンを折り返して見やすく */
-@media (max-width: 600px) {
-  .heroActions, .toolbar {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .btnPrimary, .btnGhost, a[href="/rooms/create"] {
-    width: 100%;
-    justify-content: center;
-  }
-}
-/* ===== Header: sticky + button nav ===== */
-.header{
+/* ============================
+   Header (desktop)  ※勝ち定義ベース
+   - sticky
+   - navBtnPrimaryは黒
+   ============================ */
+.header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(255,255,255,0.92);
+
+  /* ※現状は「minimal patch」が勝って background/border-bottom を上書き。
+     backdrop-filter は earlier block が残っているため維持する */
+  background: #fff;
+  border-bottom: 1px solid #eee;
+
+  /* earlier block 由来（minimal patchで消されていない） */
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 
-.headerInner{
+.headerInner {
   max-width: 1100px;
   margin: 0 auto;
   padding: 12px 16px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.brand{
+.brand {
   font-weight: 900;
   font-size: 18px;
   text-decoration: none;
   color: #111;
 }
 
-.nav{
+.nav {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.navBtn{
+.navBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 8px 12px;
   border-radius: 10px;
-  border: 1px solid rgba(0,0,0,0.18);
+  border: 1px solid rgba(0, 0, 0, 0.18);
+
   background: #fff;
   color: #111;
+
   font-weight: 800;
   font-size: 13px;
   text-decoration: none;
+
   line-height: 1;
   cursor: pointer;
+
   transition: transform .08s ease, background .12s ease, border-color .12s ease;
 }
 
-.navBtn:hover{
-  background: rgba(0,0,0,0.04);
-  border-color: rgba(0,0,0,0.28);
+.navBtn:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.28);
 }
 
-.navBtn:active{
-  transform: translateY(1px);
-}
+.navBtn:active { transform: translateY(1px); }
 
-.navBtnPrimary{
+.navBtnPrimary {
   background: #111;
   color: #fff;
   border-color: #111;
 }
 
-.navBtnPrimary:hover{
+.navBtnPrimary:hover {
   background: #000;
   border-color: #000;
 }
-/* === header sticky (minimal patch) === */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  background: #fff;
-  border-bottom: 1px solid #eee;
-}
 
-/* もし固定時に下のコンテンツがヘッダー裏に潜るなら、ページ側に余白が必要な場合あり。
-   sticky なら通常不要ですが、headerを fixed に変えている場合だけ注意。 */
-/* ===== Mobile Header Optimize (wrap + readable) ===== */
-/* 既存PCデザインは維持し、スマホ幅だけ“以前の折り返しヘッダー”に寄せる */
+/* ============================
+   Header (mobile 520px)
+   - 以前の折り返しヘッダー（wrap + readable）
+   - ログイン縦長防止（line-height/padding/nowrap統一）
+   ============================ */
 @media (max-width: 520px) {
   .headerInner {
-    /* brand + nav が窮屈にならないように折り返し */
     display: flex;
     align-items: center;
     gap: 10px;
@@ -547,7 +173,6 @@ a[href="/rooms/create"]:hover{
   }
 
   .brand {
-    /* タイトルが縦につぶれないように */
     font-size: 16px;
     line-height: 1.2;
     padding: 4px 0;
@@ -555,28 +180,308 @@ a[href="/rooms/create"]:hover{
   }
 
   .nav {
-    /* ボタン群は縦メニュー化せず、wrapで整列 */
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+    /* ※600px側の justify-content:flex-end が効いている現状を壊さないため、ここでは触らない */
   }
 
   .navBtn,
   .navBtnPrimary {
-    /* “ログインが縦長”問題を潰す：高さ/行間/パディングを統一 */
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
     line-height: 1;
     padding: 10px 12px;
-    border-radius: 12px; /* 既存の角丸テイスト維持（強すぎない） */
+    border-radius: 12px;
     white-space: nowrap;
   }
 
-  /* Primary（黒）ボタンが幅不足で潰れないように最小幅を少し確保 */
-  .navBtnPrimary {
-    min-width: 88px;
+  .navBtnPrimary { min-width: 88px; }
+}
+
+/* ============================
+   Common UI
+   ============================ */
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+.input, .select, textarea {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: 1fr; }
+
+  /* ※現状の効き（520pxより広い領域：521-600）を維持 */
+  .headerInner { align-items: flex-start; }
+  .nav { justify-content: flex-end; }
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.linkCard:hover { transform: translateY(-1px); transition: 0.12s; }
+
+.row { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.title { font-size: 16px; font-weight: 700; }
+.muted { color: var(--muted); font-size: 13px; }
+
+/* ============================
+   Badges
+   ============================ */
+.badges { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 800;
+
+  border: 1px solid var(--badge-border);
+  background: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+/* 既存の状態別（より高いspecificity） */
+.badge.ok { border-color: rgba(0, 0, 0, 0.15); }
+.badge.danger { border-color: rgba(176, 0, 32, 0.4); color: var(--danger); }
+
+.badgeCategory { font-weight: 800; }
+.badgeStatus { font-weight: 900; }
+.badgeStatusOpen { background: var(--status-open-bg); border-color: var(--status-open-border); color: var(--status-open-text); }
+.badgeStatusForced { background: var(--status-forced-bg); border-color: var(--status-forced-border); color: var(--status-forced-text); }
+.badgeStatusClosed { background: var(--status-closed-bg); border-color: var(--status-closed-border); color: var(--status-closed-text); }
+
+/* ============================
+   Readable content blocks
+   ============================ */
+.prose { line-height: 1.85; }
+.lead { font-size: 14px; font-weight: 800; margin: 0 0 8px; }
+.h3 { font-size: 14px; margin: 14px 0 6px; }
+
+.cardSub { margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+
+.quote {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+/* ※勝ち定義：Top readability boost の readableBox を採用 */
+.readableBox {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px 18px 16px;
+}
+
+/* 既存の readableBox 内指定（ただし main側のp指定が後勝ちする現状を維持） */
+.readableBox p,
+.readableBox li {
+  color: var(--fg);
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.readableBox .mutedLine { color: var(--muted); }
+.readableBox h2 { margin: 18px 0 8px; font-size: 16px; }
+.readableBox ul { margin: 8px 0 0 18px; }
+
+/* ============================
+   Buttons
+   ============================ */
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  border: 1px solid var(--btnBg);
+  background: var(--btnBg);
+  color: var(--btnFg);
+
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--fg);
+
+  text-decoration: none;
+  font-weight: 800;
+}
+
+/* ✅ 本命対策：/rooms/create は必ず黒背景＋白文字に固定 */
+a[href="/rooms/create"] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 12px;
+
+  border: 1px solid #111;
+  background: #111;
+  color: #fff !important;
+
+  font-weight: 900;
+  text-decoration: none;
+}
+
+a[href="/rooms/create"]:hover { filter: brightness(0.95); }
+
+/* ============================
+   Hero
+   ============================ */
+.heroWrap {
+  position: relative;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  padding: 18px;
+  overflow: hidden;
+}
+
+.heroTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.heroActions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ============================
+   RoomCard
+   ============================ */
+.roomCardLink { display: block; }
+
+.roomCard {
+  border: 1px solid var(--card-border);
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 14px 14px 12px;
+
+  box-shadow: var(--card-shadow);
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+}
+
+.roomCard:hover { transform: translateY(-1px); }
+
+.roomCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.roomCardTitle {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text-main);
+  margin: 2px 0 10px;
+  line-height: 1.35;
+}
+
+.roomCardMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+}
+
+.metaItem { display: flex; align-items: center; gap: 6px; min-height: 18px; }
+.metaIcon { font-size: 13px; opacity: 0.95; }
+.metaText { font-size: 13px; color: var(--text-muted); font-weight: 700; }
+
+/* ============================
+   Top readability boost
+   - 説明文はそのまま（文章は触らない）
+   - 見やすさだけ改善（余白/行間/幅/カード化）
+   ============================ */
+.main h1,
+.main .h1 {
+  margin-top: 6px;
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.main p {
+  line-height: 1.95;
+  font-size: 15px;
+  margin: 10px 0;
+}
+
+.main ul { margin: 10px 0 0 18px; }
+.main li { line-height: 1.9; margin: 6px 0; }
+
+.main h2 { margin: 22px 0 10px; font-size: 18px; line-height: 1.35; }
+.main h3 { margin: 18px 0 8px; font-size: 16px; line-height: 1.35; }
+
+.heroActions,
+.toolbar {
+  gap: 12px;
+}
+
+.btnPrimary,
+.btnGhost,
+a[href="/rooms/create"] {
+  min-height: 40px;
+  padding: 10px 16px;
+}
+
+@media (max-width: 600px) {
+  .heroActions,
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .btnPrimary,
+  .btnGhost,
+  a[href="/rooms/create"] {
+    width: 100%;
+    justify-content: center;
   }
 }
-/* ===== /Mobile Header Optimize ===== */
