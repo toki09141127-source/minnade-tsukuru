@@ -10,78 +10,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
 
-  // ✅ 追加：新規登録成功専用UIの表示状態
-  const [signupSuccess, setSignupSuccess] = useState(false)
-
-  // ✅ 追加：再送中フラグ
-  const [resending, setResending] = useState(false)
-
   const signUp = async () => {
     setMessage('')
-    setSignupSuccess(false)
-
-    const e = email.trim()
-    if (!e) {
-      setMessage('メールアドレスを入力してください')
-      return
-    }
-    if (password.length < 6) {
-      setMessage('パスワードは6文字以上にしてください')
-      return
-    }
-
-    const { error } = await supabase.auth.signUp({ email: e, password })
-    if (error) {
-      setMessage(error.message)
-      return
-    }
-
-    setSignupSuccess(true)
-    setMessage('')
-  }
-
-  const resendConfirmation = async () => {
-    setMessage('')
-
-    const e = email.trim()
-    if (!e) {
-      setMessage('メールアドレスを入力してください（確認メール再送に必要です）')
-      return
-    }
-
-    setResending(true)
-    try {
-      const authAny: any = supabase.auth
-
-      if (typeof authAny?.resend === 'function') {
-        const { error } = await authAny.resend({ type: 'signup', email: e })
-        if (error) {
-          setMessage(error.message)
-          return
-        }
-        setMessage('確認メールを再送しました ✅（迷惑メールもご確認ください）')
-        return
-      }
-
-      if (typeof authAny?.api?.resendConfirmationEmail === 'function') {
-        const { error } = await authAny.api.resendConfirmationEmail(e)
-        if (error) {
-          setMessage(error.message)
-          return
-        }
-        setMessage('確認メールを再送しました ✅（迷惑メールもご確認ください）')
-        return
-      }
-
-      setMessage('確認メールの再送に対応していないSDKです。supabase-jsの更新を確認してください。')
-    } finally {
-      setResending(false)
-    }
+    const { error } = await supabase.auth.signUp({ email, password })
+    setMessage(error ? error.message : '登録しました。次に「ログイン」を押してください。')
   }
 
   const signIn = async () => {
     setMessage('')
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       setMessage(error.message)
       return
@@ -89,16 +26,6 @@ export default function LoginPage() {
     router.replace('/')
     router.refresh()
   }
-
-  const isSuccessMsg =
-    message.includes('登録しました') ||
-    message.includes('✅') ||
-    message.includes('再送しました') ||
-    message.includes('送信しました')
-
-  // ✅ ビルド識別子（まずは手動で確実に判別できるタグを入れる）
-  const BUILD_TAG = '20260212-login-ui-v1'
-  const VERCEL_SHA = process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA
 
   return (
     <div style={{ padding: 24 }}>
@@ -144,20 +71,14 @@ export default function LoginPage() {
           type="email"
           placeholder="email@example.com"
           value={email}
-          onChange={(e) => {
-            setEmail(e.target.value)
-            setSignupSuccess(false)
-          }}
+          onChange={(e) => setEmail(e.target.value)}
           style={{ border: '1px solid #ccc', padding: 8 }}
         />
         <input
           type="password"
           placeholder="password"
           value={password}
-          onChange={(e) => {
-            setPassword(e.target.value)
-            setSignupSuccess(false)
-          }}
+          onChange={(e) => setPassword(e.target.value)}
           style={{ border: '1px solid #ccc', padding: 8 }}
         />
       </div>
@@ -167,38 +88,6 @@ export default function LoginPage() {
         <button onClick={signIn}>ログイン</button>
       </div>
 
-      {signupSuccess && (
-        <div
-          style={{
-            marginTop: 12,
-            padding: 12,
-            border: '1px solid #eee',
-            borderRadius: 10,
-            background: '#fafafa',
-            maxWidth: 720,
-          }}
-        >
-          <div style={{ fontWeight: 700, marginBottom: 6 }}>確認メールを送信しました</div>
-          <div style={{ fontSize: 14, lineHeight: 1.7 }}>
-            ・迷惑メールフォルダも確認してください
-            <br />
-            ・メール内のリンクをクリックして<strong>有効化</strong>してください
-            <br />
-            ・有効化後にこの画面に戻り、<strong>ログイン</strong>してください
-          </div>
-
-          <div style={{ marginTop: 10 }}>
-            <button onClick={resendConfirmation} disabled={resending}>
-              {resending ? '送信中…' : '確認メールを再送する'}
-            </button>
-          </div>
-
-          <div style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
-            ※確認メールが届くまで数分かかることがあります。届かない場合は、メールアドレスの入力ミスや末尾の空白も確認してください。
-          </div>
-        </div>
-      )}
-
       {message && (
         <p
           style={{
@@ -207,7 +96,7 @@ export default function LoginPage() {
             border: '1px solid #ddd',
             borderRadius: 10,
             background: '#fff',
-            color: isSuccessMsg ? '#0a7' : '#b00020',
+            color: message.includes('登録しました') ? '#0a7' : '#b00020',
             maxWidth: 720,
           }}
         >
@@ -215,11 +104,8 @@ export default function LoginPage() {
         </p>
       )}
 
-      {/* ✅ 追加：ビルド識別子（UIを崩さない極小表示） */}
-      <div style={{ marginTop: 16, fontSize: 11, color: '#999' }}>
-        build: {BUILD_TAG}
-        {VERCEL_SHA ? ` / sha: ${VERCEL_SHA}` : ''}
-      </div>
+      {/* ✅ build tag（UIを崩さない最小表示） */}
+      <div style={{ marginTop: 16, fontSize: 11, color: '#999' }}>build: 20260212-login-ui-v1</div>
     </div>
   )
 }
