@@ -1,12 +1,9 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase/client'
-
-// ✅ supabase は module-scope の singleton を使う（render毎にcreateClientしない）
-const sb = supabase
 
 export default function Header() {
   const router = useRouter()
@@ -15,20 +12,17 @@ export default function Header() {
   useEffect(() => {
     let mounted = true
 
-    // ✅ 初期状態：getSession() で決める
     const init = async () => {
-      const { data } = await sb.auth.getSession()
+      const { data } = await supabase.auth.getSession()
       if (!mounted) return
       setIsLoggedIn(!!data.session)
     }
     init()
 
-    // ✅ 認証状態の変化を購読
-    const { data: sub } = sb.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session)
     })
 
-    // ✅ cleanup
     return () => {
       mounted = false
       sub.subscription.unsubscribe()
@@ -36,16 +30,12 @@ export default function Header() {
   }, [])
 
   const handleLogout = async () => {
-    // ✅ 表記切替が最優先：押下直後に即反映
+    // 表記切り替え最優先：まず即state更新（onAuthStateChangeでも来るが保険）
     setIsLoggedIn(false)
 
-    const { error } = await sb.auth.signOut()
-    if (error) {
-      // 失敗時は戻す（最小）
-      setIsLoggedIn(true)
-      return
-    }
+    await supabase.auth.signOut()
 
+    // App Router遷移（location.hrefは使わない）
     router.replace('/')
     router.refresh()
   }
@@ -53,12 +43,10 @@ export default function Header() {
   return (
     <header className="header">
       <div className="headerInner">
-        {/* 左：ロゴ */}
-        <Link href="/" className="navBtn">
+        <Link href="/" className="brand">
           みんなで作ろう（仮）
         </Link>
 
-        {/* 中央：ナビ（並びは固定） */}
         <nav className="nav">
           <Link href="/rooms" className="navBtn">
             制作ルーム一覧
@@ -66,7 +54,7 @@ export default function Header() {
           <Link href="/profile" className="navBtn">
             プロフィール
           </Link>
-          <Link href="/ranking" className="navBtn">
+          <Link href="/rankings" className="navBtn">
             ランキング
           </Link>
           <Link href="/works" className="navBtn">
@@ -75,18 +63,17 @@ export default function Header() {
           <Link href="/terms" className="navBtn">
             利用規約
           </Link>
-        </nav>
 
-        {/* 右端：ログイン or ログアウト（並びは固定） */}
-        {isLoggedIn ? (
-          <button type="button" className="navBtn" onClick={handleLogout}>
-            ログアウト
-          </button>
-        ) : (
-          <Link href="/login" className="navBtn">
-            ログイン
-          </Link>
-        )}
+          {isLoggedIn ? (
+            <button type="button" onClick={handleLogout} className="navBtn navBtnPrimary">
+              ログアウト
+            </button>
+          ) : (
+            <Link href="/login" className="navBtn navBtnPrimary">
+              ログイン
+            </Link>
+          )}
+        </nav>
       </div>
     </header>
   )

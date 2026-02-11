@@ -533,3 +533,50 @@ a[href="/rooms/create"]:hover{
 
 /* もし固定時に下のコンテンツがヘッダー裏に潜るなら、ページ側に余白が必要な場合あり。
    sticky なら通常不要ですが、headerを fixed に変えている場合だけ注意。 */
+/* ===== Mobile Header Optimize (wrap + readable) ===== */
+/* 既存PCデザインは維持し、スマホ幅だけ“以前の折り返しヘッダー”に寄せる */
+@media (max-width: 520px) {
+  .headerInner {
+    /* brand + nav が窮屈にならないように折り返し */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .brand {
+    /* タイトルが縦につぶれないように */
+    font-size: 16px;
+    line-height: 1.2;
+    padding: 4px 0;
+    white-space: nowrap;
+  }
+
+  .nav {
+    /* ボタン群は縦メニュー化せず、wrapで整列 */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .navBtn,
+  .navBtnPrimary {
+    /* “ログインが縦長”問題を潰す：高さ/行間/パディングを統一 */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    padding: 10px 12px;
+    border-radius: 12px; /* 既存の角丸テイスト維持（強すぎない） */
+    white-space: nowrap;
+  }
+
+  /* Primary（黒）ボタンが幅不足で潰れないように最小幅を少し確保 */
+  .navBtnPrimary {
+    min-width: 88px;
+  }
+}
+/* ===== /Mobile Header Optimize ===== */
