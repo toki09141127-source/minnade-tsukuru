@@ -25,13 +25,13 @@ export default function LoginPage() {
     }
     // ログイン成功 → / へ
     router.replace('/')
+    router.refresh()
   }
 
   return (
     <div style={{ padding: 24 }}>
       <h1>ログイン</h1>
 
-      {/* ✅ 手順と注意点（最小追加） */}
       <div
         style={{
           marginTop: 12,
@@ -87,7 +87,6 @@ export default function LoginPage() {
         <button onClick={signIn}>ログイン</button>
       </div>
 
-      {/* ✅ messageを少し目立たせる（最小変更） */}
       {message && (
         <p
           style={{
