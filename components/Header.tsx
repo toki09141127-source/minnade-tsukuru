@@ -1,33 +1,26 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../lib/supabase/client'
 
+// ✅ supabase は module-scope の singleton を使う（render毎にcreateClientしない）
+const sb = supabase
+
 export default function Header() {
   const router = useRouter()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loadingAuth, setLoadingAuth] = useState(true)
-
-  // ✅ render毎にcreateClientしない（supabaseは module-scope の singleton を使う想定）
-  // ただし「依存を明確にする」ために useMemo で固定参照してもOK（最小改修）
-  const sb = useMemo(() => supabase, [])
 
   useEffect(() => {
     let mounted = true
 
-    // 初期状態
+    // ✅ 初期状態：getSession() で決める
     const init = async () => {
-      try {
-        const { data } = await sb.auth.getSession()
-        if (!mounted) return
-        setIsLoggedIn(!!data.session)
-      } finally {
-        if (mounted) setLoadingAuth(false)
-      }
+      const { data } = await sb.auth.getSession()
+      if (!mounted) return
+      setIsLoggedIn(!!data.session)
     }
-
     init()
 
     // ✅ 認証状態の変化を購読
@@ -40,15 +33,15 @@ export default function Header() {
       mounted = false
       sub.subscription.unsubscribe()
     }
-  }, [sb])
+  }, [])
 
   const handleLogout = async () => {
-    // ✅ 表示切替を最優先で即反映（signOut結果を待たない）
+    // ✅ 表記切替が最優先：押下直後に即反映
     setIsLoggedIn(false)
 
     const { error } = await sb.auth.signOut()
     if (error) {
-      // signOut 失敗時は表示を戻す（最低限）
+      // 失敗時は戻す（最小）
       setIsLoggedIn(true)
       return
     }
@@ -58,57 +51,39 @@ export default function Header() {
   }
 
   return (
-    <header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 12,
-        padding: '12px 16px',
-        borderBottom: '1px solid #eee',
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <Link href="/" style={{ fontWeight: 700 }}>
+    <header className="header">
+      <div className="headerInner">
+        {/* 左：ロゴ */}
+        <Link href="/" className="navBtn">
           みんなで作ろう（仮）
         </Link>
-        <Link href="/rooms" style={{ color: '#333' }}>
-          ルーム一覧
-        </Link>
-      </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {/* ✅ 初期判定中のチラつき防止（最小） */}
-        {loadingAuth ? (
-          <span style={{ fontSize: 12, color: '#666' }}>…</span>
-        ) : isLoggedIn ? (
-          <button
-            type="button"
-            onClick={handleLogout}
-            style={{
-              padding: '8px 12px',
-              border: '1px solid #111',
-              borderRadius: 10,
-              background: '#111',
-              color: '#fff',
-              cursor: 'pointer',
-            }}
-          >
+        {/* 中央：ナビ（並びは固定） */}
+        <nav className="nav">
+          <Link href="/rooms" className="navBtn">
+            制作ルーム一覧
+          </Link>
+          <Link href="/profile" className="navBtn">
+            プロフィール
+          </Link>
+          <Link href="/ranking" className="navBtn">
+            ランキング
+          </Link>
+          <Link href="/works" className="navBtn">
+            完成作品
+          </Link>
+          <Link href="/terms" className="navBtn">
+            利用規約
+          </Link>
+        </nav>
+
+        {/* 右端：ログイン or ログアウト（並びは固定） */}
+        {isLoggedIn ? (
+          <button type="button" className="navBtn" onClick={handleLogout}>
             ログアウト
           </button>
         ) : (
-          <Link
-            href="/login"
-            style={{
-              display: 'inline-block',
-              padding: '8px 12px',
-              border: '1px solid #111',
-              borderRadius: 10,
-              background: '#111',
-              color: '#fff',
-              textDecoration: 'none',
-            }}
-          >
+          <Link href="/login" className="navBtn">
             ログイン
           </Link>
         )}
