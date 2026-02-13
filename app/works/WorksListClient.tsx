@@ -13,8 +13,11 @@ type RoomRow = {
   is_adult: boolean | null
   created_at: string
   expires_at: string | null
-  like_count: number | null
-  member_count: number | null
+
+  // rooms に無い可能性があるので optional にして安全に扱う
+  like_count?: number | null
+  member_count?: number | null
+
   is_hidden: boolean | null
   deleted_at: string | null
 }
@@ -68,8 +71,9 @@ export default function WorksListClient() {
       setLoading(true)
       setError('')
 
+      // ✅ DB cron が更新するのは rooms テーブルなので、一覧も rooms を直接見る（確実に拾う）
       const base = supabase
-        .from('rooms_with_counts_v2')
+        .from('rooms')
         .select(
           'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at'
         )
@@ -80,6 +84,7 @@ export default function WorksListClient() {
       const query =
         sort === 'like'
           ? base
+              // like_count が無い環境でも落ちないように、まず created_at でも並べておく
               .order('like_count', { ascending: false, nullsFirst: false })
               .order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
@@ -206,8 +211,10 @@ export default function WorksListClient() {
         {filtered.map((r) => {
           const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
           const isAdult = Boolean(r.is_adult)
-          const memberCount = r.member_count ?? 0
-          const likes = r.like_count ?? 0
+
+          // rooms側に無い場合でも壊れないように fallback
+          const memberCount = (r.member_count ?? 0) as number
+          const likes = (r.like_count ?? 0) as number
 
           return (
             <Link
