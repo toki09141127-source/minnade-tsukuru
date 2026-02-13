@@ -23,6 +23,8 @@ type PostRow = {
   is_hidden: boolean
   post_type?: string | null
   deleted_at?: string | null
+  attachment_url?: string | null
+  attachment_type?: string | null
 }
 
 export const dynamic = 'force-dynamic'
@@ -71,7 +73,7 @@ export default async function WorkDetailPage({
 
   // ✅ final / log を分離して取得（最小改修・明快・安定）
   const baseSelect =
-    'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at'
+    'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
   const { data: finalPosts, error: finalErr } = await supabase
     .from('posts')
@@ -163,9 +165,30 @@ export default async function WorkDetailPage({
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
+
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
                   {p.content}
                 </div>
+
+                {/* ✅ 画像表示（最小追加） */}
+                {p.attachment_url &&
+                  (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
+                    <div style={{ marginTop: 10 }}>
+                      <img
+                        src={p.attachment_url}
+                        alt="attachment"
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          maxHeight: 520,
+                          objectFit: 'contain',
+                          borderRadius: 12,
+                          border: '1px solid rgba(0,0,0,0.10)',
+                          background: 'rgba(0,0,0,0.02)',
+                        }}
+                      />
+                    </div>
+                  )}
               </div>
             ))}
           </div>
@@ -196,9 +219,30 @@ export default async function WorkDetailPage({
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
+
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
                   {p.content}
                 </div>
+
+                {/* ✅ 画像表示（最小追加） */}
+                {p.attachment_url &&
+                  (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
+                    <div style={{ marginTop: 10 }}>
+                      <img
+                        src={p.attachment_url}
+                        alt="attachment"
+                        loading="lazy"
+                        style={{
+                          width: '100%',
+                          maxHeight: 520,
+                          objectFit: 'contain',
+                          borderRadius: 12,
+                          border: '1px solid rgba(0,0,0,0.10)',
+                          background: 'rgba(0,0,0,0.02)',
+                        }}
+                      />
+                    </div>
+                  )}
               </div>
             ))}
           </div>
