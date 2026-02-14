@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/client'
 
 const CATEGORY_OPTIONS: { value: string; label: string }[] = [
@@ -18,6 +17,8 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
 
 const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
 
+const CONCEPT_MAX = 300
+
 export default function RoomCreateClient() {
   const router = useRouter()
   const supabase = createClient()
@@ -27,14 +28,29 @@ export default function RoomCreateClient() {
   const [isAdult, setIsAdult] = useState(false)
   const [hours, setHours] = useState<number>(48)
 
+  // ✅ 追加：コンセプト
+  const [concept, setConcept] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const canSubmit = useMemo(() => title.trim().length > 0 && !loading, [title, loading])
+  const conceptLen = concept.length
+  const conceptTooLong = conceptLen > CONCEPT_MAX
+
+  const canSubmit = useMemo(() => {
+    return title.trim().length > 0 && !loading && !conceptTooLong
+  }, [title, loading, conceptTooLong])
 
   const submit = async () => {
     const t = title.trim()
     if (!t) return
+
+    // ✅ クライアント側でも弾く（API側でも弾くので二重）
+    const c = concept.trim()
+    if (c.length > CONCEPT_MAX) {
+      setError(`コンセプトは${CONCEPT_MAX}文字以内で入力してください`)
+      return
+    }
 
     setLoading(true)
     setError('')
@@ -65,6 +81,8 @@ export default function RoomCreateClient() {
           category,
           isAdult,
           hours: h,
+          // ✅ 追加：concept
+          concept: c || null,
         }),
       })
 
@@ -86,7 +104,6 @@ export default function RoomCreateClient() {
 
   return (
     <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
-
       <div
         style={{
           marginTop: 16,
@@ -189,6 +206,50 @@ export default function RoomCreateClient() {
         </div>
 
         <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>1〜150時間まで設定できます（例：48 = 2日）</div>
+
+        {/* ✅ 追加：作品コンセプト */}
+        <div style={{ marginTop: 10, marginBottom: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
+            <label style={{ display: 'block', marginBottom: 6, fontWeight: 800 }}>
+              作品コンセプト（任意）
+            </label>
+            <span style={{ fontSize: 12, opacity: 0.8 }}>
+              {conceptLen}/{CONCEPT_MAX}
+            </span>
+          </div>
+
+          <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 8, lineHeight: 1.6 }}>
+            このルームで作りたい作品のイメージを自由に書いてください（例：雰囲気、ジャンル、主人公、やりたい演出など）
+          </div>
+
+          <textarea
+            value={concept}
+            onChange={(e) => setConcept(e.target.value)}
+            placeholder={
+              '例）雰囲気：青春 × SF\n' +
+              '主人公：気弱だけど芯がある\n' +
+              '展開：最初は日常→後半で一気に正体が明かされる\n' +
+              'NG：グロは無し'
+            }
+            rows={5}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: `1px solid ${conceptTooLong ? '#b00020' : 'rgba(0,0,0,0.2)'}`,
+              background: '#fff',
+              resize: 'vertical',
+              lineHeight: 1.6,
+              wordBreak: 'break-word',
+            }}
+          />
+
+          {conceptTooLong && (
+            <div style={{ marginTop: 8, color: '#b00020', fontSize: 12 }}>
+              コンセプトは{CONCEPT_MAX}文字以内で入力してください
+            </div>
+          )}
+        </div>
 
         <button
           type="button"
