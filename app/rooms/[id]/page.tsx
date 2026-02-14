@@ -8,7 +8,7 @@ import DeleteRoomButton from './DeleteRoomButton'
 import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import BoardClient from './BoardClient'
-import PostFormClient from './PostFormClient'
+// import PostFormClient from './PostFormClient' ← ✅ 旧フォームなので削除
 
 export const dynamic = 'force-dynamic'
 
@@ -132,11 +132,10 @@ export default async function RoomDetailPage({
         <DeleteRoomButton roomId={room.id} />
       </div>
 
-      {/* ✅ 掲示板（ここが今回の赤文字の原因：roomStatus を必ず渡す） */}
+      {/* ✅ 掲示板（BoardClientに final/log 投稿UI があるのでこれだけでOK） */}
       {!isForced && (
         <div style={{ marginTop: 28 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />
-          <PostFormClient roomId={room.id} roomStatus={room.status} />
         </div>
       )}
     </div>
