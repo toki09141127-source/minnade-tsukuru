@@ -8,7 +8,6 @@ import DeleteRoomButton from './DeleteRoomButton'
 import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import BoardClient from './BoardClient'
-import PostFormClient from './PostFormClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,7 +33,7 @@ export default async function RoomDetailPage({
     )
   }
 
-  // ✅ ルーム取得（is_hidden / deleted_at も見る）
+  // ✅ ルーム取得
   const { data: room, error: roomErr } = await supabaseAdmin
     .from('rooms')
     .select(
@@ -83,14 +82,14 @@ export default async function RoomDetailPage({
         ) : null}
       </div>
 
-      {/* ✅ 成人ゲート（isAdult 必須） */}
+      {/* 成人ゲート */}
       {room.is_adult && (
         <div style={{ marginTop: 12 }}>
           <AdultGate isAdult={true} />
         </div>
       )}
 
-      {/* ✅ 残り時間（status 必須） */}
+      {/* 残り時間 */}
       <div style={{ marginTop: 12 }}>
         <RemainingTimer expiresAt={room.expires_at} status={room.status} />
       </div>
@@ -132,11 +131,10 @@ export default async function RoomDetailPage({
         <DeleteRoomButton roomId={room.id} />
       </div>
 
-      {/* ✅ 掲示板（ここが今回の赤文字の原因：roomStatus を必ず渡す） */}
+      {/* 掲示板（旧フォーム削除済み） */}
       {!isForced && (
         <div style={{ marginTop: 28 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />
-          <PostFormClient roomId={room.id} roomStatus={room.status} />
         </div>
       )}
     </div>
