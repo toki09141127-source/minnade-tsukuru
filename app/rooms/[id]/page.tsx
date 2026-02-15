@@ -7,6 +7,7 @@ import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import LikeButton from './LikeButton'
 import RoomDetailClient from './RoomDetailClient'
+import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
 
 export const dynamic = 'force-dynamic'
 
@@ -143,11 +144,16 @@ export default async function RoomDetailPage({
         <RemainingTimer expiresAt={room.expires_at} status={room.status} />
       </div>
 
-      {/* Like/Report/Delete は「常時表示」したい場合ここに残す（Join等は clientへ集約） */}
+      {/* Like/Report/Delete は常時表示 */}
       <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         <LikeButton roomId={room.id} />
         <ReportButton targetType="room" targetId={room.id} />
         <DeleteRoomButton roomId={room.id} />
+      </div>
+
+      {/* ✅ 追加：オーナー専用 申請パネル（open/ended関係なく表示したいならここで常時） */}
+      <div style={{ marginTop: 18 }}>
+        <OwnerCoreRequestsPanel roomId={room.id} />
       </div>
 
       {isForced && (
@@ -196,7 +202,7 @@ export default async function RoomDetailPage({
         </div>
       )}
 
-      {/* open のときだけ client側メニュー＋掲示板（参加ロール統合） */}
+      {/* open のときだけ client側 */}
       {isOpen && !isForced && !isEnded && (
         <RoomDetailClient
           room={{
@@ -207,20 +213,6 @@ export default async function RoomDetailPage({
           }}
         />
       )}
-    </div>
-  )
-}
-import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
-
-export default async function RoomPage({ params }: { params: Promise<{ roomId: string }> }) {
-  const { roomId } = await params
-
-  return (
-    <div>
-      {/* 既存のルーム詳細UI */}
-
-      {/* 追加：オーナー専用申請パネル */}
-      <OwnerCoreRequestsPanel roomId={roomId} />
     </div>
   )
 }

@@ -1,63 +1,74 @@
+// app/rooms/[id]/core-revoke/route.ts
 import { NextResponse, NextRequest } from 'next/server'
 import { createUserClient, createAdminClient } from '@/lib/supabase/server'
 
+type Params = { id: string }
+
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ roomId: string }> }
+  { params }: { params: Promise<Params> }
 ) {
-  const { roomId } = await params
-  const supabase = createUserClient()
+  const { id: roomId } = await params
+  const supabase = await createUserClient()
   const admin = createAdminClient()
 
   const { data: userData } = await supabase.auth.getUser()
   const user = userData.user
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { requestId } = await req.json()
-  if (!requestId) return NextResponse.json({ error: 'requestId is required' }, { status: 400 })
+  const body = await req.json().catch(() => ({} as any))
+  const requestId = body?.requestId as string | undefined
+  if (!requestId) return NextResponse.json({ error: 'requestId required' }, { status: 400 })
 
   // オーナー確認
-  const { data: room } = await supabase.from('rooms').select('created_by').eq('id', roomId).single()
-  if (room?.created_by !== user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  const { data: room, error: roomErr } = await supabase
+    .from('rooms')
+    .select('created_by')
+    .eq('id', roomId)
+    .single()
 
-  // 対象申請取得
-  const { data: jr, error: jrErr } = await admin
+  if (roomErr) return NextResponse.json({ error: roomErr.message }, { status: 400 })
+  if (room?.created_by !== user.id) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  // 申請確認（approved かどうか）
+  const { data: reqRow, error: reqErr } = await admin
     .from('room_join_requests')
     .select('*')
     .eq('id', requestId)
-    .eq('room_id', roomId)
-    .eq('requested_role', 'core')
     .single()
 
-  if (jrErr) return NextResponse.json({ error: jrErr.message }, { status: 400 })
-
-  // approvedのみ revoke（冪等：すでにrevokedなら成功）
-  if (jr.status === 'revoked') return NextResponse.json({ success: true })
-  if (jr.status !== 'approved') {
-    return NextResponse.json({ error: `Cannot revoke from status=${jr.status}` }, { status: 400 })
+  if (reqErr) return NextResponse.json({ error: reqErr.message }, { status: 400 })
+  if (reqRow.room_id !== roomId) {
+    return NextResponse.json({ error: 'Request does not belong to this room' }, { status: 400 })
+  }
+  if (reqRow.status !== 'approved') {
+    return NextResponse.json({ success: true, alreadyProcessed: true })
   }
 
-  // 申請を revoked に
-  const { error: upErr } = await admin
+  // status を revoked に
+  const { error: updErr } = await admin
     .from('room_join_requests')
     .update({
       status: 'revoked',
       decided_by: user.id,
       decided_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     })
     .eq('id', requestId)
 
-  if (upErr) return NextResponse.json({ error: upErr.message }, { status: 400 })
+  if (updErr) return NextResponse.json({ error: updErr.message }, { status: 400 })
 
-  // membershipをsupporterへdowngrade（削除より安全）
-  const { error: memErr } = await admin
+  // core 権限を剥奪（room_members の core を削除）
+  const { error: delErr } = await admin
     .from('room_members')
-    .update({ role: 'supporter' })
+    .delete()
     .eq('room_id', roomId)
-    .eq('user_id', jr.user_id)
+    .eq('user_id', reqRow.user_id)
     .eq('role', 'core')
 
-  if (memErr) return NextResponse.json({ error: memErr.message }, { status: 400 })
+  if (delErr) return NextResponse.json({ error: delErr.message }, { status: 400 })
 
   return NextResponse.json({ success: true })
 }
