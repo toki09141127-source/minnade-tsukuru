@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 
 export default function JoinButton({
@@ -13,6 +14,8 @@ export default function JoinButton({
   roomStatus: string
   onJoined?: () => void
 }) {
+  const router = useRouter()
+
   const [joined, setJoined] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -71,10 +74,13 @@ export default function JoinButton({
       }
 
       // ✅ 参加済みに切り替え
-      // APIが { joined: true } を返してても、返してなくても true にしてOK
       setJoined(json?.joined === false ? false : true)
 
+      // ✅（推奨）親側の状態更新
       onJoined?.()
+
+      // ✅（最重要）Server Componentを再評価して BoardClient を即表示
+      router.refresh()
     } catch (e: any) {
       setError(e?.message ?? '参加に失敗しました')
     } finally {
