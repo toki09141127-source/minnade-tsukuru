@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const user = userRes.user
 
     // --- body ---
-    const body = await req.json()
+    const body = await req.json().catch(() => ({}))
     const postId = String(body.postId ?? '').trim()
     if (!postId) return NextResponse.json({ ok: false, error: 'postId is required' }, { status: 400 })
 
@@ -43,12 +43,44 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'forbidden' }, { status: 403 })
     }
 
-    // 2) 論理削除（deleted_at を now）
+    // 2) ルーム確認（open以外は操作不可：安全側）
+    const { data: room, error: roomErr } = await supabaseAdmin
+      .from('rooms')
+      .select('id, status')
+      .eq('id', post.room_id)
+      .maybeSingle()
+
+    if (roomErr) return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
+    if (!room) return NextResponse.json({ ok: false, error: 'room not found' }, { status: 404 })
+    if (room.status !== 'open') {
+      return NextResponse.json(
+        { ok: false, error: `このルームは ${room.status} のため操作できません` },
+        { status: 403 }
+      )
+    }
+
+    // 3) ✅ 参加者チェック（投稿者本人でも、参加から抜けてたら不可）
+    const { data: mem, error: memErr } = await supabaseAdmin
+      .from('room_members')
+      .select('id')
+      .eq('room_id', post.room_id)
+      .eq('user_id', user.id)
+      .maybeSingle()
+
+    if (memErr) return NextResponse.json({ ok: false, error: memErr.message }, { status: 500 })
+    if (!mem) {
+      return NextResponse.json(
+        { ok: false, error: 'ルームに参加してから操作してください' },
+        { status: 403 }
+      )
+    }
+
+    // 4) 論理削除（deleted_at を now）
     const { error: updErr } = await supabaseAdmin
       .from('posts')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', postId)
-      .eq('user_id', user.id) // 念のため二重ガード
+      .eq('user_id', user.id) // 二重ガード
 
     if (updErr) {
       return NextResponse.json({ ok: false, error: updErr.message }, { status: 400 })

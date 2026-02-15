@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '../../../lib/supabase/client'
+import JoinButton from './JoinButton'
 
 type PostRow = {
   id: string
@@ -31,6 +32,10 @@ export default function BoardClient({
   const [userId, setUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // ✅ 参加済みか
+  const [isMember, setIsMember] = useState(false)
+  const [memberChecked, setMemberChecked] = useState(false)
+
   // 添付（log / final）
   const [logFile, setLogFile] = useState<File | null>(null)
   const [finalFile, setFinalFile] = useState<File | null>(null)
@@ -41,7 +46,8 @@ export default function BoardClient({
   useEffect(() => {
     const init = async () => {
       const { data } = await supabase.auth.getUser()
-      setUserId(data.user?.id ?? null)
+      const uid = data.user?.id ?? null
+      setUserId(uid)
     }
     init()
   }, [])
@@ -50,6 +56,39 @@ export default function BoardClient({
     const session = await supabase.auth.getSession()
     return session.data.session?.access_token ?? null
   }
+
+  // ✅ 参加チェック（room_members 参照）
+  const fetchMembership = useCallback(async (uid: string | null) => {
+    setMemberChecked(false)
+    setIsMember(false)
+
+    if (!uid) {
+      setMemberChecked(true)
+      return
+    }
+
+    const { data, error } = await supabase
+      .from('room_members')
+      .select('id')
+      .eq('room_id', roomId)
+      .eq('user_id', uid)
+      .maybeSingle()
+
+    if (error) {
+      // RLS等で読めない場合は「未参加」扱いに倒す（安全側）
+      setIsMember(false)
+      setMemberChecked(true)
+      return
+    }
+
+    setIsMember(!!data)
+    setMemberChecked(true)
+  }, [roomId])
+
+  useEffect(() => {
+    // userId確定後に参加チェック
+    fetchMembership(userId)
+  }, [userId, fetchMembership])
 
   const fetchPosts = useCallback(async () => {
     setError('')
@@ -132,6 +171,12 @@ export default function BoardClient({
   }
 
   const submitPost = async (type: 'log' | 'final') => {
+    // ✅ UX: 未参加ならクライアント側でも止める（最終防御はAPI）
+    if (roomStatus === 'open' && memberChecked && !isMember) {
+      alert('ルームに参加してから投稿してください')
+      return
+    }
+
     const text = type === 'log' ? content.trim() : finalContent.trim()
     const file = type === 'log' ? logFile : finalFile
 
@@ -197,11 +242,20 @@ export default function BoardClient({
       setFinalFile(null)
     }
 
+    // 投稿後に再取得
     await fetchPosts()
+    // 参加状態が変わった可能性は低いけど念のため
+    await fetchMembership(userId)
     setLoading(false)
   }
 
   const deletePost = async (postId: string) => {
+    // ✅ UX: 未参加ならクライアント側でも止める（最終防御はAPI）
+    if (roomStatus === 'open' && memberChecked && !isMember) {
+      alert('ルームに参加してから操作してください')
+      return
+    }
+
     if (!confirm('投稿を取り消しますか？')) return
 
     const token = await getToken()
@@ -283,8 +337,33 @@ export default function BoardClient({
     )
   }
 
+  const showPostForms = roomStatus === 'open' && userId && memberChecked && isMember
+  const showJoinHint = roomStatus === 'open' && userId && memberChecked && !isMember
+
   return (
     <section style={{ marginTop: 18 }}>
+      {/* 参加していない場合の案内 */}
+      {showJoinHint && (
+        <div
+          style={{
+            marginBottom: 14,
+            border: '1px solid rgba(0,0,0,0.10)',
+            borderRadius: 12,
+            padding: 12,
+            background: '#fff7e6',
+            lineHeight: 1.7,
+          }}
+        >
+          <div style={{ fontWeight: 900 }}>参加すると投稿できます</div>
+          <div style={{ fontSize: 13, color: '#6b4a00', fontWeight: 700, marginTop: 4 }}>
+            ルームに参加していないユーザーは、投稿（log/final）と取り消しができません。
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <JoinButton roomId={roomId} roomStatus={roomStatus} />
+          </div>
+        </div>
+      )}
+
       <h2>完成作品（最終提出）</h2>
 
       {finalPosts.length === 0 ? (
@@ -299,7 +378,8 @@ export default function BoardClient({
               </div>
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
-              {p.user_id === userId && (
+              {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
+              {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
                   <button onClick={() => deletePost(p.id)}>取り消し</button>
                 </div>
@@ -309,7 +389,8 @@ export default function BoardClient({
         </div>
       )}
 
-      {roomStatus === 'open' && (
+      {/* ✅ 未参加ならフォームを出さない */}
+      {showPostForms && (
         <div style={{ marginTop: 12, border: '1px solid rgba(0,0,0,0.10)', borderRadius: 12, padding: 12, background: '#fafafa' }}>
           <div style={{ fontWeight: 900, marginBottom: 8 }}>最終提出を投稿</div>
 
@@ -350,7 +431,8 @@ export default function BoardClient({
               </div>
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
-              {p.user_id === userId && (
+              {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
+              {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
                   <button onClick={() => deletePost(p.id)}>取り消し</button>
                 </div>
@@ -360,7 +442,8 @@ export default function BoardClient({
         </div>
       )}
 
-      {roomStatus === 'open' && (
+      {/* ✅ 未参加ならフォームを出さない */}
+      {showPostForms && (
         <div style={{ marginTop: 12, border: '1px solid rgba(0,0,0,0.10)', borderRadius: 12, padding: 12, background: '#fafafa' }}>
           <div style={{ fontWeight: 900, marginBottom: 8 }}>制作ログを投稿</div>
 
@@ -383,6 +466,11 @@ export default function BoardClient({
             </button>
           </div>
         </div>
+      )}
+
+      {/* memberCheck中の軽い表示（任意） */}
+      {roomStatus === 'open' && userId && !memberChecked && (
+        <p style={{ color: '#666', marginTop: 12 }}>参加状況を確認中…</p>
       )}
 
       {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error}</p>}

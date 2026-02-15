@@ -53,18 +53,27 @@ export async function POST(req: Request) {
     if (roomErr) return NextResponse.json({ error: roomErr.message }, { status: 500 })
     if (!room) return NextResponse.json({ error: 'ルームが見つかりません' }, { status: 404 })
     if (room.status !== 'open') {
-      return NextResponse.json({ error: `このルームは ${room.status} のため投稿できません` }, { status: 400 })
+      return NextResponse.json(
+        { error: `このルームは ${room.status} のため投稿できません` },
+        { status: 403 }
+      )
     }
 
-    // 参加者チェック
-    const { data: mem } = await admin
+    // ✅ 参加者チェック（最重要）
+    const { data: mem, error: memErr } = await admin
       .from('room_members')
       .select('id')
       .eq('room_id', roomId)
       .eq('user_id', user.id)
       .maybeSingle()
 
-    if (!mem) return NextResponse.json({ error: 'not a member' }, { status: 403 })
+    if (memErr) return NextResponse.json({ error: memErr.message }, { status: 500 })
+    if (!mem) {
+      return NextResponse.json(
+        { error: 'ルームに参加してから投稿してください' },
+        { status: 403 }
+      )
+    }
 
     // username
     const { data: profile, error: profErr } = await admin
