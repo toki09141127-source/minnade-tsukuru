@@ -60,11 +60,13 @@ export async function POST(req: Request) {
     }
 
     // ✅ 参加者チェック（最重要）
+    // 退出済み（left_at != null）は投稿不可にする
     const { data: mem, error: memErr } = await admin
       .from('room_members')
       .select('id')
       .eq('room_id', roomId)
       .eq('user_id', user.id)
+      .is('left_at', null) // ★追加：アクティブ参加者のみ
       .maybeSingle()
 
     if (memErr) return NextResponse.json({ error: memErr.message }, { status: 500 })
