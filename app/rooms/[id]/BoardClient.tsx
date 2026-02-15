@@ -11,9 +11,11 @@ type PostRow = {
   created_at: string
   post_type?: string | null
   deleted_at?: string | null
-  attachment_url?: string | null   // Storage path を入れる
-  attachment_type?: string | null  // mime を入れる
+  attachment_url?: string | null   // Storage path
+  attachment_type?: string | null  // mime
 }
+
+const ACCEPT = 'image/*,video/mp4,video/webm'
 
 export default function BoardClient({
   roomId,
@@ -73,7 +75,6 @@ export default function BoardClient({
     const token = await getToken()
     if (!token) return
 
-    // 並列でsign（失敗しても一覧は壊さない）
     await Promise.all(
       need.map(async (p) => {
         try {
@@ -135,7 +136,7 @@ export default function BoardClient({
     const file = type === 'log' ? logFile : finalFile
 
     if (!text && !file) {
-      alert('本文か画像のどちらかを入力してください')
+      alert('本文か画像/動画のどちらかを入力してください')
       return
     }
 
@@ -174,7 +175,7 @@ export default function BoardClient({
       },
       body: JSON.stringify({
         roomId,
-        content: text || '(画像のみ)',
+        content: text || '(添付のみ)',
         post_type: type,
         attachment_url,
         attachment_type,
@@ -231,35 +232,53 @@ export default function BoardClient({
   const logPosts = posts.filter((p) => !p.post_type || p.post_type === 'log')
 
   const renderAttachment = (p: PostRow) => {
-    const mime = (p.attachment_type ?? '').toLowerCase()
-    const signedUrl = signedMap[p.id]
     if (!p.attachment_url) return null
 
-    // 画像のみ対応（Phase3）
-    if (!mime.startsWith('image/')) {
+    const mime = (p.attachment_type ?? '').toLowerCase()
+    const signedUrl = signedMap[p.id]
+
+    if (!signedUrl) {
+      return <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>添付を読み込み中…</div>
+    }
+
+    if (mime.startsWith('image/')) {
       return (
-        <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
-          添付ファイル（未対応形式）：{mime || 'unknown'}
+        <div style={{ marginTop: 8 }}>
+          <img
+            src={signedUrl}
+            alt="attachment"
+            style={{
+              maxWidth: '100%',
+              borderRadius: 10,
+              border: '1px solid rgba(0,0,0,0.10)',
+              display: 'block',
+            }}
+          />
         </div>
       )
     }
 
-    if (!signedUrl) {
-      return <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>画像を読み込み中…</div>
+    if (mime.startsWith('video/')) {
+      return (
+        <div style={{ marginTop: 8 }}>
+          <video
+            src={signedUrl}
+            controls
+            preload="metadata"
+            style={{
+              maxWidth: '100%',
+              borderRadius: 10,
+              border: '1px solid rgba(0,0,0,0.10)',
+              display: 'block',
+            }}
+          />
+        </div>
+      )
     }
 
     return (
-      <div style={{ marginTop: 8 }}>
-        <img
-          src={signedUrl}
-          alt="attachment"
-          style={{
-            maxWidth: '100%',
-            borderRadius: 10,
-            border: '1px solid rgba(0,0,0,0.10)',
-            display: 'block',
-          }}
-        />
+      <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
+        添付ファイル（未対応形式）：{mime || 'unknown'}
       </div>
     )
   }
@@ -297,14 +316,14 @@ export default function BoardClient({
           <textarea
             value={finalContent}
             onChange={(e) => setFinalContent(e.target.value)}
-            placeholder="最終提出を書く…（画像のみでもOK）"
+            placeholder="最終提出を書く…（画像/動画のみでもOK）"
             style={{ width: '100%', minHeight: 90, padding: 10, borderRadius: 10, border: '1px solid rgba(0,0,0,0.18)' }}
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
             <input
               type="file"
-              accept="image/*"
+              accept={ACCEPT}
               onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)}
             />
             {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
@@ -348,14 +367,14 @@ export default function BoardClient({
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="制作ログを書く…（画像のみでもOK）"
+            placeholder="制作ログを書く…（画像/動画のみでもOK）"
             style={{ width: '100%', minHeight: 90, padding: 10, borderRadius: 10, border: '1px solid rgba(0,0,0,0.18)' }}
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
             <input
               type="file"
-              accept="image/*"
+              accept={ACCEPT}
               onChange={(e) => setLogFile(e.target.files?.[0] ?? null)}
             />
             {logFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{logFile.name}</span>}
