@@ -43,6 +43,18 @@ export default function BoardClient({
   // signed url cache: postId -> signedUrl
   const [signedMap, setSignedMap] = useState<Record<string, string>>({})
 
+  // ✅ ボタン（黒背景＋白文字）スタイル
+  const primaryButtonStyle: React.CSSProperties = {
+    background: '#111',
+    color: '#fff',
+    border: '1px solid #111',
+    borderRadius: 10,
+    padding: '10px 16px',
+    fontWeight: 800,
+    cursor: 'pointer',
+    opacity: loading ? 0.7 : 1,
+  }
+
   useEffect(() => {
     const init = async () => {
       const { data } = await supabase.auth.getUser()
@@ -408,7 +420,14 @@ export default function BoardClient({
               onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)}
             />
             {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
-            <button disabled={loading} onClick={() => submitPost('final')}>
+            <button
+              disabled={loading}
+              onClick={() => submitPost('final')}
+              style={{
+                ...primaryButtonStyle,
+                cursor: loading ? 'not-allowed' : 'pointer',
+              }}
+            >
               {loading ? '送信中…' : '最終提出する'}
             </button>
           </div>
@@ -461,7 +480,14 @@ export default function BoardClient({
               onChange={(e) => setLogFile(e.target.files?.[0] ?? null)}
             />
             {logFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{logFile.name}</span>}
-            <button disabled={loading} onClick={() => submitPost('log')}>
+            <button
+              disabled={loading}
+              onClick={() => submitPost('log')}
+              style={{
+                ...primaryButtonStyle,
+                cursor: loading ? 'not-allowed' : 'pointer',
+              }}
+            >
               {loading ? '送信中…' : '投稿する'}
             </button>
           </div>
