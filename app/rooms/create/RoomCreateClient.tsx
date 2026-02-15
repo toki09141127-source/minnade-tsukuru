@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/client'
 
@@ -19,6 +19,16 @@ const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
 
 const CONCEPT_MAX = 300
 
+// 招待コード生成：8桁英数字（I/O/1/0 を避けて読みやすく）
+function generateInviteCode(len = 8) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // 32 chars
+  let out = ''
+  for (let i = 0; i < len; i++) {
+    out += chars[Math.floor(Math.random() * chars.length)]
+  }
+  return out
+}
+
 export default function RoomCreateClient() {
   const router = useRouter()
   const supabase = createClient()
@@ -31,15 +41,43 @@ export default function RoomCreateClient() {
   // ✅ 追加：コンセプト
   const [concept, setConcept] = useState('')
 
+  // ✅ 追加：core参加方式
+  // 承認制はデフォルト true（あなたの仕様の推奨）
+  const [enableCoreApproval, setEnableCoreApproval] = useState(true)
+  const [enableCoreInvite, setEnableCoreInvite] = useState(false)
+  const [coreInviteCode, setCoreInviteCode] = useState<string>('')
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const conceptLen = concept.length
   const conceptTooLong = conceptLen > CONCEPT_MAX
 
+  // 招待コードONにした瞬間に自動生成（空なら）
+  useEffect(() => {
+    if (enableCoreInvite && !coreInviteCode) {
+      setCoreInviteCode(generateInviteCode(8))
+    }
+    if (!enableCoreInvite) {
+      // OFFなら null 保存したいので、クライアント上は空に戻してOK
+      setCoreInviteCode('')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enableCoreInvite])
+
+  const inviteCodeInvalid = useMemo(() => {
+    if (!enableCoreInvite) return false
+    const code = coreInviteCode.trim()
+    if (!code) return true
+    if (code.length < 6 || code.length > 32) return true
+    if (!/^[A-Z0-9]+$/.test(code)) return true
+    return false
+  }, [enableCoreInvite, coreInviteCode])
+
   const canSubmit = useMemo(() => {
-    return title.trim().length > 0 && !loading && !conceptTooLong
-  }, [title, loading, conceptTooLong])
+    const tOk = title.trim().length > 0
+    return tOk && !loading && !conceptTooLong && !inviteCodeInvalid
+  }, [title, loading, conceptTooLong, inviteCodeInvalid])
 
   const submit = async () => {
     const t = title.trim()
@@ -49,6 +87,13 @@ export default function RoomCreateClient() {
     const c = concept.trim()
     if (c.length > CONCEPT_MAX) {
       setError(`コンセプトは${CONCEPT_MAX}文字以内で入力してください`)
+      return
+    }
+
+    // ✅ 招待コードONなら必須
+    const inviteCode = coreInviteCode.trim()
+    if (enableCoreInvite && inviteCodeInvalid) {
+      setError('招待コードが不正です（英数字・6〜32文字）')
       return
     }
 
@@ -81,8 +126,14 @@ export default function RoomCreateClient() {
           category,
           isAdult,
           hours: h,
-          // ✅ 追加：concept
+
+          // ✅ 既存：concept
           concept: c || null,
+
+          // ✅ 追加：core参加方式
+          enable_core_approval: !!enableCoreApproval,
+          enable_core_invite: !!enableCoreInvite,
+          core_invite_code: enableCoreInvite ? inviteCode : null,
         }),
       })
 
@@ -206,6 +257,88 @@ export default function RoomCreateClient() {
         </div>
 
         <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>1〜150時間まで設定できます（例：48 = 2日）</div>
+
+        {/* ✅ 追加：コア参加方式 */}
+        <div style={{ marginTop: 10, marginBottom: 14 }}>
+          <div style={{ fontWeight: 900, marginBottom: 8 }}>コア参加の設定</div>
+
+          {/* 承認制 */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
+            <input
+              id="enableCoreApproval"
+              type="checkbox"
+              checked={enableCoreApproval}
+              onChange={(e) => setEnableCoreApproval(e.target.checked)}
+            />
+            <label htmlFor="enableCoreApproval" style={{ fontWeight: 800 }}>
+              コア参加：承認制を有効にする
+            </label>
+          </div>
+          <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 12, lineHeight: 1.6 }}>
+            ON：ユーザーは「コア申請」→制作者が承認すると core になります。
+          </div>
+
+          {/* 招待コード */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
+            <input
+              id="enableCoreInvite"
+              type="checkbox"
+              checked={enableCoreInvite}
+              onChange={(e) => setEnableCoreInvite(e.target.checked)}
+            />
+            <label htmlFor="enableCoreInvite" style={{ fontWeight: 800 }}>
+              招待コード枠を有効にする（入力で即core）
+            </label>
+          </div>
+
+          {enableCoreInvite && (
+            <div style={{ marginTop: 8, padding: 12, borderRadius: 12, background: '#fafafa', border: '1px solid rgba(0,0,0,0.10)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
+                <div style={{ fontWeight: 900 }}>招待コード</div>
+                <button
+                  type="button"
+                  onClick={() => setCoreInviteCode(generateInviteCode(8))}
+                  style={{
+                    padding: '6px 10px',
+                    borderRadius: 999,
+                    border: '1px solid rgba(0,0,0,0.2)',
+                    background: '#fff',
+                    cursor: 'pointer',
+                    fontWeight: 800,
+                  }}
+                >
+                  再生成
+                </button>
+              </div>
+
+              <input
+                value={coreInviteCode}
+                onChange={(e) => setCoreInviteCode(e.target.value.toUpperCase())}
+                placeholder="例：ABCD1234"
+                style={{
+                  width: '100%',
+                  padding: '10px 12px',
+                  borderRadius: 12,
+                  border: `1px solid ${inviteCodeInvalid ? '#b00020' : 'rgba(0,0,0,0.2)'}`,
+                  marginTop: 10,
+                  background: '#fff',
+                  fontWeight: 900,
+                  letterSpacing: 1,
+                }}
+              />
+
+              <div style={{ fontSize: 12, opacity: 0.75, marginTop: 8, lineHeight: 1.6 }}>
+                招待コードを知っている人は「招待コードでcore参加」から即coreになれます（最大5人枠）。
+              </div>
+
+              {inviteCodeInvalid && (
+                <div style={{ marginTop: 8, color: '#b00020', fontSize: 12 }}>
+                  招待コードが不正です（英数字・6〜32文字）
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* ✅ 追加：作品コンセプト */}
         <div style={{ marginTop: 10, marginBottom: 14 }}>
