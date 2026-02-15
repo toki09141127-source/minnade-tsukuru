@@ -1,21 +1,29 @@
-import { NextResponse, NextRequest } from 'next/server'
-import { createUserClient } from '@/lib/supabase/server'
+// lib/supabase/server.ts
+import { cookies } from 'next/headers'
+import { createServerClient } from '@supabase/ssr'
+import { createClient } from '@supabase/supabase-js'
 
-export async function GET(_req: NextRequest) {
-  const supabase = createUserClient()
+export async function createUserClient() {
+  const cookieStore = await cookies()
 
-  const { data: userData } = await supabase.auth.getUser()
-  const user = userData.user
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  return createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value
+        },
+      },
+    }
+  )
+}
 
-  // オーナーが作ったルームに紐づく pending core 申請数
-  // RLSで owner_select を貼っているので、selectできる範囲=自分のルームの申請だけ
-  const { count, error } = await supabase
-    .from('room_join_requests')
-    .select('id', { count: 'exact', head: true })
-    .eq('requested_role', 'core')
-    .eq('status', 'pending')
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 })
-  return NextResponse.json({ count: count ?? 0 })
+// Service Role（絶対にクライアントに渡さない）
+export function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
 }
