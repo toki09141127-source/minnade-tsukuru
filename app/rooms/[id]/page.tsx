@@ -1,13 +1,10 @@
+// app/rooms/[id]/page.tsx
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
-import JoinButton from './JoinButton'
-import LikeButton from './LikeButton'
 import RemainingTimer from './RemainingTimer'
-import DeleteRoomButton from './DeleteRoomButton'
 import AdultGate from './AdultGate'
-import ReportButton from './ReportButton'
-import BoardClient from './BoardClient'
+import RoomDetailClient from './RoomDetailClient'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,8 +67,7 @@ function computeIsEnded(room: RoomRow) {
       ? new Date(room.expires_at).getTime()
       : null
 
-  const endedByExpireSafety =
-    expiresMs !== null && expiresMs <= nowMs && room.status !== 'open'
+  const endedByExpireSafety = expiresMs !== null && expiresMs <= nowMs && room.status !== 'open'
 
   // C) ended_at があるなら ended_at is not null
   const endedByEndedAt = room.ended_at != null && room.ended_at !== ''
@@ -132,7 +128,7 @@ export default async function RoomDetailPage({
         </div>
       </div>
 
-      {/* AdultGate（必ず復活） */}
+      {/* AdultGate */}
       <div style={{ marginTop: 12 }}>
         <AdultGate isAdult={!!room.is_adult} />
       </div>
@@ -159,22 +155,6 @@ export default async function RoomDetailPage({
         <RemainingTimer expiresAt={room.expires_at} status={room.status} />
       </div>
 
-      {/* 操作ボタン群（必ず復活） */}
-      <div
-        style={{
-          marginTop: 14,
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 10,
-          alignItems: 'center',
-        }}
-      >
-        <JoinButton roomId={room.id} roomStatus={room.status} />
-        <LikeButton roomId={room.id} />
-        <ReportButton targetType="room" targetId={room.id} />
-        <DeleteRoomButton roomId={room.id} />
-      </div>
-
       {/* forced_publish：公開済み案内＋作品リンク（投稿UIは出さない） */}
       {isForced && (
         <div
@@ -187,9 +167,7 @@ export default async function RoomDetailPage({
             lineHeight: 1.7,
           }}
         >
-          <div style={{ fontWeight: 900, fontSize: 16 }}>
-            このルームは公開済みです
-          </div>
+          <div style={{ fontWeight: 900, fontSize: 16 }}>このルームは公開済みです</div>
           <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>
             参加・投稿はできません
           </div>
@@ -213,7 +191,7 @@ export default async function RoomDetailPage({
         </div>
       )}
 
-      {/* forced_publish 以外の「終了済み」：終了案内＋作品リンク（必ず表示） */}
+      {/* forced_publish 以外の「終了済み」：終了案内＋作品リンク */}
       {!isForced && isEnded && (
         <div
           style={{
@@ -225,9 +203,7 @@ export default async function RoomDetailPage({
             lineHeight: 1.7,
           }}
         >
-          <div style={{ fontWeight: 900, fontSize: 16 }}>
-            このルームはすでに終了しました
-          </div>
+          <div style={{ fontWeight: 900, fontSize: 16 }}>このルームはすでに終了しました</div>
           <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>
             参加・投稿はできません
           </div>
@@ -251,11 +227,9 @@ export default async function RoomDetailPage({
         </div>
       )}
 
-      {/* open のときだけ BoardClient（投稿UI）を表示 */}
-      {isOpen && (
-        <div style={{ marginTop: 28 }}>
-          <BoardClient roomId={room.id} roomStatus={room.status} />
-        </div>
+      {/* open のときだけ：操作ボタン群＋（参加済みなら）BoardClient を client state で確実に表示 */}
+      {isOpen && !isForced && !isEnded && (
+        <RoomDetailClient room={{ id: room.id, status: room.status }} />
       )}
     </div>
   )
