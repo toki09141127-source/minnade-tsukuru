@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/client'
+import { AI_LEVEL_OPTIONS, type AiLevel } from '../../../lib/aiLevel'
 
 const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: '小説', label: '小説' },
@@ -15,15 +16,7 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: 'その他', label: 'その他' },
 ]
 
-const AI_LEVEL_OPTIONS: { value: 'none' | 'low' | 'mid' | 'high'; label: string; help: string }[] = [
-  { value: 'none', label: 'AIなし', help: 'AIは使わない（人力のみ）' },
-  { value: 'low', label: 'AI少し', help: 'アイデア出し・壁打ち程度で使用' },
-  { value: 'mid', label: 'AIふつう', help: '一部文章/構成/たたき台作りに使用' },
-  { value: 'high', label: 'AI多め', help: 'かなりAIを活用して制作する' },
-]
-
 const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
-
 const CONCEPT_MAX = 300
 
 // 招待コード生成：8桁英数字（I/O/1/0 を避けて読みやすく）
@@ -45,13 +38,13 @@ export default function RoomCreateClient() {
   const [isAdult, setIsAdult] = useState(false)
   const [hours, setHours] = useState<number>(48)
 
-  // ✅ 追加：AIレベル
-  const [aiLevel, setAiLevel] = useState<'none' | 'low' | 'mid' | 'high'>('none')
+  // ✅ AIレベル（DB準拠：forbidden/assist/free）
+  const [aiLevel, setAiLevel] = useState<AiLevel>('assist')
 
-  // ✅ 追加：コンセプト
+  // ✅ コンセプト
   const [concept, setConcept] = useState('')
 
-  // ✅ 追加：core参加方式（承認制デフォルトON）
+  // ✅ core参加方式（承認制デフォルトON）
   const [enableCoreApproval, setEnableCoreApproval] = useState(true)
   const [enableCoreInvite, setEnableCoreInvite] = useState(false)
   const [coreInviteCode, setCoreInviteCode] = useState<string>('')
@@ -133,13 +126,11 @@ export default function RoomCreateClient() {
           isAdult,
           hours: h,
 
-          // ✅ 追加：AIレベル
+          // ✅ DBに合わせた3値を送る
           ai_level: aiLevel,
 
-          // ✅ 既存：concept
           concept: c || null,
 
-          // ✅ 追加：core参加方式
           enable_core_approval: !!enableCoreApproval,
           enable_core_invite: !!enableCoreInvite,
           core_invite_code: enableCoreInvite ? inviteCode : null,
@@ -232,7 +223,7 @@ export default function RoomCreateClient() {
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>AIレベル</label>
         <select
           value={aiLevel}
-          onChange={(e) => setAiLevel(e.target.value as any)}
+          onChange={(e) => setAiLevel(e.target.value as AiLevel)}
           style={{
             width: '100%',
             padding: '10px 12px',

@@ -1,6 +1,7 @@
 // app/api/rooms/create/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { normalizeAiLevel } from '@/lib/aiLevel' // ← パスはあなたの構成に合わせて調整
 
 const CATEGORY_VALUES = [
   '小説',
@@ -15,16 +16,11 @@ const CATEGORY_VALUES = [
   'その他',
 ] as const
 
-const AI_LEVEL_VALUES = ['none', 'low', 'mid', 'high'] as const
-type AiLevel = (typeof AI_LEVEL_VALUES)[number]
-
 const WORK_TYPE_DEFAULT = 'room'
 const MAX_CONCEPT_LENGTH = 300
 
 function normalizeInviteCode(raw: unknown) {
-  return String(raw ?? '')
-    .trim()
-    .toUpperCase()
+  return String(raw ?? '').trim().toUpperCase()
 }
 
 function isValidInviteCode(code: string) {
@@ -34,16 +30,12 @@ function isValidInviteCode(code: string) {
   return true
 }
 
-function normalizeAiLevel(raw: unknown): AiLevel {
-  const s = String(raw ?? '').trim().toLowerCase()
-  return (AI_LEVEL_VALUES as readonly string[]).includes(s) ? (s as AiLevel) : 'none'
-}
-
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
 
     const title = String(body?.title ?? '').trim()
+
     const categoryRaw = String(body?.category ?? 'その他').trim()
     const category = (CATEGORY_VALUES as readonly string[]).includes(categoryRaw)
       ? categoryRaw
@@ -55,19 +47,16 @@ export async function POST(req: Request) {
     const hoursNum = Number(body?.hours ?? 48)
     const hours = Math.max(1, Math.min(150, Math.floor(hoursNum)))
 
-    // ✅ AIレベル（未指定は none）
-    const aiLevel = normalizeAiLevel(body?.aiLevel ?? body?.ai_level)
+    // ✅ AIレベル（未指定/不正はDB defaultと同じ "assist"）
+    // 互換：ai_level を正としつつ、aiLevel も拾う
+    const aiLevel = normalizeAiLevel(body?.ai_level ?? body?.aiLevel, 'assist')
 
     // ✅ core参加方式
     const enableCoreApproval =
-      body?.enable_core_approval === undefined
-        ? true
-        : Boolean(body?.enable_core_approval)
+      body?.enable_core_approval === undefined ? true : Boolean(body?.enable_core_approval)
 
     const enableCoreInvite = Boolean(body?.enable_core_invite ?? false)
-    const coreInviteCode = enableCoreInvite
-      ? normalizeInviteCode(body?.core_invite_code)
-      : null
+    const coreInviteCode = enableCoreInvite ? normalizeInviteCode(body?.core_invite_code) : null
 
     if (!title) {
       return NextResponse.json({ ok: false, error: 'title is required' }, { status: 400 })
@@ -99,9 +88,9 @@ export async function POST(req: Request) {
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
+    // token検証（anonでOK）
     const supabaseAuth = createClient(url, anonKey, { auth: { persistSession: false } })
     const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token)
-
     if (userErr || !userData?.user) {
       return NextResponse.json({ ok: false, error: 'Not authenticated' }, { status: 401 })
     }
@@ -112,7 +101,7 @@ export async function POST(req: Request) {
     const now = new Date()
     const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
 
-    const insertPayload: any = {
+    const insertPayload = {
       title,
       category,
       is_adult: isAdult,
@@ -120,22 +109,20 @@ export async function POST(req: Request) {
       started_at: now.toISOString(),
       expires_at: expiresAt.toISOString(),
       created_by: user.id,
-
       host_ids: [user.id],
-
       is_hidden: false,
       deleted_at: null,
       time_limit_hours: hours,
       work_type: String(body?.workType ?? body?.work_type ?? WORK_TYPE_DEFAULT),
       concept: conceptRaw || null,
 
-      // ✅ 追加：ai_level
+      // ✅ DB許容値に一致（forbidden/assist/free）
       ai_level: aiLevel,
 
       enable_core_approval: enableCoreApproval,
       enable_core_invite: enableCoreInvite,
       core_invite_code: enableCoreInvite ? coreInviteCode : null,
-    }
+    } as const
 
     const { data: room, error: insErr } = await admin
       .from('rooms')
@@ -147,18 +134,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: insErr.message }, { status: 500 })
     }
 
-    const { error: memberErr } = await admin
-      .from('room_members')
-      .upsert(
-        {
-          room_id: room.id,
-          user_id: user.id,
-          role: 'creator',
-          joined_at: now.toISOString(),
-          left_at: null,
-        },
-        { onConflict: 'room_id,user_id' }
-      )
+    const { error: memberErr } = await admin.from('room_members').upsert(
+      {
+        room_id: room.id,
+        user_id: user.id,
+        role: 'creator',
+        joined_at: now.toISOString(),
+        left_at: null,
+      },
+      { onConflict: 'room_id,user_id' }
+    )
 
     if (memberErr) {
       return NextResponse.json({ ok: false, error: memberErr.message }, { status: 500 })
@@ -166,9 +151,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, room })
   } catch (e: any) {
-    return NextResponse.json(
-      { ok: false, error: e?.message ?? 'Server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ ok: false, error: e?.message ?? 'Server error' }, { status: 500 })
   }
 }
