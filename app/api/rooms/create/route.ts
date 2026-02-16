@@ -15,6 +15,9 @@ const CATEGORY_VALUES = [
   'その他',
 ] as const
 
+const AI_LEVEL_VALUES = ['none', 'low', 'mid', 'high'] as const
+type AiLevel = (typeof AI_LEVEL_VALUES)[number]
+
 const WORK_TYPE_DEFAULT = 'room'
 const MAX_CONCEPT_LENGTH = 300
 
@@ -25,11 +28,15 @@ function normalizeInviteCode(raw: unknown) {
 }
 
 function isValidInviteCode(code: string) {
-  // 英数字のみ・6〜32文字（読みやすさ制約はUI側任せでもOK）
   if (!code) return false
   if (code.length < 6 || code.length > 32) return false
   if (!/^[A-Z0-9]+$/.test(code)) return false
   return true
+}
+
+function normalizeAiLevel(raw: unknown): AiLevel {
+  const s = String(raw ?? '').trim().toLowerCase()
+  return (AI_LEVEL_VALUES as readonly string[]).includes(s) ? (s as AiLevel) : 'none'
 }
 
 export async function POST(req: Request) {
@@ -48,8 +55,10 @@ export async function POST(req: Request) {
     const hoursNum = Number(body?.hours ?? 48)
     const hours = Math.max(1, Math.min(150, Math.floor(hoursNum)))
 
-    // ✅ 追加：core参加方式（未指定はデフォルトに寄せる）
-    // 承認制は「true 推奨」なので、未指定なら true に倒す
+    // ✅ AIレベル（未指定は none）
+    const aiLevel = normalizeAiLevel(body?.aiLevel ?? body?.ai_level)
+
+    // ✅ core参加方式
     const enableCoreApproval =
       body?.enable_core_approval === undefined
         ? true
@@ -71,7 +80,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 招待コード枠ONなら必須チェック
     if (enableCoreInvite) {
       if (!coreInviteCode || !isValidInviteCode(coreInviteCode)) {
         return NextResponse.json(
@@ -104,7 +112,6 @@ export async function POST(req: Request) {
     const now = new Date()
     const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
 
-    // ✅ rooms.insert payload
     const insertPayload: any = {
       title,
       category,
@@ -114,7 +121,6 @@ export async function POST(req: Request) {
       expires_at: expiresAt.toISOString(),
       created_by: user.id,
 
-      // 既存互換（残してOK）
       host_ids: [user.id],
 
       is_hidden: false,
@@ -123,13 +129,14 @@ export async function POST(req: Request) {
       work_type: String(body?.workType ?? body?.work_type ?? WORK_TYPE_DEFAULT),
       concept: conceptRaw || null,
 
-      // ✅ 追加：コア参加方式
+      // ✅ 追加：ai_level
+      ai_level: aiLevel,
+
       enable_core_approval: enableCoreApproval,
       enable_core_invite: enableCoreInvite,
       core_invite_code: enableCoreInvite ? coreInviteCode : null,
     }
 
-    // 1) rooms作成
     const { data: room, error: insErr } = await admin
       .from('rooms')
       .insert(insertPayload)
@@ -140,8 +147,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: insErr.message }, { status: 500 })
     }
 
-    // 2) 作成者を room_members に creator として参加させる（退出不可の前提）
-    // role: 'creator' / 'core' / 'supporter' の新仕様に統一
     const { error: memberErr } = await admin
       .from('room_members')
       .upsert(

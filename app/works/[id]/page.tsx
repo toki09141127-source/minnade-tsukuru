@@ -12,6 +12,7 @@ type RoomRow = {
   is_hidden: boolean
   deleted_at?: string | null
   concept?: string | null
+  ai_level?: string | null
 }
 
 type PostRow = {
@@ -28,6 +29,14 @@ type PostRow = {
 }
 
 export const dynamic = 'force-dynamic'
+
+function aiLabel(v: string | null | undefined) {
+  const s = (v ?? '').toLowerCase()
+  if (s === 'high') return '多め'
+  if (s === 'mid') return 'ふつう'
+  if (s === 'low') return '少し'
+  return 'なし'
+}
 
 export default async function WorkDetailPage({
   params,
@@ -48,7 +57,7 @@ export default async function WorkDetailPage({
 
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept')
+    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level')
     .eq('id', roomId)
     .maybeSingle<RoomRow>()
 
@@ -61,7 +70,6 @@ export default async function WorkDetailPage({
     )
   }
 
-  // 完成作品ページなので forced_publish のみ表示（仕様通り）
   if (room.status !== 'forced_publish') {
     return (
       <div style={{ padding: 24 }}>
@@ -71,7 +79,6 @@ export default async function WorkDetailPage({
     )
   }
 
-  // ✅ final / log を分離して取得（最小改修・明快・安定）
   const baseSelect =
     'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
@@ -91,14 +98,11 @@ export default async function WorkDetailPage({
     .eq('room_id', roomId)
     .eq('is_hidden', false)
     .is('deleted_at', null)
-    // post_type が null（既存データ）も log として扱う
     .in('post_type', ['log', ''])
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
-  // 既存データに post_type が NULL の投稿がある可能性が高いので、サーバ側で補正
-  const normalizedLogPosts =
-    (logPosts ?? []).filter((p) => !p.post_type || p.post_type === 'log')
+  const normalizedLogPosts = (logPosts ?? []).filter((p) => !p.post_type || p.post_type === 'log')
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
@@ -116,8 +120,9 @@ export default async function WorkDetailPage({
       </div>
 
       <h1 style={{ marginTop: 10 }}>{room.title}</h1>
+
       <div style={{ marginTop: 6, color: '#444', fontSize: 14 }}>
-        {room.work_type} / ❤️ {room.like_count ?? 0}
+        {room.work_type} / 🤖AI: {aiLabel(room.ai_level)} / ❤️ {room.like_count ?? 0}
       </div>
 
       {room.concept && (
@@ -141,7 +146,6 @@ export default async function WorkDetailPage({
         </p>
       )}
 
-      {/* ✅ 最終提出（final） */}
       <section style={{ marginTop: 18 }}>
         <h2 style={{ fontSize: 16 }}>完成作品（最終提出）</h2>
 
@@ -170,7 +174,6 @@ export default async function WorkDetailPage({
                   {p.content}
                 </div>
 
-                {/* ✅ 画像表示（最小追加） */}
                 {p.attachment_url &&
                   (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
                     <div style={{ marginTop: 10 }}>
@@ -195,7 +198,6 @@ export default async function WorkDetailPage({
         )}
       </section>
 
-      {/* ✅ 制作ログ（log） */}
       <section style={{ marginTop: 18 }}>
         <h2 style={{ fontSize: 16 }}>制作ログ（掲示板）</h2>
 
@@ -224,7 +226,6 @@ export default async function WorkDetailPage({
                   {p.content}
                 </div>
 
-                {/* ✅ 画像表示（最小追加） */}
                 {p.attachment_url &&
                   (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
                     <div style={{ marginTop: 10 }}>

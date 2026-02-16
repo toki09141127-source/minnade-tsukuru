@@ -17,6 +17,9 @@ type RoomRow = {
   member_count: number | null
   is_hidden: boolean | null
   deleted_at: string | null
+
+  // ✅ 追加
+  ai_level: string | null
 }
 
 const CATEGORY_OPTIONS = [
@@ -51,6 +54,14 @@ function badgeStyle(bg: string, fg: string): CSSProperties {
   }
 }
 
+function aiLabel(v: string | null | undefined) {
+  const s = (v ?? '').toLowerCase()
+  if (s === 'high') return '多め'
+  if (s === 'mid') return 'ふつう'
+  if (s === 'low') return '少し'
+  return 'なし'
+}
+
 export default function WorksListClient() {
   const supabase = useMemo(() => createClient(), [])
 
@@ -68,11 +79,10 @@ export default function WorksListClient() {
       setLoading(true)
       setError('')
 
-      // ✅ ここが重要：rooms ではなく rooms_with_counts_v2 を読む
       const base = supabase
         .from('rooms_with_counts_v2')
         .select(
-          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at'
+          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
         )
         .eq('status', 'forced_publish')
         .eq('is_hidden', false)
@@ -122,7 +132,6 @@ export default function WorksListClient() {
 
   return (
     <div style={{ marginTop: 14 }}>
-      {/* Controls */}
       <div
         style={{
           display: 'grid',
@@ -195,7 +204,6 @@ export default function WorksListClient() {
       {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
       {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
 
-      {/* Cards */}
       <div
         style={{
           marginTop: 12,
@@ -209,6 +217,7 @@ export default function WorksListClient() {
           const isAdult = Boolean(r.is_adult)
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
+          const ai = aiLabel(r.ai_level)
 
           return (
             <Link
@@ -229,6 +238,7 @@ export default function WorksListClient() {
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   <span style={badgeStyle('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
                   <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>
+                  <span style={badgeStyle('rgba(16,185,129,0.14)', '#065f46')}>AI:{ai}</span>
                   {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
                 </div>
 

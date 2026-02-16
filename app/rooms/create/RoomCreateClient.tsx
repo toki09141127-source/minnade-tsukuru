@@ -15,13 +15,20 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
   { value: 'その他', label: 'その他' },
 ]
 
+const AI_LEVEL_OPTIONS: { value: 'none' | 'low' | 'mid' | 'high'; label: string; help: string }[] = [
+  { value: 'none', label: 'AIなし', help: 'AIは使わない（人力のみ）' },
+  { value: 'low', label: 'AI少し', help: 'アイデア出し・壁打ち程度で使用' },
+  { value: 'mid', label: 'AIふつう', help: '一部文章/構成/たたき台作りに使用' },
+  { value: 'high', label: 'AI多め', help: 'かなりAIを活用して制作する' },
+]
+
 const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
 
 const CONCEPT_MAX = 300
 
 // 招待コード生成：8桁英数字（I/O/1/0 を避けて読みやすく）
 function generateInviteCode(len = 8) {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789' // 32 chars
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
   let out = ''
   for (let i = 0; i < len; i++) {
     out += chars[Math.floor(Math.random() * chars.length)]
@@ -38,11 +45,13 @@ export default function RoomCreateClient() {
   const [isAdult, setIsAdult] = useState(false)
   const [hours, setHours] = useState<number>(48)
 
+  // ✅ 追加：AIレベル
+  const [aiLevel, setAiLevel] = useState<'none' | 'low' | 'mid' | 'high'>('none')
+
   // ✅ 追加：コンセプト
   const [concept, setConcept] = useState('')
 
-  // ✅ 追加：core参加方式
-  // 承認制はデフォルト true（あなたの仕様の推奨）
+  // ✅ 追加：core参加方式（承認制デフォルトON）
   const [enableCoreApproval, setEnableCoreApproval] = useState(true)
   const [enableCoreInvite, setEnableCoreInvite] = useState(false)
   const [coreInviteCode, setCoreInviteCode] = useState<string>('')
@@ -59,7 +68,6 @@ export default function RoomCreateClient() {
       setCoreInviteCode(generateInviteCode(8))
     }
     if (!enableCoreInvite) {
-      // OFFなら null 保存したいので、クライアント上は空に戻してOK
       setCoreInviteCode('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,14 +91,12 @@ export default function RoomCreateClient() {
     const t = title.trim()
     if (!t) return
 
-    // ✅ クライアント側でも弾く（API側でも弾くので二重）
     const c = concept.trim()
     if (c.length > CONCEPT_MAX) {
       setError(`コンセプトは${CONCEPT_MAX}文字以内で入力してください`)
       return
     }
 
-    // ✅ 招待コードONなら必須
     const inviteCode = coreInviteCode.trim()
     if (enableCoreInvite && inviteCodeInvalid) {
       setError('招待コードが不正です（英数字・6〜32文字）')
@@ -127,6 +133,9 @@ export default function RoomCreateClient() {
           isAdult,
           hours: h,
 
+          // ✅ 追加：AIレベル
+          ai_level: aiLevel,
+
           // ✅ 既存：concept
           concept: c || null,
 
@@ -152,6 +161,8 @@ export default function RoomCreateClient() {
       setLoading(false)
     }
   }
+
+  const aiHelp = AI_LEVEL_OPTIONS.find((x) => x.value === aiLevel)?.help ?? ''
 
   return (
     <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
@@ -217,8 +228,32 @@ export default function RoomCreateClient() {
           <option value="true">成人向け</option>
         </select>
 
-        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>制限時間（時間）</label>
+        {/* ✅ AIレベル */}
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>AIレベル</label>
+        <select
+          value={aiLevel}
+          onChange={(e) => setAiLevel(e.target.value as any)}
+          style={{
+            width: '100%',
+            padding: '10px 12px',
+            borderRadius: 12,
+            border: '1px solid rgba(0,0,0,0.2)',
+            marginBottom: 8,
+            background: '#fff',
+            fontWeight: 800,
+          }}
+        >
+          {AI_LEVEL_OPTIONS.map((x) => (
+            <option key={x.value} value={x.value}>
+              {x.label}
+            </option>
+          ))}
+        </select>
+        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14, lineHeight: 1.6 }}>
+          {aiHelp}
+        </div>
 
+        <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>制限時間（時間）</label>
         <input
           type="number"
           min={1}
@@ -256,13 +291,14 @@ export default function RoomCreateClient() {
           ))}
         </div>
 
-        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>1〜150時間まで設定できます（例：48 = 2日）</div>
+        <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 14 }}>
+          1〜150時間まで設定できます（例：48 = 2日）
+        </div>
 
-        {/* ✅ 追加：コア参加方式 */}
+        {/* ✅ コア参加方式 */}
         <div style={{ marginTop: 10, marginBottom: 14 }}>
           <div style={{ fontWeight: 900, marginBottom: 8 }}>コア参加の設定</div>
 
-          {/* 承認制 */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
             <input
               id="enableCoreApproval"
@@ -278,7 +314,6 @@ export default function RoomCreateClient() {
             ON：ユーザーは「コア申請」→制作者が承認すると core になります。
           </div>
 
-          {/* 招待コード */}
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
             <input
               id="enableCoreInvite"
@@ -292,7 +327,15 @@ export default function RoomCreateClient() {
           </div>
 
           {enableCoreInvite && (
-            <div style={{ marginTop: 8, padding: 12, borderRadius: 12, background: '#fafafa', border: '1px solid rgba(0,0,0,0.10)' }}>
+            <div
+              style={{
+                marginTop: 8,
+                padding: 12,
+                borderRadius: 12,
+                background: '#fafafa',
+                border: '1px solid rgba(0,0,0,0.10)',
+              }}
+            >
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
                 <div style={{ fontWeight: 900 }}>招待コード</div>
                 <button
@@ -340,7 +383,7 @@ export default function RoomCreateClient() {
           )}
         </div>
 
-        {/* ✅ 追加：作品コンセプト */}
+        {/* ✅ 作品コンセプト */}
         <div style={{ marginTop: 10, marginBottom: 14 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'baseline' }}>
             <label style={{ display: 'block', marginBottom: 6, fontWeight: 800 }}>
