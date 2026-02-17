@@ -1,14 +1,15 @@
-import { NextResponse } from 'next/server'
+// app/api/rooms/[id]/invite-code/route.ts
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const roomId = params.id
+    const { id: roomId } = await params
 
     // --- Auth ---
     const authHeader = req.headers.get('authorization') ?? ''
@@ -26,32 +27,32 @@ export async function GET(
     if (userErr || !userData?.user) {
       return NextResponse.json({ ok: false, error: 'Not authenticated' }, { status: 401 })
     }
-
     const userId = userData.user.id
+
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
+    // 1) ルーム取得（招待設定）
     const { data: room, error: roomErr } = await admin
       .from('rooms')
       .select('id, created_by, enable_core_invite, core_invite_code')
       .eq('id', roomId)
-      .single()
+      .maybeSingle()
 
-    if (roomErr || !room) {
+    if (roomErr) {
+      return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
+    }
+    if (!room) {
       return NextResponse.json({ ok: false, error: 'Room not found' }, { status: 404 })
     }
 
-    // ✅ 制作者のみ
+    // 2) 制作者だけに開示
     if (room.created_by !== userId) {
       return NextResponse.json({ ok: false, error: 'Forbidden' }, { status: 403 })
     }
 
-    if (!room.enable_core_invite) {
-      return NextResponse.json({ ok: true, enable: false, code: null })
-    }
-
     return NextResponse.json({
       ok: true,
-      enable: true,
+      enable: !!room.enable_core_invite,
       code: room.core_invite_code ?? null,
     })
   } catch (e: any) {
