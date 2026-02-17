@@ -35,6 +35,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   const isOpen = room.status === 'open'
 
+  // left_at が null のときだけ「参加中」とみなす
   const myRole = myMember?.left_at == null ? myMember?.role : null
 
   const coreLeaveAllowed = useMemo(() => {
@@ -45,6 +46,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }, [myRole, myMember?.joined_at])
 
   const canPost = isOpen && (myRole === 'supporter' || myRole === 'core' || myRole === 'creator')
+
+  // ✅ 未参加者だけが「招待コードでcore参加」を使える
+  const canJoinByInvite = isOpen && room.enable_core_invite && !myRole
 
   const getToken = async () => {
     const sess = await supabase.auth.getSession()
@@ -141,8 +145,12 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }
 
   const joinCoreByInvite = async () => {
+    // ✅ 二重ガード：未参加者以外は操作させない（creatorを含む）
+    if (myRole) return alert('すでに参加しています（招待コード参加は未参加者のみ）')
+
     if (!isOpen) return alert('このルームは参加できません')
     if (!room.enable_core_invite) return
+
     const code = inviteCode.trim()
     if (!code) return alert('招待コードを入力してください')
 
@@ -293,8 +301,8 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           </button>
         </div>
 
-        {/* core招待参加 */}
-        {room.enable_core_invite && (
+        {/* ✅ core招待参加：未参加者のみ表示（creatorには出ない） */}
+        {canJoinByInvite && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
             <div style={{ fontWeight: 900, marginBottom: 6 }}>招待コードでcore参加</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -306,7 +314,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
               />
               <button
                 onClick={joinCoreByInvite}
-                disabled={busy || !isOpen || checking}
+                disabled={busy || checking}
                 style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
               >
                 core参加
@@ -341,7 +349,15 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           ) : (
             <div style={{ display: 'grid', gap: 10 }}>
               {pendingRequests.map((r) => (
-                <div key={r.id} style={{ background: '#fff', borderRadius: 12, padding: 12, border: '1px solid #eee' }}>
+                <div
+                  key={r.id}
+                  style={{
+                    background: '#fff',
+                    borderRadius: 12,
+                    padding: 12,
+                    border: '1px solid #eee',
+                  }}
+                >
                   <div style={{ fontSize: 13, color: '#555' }}>
                     user_id: <b>{r.user_id}</b>
                   </div>
@@ -364,13 +380,21 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         </div>
       )}
 
-      {/* 掲示板：参加者のみ表示（既存「参加しないと投稿できない」をUIでも担保） */}
+      {/* 掲示板：参加者のみ表示 */}
       {canPost ? (
         <div style={{ marginTop: 18 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />
         </div>
       ) : (
-        <div style={{ marginTop: 18, padding: 14, borderRadius: 12, background: '#fff7e6', border: '1px solid #f3d08a' }}>
+        <div
+          style={{
+            marginTop: 18,
+            padding: 14,
+            borderRadius: 12,
+            background: '#fff7e6',
+            border: '1px solid #f3d08a',
+          }}
+        >
           参加すると掲示板に投稿できます。
         </div>
       )}
