@@ -8,6 +8,7 @@ import ReportButton from './ReportButton'
 import LikeButton from './LikeButton'
 import RoomDetailClient from './RoomDetailClient'
 import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
+import InviteCodeForCreator from './InviteCodeForCreator'
 
 export const dynamic = 'force-dynamic'
 
@@ -124,6 +125,9 @@ export default async function RoomDetailPage({
         <AdultGate isAdult={!!room.is_adult} />
       </div>
 
+      {/* ✅ 追加：制作者のみ招待コード（open/ended/forced すべてで表示OK） */}
+      <InviteCodeForCreator roomId={room.id} />
+
       {room.concept && (
         <div
           style={{
@@ -151,7 +155,7 @@ export default async function RoomDetailPage({
         <DeleteRoomButton roomId={room.id} />
       </div>
 
-      {/* ✅ 追加：オーナー専用 申請パネル（open/ended関係なく表示したいならここで常時） */}
+      {/* ✅ オーナー専用 申請パネル（open/ended関係なく表示したいならここで常時） */}
       <div style={{ marginTop: 18 }}>
         <OwnerCoreRequestsPanel roomId={room.id} />
       </div>

@@ -19,6 +19,9 @@ const CATEGORY_OPTIONS: { value: string; label: string }[] = [
 const PRESET_HOURS = [1, 3, 6, 12, 24, 36, 48, 72, 100, 120, 150] as const
 const CONCEPT_MAX = 300
 
+// ✅ ルーム詳細で「制作者のみ招待コード確認」を実装する前提で true
+const INVITE_CODE_VIEWABLE_IN_ROOM_DETAIL = true
+
 // 招待コード生成：8桁英数字（I/O/1/0 を避けて読みやすく）
 function generateInviteCode(len = 8) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -44,10 +47,14 @@ export default function RoomCreateClient() {
   // ✅ コンセプト
   const [concept, setConcept] = useState('')
 
-  // ✅ core参加方式（承認制デフォルトOF）
+  // ✅ core参加方式（承認制デフォルトOFF）
   const [enableCoreApproval, setEnableCoreApproval] = useState(false)
   const [enableCoreInvite, setEnableCoreInvite] = useState(false)
   const [coreInviteCode, setCoreInviteCode] = useState<string>('')
+
+  // ✅ 追加：コピー用 state
+  const [copyMsg, setCopyMsg] = useState('')
+  const [copyBusy, setCopyBusy] = useState(false)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -62,6 +69,8 @@ export default function RoomCreateClient() {
     }
     if (!enableCoreInvite) {
       setCoreInviteCode('')
+      setCopyMsg('')
+      setCopyBusy(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableCoreInvite])
@@ -79,6 +88,35 @@ export default function RoomCreateClient() {
     const tOk = title.trim().length > 0
     return tOk && !loading && !conceptTooLong && !inviteCodeInvalid
   }, [title, loading, conceptTooLong, inviteCodeInvalid])
+
+  // ✅ コピー処理（clipboard + フォールバック）
+  const copyInviteCode = async () => {
+    if (!enableCoreInvite) return
+    const code = coreInviteCode.trim()
+    if (!code) return
+
+    if (inviteCodeInvalid) {
+      setCopyMsg('招待コードが不正です（英数字・6〜32文字）')
+      setTimeout(() => setCopyMsg(''), 2500)
+      return
+    }
+
+    if (copyBusy) return
+    setCopyBusy(true)
+    setCopyMsg('')
+
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopyMsg('コピーしました！')
+    } catch {
+      const manual = window.prompt('コピーに失敗しました。手動でコピーしてください：', code)
+      if (manual !== null) setCopyMsg('手動コピー用に表示しました')
+      else setCopyMsg('コピーできませんでした（ブラウザ制限の可能性）')
+    } finally {
+      setCopyBusy(false)
+      setTimeout(() => setCopyMsg(''), 2500)
+    }
+  }
 
   const submit = async () => {
     const t = title.trim()
@@ -126,7 +164,7 @@ export default function RoomCreateClient() {
           isAdult,
           hours: h,
 
-          // ✅ DBに合わせた3値を送る
+          // ✅ DBに合わせた3値
           ai_level: aiLevel,
 
           concept: c || null,
@@ -329,21 +367,73 @@ export default function RoomCreateClient() {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
                 <div style={{ fontWeight: 900 }}>招待コード</div>
-                <button
-                  type="button"
-                  onClick={() => setCoreInviteCode(generateInviteCode(8))}
+
+                {/* ✅ 追加：コピー + 再生成 */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <button
+                    type="button"
+                    onClick={copyInviteCode}
+                    disabled={copyBusy || !coreInviteCode.trim()}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 999,
+                      border: '1px solid rgba(0,0,0,0.2)',
+                      background: '#111',
+                      color: '#fff',
+                      cursor: copyBusy ? 'not-allowed' : 'pointer',
+                      fontWeight: 900,
+                      opacity: copyBusy ? 0.6 : 1,
+                    }}
+                    title="招待コードをコピー"
+                  >
+                    {copyBusy ? 'コピー中…' : 'コピー'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setCoreInviteCode(generateInviteCode(8))}
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: 999,
+                      border: '1px solid rgba(0,0,0,0.2)',
+                      background: '#fff',
+                      cursor: 'pointer',
+                      fontWeight: 800,
+                    }}
+                  >
+                    再生成
+                  </button>
+                </div>
+              </div>
+
+              {/* ✅ 注意文（切替） */}
+              {INVITE_CODE_VIEWABLE_IN_ROOM_DETAIL ? (
+                <div style={{ fontSize: 12, opacity: 0.8, marginTop: 8, lineHeight: 1.6 }}>
+                  招待コードは<b>ルーム作成者のみ</b>、ルーム詳細でいつでも確認できます。
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, marginTop: 8, lineHeight: 1.6, color: '#b00020', fontWeight: 800 }}>
+                  ※現在、招待コードは作成後に確認できません。必ず今コピーして保管してください。
+                </div>
+              )}
+
+              {/* ✅ コピー結果 */}
+              {copyMsg && (
+                <div
                   style={{
-                    padding: '6px 10px',
-                    borderRadius: 999,
-                    border: '1px solid rgba(0,0,0,0.2)',
-                    background: '#fff',
-                    cursor: 'pointer',
-                    fontWeight: 800,
+                    marginTop: 8,
+                    fontSize: 12,
+                    fontWeight: 900,
+                    color: copyMsg.includes('失敗') || copyMsg.includes('不正') ? '#b00020' : '#111',
+                    background: 'rgba(0,0,0,0.04)',
+                    padding: '8px 10px',
+                    borderRadius: 10,
+                    border: '1px solid rgba(0,0,0,0.08)',
                   }}
                 >
-                  再生成
-                </button>
-              </div>
+                  {copyMsg}
+                </div>
+              )}
 
               <input
                 value={coreInviteCode}
