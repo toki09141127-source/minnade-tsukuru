@@ -44,8 +44,8 @@ export default function RoomCreateClient() {
   // ✅ コンセプト
   const [concept, setConcept] = useState('')
 
-  // ✅ core参加方式（承認制デフォルトON）
-  const [enableCoreApproval, setEnableCoreApproval] = useState(true)
+  // ✅ core参加方式（承認制デフォルトOF）
+  const [enableCoreApproval, setEnableCoreApproval] = useState(false)
   const [enableCoreInvite, setEnableCoreInvite] = useState(false)
   const [coreInviteCode, setCoreInviteCode] = useState<string>('')
 

@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 
     // ✅ core参加方式
     const enableCoreApproval =
-      body?.enable_core_approval === undefined ? true : Boolean(body?.enable_core_approval)
+      body?.enable_core_approval === undefined ? false : Boolean(body?.enable_core_approval)
 
     const enableCoreInvite = Boolean(body?.enable_core_invite ?? false)
     const coreInviteCode = enableCoreInvite ? normalizeInviteCode(body?.core_invite_code) : null
