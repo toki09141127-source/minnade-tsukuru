@@ -75,6 +75,8 @@ export default function HomePage() {
               <br />
               <b>参加後5分以内のみ退出可</b>（5分経過後は退出不可）
               <br />
+              <b>権限：</b>掲示板の投稿を「⭐重要」としてマーキングできます（重要アイデアのピックアップ用）
+              <br />
               参加方法：<b>制作者承認制</b> / <b>招待コード枠</b>（ルーム作成時にON/OFF）
             </li>
 
@@ -82,6 +84,8 @@ export default function HomePage() {
               <b>supporter（最大45人）</b>：応援・アイデア・感想・資料共有・制作ログ参加など。
               <br />
               <b>自由参加・自由退出可</b>
+              <br />
+              ※閲覧・投稿はOKですが、⭐マーキングなどの意思決定系操作はできません
             </li>
           </ul>
 
@@ -93,6 +97,13 @@ export default function HomePage() {
               <br />
               → そのため <b>「5分以内だけ退出可」</b> になっています（以降は退出不可）。
             </li>
+
+            <li style={{ marginTop: 8 }}>
+              <b>coreの⭐マーキング</b>：良い案や採用候補を「⭐重要」で目立たせます。
+              <br />
+              → supporter は操作できません（閲覧のみ）。誤操作・荒れ対策のために権限を限定しています。
+            </li>
+
             <li style={{ marginTop: 8 }}>
               <b>投稿条件</b>：掲示板への投稿は<b>参加者のみ</b>です（まずは supporter 参加が一番気軽です）。
             </li>
@@ -104,7 +115,7 @@ export default function HomePage() {
             </li>
           </ul>
 
-          {/* 5) FAQ（最低6） */}
+          {/* 5) FAQ */}
           <h2>よくある質問（FAQ）</h2>
 
           <p style={{ marginTop: 8 }}>
@@ -117,6 +128,12 @@ export default function HomePage() {
             <b>Q. coreって、5分過ぎたら本当に退出できないの？</b>
             <br />
             A. できません。意思決定役が途中で抜けると混乱が起きるため、ルールで固定しています。参加前にだけ確認してください。
+          </p>
+
+          <p>
+            <b>Q. ⭐重要（マーキング）って何？</b>
+            <br />
+            A. 掲示板の投稿を「採用候補・重要アイデア」として目立たせる機能です。core/creatorのみが付け外しできます。
           </p>
 
           <p>
