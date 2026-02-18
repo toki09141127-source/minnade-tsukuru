@@ -1,4 +1,3 @@
-// app/api/rooms/reject-core/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -14,7 +13,7 @@ function getEnv() {
 async function getUserIdFromBearer(req: Request) {
   const authHeader = req.headers.get('authorization') ?? ''
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
-  if (!token) return { userId: null, error: 'Unauthorized' }
+  if (!token) return { userId: null as string | null, error: 'Unauthorized' }
 
   const { url, anonKey } = getEnv()
   const supabaseAuth = createClient(url, anonKey, { auth: { persistSession: false } })
@@ -28,6 +27,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}))
     const roomId = String(body?.roomId ?? '').trim()
     const requestId = String(body?.requestId ?? '').trim()
+
     if (!roomId) return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
     if (!requestId) return NextResponse.json({ ok: false, error: 'requestId is required' }, { status: 400 })
 
@@ -37,29 +37,23 @@ export async function POST(req: Request) {
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    // creator確認
-    const { data: me } = await admin
-      .from('room_members')
-      .select('role, left_at')
-      .eq('room_id', roomId)
-      .eq('user_id', userId)
-      .maybeSingle()
+    const { data, error: rpcErr } = await admin.rpc('reject_core_request', {
+      p_room_id: roomId,
+      p_creator_user_id: userId,
+      p_request_id: requestId,
+    })
 
-    if (!me || me.left_at != null || me.role !== 'creator') {
-      return NextResponse.json({ ok: false, error: 'creatorのみ却下できます' }, { status: 403 })
+    if (rpcErr) {
+      const msg = rpcErr.message || '却下に失敗しました'
+
+      if (msg.includes('NOT_CREATOR')) return NextResponse.json({ ok: false, error: 'creatorのみ却下できます' }, { status: 403 })
+      if (msg.includes('REQUEST_NOT_FOUND')) return NextResponse.json({ ok: false, error: '申請が見つかりません' }, { status: 404 })
+      if (msg.includes('NOT_PENDING')) return NextResponse.json({ ok: false, error: 'pendingのみ却下できます' }, { status: 400 })
+
+      return NextResponse.json({ ok: false, error: msg }, { status: 500 })
     }
 
-    const now = new Date().toISOString()
-    const { error: updErr } = await admin
-      .from('room_join_requests')
-      .update({ status: 'rejected', decided_at: now, decided_by: userId })
-      .eq('id', requestId)
-      .eq('room_id', roomId)
-      .eq('status', 'pending')
-
-    if (updErr) return NextResponse.json({ ok: false, error: updErr.message }, { status: 500 })
-
-    return NextResponse.json({ ok: true })
+    return NextResponse.json({ ok: true, data })
   } catch (e: any) {
     return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
   }
