@@ -1,4 +1,3 @@
-// app/rooms/[id]/RoomDetailClient.tsx
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
@@ -33,6 +32,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   const [pendingRequests, setPendingRequests] = useState<JoinRequestRow[]>([])
   const [busy, setBusy] = useState(false)
 
+  // ✅ UI内エラー表示（alert依存を減らす）
+  const [uiError, setUiError] = useState<string>('')
+
   const isOpen = room.status === 'open'
 
   // left_at が null のときだけ「参加中」とみなす
@@ -49,6 +51,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   // ✅ 未参加者だけが「招待コードでcore参加」を使える
   const canJoinByInvite = isOpen && room.enable_core_invite && !myRole
+
+  // ✅ 承認OFFのときは「先着core参加」ボタン
+  const canJoinCoreFirstCome = isOpen && !room.enable_core_approval && !myRole
 
   const getToken = async () => {
     const sess = await supabase.auth.getSession()
@@ -69,7 +74,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       return
     }
 
-    // 自分の参加状態
+    // 自分の参加状態（RLSでselect可能前提）
     const { data: mem } = await supabase
       .from('room_members')
       .select('role, joined_at, left_at')
@@ -79,7 +84,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
     setMyMember((mem as any) ?? null)
 
-    // creatorなら pending一覧（RLSでcreatorのみ見える）
+    // creatorなら pending一覧（RLSでcreatorのみ見える想定）
     if (mem?.left_at == null && mem?.role === 'creator') {
       const { data: reqs } = await supabase
         .from('room_join_requests')
@@ -103,9 +108,10 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   // --- actions ---
   const joinSupporter = async () => {
-    if (!isOpen) return alert('このルームは参加できません')
+    setUiError('')
+    if (!isOpen) return setUiError('このルームは参加できません')
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     setBusy(true)
     try {
@@ -115,7 +121,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '参加に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -123,10 +129,11 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }
 
   const requestCore = async () => {
-    if (!isOpen) return alert('このルームは申請できません')
+    setUiError('')
+    if (!isOpen) return setUiError('このルームは申請できません')
     if (!room.enable_core_approval) return
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     setBusy(true)
     try {
@@ -136,7 +143,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '申請に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '申請に失敗しました')
       alert('core申請を送信しました')
       await reloadMyState()
     } finally {
@@ -144,18 +151,43 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
     }
   }
 
-  const joinCoreByInvite = async () => {
-    // ✅ 二重ガード：未参加者以外は操作させない（creatorを含む）
-    if (myRole) return alert('すでに参加しています（招待コード参加は未参加者のみ）')
+  const joinCoreFirstCome = async () => {
+    setUiError('')
+    if (myRole) return setUiError('すでに参加しています')
+    if (!isOpen) return setUiError('このルームは参加できません')
+    if (room.enable_core_approval) return setUiError('このルームは承認制です（先着参加はできません）')
 
-    if (!isOpen) return alert('このルームは参加できません')
+    const token = await getToken()
+    if (!token) return setUiError('ログインしてください')
+
+    setBusy(true)
+    try {
+      const res = await fetch('/api/rooms/join-core-first-come', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ roomId: room.id }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
+      await reloadMyState()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const joinCoreByInvite = async () => {
+    setUiError('')
+    // ✅ 二重ガード：未参加者以外は操作させない（creatorを含む）
+    if (myRole) return setUiError('すでに参加しています（招待コード参加は未参加者のみ）')
+
+    if (!isOpen) return setUiError('このルームは参加できません')
     if (!room.enable_core_invite) return
 
     const code = inviteCode.trim()
-    if (!code) return alert('招待コードを入力してください')
+    if (!code) return setUiError('招待コードを入力してください')
 
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     setBusy(true)
     try {
@@ -165,7 +197,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id, inviteCode: code }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '参加に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -173,8 +205,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }
 
   const leaveRoom = async () => {
+    setUiError('')
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     if (!confirm('退出しますか？')) return
 
@@ -186,7 +219,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '退出に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '退出に失敗しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -194,8 +227,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }
 
   const approve = async (requestId: string) => {
+    setUiError('')
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     setBusy(true)
     try {
@@ -205,7 +239,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id, requestId }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '承認に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '承認に失敗しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -213,8 +247,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   }
 
   const reject = async (requestId: string) => {
+    setUiError('')
     const token = await getToken()
-    if (!token) return alert('ログインしてください')
+    if (!token) return setUiError('ログインしてください')
 
     setBusy(true)
     try {
@@ -224,7 +259,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         body: JSON.stringify({ roomId: room.id, requestId }),
       })
       const json = await res.json().catch(() => ({}))
-      if (!res.ok) return alert(json?.error ?? '却下に失敗しました')
+      if (!res.ok) return setUiError(json?.error ?? '却下に失敗しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -234,7 +269,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   // --- UI ---
   return (
     <div style={{ marginTop: 14 }}>
-      {/* 操作ボックス */}
       <div
         style={{
           border: '1px solid rgba(0,0,0,0.12)',
@@ -258,7 +292,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
-          {/* supporter参加 */}
           <button
             onClick={joinSupporter}
             disabled={busy || !isOpen || checking || !!myRole}
@@ -267,7 +300,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
             supporter参加
           </button>
 
-          {/* core申請 */}
+          {/* ✅ 承認制ON：core申請 */}
           {room.enable_core_approval && (
             <button
               onClick={requestCore}
@@ -278,7 +311,17 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
             </button>
           )}
 
-          {/* 退出 */}
+          {/* ✅ 承認制OFF：先着core参加 */}
+          {!room.enable_core_approval && (
+            <button
+              onClick={joinCoreFirstCome}
+              disabled={busy || !isOpen || checking || !!myRole}
+              style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
+            >
+              core参加（先着）
+            </button>
+          )}
+
           <button
             onClick={leaveRoom}
             disabled={
@@ -301,7 +344,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           </button>
         </div>
 
-        {/* ✅ core招待参加：未参加者のみ表示（creatorには出ない） */}
+        {/* ✅ 招待コードでcore参加（未参加者のみ） */}
         {canJoinByInvite && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
             <div style={{ fontWeight: 900, marginBottom: 6 }}>招待コードでcore参加</div>
@@ -323,15 +366,20 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           </div>
         )}
 
-        {/* core退出の説明 */}
         {myRole === 'core' && !coreLeaveAllowed && (
           <div style={{ marginTop: 10, color: '#b00020', fontWeight: 800, fontSize: 13 }}>
             coreは参加から5分経過すると退出できません。
           </div>
         )}
+
+        {!!uiError && (
+          <div style={{ marginTop: 10, color: '#b00020', fontWeight: 800, fontSize: 13 }}>
+            {uiError}
+          </div>
+        )}
       </div>
 
-      {/* creator 承認UI */}
+      {/* creator 承認UI（承認制ONのみ） */}
       {myRole === 'creator' && room.enable_core_approval && (
         <div
           style={{
@@ -380,7 +428,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         </div>
       )}
 
-      {/* 掲示板：参加者のみ表示 */}
       {canPost ? (
         <div style={{ marginTop: 18 }}>
           <BoardClient roomId={room.id} roomStatus={room.status} />

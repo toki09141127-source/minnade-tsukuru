@@ -26,10 +26,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
     const roomId = String(body?.roomId ?? '').trim()
-    const inviteCode = String(body?.inviteCode ?? '').trim()
-
     if (!roomId) return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
-    if (!inviteCode) return NextResponse.json({ ok: false, error: 'inviteCode is required' }, { status: 400 })
 
     const { userId, error } = await getUserIdFromBearer(req)
     if (!userId) return NextResponse.json({ ok: false, error }, { status: 401 })
@@ -37,10 +34,9 @@ export async function POST(req: Request) {
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
-    const { data, error: rpcErr } = await admin.rpc('join_core_by_invite', {
+    const { data, error: rpcErr } = await admin.rpc('join_core_first_come', {
       p_room_id: roomId,
       p_user_id: userId,
-      p_invite_code: inviteCode,
     })
 
     if (rpcErr) {
@@ -48,10 +44,9 @@ export async function POST(req: Request) {
 
       if (msg.includes('ROOM_NOT_FOUND')) return NextResponse.json({ ok: false, error: 'ルームが見つかりません' }, { status: 404 })
       if (msg.includes('ROOM_NOT_OPEN')) return NextResponse.json({ ok: false, error: 'openルームのみ参加できます' }, { status: 400 })
-      if (msg.includes('INVITE_OFF')) return NextResponse.json({ ok: false, error: 'このルームは招待コード参加がOFFです' }, { status: 400 })
-      if (msg.includes('INVITE_MISMATCH')) return NextResponse.json({ ok: false, error: '招待コードが違います' }, { status: 403 })
+      if (msg.includes('APPROVAL_ON')) return NextResponse.json({ ok: false, error: 'このルームは承認制です（先着参加はできません）' }, { status: 400 })
       if (msg.includes('ALREADY_JOINED')) return NextResponse.json({ ok: false, error: 'すでに参加しています' }, { status: 409 })
-      if (msg.includes('CORE_FULL')) return NextResponse.json({ ok: false, error: 'core枠が満員です（最大5）' }, { status: 409 })
+      if (msg.includes('CORE_FULL')) return NextResponse.json({ ok: false, error: 'core枠が埋まりました（最大5）' }, { status: 409 })
 
       return NextResponse.json({ ok: false, error: msg }, { status: 500 })
     }
