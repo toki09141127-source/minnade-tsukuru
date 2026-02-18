@@ -1,8 +1,10 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../../../lib/supabase/client'
 import JoinButton from './JoinButton'
+
+type Role = 'creator' | 'core' | 'supporter' | null
 
 type PostRow = {
   id: string
@@ -12,8 +14,13 @@ type PostRow = {
   created_at: string
   post_type?: string | null
   deleted_at?: string | null
-  attachment_url?: string | null   // Storage path
-  attachment_type?: string | null  // mime
+  attachment_url?: string | null
+  attachment_type?: string | null
+
+  // ✅ marking
+  is_marked: boolean
+  marked_by?: string | null
+  marked_at?: string | null
 }
 
 const ACCEPT = 'image/*,video/mp4,video/webm'
@@ -21,9 +28,11 @@ const ACCEPT = 'image/*,video/mp4,video/webm'
 export default function BoardClient({
   roomId,
   roomStatus,
+  myRole,
 }: {
   roomId: string
   roomStatus: string
+  myRole: Role
 }) {
   const [posts, setPosts] = useState<PostRow[]>([])
   const [error, setError] = useState('')
@@ -32,9 +41,9 @@ export default function BoardClient({
   const [userId, setUserId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // ✅ 参加済みか
-  const [isMember, setIsMember] = useState(false)
-  const [memberChecked, setMemberChecked] = useState(false)
+  // ✅ 参加済みか（親からのmyRoleで判定）
+  const isMember = !!myRole
+  const memberChecked = true
 
   // 添付（log / final）
   const [logFile, setLogFile] = useState<File | null>(null)
@@ -42,6 +51,11 @@ export default function BoardClient({
 
   // signed url cache: postId -> signedUrl
   const [signedMap, setSignedMap] = useState<Record<string, string>>({})
+
+  // ✅ Mark filter
+  const [markFilter, setMarkFilter] = useState<'all' | 'marked'>('all')
+
+  const canMark = myRole === 'core' || myRole === 'creator'
 
   // ✅ ボタン（黒背景＋白文字）スタイル
   const primaryButtonStyle: React.CSSProperties = {
@@ -53,6 +67,16 @@ export default function BoardClient({
     fontWeight: 800,
     cursor: 'pointer',
     opacity: loading ? 0.7 : 1,
+  }
+
+  const smallButtonStyle: React.CSSProperties = {
+    background: '#fff',
+    color: '#111',
+    border: '1px solid rgba(0,0,0,0.20)',
+    borderRadius: 10,
+    padding: '6px 10px',
+    fontWeight: 900,
+    cursor: 'pointer',
   }
 
   useEffect(() => {
@@ -69,44 +93,13 @@ export default function BoardClient({
     return session.data.session?.access_token ?? null
   }
 
-  // ✅ 参加チェック（room_members 参照）
-  const fetchMembership = useCallback(async (uid: string | null) => {
-    setMemberChecked(false)
-    setIsMember(false)
-
-    if (!uid) {
-      setMemberChecked(true)
-      return
-    }
-
-    const { data, error } = await supabase
-      .from('room_members')
-      .select('id')
-      .eq('room_id', roomId)
-      .eq('user_id', uid)
-      .maybeSingle()
-
-    if (error) {
-      // RLS等で読めない場合は「未参加」扱いに倒す（安全側）
-      setIsMember(false)
-      setMemberChecked(true)
-      return
-    }
-
-    setIsMember(!!data)
-    setMemberChecked(true)
-  }, [roomId])
-
-  useEffect(() => {
-    // userId確定後に参加チェック
-    fetchMembership(userId)
-  }, [userId, fetchMembership])
-
   const fetchPosts = useCallback(async () => {
     setError('')
     const { data, error } = await supabase
       .from('posts')
-      .select('id, user_id, username, content, created_at, post_type, deleted_at, attachment_url, attachment_type')
+      .select(
+        'id, user_id, username, content, created_at, post_type, deleted_at, attachment_url, attachment_type, is_marked, marked_by, marked_at'
+      )
       .eq('room_id', roomId)
       .is('deleted_at', null)
       .order('created_at', { ascending: true })
@@ -183,7 +176,7 @@ export default function BoardClient({
   }
 
   const submitPost = async (type: 'log' | 'final') => {
-    // ✅ UX: 未参加ならクライアント側でも止める（最終防御はAPI）
+    // ✅ UX: 未参加なら止める（最終防御はAPI）
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから投稿してください')
       return
@@ -254,15 +247,12 @@ export default function BoardClient({
       setFinalFile(null)
     }
 
-    // 投稿後に再取得
     await fetchPosts()
-    // 参加状態が変わった可能性は低いけど念のため
-    await fetchMembership(userId)
     setLoading(false)
   }
 
   const deletePost = async (postId: string) => {
-    // ✅ UX: 未参加ならクライアント側でも止める（最終防御はAPI）
+    // ✅ UX: 未参加なら止める（最終防御はAPI）
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから操作してください')
       return
@@ -294,8 +284,82 @@ export default function BoardClient({
     await fetchPosts()
   }
 
-  const finalPosts = posts.filter((p) => p.post_type === 'final')
-  const logPosts = posts.filter((p) => !p.post_type || p.post_type === 'log')
+  const toggleMark = async (postId: string) => {
+    if (!canMark) return
+    const token = await getToken()
+    if (!token) {
+      alert('ログインが必要です')
+      return
+    }
+
+    // 準optimistic：まずローカル反映（戻しも入れる）
+    const before = posts.find((p) => p.id === postId)
+    if (!before) return
+
+    const optimisticNext = !before.is_marked
+    setPosts((prev) =>
+      prev.map((p) =>
+        p.id === postId
+          ? {
+              ...p,
+              is_marked: optimisticNext,
+              marked_by: optimisticNext ? userId : null,
+              marked_at: optimisticNext ? new Date().toISOString() : null,
+            }
+          : p
+      )
+    )
+
+    try {
+      const res = await fetch('/api/posts/toggle-mark', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ postId, roomId }),
+      })
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        // rollback
+        setPosts((prev) => prev.map((p) => (p.id === postId ? before : p)))
+        alert(json?.error ?? 'マーキングに失敗しました')
+        return
+      }
+
+      const updated = json?.post as { id: string; is_marked: boolean; marked_by: string | null; marked_at: string | null } | null
+      if (updated?.id) {
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.id === updated.id
+              ? { ...p, is_marked: !!updated.is_marked, marked_by: updated.marked_by ?? null, marked_at: updated.marked_at ?? null }
+              : p
+          )
+        )
+      } else {
+        // 何らかで返らない時は再取得で安全に揃える
+        await fetchPosts()
+      }
+    } catch {
+      // rollback
+      setPosts((prev) => prev.map((p) => (p.id === postId ? before : p)))
+      alert('通信に失敗しました')
+    }
+  }
+
+  const finalPostsAll = useMemo(() => posts.filter((p) => p.post_type === 'final'), [posts])
+  const logPostsAll = useMemo(() => posts.filter((p) => !p.post_type || p.post_type === 'log'), [posts])
+
+  const applyMarkFilter = useCallback(
+    (rows: PostRow[]) => {
+      if (markFilter === 'marked') return rows.filter((p) => p.is_marked)
+      return rows
+    },
+    [markFilter]
+  )
+
+  const finalPosts = applyMarkFilter(finalPostsAll)
+  const logPosts = applyMarkFilter(logPostsAll)
 
   const renderAttachment = (p: PostRow) => {
     if (!p.attachment_url) return null
@@ -352,6 +416,40 @@ export default function BoardClient({
   const showPostForms = roomStatus === 'open' && userId && memberChecked && isMember
   const showJoinHint = roomStatus === 'open' && userId && memberChecked && !isMember
 
+  const renderMarkBadge = (p: PostRow) => {
+    if (!p.is_marked) return null
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 6,
+          fontSize: 12,
+          fontWeight: 900,
+          padding: '3px 8px',
+          borderRadius: 999,
+          border: '1px solid rgba(0,0,0,0.18)',
+          background: '#fff7e6',
+        }}
+        title={p.marked_at ? `marked_at: ${new Date(p.marked_at).toLocaleString()}` : 'marked'}
+      >
+        ⭐ 重要
+      </span>
+    )
+  }
+
+  const cardStyle = (p: PostRow): React.CSSProperties => {
+    if (!p.is_marked) {
+      return { border: '1px solid #eee', borderRadius: 10, padding: 12, background: '#fff' }
+    }
+    return {
+      border: '2px solid rgba(255, 170, 0, 0.60)',
+      borderRadius: 10,
+      padding: 12,
+      background: '#fffdf5',
+    }
+  }
+
   return (
     <section style={{ marginTop: 18 }}>
       {/* 参加していない場合の案内 */}
@@ -376,6 +474,38 @@ export default function BoardClient({
         </div>
       )}
 
+      {/* ✅ Mark filter */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
+        <div style={{ fontWeight: 900 }}>表示:</div>
+        <button
+          onClick={() => setMarkFilter('all')}
+          style={{
+            ...smallButtonStyle,
+            background: markFilter === 'all' ? '#111' : '#fff',
+            color: markFilter === 'all' ? '#fff' : '#111',
+            borderColor: markFilter === 'all' ? '#111' : 'rgba(0,0,0,0.20)',
+          }}
+        >
+          すべて
+        </button>
+        <button
+          onClick={() => setMarkFilter('marked')}
+          style={{
+            ...smallButtonStyle,
+            background: markFilter === 'marked' ? '#111' : '#fff',
+            color: markFilter === 'marked' ? '#fff' : '#111',
+            borderColor: markFilter === 'marked' ? '#111' : 'rgba(0,0,0,0.20)',
+          }}
+        >
+          ⭐ マーク済みのみ
+        </button>
+        {canMark && (
+          <span style={{ marginLeft: 6, fontSize: 12, opacity: 0.75 }}>
+            ※core/creatorは投稿を「重要」にできます
+          </span>
+        )}
+      </div>
+
       <h2>完成作品（最終提出）</h2>
 
       {finalPosts.length === 0 ? (
@@ -383,13 +513,37 @@ export default function BoardClient({
       ) : (
         <div style={{ display: 'grid', gap: 10 }}>
           {finalPosts.map((p) => (
-            <div key={p.id} style={{ border: '1px solid #ddd', borderRadius: 10, padding: 12, background: '#fff' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                <strong>{p.username ?? '名無し'}</strong>
-                <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
+            <div key={p.id} style={cardStyle(p)}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <strong>{p.username ?? '名無し'}</strong>
+                  {renderMarkBadge(p)}
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
+
+                  {/* ✅ Mark toggle button（core/creatorのみ） */}
+                  {canMark && (
+                    <button
+                      onClick={() => toggleMark(p.id)}
+                      style={{
+                        ...smallButtonStyle,
+                        background: p.is_marked ? '#111' : '#fff',
+                        color: p.is_marked ? '#fff' : '#111',
+                        borderColor: p.is_marked ? '#111' : 'rgba(0,0,0,0.20)',
+                      }}
+                      title={p.is_marked ? '重要を解除' : '重要にする'}
+                    >
+                      {p.is_marked ? '⭐解除' : '⭐重要'}
+                    </button>
+                  )}
+                </div>
               </div>
+
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
+
               {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
@@ -403,7 +557,15 @@ export default function BoardClient({
 
       {/* ✅ 未参加ならフォームを出さない */}
       {showPostForms && (
-        <div style={{ marginTop: 12, border: '1px solid rgba(0,0,0,0.10)', borderRadius: 12, padding: 12, background: '#fafafa' }}>
+        <div
+          style={{
+            marginTop: 12,
+            border: '1px solid rgba(0,0,0,0.10)',
+            borderRadius: 12,
+            padding: 12,
+            background: '#fafafa',
+          }}
+        >
           <div style={{ fontWeight: 900, marginBottom: 8 }}>最終提出を投稿</div>
 
           <textarea
@@ -414,11 +576,7 @@ export default function BoardClient({
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-            <input
-              type="file"
-              accept={ACCEPT}
-              onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)}
-            />
+            <input type="file" accept={ACCEPT} onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
             {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
             <button
               disabled={loading}
@@ -443,13 +601,37 @@ export default function BoardClient({
       ) : (
         <div style={{ display: 'grid', gap: 10 }}>
           {logPosts.map((p) => (
-            <div key={p.id} style={{ border: '1px solid #eee', borderRadius: 10, padding: 12, background: '#fff' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                <strong>{p.username ?? '名無し'}</strong>
-                <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
+            <div key={p.id} style={cardStyle(p)}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <strong>{p.username ?? '名無し'}</strong>
+                  {renderMarkBadge(p)}
+                </div>
+
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
+
+                  {/* ✅ Mark toggle button（core/creatorのみ） */}
+                  {canMark && (
+                    <button
+                      onClick={() => toggleMark(p.id)}
+                      style={{
+                        ...smallButtonStyle,
+                        background: p.is_marked ? '#111' : '#fff',
+                        color: p.is_marked ? '#fff' : '#111',
+                        borderColor: p.is_marked ? '#111' : 'rgba(0,0,0,0.20)',
+                      }}
+                      title={p.is_marked ? '重要を解除' : '重要にする'}
+                    >
+                      {p.is_marked ? '⭐解除' : '⭐重要'}
+                    </button>
+                  )}
+                </div>
               </div>
+
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
+
               {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
@@ -463,7 +645,15 @@ export default function BoardClient({
 
       {/* ✅ 未参加ならフォームを出さない */}
       {showPostForms && (
-        <div style={{ marginTop: 12, border: '1px solid rgba(0,0,0,0.10)', borderRadius: 12, padding: 12, background: '#fafafa' }}>
+        <div
+          style={{
+            marginTop: 12,
+            border: '1px solid rgba(0,0,0,0.10)',
+            borderRadius: 12,
+            padding: 12,
+            background: '#fafafa',
+          }}
+        >
           <div style={{ fontWeight: 900, marginBottom: 8 }}>制作ログを投稿</div>
 
           <textarea
@@ -474,11 +664,7 @@ export default function BoardClient({
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-            <input
-              type="file"
-              accept={ACCEPT}
-              onChange={(e) => setLogFile(e.target.files?.[0] ?? null)}
-            />
+            <input type="file" accept={ACCEPT} onChange={(e) => setLogFile(e.target.files?.[0] ?? null)} />
             {logFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{logFile.name}</span>}
             <button
               disabled={loading}
@@ -492,11 +678,6 @@ export default function BoardClient({
             </button>
           </div>
         </div>
-      )}
-
-      {/* memberCheck中の軽い表示（任意） */}
-      {roomStatus === 'open' && userId && !memberChecked && (
-        <p style={{ color: '#666', marginTop: 12 }}>参加状況を確認中…</p>
       )}
 
       {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error}</p>}

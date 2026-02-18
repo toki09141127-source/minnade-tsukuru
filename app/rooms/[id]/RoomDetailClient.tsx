@@ -324,13 +324,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
           <button
             onClick={leaveRoom}
-            disabled={
-              busy ||
-              checking ||
-              !myRole ||
-              myRole === 'creator' ||
-              (myRole === 'core' && !coreLeaveAllowed)
-            }
+            disabled={busy || checking || !myRole || myRole === 'creator' || (myRole === 'core' && !coreLeaveAllowed)}
             title={
               myRole === 'creator'
                 ? 'creatorは退出できません'
@@ -409,9 +403,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
                   <div style={{ fontSize: 13, color: '#555' }}>
                     user_id: <b>{r.user_id}</b>
                   </div>
-                  <div style={{ fontSize: 12, opacity: 0.7 }}>
-                    {new Date(r.created_at).toLocaleString()}
-                  </div>
+                  <div style={{ fontSize: 12, opacity: 0.7 }}>{new Date(r.created_at).toLocaleString()}</div>
 
                   <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
                     <button disabled={busy} onClick={() => approve(r.id)} style={{ fontWeight: 900 }}>
@@ -430,7 +422,8 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
       {canPost ? (
         <div style={{ marginTop: 18 }}>
-          <BoardClient roomId={room.id} roomStatus={room.status} />
+          {/* ✅ 追加：myRole を BoardClient に渡す */}
+          <BoardClient roomId={room.id} roomStatus={room.status} myRole={myRole} />
         </div>
       ) : (
         <div
