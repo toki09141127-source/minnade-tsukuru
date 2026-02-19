@@ -1,7 +1,7 @@
 // app/users/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '../../../lib/supabase/server'
+import { createUserClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,7 +35,7 @@ export default async function UserPage({ params }: PageProps) {
   }
 
   // 3) Supabase 取得（RLS / anon read が効いてれば読める）
-  const supabase = await createClient()
+  const supabase = await createUserClient()
 
   const { data, error } = await supabase
     .from('profiles')
