@@ -6,10 +6,15 @@ import { createUserClient } from '../../../lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 function isValidUUID(v: string) {
-  // 36文字UUID（8-4-4-4-12）
-  return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
-    v
-  )
+  return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(v)
+}
+
+function safeDecode(v: string) {
+  try {
+    return decodeURIComponent(v).trim()
+  } catch {
+    return String(v).trim()
+  }
 }
 
 type PageProps = {
@@ -17,25 +22,20 @@ type PageProps = {
 }
 
 export default async function UserPage({ params }: PageProps) {
-  // 1) idを安全に整形（変な値は弾く）
+  // 1) id 正規化
   const raw = params?.id ?? ''
-  const id = (() => {
-    try {
-      return decodeURIComponent(raw).trim()
-    } catch {
-      return String(raw).trim()
-    }
-  })()
+  const id = safeDecode(raw)
 
+  // 2) UUID 検証（変な値が来たら 404）
   if (!isValidUUID(id)) {
     console.warn('[users/[id]] invalid id:', { raw, id })
     notFound()
   }
 
-  // 2) Supabase（サーバ側ユーザーセッション付き）クライアント
+  // 3) Supabase（※ここが重要：await）
   const supabase = await createUserClient()
 
-  // 3) profiles取得
+  // 4) プロフィール取得
   const { data: profile, error } = await supabase
     .from('profiles')
     .select('id, username, bio')
@@ -48,24 +48,44 @@ export default async function UserPage({ params }: PageProps) {
   }
 
   if (!profile) {
+    // RLS で見えない / そもそも存在しない
     notFound()
   }
 
   return (
     <main className="max-w-2xl mx-auto py-10 px-4">
-      <div className="mb-6">
-        <Link href="/rooms" className="underline">
-          ← ルーム一覧へ
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{profile.username ?? 'No Name'}</h1>
+        <Link href="/rooms" className="text-sm underline">
+          ルーム一覧へ
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold mb-2">{profile.username ?? 'No Name'}</h1>
+      <section className="rounded-xl border p-5">
+        <div className="text-sm text-gray-600 mb-2">ユーザーID</div>
+        <div className="font-mono text-xs break-all mb-5">{profile.id}</div>
 
-      {profile.bio ? (
-        <p className="whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
-      ) : (
-        <p className="text-sm opacity-70">自己紹介は未設定です。</p>
-      )}
+        <div className="text-sm text-gray-600 mb-2">自己紹介</div>
+        <p className="whitespace-pre-wrap">
+          {profile.bio?.trim() ? profile.bio : '（未設定）'}
+        </p>
+
+        <div className="mt-6 flex gap-3">
+          <Link
+            href={`/works?user=${profile.id}`}
+            className="inline-flex items-center rounded-md bg-black px-4 py-2 text-white text-sm"
+          >
+            この人の完成作品
+          </Link>
+
+          <Link
+            href="/profile"
+            className="inline-flex items-center rounded-md border px-4 py-2 text-sm"
+          >
+            自分のプロフィール編集
+          </Link>
+        </div>
+      </section>
     </main>
   )
 }
