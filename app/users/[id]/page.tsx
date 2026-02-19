@@ -1,3 +1,4 @@
+// app/users/[id]/page.tsx
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { createUserClient } from '../../../lib/supabase/server'
@@ -5,49 +6,66 @@ import { createUserClient } from '../../../lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 function isValidUUID(v: string) {
-  return /^[0-9a-fA-F-]{36}$/.test(v)
+  // 36文字UUID（8-4-4-4-12）
+  return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+    v
+  )
 }
 
-export default async function UserPage({
-  params,
-}: {
+type PageProps = {
   params: { id: string }
-}) {
-  const id = decodeURIComponent(params.id ?? '').trim()
+}
+
+export default async function UserPage({ params }: PageProps) {
+  // 1) idを安全に整形（変な値は弾く）
+  const raw = params?.id ?? ''
+  const id = (() => {
+    try {
+      return decodeURIComponent(raw).trim()
+    } catch {
+      return String(raw).trim()
+    }
+  })()
 
   if (!isValidUUID(id)) {
+    console.warn('[users/[id]] invalid id:', { raw, id })
     notFound()
   }
 
-  const supabase = await createUserClient() // ← ★これが重要
+  // 2) Supabase（サーバ側ユーザーセッション付き）クライアント
+  const supabase = await createUserClient()
 
-  const { data: profile } = await supabase
+  // 3) profiles取得
+  const { data: profile, error } = await supabase
     .from('profiles')
     .select('id, username, bio')
     .eq('id', id)
     .maybeSingle()
+
+  if (error) {
+    console.error('[users/[id]] profiles select error:', error)
+    notFound()
+  }
 
   if (!profile) {
     notFound()
   }
 
   return (
-    <main className="max-w-2xl mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-4">
-        {profile.username ?? 'No Name'}
-      </h1>
-
-      {profile.bio && (
-        <p className="text-gray-600 whitespace-pre-wrap">
-          {profile.bio}
-        </p>
-      )}
-
-      <div className="mt-6">
-        <Link href="/" className="text-blue-500 underline">
-          トップへ戻る
+    <main className="max-w-2xl mx-auto py-10 px-4">
+      <div className="mb-6">
+        <Link href="/rooms" className="underline">
+          ← ルーム一覧へ
         </Link>
       </div>
+
+      <h1 className="text-2xl font-bold mb-2">{profile.username ?? 'No Name'}</h1>
+
+      {profile.bio ? (
+        <p className="whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
+      ) : (
+        <p className="text-sm opacity-70">自己紹介は未設定です。</p>
+      )}
     </main>
   )
 }
