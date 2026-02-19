@@ -1,5 +1,4 @@
 // app/users/[id]/page.tsx
-
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
@@ -18,6 +17,9 @@ type PublicUser = {
   website_url: string | null
 }
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+
 function normalizeUrl(url: string | null) {
   const u = (url ?? '').trim()
   if (!u) return ''
@@ -32,10 +34,7 @@ function SnsLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      style={{
-        textDecoration: 'underline',
-        wordBreak: 'break-all',
-      }}
+      style={{ textDecoration: 'underline', wordBreak: 'break-all' }}
     >
       {label}
     </a>
@@ -47,47 +46,63 @@ export default async function PublicProfilePage({
 }: {
   params: { id: string }
 }) {
-  const id = String(params?.id ?? '').trim()
+  const raw = String(params?.id ?? '')
+  const id = raw.trim()
 
-  if (!id) {
+  // ✅ パラメータがおかしいものは即404
+  if (!id || !UUID_RE.test(id)) {
+    console.warn('[users/[id]] invalid id:', { raw, id })
     return notFound()
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.error('Supabase env missing')
-    return notFound()
+  // ✅ ENVが無いと本番で必ず死ぬ（ここは404ではなく設定ミス）
+  if (!url || !anon) {
+    console.error('[users/[id]] Missing Supabase env', {
+      hasUrl: !!url,
+      hasAnon: !!anon,
+    })
+    // 404にすると原因が隠れるので throw で気づけるようにする
+    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY')
   }
 
-  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+  // ✅ 認証不要 client（anon）
+  // ✅ no-store強制（キャッシュで404が固定される事故を避ける）
+  const supabase = createClient(url, anon, {
+    global: {
+      fetch: (input, init) => {
+        return fetch(input, { ...(init ?? {}), cache: 'no-store' })
+      },
+    },
+  })
 
   const { data, error } = await supabase
     .from('profiles')
     .select(
-      `
-      id,
-      username,
-      bio,
-      x_url,
-      youtube_url,
-      instagram_url,
-      tiktok_url,
-      website_url,
-      deleted_at
-      `
+      'id, username, bio, x_url, youtube_url, instagram_url, tiktok_url, website_url'
     )
     .eq('id', id)
-    .is('deleted_at', null)
     .maybeSingle()
 
+  // ✅ Runtime Logsで見えるように必ずログ
+  console.log('[users/[id]] fetch result', {
+    id,
+    hasData: !!data,
+    error: error ? { message: error.message, code: (error as any).code } : null,
+  })
+
   if (error) {
-    console.error('Profile fetch error:', error)
+    // ここでnotFoundにすると「本当に存在しない」のか「RLS/ENV/通信エラー」なのか見えないので、
+    // まずはログで原因追う（必要なら notFound に戻す）
+    console.error('[users/[id]] Profile fetch error:', error)
     return notFound()
   }
 
   if (!data) {
+    // ✅ ここが発火してるはず（RLS/参照先ENV違い/実は0件）
+    console.warn('[users/[id]] Profile not found (data null):', { id })
     return notFound()
   }
 
@@ -98,14 +113,12 @@ export default async function PublicProfilePage({
   const ig = normalizeUrl(u.instagram_url)
   const tt = normalizeUrl(u.tiktok_url)
   const web = normalizeUrl(u.website_url)
-
   const hasAnyLink = !!(x || yt || ig || tt || web)
 
   return (
     <div style={{ padding: 24, maxWidth: 720 }}>
       <p>
-        <Link href="/">← トップへ</Link> /{' '}
-        <Link href="/rooms">ルーム一覧</Link>
+        <Link href="/">← トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
       </p>
 
       <h1 style={{ marginTop: 8 }}>公開プロフィール</h1>
@@ -149,9 +162,7 @@ export default async function PublicProfilePage({
             paddingTop: 12,
           }}
         >
-          <div style={{ fontWeight: 900, marginBottom: 8 }}>
-            SNSリンク
-          </div>
+          <div style={{ fontWeight: 900, marginBottom: 8 }}>SNSリンク</div>
 
           {!hasAnyLink ? (
             <div style={{ color: '#666', fontSize: 13 }}>
