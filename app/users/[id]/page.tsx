@@ -1,7 +1,8 @@
 // app/users/[id]/page.tsx
+
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createUserClient } from '@/lib/supabase/server'
+import { createClient } from '@supabase/supabase-js'
 
 type PublicUser = {
   id: string
@@ -28,7 +29,10 @@ function SnsLink({ href, label }: { href: string; label: string }) {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      style={{ textDecoration: 'underline' }}
+      style={{
+        textDecoration: 'underline',
+        wordBreak: 'break-all',
+      }}
     >
       {label}
     </a>
@@ -41,21 +45,33 @@ export default async function PublicProfilePage({
   params: { id: string }
 }) {
   const id = String(params.id ?? '').trim()
-  if (!id) return notFound()
 
-  // ✅ ここが赤文字の原因：Promiseを返すので await が必要
-  const supabase = await createUserClient()
+  if (!id) {
+    return notFound()
+  }
+
+  // ✅ 認証不要の server client（anon key使用）
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const { data, error } = await supabase
     .from('profiles')
-    // ✅ 公開して良いカラムだけ明示
     .select(
       'id, username, bio, x_url, youtube_url, instagram_url, tiktok_url, website_url'
     )
     .eq('id', id)
     .maybeSingle()
 
-  if (error || !data) return notFound()
+  if (error) {
+    console.error('Profile fetch error:', error)
+    return notFound()
+  }
+
+  if (!data) {
+    return notFound()
+  }
 
   const u = data as PublicUser
 
@@ -70,7 +86,8 @@ export default async function PublicProfilePage({
   return (
     <div style={{ padding: 24, maxWidth: 720 }}>
       <p>
-        <Link href="/">← トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
+        <Link href="/">← トップへ</Link> /{' '}
+        <Link href="/rooms">ルーム一覧</Link>
       </p>
 
       <h1 style={{ marginTop: 8 }}>公開プロフィール</h1>
@@ -85,10 +102,12 @@ export default async function PublicProfilePage({
           lineHeight: 1.7,
         }}
       >
+        {/* ユーザー名 */}
         <div style={{ fontWeight: 900, fontSize: 18 }}>
           {u.username?.trim() ? u.username : 'unknown'}
         </div>
 
+        {/* bio */}
         {u.bio?.trim() ? (
           <div
             style={{
@@ -107,6 +126,7 @@ export default async function PublicProfilePage({
           </div>
         )}
 
+        {/* SNSリンク */}
         <div
           style={{
             marginTop: 12,
@@ -114,7 +134,9 @@ export default async function PublicProfilePage({
             paddingTop: 12,
           }}
         >
-          <div style={{ fontWeight: 900, marginBottom: 8 }}>SNSリンク</div>
+          <div style={{ fontWeight: 900, marginBottom: 8 }}>
+            SNSリンク
+          </div>
 
           {!hasAnyLink ? (
             <div style={{ color: '#666', fontSize: 13 }}>
@@ -133,7 +155,7 @@ export default async function PublicProfilePage({
       </div>
 
       <div style={{ marginTop: 14, fontSize: 12, color: '#666' }}>
-        ※このページは公開プロフィールです。メール/パスワード等は表示しません。
+        ※このページは公開プロフィールです。メール / パスワード等の機密情報は表示しません。
       </div>
     </div>
   )
