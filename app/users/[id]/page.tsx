@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 type PublicUser = {
   id: string
   username: string | null
@@ -44,24 +47,39 @@ export default async function PublicProfilePage({
 }: {
   params: { id: string }
 }) {
-  const id = String(params.id ?? '').trim()
+  const id = String(params?.id ?? '').trim()
 
   if (!id) {
     return notFound()
   }
 
-  // ✅ 認証不要の server client（anon key使用）
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error('Supabase env missing')
+    return notFound()
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
   const { data, error } = await supabase
     .from('profiles')
     .select(
-      'id, username, bio, x_url, youtube_url, instagram_url, tiktok_url, website_url'
+      `
+      id,
+      username,
+      bio,
+      x_url,
+      youtube_url,
+      instagram_url,
+      tiktok_url,
+      website_url,
+      deleted_at
+      `
     )
     .eq('id', id)
+    .is('deleted_at', null)
     .maybeSingle()
 
   if (error) {
@@ -102,12 +120,10 @@ export default async function PublicProfilePage({
           lineHeight: 1.7,
         }}
       >
-        {/* ユーザー名 */}
         <div style={{ fontWeight: 900, fontSize: 18 }}>
           {u.username?.trim() ? u.username : 'unknown'}
         </div>
 
-        {/* bio */}
         {u.bio?.trim() ? (
           <div
             style={{
@@ -126,7 +142,6 @@ export default async function PublicProfilePage({
           </div>
         )}
 
-        {/* SNSリンク */}
         <div
           style={{
             marginTop: 12,
