@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { supabase } from '../../../lib/supabase/client'
 import JoinButton from './JoinButton'
@@ -112,7 +113,6 @@ export default function BoardClient({
     const rows = (data ?? []) as PostRow[]
     setPosts(rows)
 
-    // 添付がある投稿の signed url を取りに行く（未取得分だけ）
     const need = rows.filter((p) => p.attachment_url && !signedMap[p.id])
     if (need.length === 0) return
 
@@ -160,9 +160,7 @@ export default function BoardClient({
 
     const res = await fetch('/api/uploads', {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
       body: form,
     })
 
@@ -176,7 +174,6 @@ export default function BoardClient({
   }
 
   const submitPost = async (type: 'log' | 'final') => {
-    // ✅ UX: 未参加なら止める（最終防御はAPI）
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから投稿してください')
       return
@@ -252,7 +249,6 @@ export default function BoardClient({
   }
 
   const deletePost = async (postId: string) => {
-    // ✅ UX: 未参加なら止める（最終防御はAPI）
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから操作してください')
       return
@@ -292,7 +288,6 @@ export default function BoardClient({
       return
     }
 
-    // 準optimistic：まずローカル反映（戻しも入れる）
     const before = posts.find((p) => p.id === postId)
     if (!before) return
 
@@ -313,35 +308,37 @@ export default function BoardClient({
     try {
       const res = await fetch('/api/posts/toggle-mark', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ postId, roomId }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) {
-        // rollback
         setPosts((prev) => prev.map((p) => (p.id === postId ? before : p)))
         alert(json?.error ?? 'マーキングに失敗しました')
         return
       }
 
-      const updated = json?.post as { id: string; is_marked: boolean; marked_by: string | null; marked_at: string | null } | null
+      const updated = json?.post as
+        | { id: string; is_marked: boolean; marked_by: string | null; marked_at: string | null }
+        | null
+
       if (updated?.id) {
         setPosts((prev) =>
           prev.map((p) =>
             p.id === updated.id
-              ? { ...p, is_marked: !!updated.is_marked, marked_by: updated.marked_by ?? null, marked_at: updated.marked_at ?? null }
+              ? {
+                  ...p,
+                  is_marked: !!updated.is_marked,
+                  marked_by: updated.marked_by ?? null,
+                  marked_at: updated.marked_at ?? null,
+                }
               : p
           )
         )
       } else {
-        // 何らかで返らない時は再取得で安全に揃える
         await fetchPosts()
       }
     } catch {
-      // rollback
       setPosts((prev) => prev.map((p) => (p.id === postId ? before : p)))
       alert('通信に失敗しました')
     }
@@ -450,6 +447,17 @@ export default function BoardClient({
     }
   }
 
+  // ✅ username を公開プロフィールにリンク（/users/[id]）
+  const UserLink = ({ p }: { p: PostRow }) => (
+    <Link
+      href={`/users/${p.user_id}`}
+      style={{ fontWeight: 900, textDecoration: 'none', color: '#111' }}
+      title="公開プロフィールを見る"
+    >
+      {p.username ?? 'unknown'}
+    </Link>
+  )
+
   return (
     <section style={{ marginTop: 18 }}>
       {/* 参加していない場合の案内 */}
@@ -516,7 +524,7 @@ export default function BoardClient({
             <div key={p.id} style={cardStyle(p)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <strong>{p.username ?? '名無し'}</strong>
+                  <UserLink p={p} />
                   {renderMarkBadge(p)}
                 </div>
 
@@ -604,7 +612,7 @@ export default function BoardClient({
             <div key={p.id} style={cardStyle(p)}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, alignItems: 'center' }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                  <strong>{p.username ?? '名無し'}</strong>
+                  <UserLink p={p} />
                   {renderMarkBadge(p)}
                 </div>
 

@@ -13,7 +13,12 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState<string>('')
 
-  // ✅ SNS links (追加)
+  // ✅ bio（紹介文）
+  const [bio, setBio] = useState('')
+  const bioCount = bio.length
+  const bioOk = bioCount <= 300
+
+  // ✅ SNS links
   const [xUrl, setXUrl] = useState('')
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [instagramUrl, setInstagramUrl] = useState('')
@@ -26,14 +31,15 @@ export default function ProfilePage() {
       setEmail(u.user?.email ?? null)
 
       if (u.user?.id) {
-        // ✅ selectにSNSカラムを追加（読み込み）
+        // ✅ selectにbioを追加
         const { data: prof } = await supabase
           .from('profiles')
-          .select('username, x_url, youtube_url, instagram_url, tiktok_url, website_url')
+          .select('username, bio, x_url, youtube_url, instagram_url, tiktok_url, website_url')
           .eq('id', u.user.id)
           .maybeSingle()
 
         setUsername((prof?.username ?? '').toString())
+        setBio((prof?.bio ?? '').toString())
 
         setXUrl((prof?.x_url ?? '').toString())
         setYoutubeUrl((prof?.youtube_url ?? '').toString())
@@ -51,7 +57,6 @@ export default function ProfilePage() {
     const nameOk = username.trim().length >= 2 && username.trim().length <= 20
     const passOk = password === '' || password.length >= 6
 
-    // ✅ URLバリデーション（空ならOK / 入ってるならhttp(s)）
     const urlsOk =
       isValidHttpUrlOrEmpty(xUrl) &&
       isValidHttpUrlOrEmpty(youtubeUrl) &&
@@ -59,8 +64,8 @@ export default function ProfilePage() {
       isValidHttpUrlOrEmpty(tiktokUrl) &&
       isValidHttpUrlOrEmpty(websiteUrl)
 
-    return nameOk && passOk && urlsOk
-  }, [username, password, loading, xUrl, youtubeUrl, instagramUrl, tiktokUrl, websiteUrl])
+    return nameOk && passOk && urlsOk && bioOk
+  }, [username, password, loading, xUrl, youtubeUrl, instagramUrl, tiktokUrl, websiteUrl, bioOk])
 
   const save = async () => {
     setMsg('')
@@ -72,6 +77,10 @@ export default function ProfilePage() {
     }
     if (password !== '' && password.length < 6) {
       setMsg('パスワードは 6文字以上 にしてください（変更しないなら空でOK）')
+      return
+    }
+    if (!bioOk) {
+      setMsg('紹介文は 300文字以内 にしてください')
       return
     }
 
@@ -91,9 +100,12 @@ export default function ProfilePage() {
       }
     }
 
+    // ✅ bio payload（空は null 扱い）
+    const bioTrim = bio.trim()
+    const bioPayload = { bio: bioTrim ? bioTrim : null }
+
     setLoading(true)
     try {
-      // ログイン必須
       const { data: s } = await supabase.auth.getSession()
       const token = s.session?.access_token
       if (!token) {
@@ -116,7 +128,7 @@ export default function ProfilePage() {
         return
       }
 
-      // ② SNSリンク更新（追加：サーバRoute Handler経由）
+      // ② SNSリンク更新（既存）
       const res2 = await fetch('/profile/set-sns-links', {
         method: 'POST',
         headers: {
@@ -131,11 +143,26 @@ export default function ProfilePage() {
         return
       }
 
-      // ③ パスワード変更（空ならスキップ）（既存）
+      // ③ bio更新（追加：Route Handler）
+      const res3 = await fetch('/profile/set-bio', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(bioPayload),
+      })
+      const json3 = await res3.json().catch(() => ({}))
+      if (!json3.ok) {
+        setMsg(json3.error ?? '紹介文の保存に失敗しました')
+        return
+      }
+
+      // ④ パスワード変更（既存）
       if (password !== '') {
         const { error: pwErr } = await supabase.auth.updateUser({ password })
         if (pwErr) {
-          setMsg(`ユーザー名/SNSは保存できましたが、パスワード変更に失敗: ${pwErr.message}`)
+          setMsg(`ユーザー名/SNS/紹介文は保存できましたが、パスワード変更に失敗: ${pwErr.message}`)
           return
         }
         setPassword('')
@@ -147,6 +174,8 @@ export default function ProfilePage() {
       setInstagramUrl(snsPayload.instagram_url)
       setTiktokUrl(snsPayload.tiktok_url)
       setWebsiteUrl(snsPayload.website_url)
+
+      setBio(bioTrim) // nullの場合は空欄として表示
 
       setMsg('保存しました ✅')
     } finally {
@@ -200,7 +229,39 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* ✅ SNSリンクセクション（追加・既存UIを崩さない） */}
+          {/* ✅ 紹介文（bio） */}
+          <div style={{ marginTop: 18 }}>
+            <div style={{ fontSize: 16, fontWeight: 700 }}>紹介文（公開プロフィールに表示）</div>
+            <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>
+              300文字以内。空なら未設定扱い。
+            </div>
+
+            <textarea
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              maxLength={300}
+              placeholder="例：創作ジャンル / 得意なこと / 参加したい制作 / 好きな作品 / SNS誘導など"
+              style={{
+                width: '100%',
+                minHeight: 120,
+                border: '1px solid #ccc',
+                borderRadius: 10,
+                padding: '10px 12px',
+                marginTop: 10,
+              }}
+            />
+            <div style={{ fontSize: 12, color: bioOk ? '#666' : '#b00020', marginTop: 6 }}>
+              {bioCount}/300
+            </div>
+
+            {!bioOk && (
+              <div style={{ fontSize: 12, color: '#b00020', marginTop: 6 }}>
+                300文字以内にしてください
+              </div>
+            )}
+          </div>
+
+          {/* ✅ SNSリンクセクション（既存） */}
           <div style={{ marginTop: 18 }}>
             <div style={{ fontSize: 16, fontWeight: 700 }}>SNSリンク</div>
             <div style={{ fontSize: 12, color: '#666', marginTop: 6 }}>
@@ -307,7 +368,6 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* ✅ 保存後のリンク表示 */}
             {hasAnySns && (
               <div style={{ marginTop: 14, padding: 12, border: '1px solid #eee', borderRadius: 10 }}>
                 <div style={{ fontSize: 13, color: '#666', marginBottom: 8 }}>登録済みリンク</div>
@@ -319,42 +379,22 @@ export default function ProfilePage() {
                     </a>
                   )}
                   {youtubeUrl.trim() !== '' && (
-                    <a
-                      href={youtubeUrl.trim()}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
+                    <a href={youtubeUrl.trim()} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
                       YouTube
                     </a>
                   )}
                   {instagramUrl.trim() !== '' && (
-                    <a
-                      href={instagramUrl.trim()}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
+                    <a href={instagramUrl.trim()} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
                       Instagram
                     </a>
                   )}
                   {tiktokUrl.trim() !== '' && (
-                    <a
-                      href={tiktokUrl.trim()}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
+                    <a href={tiktokUrl.trim()} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
                       TikTok
                     </a>
                   )}
                   {websiteUrl.trim() !== '' && (
-                    <a
-                      href={websiteUrl.trim()}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textDecoration: 'underline' }}
-                    >
+                    <a href={websiteUrl.trim()} target="_blank" rel="noreferrer" style={{ textDecoration: 'underline' }}>
                       Website
                     </a>
                   )}
@@ -403,7 +443,6 @@ export default function ProfilePage() {
             {loading ? '保存中…' : '保存'}
           </button>
 
-          {/* ✅ 退会ボタンはログイン中だけ表示 */}
           <DeleteAccountButton />
         </>
       )}
