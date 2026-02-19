@@ -1,188 +1,138 @@
 // app/users/[id]/page.tsx
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { createClient } from '@supabase/supabase-js'
+import Link from 'next/link'
+import { createClient } from '../../../lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
-export const revalidate = 0
 
-type PublicUser = {
-  id: string
-  username: string | null
-  bio: string | null
-  x_url: string | null
-  youtube_url: string | null
-  instagram_url: string | null
-  tiktok_url: string | null
-  website_url: string | null
+type PageProps = {
+  params: { id?: string }
 }
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
-
-function normalizeUrl(url: string | null) {
-  const u = (url ?? '').trim()
-  if (!u) return ''
-  if (u.startsWith('http://') || u.startsWith('https://')) return u
-  return `https://${u}`
-}
-
-function SnsLink({ href, label }: { href: string; label: string }) {
-  if (!href) return null
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      style={{ textDecoration: 'underline', wordBreak: 'break-all' }}
-    >
-      {label}
-    </a>
+function isUuidLike(v: string) {
+  // Postgres uuid 形式（v1-v5 を許容）をざっくり許可
+  // 8-4-4-4-12 hex
+  return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(
+    v
   )
 }
 
-export default async function PublicProfilePage({
-  params,
-}: {
-  params: { id: string }
-}) {
-  const raw = String(params?.id ?? '')
-  const id = raw.trim()
+export default async function UserPage({ params }: PageProps) {
+  // 1) id の取り出し（Next が変な値を渡すケース/エンコードを想定）
+  const raw = params?.id ?? ''
+  const id = (() => {
+    try {
+      return decodeURIComponent(raw).trim()
+    } catch {
+      return String(raw).trim()
+    }
+  })()
 
-  // ✅ パラメータがおかしいものは即404
-  if (!id || !UUID_RE.test(id)) {
+  // 2) UUID検証（ここで落ちると Vercel Logs に原因が残る）
+  if (!id || !isUuidLike(id)) {
     console.warn('[users/[id]] invalid id:', { raw, id })
-    return notFound()
+    notFound()
   }
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  // ✅ ENVが無いと本番で必ず死ぬ（ここは404ではなく設定ミス）
-  if (!url || !anon) {
-    console.error('[users/[id]] Missing Supabase env', {
-      hasUrl: !!url,
-      hasAnon: !!anon,
-    })
-    // 404にすると原因が隠れるので throw で気づけるようにする
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY')
-  }
-
-  // ✅ 認証不要 client（anon）
-  // ✅ no-store強制（キャッシュで404が固定される事故を避ける）
-  const supabase = createClient(url, anon, {
-    global: {
-      fetch: (input, init) => {
-        return fetch(input, { ...(init ?? {}), cache: 'no-store' })
-      },
-    },
-  })
+  // 3) Supabase 取得（RLS / anon read が効いてれば読める）
+  const supabase = await createClient()
 
   const { data, error } = await supabase
     .from('profiles')
-    .select(
-      'id, username, bio, x_url, youtube_url, instagram_url, tiktok_url, website_url'
-    )
+    .select('id, username, bio, avatar_url, deleted_at')
     .eq('id', id)
     .maybeSingle()
 
-  // ✅ Runtime Logsで見えるように必ずログ
-  console.log('[users/[id]] fetch result', {
-    id,
-    hasData: !!data,
-    error: error ? { message: error.message, code: (error as any).code } : null,
-  })
-
+  // 4) DBエラーは「404にせず」画面にエラー表示＋ログ出し（原因追跡しやすくする）
   if (error) {
-    // ここでnotFoundにすると「本当に存在しない」のか「RLS/ENV/通信エラー」なのか見えないので、
-    // まずはログで原因追う（必要なら notFound に戻す）
-    console.error('[users/[id]] Profile fetch error:', error)
-    return notFound()
-  }
+    console.error('[users/[id]] supabase error:', {
+      id,
+      message: error.message,
+      code: (error as any).code,
+      details: (error as any).details,
+      hint: (error as any).hint,
+    })
 
-  if (!data) {
-    // ✅ ここが発火してるはず（RLS/参照先ENV違い/実は0件）
-    console.warn('[users/[id]] Profile not found (data null):', { id })
-    return notFound()
-  }
+    return (
+      <main className="mx-auto max-w-2xl p-6">
+        <h1 className="text-xl font-bold">プロフィールの取得に失敗しました</h1>
+        <p className="mt-2 text-sm opacity-80">
+          サーバ側でプロフィールを読み込めませんでした。Vercel Logs の
+          <code className="mx-1 rounded bg-black/5 px-1">[users/[id]] supabase error</code>
+          を確認してください。
+        </p>
 
-  const u = data as PublicUser
-
-  const x = normalizeUrl(u.x_url)
-  const yt = normalizeUrl(u.youtube_url)
-  const ig = normalizeUrl(u.instagram_url)
-  const tt = normalizeUrl(u.tiktok_url)
-  const web = normalizeUrl(u.website_url)
-  const hasAnyLink = !!(x || yt || ig || tt || web)
-
-  return (
-    <div style={{ padding: 24, maxWidth: 720 }}>
-      <p>
-        <Link href="/">← トップへ</Link> / <Link href="/rooms">ルーム一覧</Link>
-      </p>
-
-      <h1 style={{ marginTop: 8 }}>公開プロフィール</h1>
-
-      <div
-        style={{
-          marginTop: 14,
-          border: '1px solid rgba(0,0,0,0.12)',
-          borderRadius: 14,
-          padding: 14,
-          background: '#fff',
-          lineHeight: 1.7,
-        }}
-      >
-        <div style={{ fontWeight: 900, fontSize: 18 }}>
-          {u.username?.trim() ? u.username : 'unknown'}
+        <div className="mt-4 rounded border p-3 text-sm">
+          <div>
+            <span className="font-semibold">userId:</span> {id}
+          </div>
+          <div className="mt-1">
+            <span className="font-semibold">message:</span> {error.message}
+          </div>
         </div>
 
-        {u.bio?.trim() ? (
-          <div
-            style={{
-              marginTop: 10,
-              whiteSpace: 'pre-wrap',
-              borderTop: '1px solid rgba(0,0,0,0.08)',
-              paddingTop: 10,
-              color: '#222',
-            }}
-          >
-            {u.bio}
-          </div>
-        ) : (
-          <div style={{ marginTop: 10, color: '#666', fontSize: 13 }}>
-            紹介文は未設定です。
-          </div>
-        )}
+        <div className="mt-6">
+          <Link className="underline" href="/profile">
+            自分のプロフィールへ戻る
+          </Link>
+        </div>
+      </main>
+    )
+  }
 
-        <div
-          style={{
-            marginTop: 12,
-            borderTop: '1px solid rgba(0,0,0,0.08)',
-            paddingTop: 12,
-          }}
-        >
-          <div style={{ fontWeight: 900, marginBottom: 8 }}>SNSリンク</div>
+  // 5) 取得できない / 論理削除なら 404（仕様に合わせて）
+  if (!data || data.deleted_at) {
+    console.warn('[users/[id]] not found or deleted:', { id, found: !!data })
+    notFound()
+  }
 
-          {!hasAnyLink ? (
-            <div style={{ color: '#666', fontSize: 13 }}>
-              SNSリンクは未設定です。
-            </div>
+  const username = (data.username ?? '').toString().trim() || '名無し'
+  const bio = (data.bio ?? '').toString().trim()
+  const avatarUrl = (data.avatar_url ?? '').toString().trim()
+
+  return (
+    <main className="mx-auto max-w-2xl p-6">
+      <div className="flex items-center gap-4">
+        <div className="h-16 w-16 overflow-hidden rounded-full border bg-black/5">
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={avatarUrl}
+              alt={`${username} avatar`}
+              className="h-full w-full object-cover"
+            />
           ) : (
-            <div style={{ display: 'grid', gap: 6, fontSize: 14 }}>
-              <SnsLink href={x} label="X / Twitter" />
-              <SnsLink href={yt} label="YouTube" />
-              <SnsLink href={ig} label="Instagram" />
-              <SnsLink href={tt} label="TikTok" />
-              <SnsLink href={web} label="Website" />
+            <div className="flex h-full w-full items-center justify-center text-sm opacity-60">
+              NO IMG
             </div>
           )}
         </div>
+
+        <div className="min-w-0">
+          <h1 className="truncate text-2xl font-bold">{username}</h1>
+          <p className="mt-1 break-all text-xs opacity-60">{data.id}</p>
+        </div>
       </div>
 
-      <div style={{ marginTop: 14, fontSize: 12, color: '#666' }}>
-        ※このページは公開プロフィールです。メール / パスワード等の機密情報は表示しません。
+      <section className="mt-6">
+        <h2 className="text-sm font-semibold opacity-80">自己紹介</h2>
+        <div className="mt-2 rounded border p-4">
+          {bio ? (
+            <p className="whitespace-pre-wrap leading-relaxed">{bio}</p>
+          ) : (
+            <p className="text-sm opacity-60">（未入力）</p>
+          )}
+        </div>
+      </section>
+
+      <div className="mt-8 flex gap-3">
+        <Link className="rounded border px-3 py-2 text-sm" href="/rooms">
+          制作ルーム一覧へ
+        </Link>
+        <Link className="rounded border px-3 py-2 text-sm" href="/profile">
+          自分のプロフィールへ
+        </Link>
       </div>
-    </div>
+    </main>
   )
 }
