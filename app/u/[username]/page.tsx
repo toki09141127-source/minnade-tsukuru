@@ -20,7 +20,6 @@ function safeStr(v: unknown) {
 
 export default async function PublicProfilePage({ params }: PageProps) {
   const raw = params.username ?? ""
-
   const username = (() => {
     try {
       return decodeURIComponent(raw).trim()
@@ -31,11 +30,14 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
   if (!username) return notFound()
 
-  // 🔥 公開ページなので anon クライアントを使う
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
+  // ✅ ここが重要：Cookie/Sessionに依存しない anon クライアント（= 公開プロフィール取得の最短安定ルート）
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  if (!url || !anon) return notFound()
+
+  const supabase = createClient(url, anon, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  })
 
   const { data, error } = await supabase
     .from("public_profiles")
@@ -43,7 +45,15 @@ export default async function PublicProfilePage({ params }: PageProps) {
     .eq("username", username)
     .maybeSingle()
 
-  if (error || !data) return notFound()
+  if (error || !data) {
+    // サーバーログ（Vercel logsで確認できる）
+    console.error("[/u/[username]] fetch public_profiles failed:", {
+      username,
+      error,
+      data,
+    })
+    return notFound()
+  }
 
   const links = (data.links ?? {}) as Links
 
@@ -61,7 +71,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
     websiteUrl !== ""
 
   return (
-    <main className="max-w-2xl mx-auto py-10">
+    <main className="max-w-2xl mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold mb-4">{data.username}</h1>
 
       <p className="text-gray-600 whitespace-pre-wrap">
