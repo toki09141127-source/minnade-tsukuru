@@ -5,21 +5,12 @@ import { createClient } from "@supabase/supabase-js"
 
 export const dynamic = "force-dynamic"
 
-type PageProps = {
-  params: { username: string }
-}
-
-function decodeMaybe(raw: string) {
-  try {
-    return decodeURIComponent(raw).trim()
-  } catch {
-    return raw.trim()
-  }
-}
-
-export default async function PublicProfilePage({ params }: PageProps) {
-  const raw = params?.username ?? ""
-  const username = decodeMaybe(raw)
+export default async function PublicProfilePage(
+  { params }: { params: Promise<{ username: string }> }
+) {
+  const resolvedParams = await params
+  const rawUsername = resolvedParams?.username ?? ""
+  const username = rawUsername.trim()
 
   console.log("======== PUBLIC PROFILE DEBUG START ========")
   console.log("username param:", username)
@@ -34,6 +25,12 @@ export default async function PublicProfilePage({ params }: PageProps) {
   if (!url || !anon) {
     console.log("❌ Missing environment variables")
     console.log("======== DEBUG END (env missing) ========")
+    return notFound()
+  }
+
+  if (!username) {
+    console.log("❌ Username empty")
+    console.log("======== DEBUG END (username empty) ========")
     return notFound()
   }
 
@@ -60,6 +57,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
   return (
     <main className="max-w-2xl mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold mb-4">{data.username}</h1>
+
       <p className="text-gray-600 whitespace-pre-wrap">
         {data.bio ?? "自己紹介はまだありません。"}
       </p>
