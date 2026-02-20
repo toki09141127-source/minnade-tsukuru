@@ -447,16 +447,28 @@ export default function BoardClient({
     }
   }
 
-  // ✅ username を公開プロフィールにリンク（/users/[id]）
-  const UserLink = ({ p }: { p: PostRow }) => (
-    <Link
-      href={`/users/${p.user_id}`}
-      style={{ fontWeight: 900, textDecoration: 'none', color: '#111' }}
-      title="公開プロフィールを見る"
-    >
-      {p.username ?? 'unknown'}
-    </Link>
-  )
+  // ✅ username を公開プロフィールにリンク（/u/[username]）
+  const UserLink = ({ p }: { p: PostRow }) => {
+    const name = (p.username ?? '').trim()
+
+    if (!name) {
+      return (
+        <span style={{ fontWeight: 900, color: '#111', opacity: 0.6 }} title="ユーザー名未設定">
+          unknown
+        </span>
+      )
+    }
+
+    return (
+      <Link
+        href={`/u/${encodeURIComponent(name)}`}
+        style={{ fontWeight: 900, textDecoration: 'none', color: '#111' }}
+        title="公開プロフィールを見る"
+      >
+        {name}
+      </Link>
+    )
+  }
 
   return (
     <section style={{ marginTop: 18 }}>

@@ -77,15 +77,15 @@ export async function POST(req: Request) {
       )
     }
 
-    // username
-    const { data: profile, error: profErr } = await admin
-      .from('profiles')
+    // ✅ username は public_profiles から取得（公開プロフィールと統一）
+    const { data: pub, error: pubErr } = await admin
+      .from('public_profiles')
       .select('username')
       .eq('id', user.id)
       .maybeSingle()
 
-    if (profErr) return NextResponse.json({ error: profErr.message }, { status: 500 })
-    const username = (profile?.username ?? '').trim() || '名無し'
+    if (pubErr) return NextResponse.json({ error: pubErr.message }, { status: 500 })
+    const username = (pub?.username ?? '').trim() || '名無し'
 
     const { error: insErr } = await admin.from('posts').insert({
       room_id: roomId,

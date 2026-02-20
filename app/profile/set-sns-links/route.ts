@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = (await req.json()) as Body
+    const body = (await req.json().catch(() => ({}))) as Body
 
     // 正規化（前後の空白除去、空は空のまま）
     const payload = {
@@ -50,7 +50,11 @@ export async function POST(req: Request) {
 
     if (!supabaseUrl || !anonKey || !serviceRoleKey) {
       return NextResponse.json(
-        { ok: false, error: 'Server env missing: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY' },
+        {
+          ok: false,
+          error:
+            'Server env missing: NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY',
+        },
         { status: 500 }
       )
     }
@@ -67,7 +71,7 @@ export async function POST(req: Request) {
 
     const userId = userData.user.id
 
-    // ② profiles更新（サービスロールで実行：RLSの影響を受けにくい）
+    // ② profiles更新（サービスロールで実行）
     const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
       auth: { persistSession: false, autoRefreshToken: false },
     })
@@ -79,6 +83,38 @@ export async function POST(req: Request) {
 
     if (upErr) {
       return NextResponse.json({ ok: false, error: upErr.message }, { status: 500 })
+    }
+
+    // ③ public_profiles にも同期（links jsonb）
+    // public_profiles.username が NOT NULL の想定なので、username を取得して upsert する
+    const { data: prof, error: profErr } = await supabaseAdmin
+      .from('profiles')
+      .select('username, bio')
+      .eq('id', userId)
+      .maybeSingle()
+
+    if (profErr) {
+      return NextResponse.json({ ok: false, error: profErr.message }, { status: 500 })
+    }
+
+    const username = (prof?.username ?? '').trim()
+    if (username) {
+      const links = payload
+
+      const { error: pubErr } = await supabaseAdmin.from('public_profiles').upsert(
+        {
+          id: userId,
+          username,
+          bio: (prof?.bio ?? null) as string | null,
+          links,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' }
+      )
+
+      if (pubErr) {
+        return NextResponse.json({ ok: false, error: pubErr.message }, { status: 500 })
+      }
     }
 
     return NextResponse.json({ ok: true })

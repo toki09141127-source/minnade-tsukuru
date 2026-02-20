@@ -30,6 +30,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: '紹介文は300文字以内にしてください' }, { status: 400 })
     }
 
+    // ① profiles 更新
     const { error: upErr } = await supabaseAdmin
       .from('profiles')
       .update({ bio: value })
@@ -37,6 +38,16 @@ export async function POST(req: Request) {
 
     if (upErr) {
       return NextResponse.json({ ok: false, error: upErr.message }, { status: 400 })
+    }
+
+    // ② public_profiles にも反映（存在しない場合は0件更新＝OK）
+    const { error: pubErr } = await supabaseAdmin
+      .from('public_profiles')
+      .update({ bio: value, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+
+    if (pubErr) {
+      return NextResponse.json({ ok: false, error: pubErr.message }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true })
