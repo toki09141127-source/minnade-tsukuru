@@ -1,5 +1,6 @@
+// app/u/[username]/page.tsx
 import { notFound } from "next/navigation"
-import { createUserClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
 export const dynamic = "force-dynamic"
 
@@ -19,6 +20,7 @@ function safeStr(v: unknown) {
 
 export default async function PublicProfilePage({ params }: PageProps) {
   const raw = params.username ?? ""
+
   const username = (() => {
     try {
       return decodeURIComponent(raw).trim()
@@ -29,7 +31,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
 
   if (!username) return notFound()
 
-  const supabase = await createUserClient()
+  // 🔥 公開ページなので anon クライアントを使う
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
   const { data, error } = await supabase
     .from("public_profiles")
@@ -48,7 +54,11 @@ export default async function PublicProfilePage({ params }: PageProps) {
   const websiteUrl = safeStr(links.website_url)
 
   const hasAny =
-    xUrl !== "" || youtubeUrl !== "" || instagramUrl !== "" || tiktokUrl !== "" || websiteUrl !== ""
+    xUrl !== "" ||
+    youtubeUrl !== "" ||
+    instagramUrl !== "" ||
+    tiktokUrl !== "" ||
+    websiteUrl !== ""
 
   return (
     <main className="max-w-2xl mx-auto py-10">
