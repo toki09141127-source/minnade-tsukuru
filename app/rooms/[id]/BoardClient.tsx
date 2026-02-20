@@ -58,6 +58,10 @@ export default function BoardClient({
 
   const canMark = myRole === 'core' || myRole === 'creator'
 
+  // ✅ iPhone対応：confirm()をやめて自前モーダルにする
+  const [confirmTarget, setConfirmTarget] = useState<{ postId: string } | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
   // ✅ ボタン（黒背景＋白文字）スタイル
   const primaryButtonStyle: React.CSSProperties = {
     background: '#111',
@@ -248,36 +252,47 @@ export default function BoardClient({
     setLoading(false)
   }
 
+  // ✅ 取り消し：confirm()廃止 → モーダルを開くだけ
   const deletePost = async (postId: string) => {
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから操作してください')
       return
     }
+    setConfirmTarget({ postId })
+  }
 
-    if (!confirm('投稿を取り消しますか？')) return
+  // ✅ 実際の削除処理（モーダルの「取り消す」から呼ぶ）
+  const executeDeletePost = async (postId: string) => {
+    if (deleting) return
+    setDeleting(true)
 
-    const token = await getToken()
-    if (!token) {
-      alert('ログインが必要です')
-      return
+    try {
+      const token = await getToken()
+      if (!token) {
+        alert('ログインが必要です')
+        return
+      }
+
+      const res = await fetch('/api/posts/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ postId }),
+      })
+
+      const json = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        alert(json.error ?? '削除失敗')
+        return
+      }
+
+      await fetchPosts()
+    } finally {
+      setDeleting(false)
+      setConfirmTarget(null)
     }
-
-    const res = await fetch('/api/posts/delete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ postId }),
-    })
-
-    const json = await res.json()
-    if (!res.ok) {
-      alert(json.error ?? '削除失敗')
-      return
-    }
-
-    await fetchPosts()
   }
 
   const toggleMark = async (postId: string) => {
@@ -567,7 +582,12 @@ export default function BoardClient({
               {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
-                  <button onClick={() => deletePost(p.id)}>取り消し</button>
+                  <button
+                    onClick={() => deletePost(p.id)}
+                    style={smallButtonStyle}
+                  >
+                    取り消し
+                  </button>
                 </div>
               )}
             </div>
@@ -655,7 +675,12 @@ export default function BoardClient({
               {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
-                  <button onClick={() => deletePost(p.id)}>取り消し</button>
+                  <button
+                    onClick={() => deletePost(p.id)}
+                    style={smallButtonStyle}
+                  >
+                    取り消し
+                  </button>
                 </div>
               )}
             </div>
@@ -701,6 +726,66 @@ export default function BoardClient({
       )}
 
       {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error}</p>}
+
+      {/* ✅ iPhone対応：confirm代替モーダル */}
+      {confirmTarget && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => !deleting && setConfirmTarget(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.45)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+            zIndex: 9999,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: 420,
+              background: '#fff',
+              borderRadius: 14,
+              padding: 14,
+              border: '1px solid rgba(0,0,0,0.10)',
+            }}
+          >
+            <div style={{ fontWeight: 900, fontSize: 16 }}>投稿を取り消しますか？</div>
+            <div style={{ marginTop: 8, fontSize: 13, opacity: 0.8, lineHeight: 1.6 }}>
+              取り消すと元に戻せません。
+            </div>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 14 }}>
+              <button
+                disabled={deleting}
+                onClick={() => setConfirmTarget(null)}
+                style={smallButtonStyle}
+              >
+                キャンセル
+              </button>
+
+              <button
+                disabled={deleting}
+                onClick={() => executeDeletePost(confirmTarget.postId)}
+                style={{
+                  ...smallButtonStyle,
+                  background: '#111',
+                  color: '#fff',
+                  borderColor: '#111',
+                  opacity: deleting ? 0.7 : 1,
+                }}
+              >
+                {deleting ? '処理中…' : '取り消す'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
