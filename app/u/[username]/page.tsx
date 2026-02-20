@@ -1,4 +1,7 @@
 // app/u/[username]/page.tsx
+console.log("SUPABASE_URL:", process.env.NEXT_PUBLIC_SUPABASE_URL)
+console.log("SUPABASE_ANON_LEN:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.length)
+
 import { notFound } from "next/navigation"
 import { createClient } from "@supabase/supabase-js"
 
