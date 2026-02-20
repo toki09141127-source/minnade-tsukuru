@@ -1,6 +1,6 @@
 // app/u/[username]/page.tsx
 import { notFound } from "next/navigation"
-import { createAdminClient } from "@/lib/supabase/server"
+import { createClient } from "@supabase/supabase-js"
 
 export const dynamic = "force-dynamic"
 
@@ -18,20 +18,38 @@ function safeStr(v: unknown) {
   return typeof v === "string" ? v.trim() : ""
 }
 
+function decodeMaybe(raw: string) {
+  // Next の params は通常デコード済みだが、保険で
+  try {
+    return decodeURIComponent(raw).trim()
+  } catch {
+    return raw.trim()
+  }
+}
+
 export default async function PublicProfilePage({ params }: PageProps) {
-  const raw = params.username ?? ""
-  const username = (() => {
-    try {
-      return decodeURIComponent(raw).trim()
-    } catch {
-      return raw.trim()
-    }
-  })()
+  const raw = params?.username ?? ""
+  const username = decodeMaybe(raw)
 
   if (!username) return notFound()
 
-  // ✅ 公開プロフィールは「サーバー側だけ」で読む（RLS/anon/env事故を回避）
-  const supabase = createAdminClient()
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // ここが短い/undefined なら 99% 環境変数事故
+  console.log("[public_profile] username=", username)
+  console.log("[public_profile] env url exists=", !!url, "anon len=", anon?.length ?? 0)
+
+  if (!url || !anon) {
+    // env 無しは 404 じゃなく原因表示したいが、公開ページなので一旦 404 に寄せる
+    console.log("[public_profile] missing env")
+    return notFound()
+  }
+
+  // public page: anon client（cookie/session不要）
+  const supabase = createClient(url, anon, {
+    auth: { persistSession: false },
+  })
 
   const { data, error } = await supabase
     .from("public_profiles")
@@ -39,9 +57,8 @@ export default async function PublicProfilePage({ params }: PageProps) {
     .eq("username", username)
     .maybeSingle()
 
-  if (error) {
-    console.error("[/u/[username]] public_profiles select error:", error)
-  }
+  console.log("[public_profile] supabase error=", error?.message ?? null, "hasData=", !!data)
+
   if (error || !data) return notFound()
 
   const links = (data.links ?? {}) as Links
@@ -60,7 +77,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
     websiteUrl !== ""
 
   return (
-    <main className="max-w-2xl mx-auto py-10">
+    <main className="max-w-2xl mx-auto py-10 px-4">
       <h1 className="text-2xl font-bold mb-4">{data.username}</h1>
 
       <p className="text-gray-600 whitespace-pre-wrap">
