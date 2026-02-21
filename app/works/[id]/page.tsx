@@ -38,6 +38,29 @@ function aiLabel(v: string | null | undefined) {
   return 'なし'
 }
 
+// ✅ 追加：公開プロフィールリンク用コンポーネント
+function UserLink({ username }: { username: string | null }) {
+  const name = (username ?? '').trim()
+
+  if (!name) {
+    return <strong style={{ opacity: 0.6 }}>名無し</strong>
+  }
+
+  return (
+    <Link
+      href={`/u/${encodeURIComponent(name)}`}
+      style={{
+        fontWeight: 900,
+        textDecoration: 'none',
+        color: '#111',
+      }}
+      title="公開プロフィールを見る"
+    >
+      {name}
+    </Link>
+  )
+}
+
 export default async function WorkDetailPage({
   params,
 }: {
@@ -57,7 +80,9 @@ export default async function WorkDetailPage({
 
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level')
+    .select(
+      'id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level'
+    )
     .eq('id', roomId)
     .maybeSingle<RoomRow>()
 
@@ -82,7 +107,7 @@ export default async function WorkDetailPage({
   const baseSelect =
     'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
-  const { data: finalPosts, error: finalErr } = await supabase
+  const { data: finalPosts } = await supabase
     .from('posts')
     .select(baseSelect)
     .eq('room_id', roomId)
@@ -92,7 +117,7 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: false })
     .returns<PostRow[]>()
 
-  const { data: logPosts, error: logErr } = await supabase
+  const { data: logPosts } = await supabase
     .from('posts')
     .select(baseSelect)
     .eq('room_id', roomId)
@@ -102,7 +127,9 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
-  const normalizedLogPosts = (logPosts ?? []).filter((p) => !p.post_type || p.post_type === 'log')
+  const normalizedLogPosts = (logPosts ?? []).filter(
+    (p) => !p.post_type || p.post_type === 'log'
+  )
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
@@ -122,30 +149,11 @@ export default async function WorkDetailPage({
       <h1 style={{ marginTop: 10 }}>{room.title}</h1>
 
       <div style={{ marginTop: 6, color: '#444', fontSize: 14 }}>
-        {room.work_type} / 🤖AI: {aiLabel(room.ai_level)} / ❤️ {room.like_count ?? 0}
+        {room.work_type} / 🤖AI: {aiLabel(room.ai_level)} / ❤️{' '}
+        {room.like_count ?? 0}
       </div>
 
-      {room.concept && (
-        <div
-          style={{
-            marginTop: 12,
-            padding: 12,
-            border: '1px solid rgba(0,0,0,0.10)',
-            borderRadius: 12,
-            background: 'rgba(255,255,255,0.85)',
-          }}
-        >
-          <div style={{ fontWeight: 900, marginBottom: 6 }}>作品コンセプト</div>
-          <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{room.concept}</div>
-        </div>
-      )}
-
-      {(finalErr || logErr) && (
-        <p style={{ marginTop: 12, color: '#b00020' }}>
-          {finalErr?.message || logErr?.message}
-        </p>
-      )}
-
+      {/* ===== 完成作品 ===== */}
       <section style={{ marginTop: 18 }}>
         <h2 style={{ fontSize: 16 }}>完成作品（最終提出）</h2>
 
@@ -163,41 +171,37 @@ export default async function WorkDetailPage({
                   background: 'rgba(255,255,255,0.92)',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                  <strong>{p.username ?? '名無し'}</strong>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                  }}
+                >
+                  {/* ✅ ここを変更 */}
+                  <UserLink username={p.username} />
+
                   <span style={{ fontSize: 12, color: '#666' }}>
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
 
-                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                <div
+                  style={{
+                    marginTop: 8,
+                    whiteSpace: 'pre-wrap',
+                    lineHeight: 1.7,
+                  }}
+                >
                   {p.content}
                 </div>
-
-                {p.attachment_url &&
-                  (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
-                    <div style={{ marginTop: 10 }}>
-                      <img
-                        src={p.attachment_url}
-                        alt="attachment"
-                        loading="lazy"
-                        style={{
-                          width: '100%',
-                          maxHeight: 520,
-                          objectFit: 'contain',
-                          borderRadius: 12,
-                          border: '1px solid rgba(0,0,0,0.10)',
-                          background: 'rgba(0,0,0,0.02)',
-                        }}
-                      />
-                    </div>
-                  )}
               </div>
             ))}
           </div>
         )}
       </section>
 
+      {/* ===== 制作ログ ===== */}
       <section style={{ marginTop: 18 }}>
         <h2 style={{ fontSize: 16 }}>制作ログ（掲示板）</h2>
 
@@ -215,35 +219,30 @@ export default async function WorkDetailPage({
                   background: 'rgba(255,255,255,0.9)',
                 }}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                  <strong>{p.username ?? '名無し'}</strong>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: 10,
+                  }}
+                >
+                  {/* ✅ ここも変更 */}
+                  <UserLink username={p.username} />
+
                   <span style={{ fontSize: 12, color: '#666' }}>
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
 
-                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                <div
+                  style={{
+                    marginTop: 8,
+                    whiteSpace: 'pre-wrap',
+                    lineHeight: 1.7,
+                  }}
+                >
                   {p.content}
                 </div>
-
-                {p.attachment_url &&
-                  (p.attachment_type?.startsWith('image/') || p.attachment_type === 'image') && (
-                    <div style={{ marginTop: 10 }}>
-                      <img
-                        src={p.attachment_url}
-                        alt="attachment"
-                        loading="lazy"
-                        style={{
-                          width: '100%',
-                          maxHeight: 520,
-                          objectFit: 'contain',
-                          borderRadius: 12,
-                          border: '1px solid rgba(0,0,0,0.10)',
-                          background: 'rgba(0,0,0,0.02)',
-                        }}
-                      />
-                    </div>
-                  )}
               </div>
             ))}
           </div>
