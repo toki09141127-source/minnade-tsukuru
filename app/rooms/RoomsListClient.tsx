@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
@@ -51,6 +51,28 @@ function badgeStyle(bg: string, fg: string): React.CSSProperties {
   }
 }
 
+function unreadBadgeStyle(): React.CSSProperties {
+  return {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    minWidth: 28,
+    height: 22,
+    padding: '0 8px',
+    borderRadius: 999,
+    background: '#111',
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 900,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 8px 18px rgba(0,0,0,0.18)',
+    border: '1px solid rgba(255,255,255,0.15)',
+    lineHeight: 1,
+  }
+}
+
 export default function RoomsListClient() {
   const supabase = createClient()
 
@@ -63,15 +85,34 @@ export default function RoomsListClient() {
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('like')
 
-  // ✅ 追加：ステータスフィルタ
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
+  // ✅ 未読マップ（roomId -> count）
+  const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
+  // ✅ 自分が参加中のroom集合（Realtimeの増分フィルタに使う）
+  const [memberRoomSet, setMemberRoomSet] = useState<Set<string>>(new Set())
+  // ✅ 自分のuserId
+  const [userId, setUserId] = useState<string | null>(null)
+
+  // -----------------------------------------
+  // 1) userId 取得
+  // -----------------------------------------
+  useEffect(() => {
+    const init = async () => {
+      const { data } = await supabase.auth.getUser()
+      setUserId(data.user?.id ?? null)
+    }
+    init()
+  }, [supabase])
+
+  // -----------------------------------------
+  // 2) rooms を取得
+  // -----------------------------------------
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true)
       setError('')
 
-      // ベース
       let base = supabase
         .from('rooms_with_counts_v2')
         .select(
@@ -80,17 +121,14 @@ export default function RoomsListClient() {
         .eq('is_hidden', false)
         .is('deleted_at', null)
 
-      // ✅ 追加：status で絞る
       if (statusFilter === 'open') {
         base = base.eq('status', 'open')
       } else if (statusFilter === 'forced_publish') {
         base = base.eq('status', 'forced_publish')
       } else {
-        // all = open と forced_publish だけ表示（他の status があるならここで調整）
         base = base.in('status', ['open', 'forced_publish'])
       }
 
-      // 並び替え
       const sorted =
         sort === 'like'
           ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
@@ -107,6 +145,90 @@ export default function RoomsListClient() {
     fetchRooms()
   }, [sort, statusFilter, supabase])
 
+  // -----------------------------------------
+  // 3) 初期未読を RPC で取得（ログイン時のみ）
+  //    unreadMap + memberRoomSet を構築
+  // -----------------------------------------
+  const loadUnread = useCallback(async () => {
+    if (!userId) {
+      setUnreadMap({})
+      setMemberRoomSet(new Set())
+      return
+    }
+
+    const { data, error } = await supabase.rpc('unread_counts_for_me')
+    if (error) {
+      // 未読は失敗しても一覧表示は壊さない
+      return
+    }
+
+    const map: Record<string, number> = {}
+    const set = new Set<string>()
+
+    ;(data ?? []).forEach((row: any) => {
+      const rid = String(row.room_id)
+      const cnt = Number(row.unread_count ?? 0)
+      map[rid] = cnt
+      set.add(rid)
+    })
+
+    setUnreadMap(map)
+    setMemberRoomSet(set)
+  }, [supabase, userId])
+
+  useEffect(() => {
+    loadUnread()
+  }, [loadUnread])
+
+  // -----------------------------------------
+  // 4) Realtime: posts INSERT を拾って unread を増やす
+  //    条件：deleted_at null / 自分の投稿は除外 / 参加中roomのみ加算
+  // -----------------------------------------
+  useEffect(() => {
+    if (!userId) return
+
+    const channel = supabase
+      .channel('realtime-unread-posts')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'posts',
+        },
+        (payload) => {
+          const post = payload.new as any
+          if (!post) return
+
+          // deleted_at は INSERT 時点では通常 null 想定だが保険
+          if (post.deleted_at) return
+
+          // 自分の投稿は未読に含めない
+          if (String(post.user_id) === String(userId)) return
+
+          const rid = String(post.room_id ?? '')
+          if (!rid) return
+
+          // 自分が参加中のルームだけ増やす（不要な通知を排除）
+          if (!memberRoomSet.has(rid)) return
+
+          setUnreadMap((prev) => {
+            const next = { ...prev }
+            next[rid] = (next[rid] ?? 0) + 1
+            return next
+          })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [supabase, userId, memberRoomSet])
+
+  // -----------------------------------------
+  // UI側フィルタ
+  // -----------------------------------------
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
     return rooms.filter((r) => {
@@ -152,7 +274,6 @@ export default function RoomsListClient() {
           }}
         />
 
-        {/* ✅ 3列にして「ステータス」を追加 */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
           <select
             value={category}
@@ -187,7 +308,6 @@ export default function RoomsListClient() {
             <option value="new">新着順</option>
           </select>
 
-          {/* ✅ 追加：ステータス */}
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
@@ -219,7 +339,6 @@ export default function RoomsListClient() {
       {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
       {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
 
-      {/* Cards */}
       <div
         style={{
           marginTop: 12,
@@ -239,10 +358,13 @@ export default function RoomsListClient() {
               ? { bg: 'rgba(16,185,129,0.14)', fg: '#065f46', label: 'open' }
               : { bg: 'rgba(59,130,246,0.14)', fg: '#1e40af', label: 'forced_publish' }
 
+          const unread = unreadMap[r.id] ?? 0
+
           return (
             <Link key={r.id} href={`/rooms/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
+                  position: 'relative',
                   border: '1px solid rgba(0,0,0,0.10)',
                   borderRadius: 18,
                   padding: 14,
@@ -250,6 +372,9 @@ export default function RoomsListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
+                {/* ✅ 未読バッジ */}
+                {unread > 0 && <span style={unreadBadgeStyle()}>{unread > 99 ? '99+' : unread}</span>}
+
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   <span style={badgeStyle(statusBadge.bg, statusBadge.fg)}>{statusBadge.label}</span>
                   <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>

@@ -18,7 +18,6 @@ type PostRow = {
   attachment_url?: string | null
   attachment_type?: string | null
 
-  // ✅ marking
   is_marked: boolean
   marked_by?: string | null
   marked_at?: string | null
@@ -55,7 +54,6 @@ export default function BoardClient({
 
   // ✅ Mark filter
   const [markFilter, setMarkFilter] = useState<'all' | 'marked'>('all')
-
   const canMark = myRole === 'core' || myRole === 'creator'
 
   // ✅ iPhone対応：confirm()をやめて自前モーダルにする
@@ -97,6 +95,31 @@ export default function BoardClient({
     const session = await supabase.auth.getSession()
     return session.data.session?.access_token ?? null
   }
+
+  // ✅ 入室した瞬間に seen を更新（参加者のみ）
+  useEffect(() => {
+    const markSeen = async () => {
+      try {
+        if (!userId) return
+        if (!isMember) return // 未参加なら更新しない（仕様）
+        const token = await getToken()
+        if (!token) return
+
+        await fetch('/api/rooms/seen', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ roomId }),
+        })
+      } catch {
+        // 失敗してもUIは壊さない
+      }
+    }
+
+    markSeen()
+  }, [roomId, userId, isMember])
 
   const fetchPosts = useCallback(async () => {
     setError('')
@@ -462,7 +485,6 @@ export default function BoardClient({
     }
   }
 
-  // ✅ username を公開プロフィールにリンク（/u/[username]）
   const UserLink = ({ p }: { p: PostRow }) => {
     const name = (p.username ?? '').trim()
 
@@ -487,7 +509,6 @@ export default function BoardClient({
 
   return (
     <section style={{ marginTop: 18 }}>
-      {/* 参加していない場合の案内 */}
       {showJoinHint && (
         <div
           style={{
@@ -509,7 +530,6 @@ export default function BoardClient({
         </div>
       )}
 
-      {/* ✅ Mark filter */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
         <div style={{ fontWeight: 900 }}>表示:</div>
         <button
@@ -558,7 +578,6 @@ export default function BoardClient({
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
 
-                  {/* ✅ Mark toggle button（core/creatorのみ） */}
                   {canMark && (
                     <button
                       onClick={() => toggleMark(p.id)}
@@ -579,13 +598,9 @@ export default function BoardClient({
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
 
-              {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
-                  <button
-                    onClick={() => deletePost(p.id)}
-                    style={smallButtonStyle}
-                  >
+                  <button onClick={() => deletePost(p.id)} style={smallButtonStyle}>
                     取り消し
                   </button>
                 </div>
@@ -595,7 +610,6 @@ export default function BoardClient({
         </div>
       )}
 
-      {/* ✅ 未参加ならフォームを出さない */}
       {showPostForms && (
         <div
           style={{
@@ -651,7 +665,6 @@ export default function BoardClient({
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   <span style={{ fontSize: 12, opacity: 0.7 }}>{new Date(p.created_at).toLocaleString()}</span>
 
-                  {/* ✅ Mark toggle button（core/creatorのみ） */}
                   {canMark && (
                     <button
                       onClick={() => toggleMark(p.id)}
@@ -672,13 +685,9 @@ export default function BoardClient({
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
 
-              {/* ✅ 削除ボタン：投稿者本人 かつ 参加者（UX） */}
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
-                  <button
-                    onClick={() => deletePost(p.id)}
-                    style={smallButtonStyle}
-                  >
+                  <button onClick={() => deletePost(p.id)} style={smallButtonStyle}>
                     取り消し
                   </button>
                 </div>
@@ -688,7 +697,6 @@ export default function BoardClient({
         </div>
       )}
 
-      {/* ✅ 未参加ならフォームを出さない */}
       {showPostForms && (
         <div
           style={{
@@ -727,7 +735,6 @@ export default function BoardClient({
 
       {error && <p style={{ color: '#b00020', marginTop: 12 }}>{error}</p>}
 
-      {/* ✅ iPhone対応：confirm代替モーダル */}
       {confirmTarget && (
         <div
           role="dialog"
@@ -761,11 +768,7 @@ export default function BoardClient({
             </div>
 
             <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 14 }}>
-              <button
-                disabled={deleting}
-                onClick={() => setConfirmTarget(null)}
-                style={smallButtonStyle}
-              >
+              <button disabled={deleting} onClick={() => setConfirmTarget(null)} style={smallButtonStyle}>
                 キャンセル
               </button>
 
