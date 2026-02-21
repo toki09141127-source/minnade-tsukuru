@@ -3,19 +3,23 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase/client'
+import ConfirmModal from '../../components/ConfirmModal'
 
 export default function DeleteRoomButton(props: { roomId: string }) {
   const { roomId } = props
   const router = useRouter()
+
   const [msg, setMsg] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const onDelete = async () => {
-    setMsg(null)
-    const ok = window.confirm('このルームを削除（論理削除）します。よろしいですか？\n※ホストのみ実行できます。')
-    if (!ok) return
+  // ✅ iPhone対応：confirm()をやめて自前モーダルにする
+  const [open, setOpen] = useState(false)
 
+  const doDelete = async () => {
+    if (loading) return
+    setMsg(null)
     setLoading(true)
+
     try {
       const { data } = await supabase.auth.getSession()
       const token = data.session?.access_token
@@ -33,7 +37,7 @@ export default function DeleteRoomButton(props: { roomId: string }) {
         body: JSON.stringify({ roomId }),
       })
 
-      const json = await res.json()
+      const json = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(json?.error ?? 'delete failed')
 
       // 削除成功→一覧へ
@@ -43,13 +47,17 @@ export default function DeleteRoomButton(props: { roomId: string }) {
       setMsg(e?.message ?? 'error')
     } finally {
       setLoading(false)
+      setOpen(false)
     }
   }
 
   return (
     <div>
       <button
-        onClick={onDelete}
+        onClick={() => {
+          setMsg(null)
+          setOpen(true)
+        }}
         disabled={loading}
         style={{
           padding: '10px 12px',
@@ -58,12 +66,25 @@ export default function DeleteRoomButton(props: { roomId: string }) {
           background: 'rgba(255,0,0,0.08)',
           cursor: 'pointer',
           fontWeight: 900,
+          opacity: loading ? 0.7 : 1,
         }}
       >
         {loading ? '削除中...' : '🗑️ ルームを削除'}
       </button>
 
       {msg && <p style={{ marginTop: 8, color: 'crimson', fontWeight: 700 }}>{msg}</p>}
+
+      <ConfirmModal
+        open={open}
+        title="このルームを削除しますか？"
+        description="削除（論理削除）すると元に戻せません。※ホストのみ実行できます。"
+        confirmText="削除する"
+        cancelText="キャンセル"
+        danger
+        loading={loading}
+        onCancel={() => !loading && setOpen(false)}
+        onConfirm={doDelete}
+      />
     </div>
   )
 }

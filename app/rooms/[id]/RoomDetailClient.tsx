@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import BoardClient from './BoardClient'
+import ConfirmModal from '@/app/components/ConfirmModal'
 
 type RoomFlags = {
   id: string
@@ -54,6 +55,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   // ✅ 承認OFFのときは「先着core参加」ボタン
   const canJoinCoreFirstCome = isOpen && !room.enable_core_approval && !myRole
+
+  // ✅ iPhone対応：退出confirmをモーダル化
+  const [leaveOpen, setLeaveOpen] = useState(false)
 
   const getToken = async () => {
     const sess = await supabase.auth.getSession()
@@ -204,12 +208,15 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
     }
   }
 
-  const leaveRoom = async () => {
+  // ✅ 退出：confirm()廃止 → モーダルから実行
+  const executeLeaveRoom = async () => {
     setUiError('')
     const token = await getToken()
-    if (!token) return setUiError('ログインしてください')
-
-    if (!confirm('退出しますか？')) return
+    if (!token) {
+      setUiError('ログインしてください')
+      setLeaveOpen(false)
+      return
+    }
 
     setBusy(true)
     try {
@@ -223,6 +230,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       await reloadMyState()
     } finally {
       setBusy(false)
+      setLeaveOpen(false)
     }
   }
 
@@ -323,7 +331,10 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           )}
 
           <button
-            onClick={leaveRoom}
+            onClick={() => {
+              setUiError('')
+              setLeaveOpen(true)
+            }}
             disabled={busy || checking || !myRole || myRole === 'creator' || (myRole === 'core' && !coreLeaveAllowed)}
             title={
               myRole === 'creator'
@@ -422,7 +433,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
       {canPost ? (
         <div style={{ marginTop: 18 }}>
-          {/* ✅ 追加：myRole を BoardClient に渡す */}
           <BoardClient roomId={room.id} roomStatus={room.status} myRole={myRole} />
         </div>
       ) : (
@@ -438,6 +448,23 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           参加すると掲示板に投稿できます。
         </div>
       )}
+
+      {/* ✅ iPhone対応：退出confirm代替モーダル */}
+      <ConfirmModal
+        open={leaveOpen}
+        title="このルームから退出しますか？"
+        description={
+          myRole === 'core'
+            ? 'coreは参加から5分以内のみ退出できます。条件を満たしていれば退出できます。'
+            : '退出すると、このルームで投稿や取り消しができなくなります。'
+        }
+        confirmText="退出する"
+        cancelText="キャンセル"
+        danger
+        loading={busy}
+        onCancel={() => !busy && setLeaveOpen(false)}
+        onConfirm={executeLeaveRoom}
+      />
     </div>
   )
 }
