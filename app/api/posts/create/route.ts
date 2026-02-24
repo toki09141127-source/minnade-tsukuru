@@ -4,6 +4,11 @@ import { createClient } from '@supabase/supabase-js'
 
 export const dynamic = 'force-dynamic'
 
+type MemberRow = {
+  id: string
+  role: string
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
@@ -59,22 +64,31 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ 参加者チェック（最重要）
-    // 退出済み（left_at != null）は投稿不可にする
+    // ✅ 参加者チェック（left_at is null のみ参加中）
+    // ここで role も取る
     const { data: mem, error: memErr } = await admin
       .from('room_members')
-      .select('id')
+      .select('id, role')
       .eq('room_id', roomId)
       .eq('user_id', user.id)
-      .is('left_at', null) // ★追加：アクティブ参加者のみ
+      .is('left_at', null)
       .maybeSingle()
 
     if (memErr) return NextResponse.json({ error: memErr.message }, { status: 500 })
     if (!mem) {
-      return NextResponse.json(
-        { error: 'ルームに参加してから投稿してください' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'ルームに参加してから投稿してください' }, { status: 403 })
+    }
+
+    // ✅ final は core/creator のみ許可（API側ガード）
+    if (post_type === 'final') {
+      const role = String((mem as MemberRow).role ?? '')
+      const ok = role === 'creator' || role === 'core'
+      if (!ok) {
+        return NextResponse.json(
+          { error: '最終提出はcore/creatorのみ投稿できます' },
+          { status: 403 }
+        )
+      }
     }
 
     // ✅ username は public_profiles から取得（公開プロフィールと統一）

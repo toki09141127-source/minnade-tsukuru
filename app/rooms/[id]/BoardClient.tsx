@@ -45,6 +45,10 @@ export default function BoardClient({
   const isMember = !!myRole
   const memberChecked = true
 
+  // ✅ 権限
+  const canFinal = myRole === 'core' || myRole === 'creator'
+  const isSupporter = myRole === 'supporter'
+
   // 添付（log / final）
   const [logFile, setLogFile] = useState<File | null>(null)
   const [finalFile, setFinalFile] = useState<File | null>(null)
@@ -203,6 +207,12 @@ export default function BoardClient({
   const submitPost = async (type: 'log' | 'final') => {
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから投稿してください')
+      return
+    }
+
+    // ✅ フロント側の二重ガード（UIで消しても、念のため）
+    if (type === 'final' && !canFinal) {
+      alert('最終提出はcore/creatorのみ投稿できます')
       return
     }
 
@@ -448,7 +458,9 @@ export default function BoardClient({
     )
   }
 
+  // ✅ フォーム表示条件
   const showPostForms = roomStatus === 'open' && userId && memberChecked && isMember
+  const showFinalForm = showPostForms && canFinal
   const showJoinHint = roomStatus === 'open' && userId && memberChecked && !isMember
 
   const renderMarkBadge = (p: PostRow) => {
@@ -610,6 +622,7 @@ export default function BoardClient({
         </div>
       )}
 
+      {/* ✅ 最終提出フォーム（コア限定） */}
       {showPostForms && (
         <div
           style={{
@@ -620,29 +633,51 @@ export default function BoardClient({
             background: '#fafafa',
           }}
         >
-          <div style={{ fontWeight: 900, marginBottom: 8 }}>最終提出を投稿</div>
-
-          <textarea
-            value={finalContent}
-            onChange={(e) => setFinalContent(e.target.value)}
-            placeholder="最終提出を書く…（画像/動画のみでもOK）"
-            style={{ width: '100%', minHeight: 90, padding: 10, borderRadius: 10, border: '1px solid rgba(0,0,0,0.18)' }}
-          />
-
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-            <input type="file" accept={ACCEPT} onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
-            {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
-            <button
-              disabled={loading}
-              onClick={() => submitPost('final')}
-              style={{
-                ...primaryButtonStyle,
-                cursor: loading ? 'not-allowed' : 'pointer',
-              }}
-            >
-              {loading ? '送信中…' : '最終提出する'}
-            </button>
+          <div style={{ fontWeight: 900, marginBottom: 8 }}>
+            最終提出を投稿（コア限定）
           </div>
+
+          {isSupporter && (
+            <div style={{ fontSize: 13, lineHeight: 1.7, color: '#6b4a00', fontWeight: 800, marginBottom: 10 }}>
+              あなたは supporter です。最終提出は core/creator のみ投稿できます（supporter は制作ログのみ投稿可能です）。
+            </div>
+          )}
+
+          {showFinalForm ? (
+            <>
+              <textarea
+                value={finalContent}
+                onChange={(e) => setFinalContent(e.target.value)}
+                placeholder="最終提出を書く…（画像/動画のみでもOK）"
+                style={{
+                  width: '100%',
+                  minHeight: 90,
+                  padding: 10,
+                  borderRadius: 10,
+                  border: '1px solid rgba(0,0,0,0.18)',
+                }}
+              />
+
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
+                <input type="file" accept={ACCEPT} onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
+                {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
+                <button
+                  disabled={loading}
+                  onClick={() => submitPost('final')}
+                  style={{
+                    ...primaryButtonStyle,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {loading ? '送信中…' : '最終提出する'}
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ fontSize: 13, opacity: 0.75 }}>
+              最終提出フォームは core/creator のみ表示されます。
+            </div>
+          )}
         </div>
       )}
 
@@ -713,7 +748,13 @@ export default function BoardClient({
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="制作ログを書く…（画像/動画のみでもOK）"
-            style={{ width: '100%', minHeight: 90, padding: 10, borderRadius: 10, border: '1px solid rgba(0,0,0,0.18)' }}
+            style={{
+              width: '100%',
+              minHeight: 90,
+              padding: 10,
+              borderRadius: 10,
+              border: '1px solid rgba(0,0,0,0.18)',
+            }}
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
