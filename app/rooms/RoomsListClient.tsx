@@ -95,14 +95,27 @@ export default function RoomsListClient() {
   const [userId, setUserId] = useState<string | null>(null)
 
   // -----------------------------------------
-  // 1) userId 取得
+  // 1) userId 取得（ログイン/ログアウトでも追従）
   // -----------------------------------------
   useEffect(() => {
+    let mounted = true
+
     const init = async () => {
       const { data } = await supabase.auth.getUser()
+      if (!mounted) return
       setUserId(data.user?.id ?? null)
     }
+
     init()
+
+    const { data: sub } = supabase.auth.onAuthStateChange(() => {
+      init()
+    })
+
+    return () => {
+      mounted = false
+      sub.subscription.unsubscribe()
+    }
   }, [supabase])
 
   // -----------------------------------------
@@ -131,7 +144,9 @@ export default function RoomsListClient() {
 
       const sorted =
         sort === 'like'
-          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+          ? base
+              .order('like_count', { ascending: false, nullsFirst: false })
+              .order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
       const { data, error } = await sorted
@@ -146,7 +161,7 @@ export default function RoomsListClient() {
   }, [sort, statusFilter, supabase])
 
   // -----------------------------------------
-  // 3) 初期未読を RPC で取得（ログイン時のみ）
+  // 3) 未読を RPC で取得（ログイン時のみ）
   //    unreadMap + memberRoomSet を構築
   // -----------------------------------------
   const loadUnread = useCallback(async () => {
@@ -176,9 +191,32 @@ export default function RoomsListClient() {
     setMemberRoomSet(set)
   }, [supabase, userId])
 
+  // 初回 & userId 変化で取得
   useEffect(() => {
     loadUnread()
   }, [loadUnread])
+
+  // ✅ 重要：画面復帰（/rooms に戻った時・タブ復帰）で未読を再取得
+  useEffect(() => {
+    if (!userId) return
+
+    const onFocus = () => {
+      loadUnread()
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadUnread()
+      }
+    }
+
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisibility)
+
+    return () => {
+      window.removeEventListener('focus', onFocus)
+      document.removeEventListener('visibilitychange', onVisibility)
+    }
+  }, [userId, loadUnread])
 
   // -----------------------------------------
   // 4) Realtime: posts INSERT を拾って unread を増やす
@@ -200,16 +238,11 @@ export default function RoomsListClient() {
           const post = payload.new as any
           if (!post) return
 
-          // deleted_at は INSERT 時点では通常 null 想定だが保険
           if (post.deleted_at) return
-
-          // 自分の投稿は未読に含めない
           if (String(post.user_id) === String(userId)) return
 
           const rid = String(post.room_id ?? '')
           if (!rid) return
-
-          // 自分が参加中のルームだけ増やす（不要な通知を排除）
           if (!memberRoomSet.has(rid)) return
 
           setUnreadMap((prev) => {
@@ -247,6 +280,16 @@ export default function RoomsListClient() {
       return true
     })
   }, [rooms, q, category, adultOnly])
+
+  // ✅ クリック時に「そのルームの未読だけ」即0にして体感改善（実データはページ側で既読化される）
+  const optimisticClearUnread = useCallback((roomId: string) => {
+    setUnreadMap((prev) => {
+      if (!prev[roomId]) return prev
+      const next = { ...prev }
+      next[roomId] = 0
+      return next
+    })
+  }, [])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -361,7 +404,13 @@ export default function RoomsListClient() {
           const unread = unreadMap[r.id] ?? 0
 
           return (
-            <Link key={r.id} href={`/rooms/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link
+              key={r.id}
+              href={`/rooms/${r.id}`}
+              prefetch={false}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+              onClick={() => optimisticClearUnread(r.id)}
+            >
               <div
                 style={{
                   position: 'relative',
