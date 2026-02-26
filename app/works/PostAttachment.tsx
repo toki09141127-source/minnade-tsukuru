@@ -1,13 +1,26 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
   attachment_url?: string | null
   attachment_type?: string | null
 }
 
+function isImageAttachment(url: string, type: string) {
+  // type が MIME の場合：image/jpeg, image/png など
+  if (type.startsWith('image/')) return true
+  if (type === 'image') return true // 旧互換
+
+  // type が空でも拡張子で推定（保険）
+  const u = url.toLowerCase()
+  return /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(u)
+}
+
 export default function PostAttachment({ attachment_url, attachment_type }: Props) {
+  const path = useMemo(() => (attachment_url ?? '').trim(), [attachment_url])
+  const type = useMemo(() => (attachment_type ?? '').trim().toLowerCase(), [attachment_type])
+
   const [src, setSrc] = useState<string | null>(null)
   const [err, setErr] = useState<string>('')
 
@@ -18,11 +31,11 @@ export default function PostAttachment({ attachment_url, attachment_type }: Prop
       setErr('')
       setSrc(null)
 
-      const path = (attachment_url ?? '').trim()
-      const type = (attachment_type ?? '').trim()
-
       if (!path) return
-      if (type && type !== 'image') return
+
+      // 画像以外は表示しない（ただし type が空のケースは拡張子で推定）
+      if (type && !isImageAttachment(path, type)) return
+      if (!type && !isImageAttachment(path, '')) return
 
       const res = await fetch('/api/storage/sign', {
         method: 'POST',
@@ -45,10 +58,11 @@ export default function PostAttachment({ attachment_url, attachment_type }: Prop
     return () => {
       canceled = true
     }
-  }, [attachment_url, attachment_type])
+  }, [path, type])
 
-  if (!attachment_url) return null
-  if (attachment_type && attachment_type !== 'image') return null
+  if (!path) return null
+  if (type && !isImageAttachment(path, type)) return null
+  if (!type && !isImageAttachment(path, '')) return null
 
   if (err) {
     return (
