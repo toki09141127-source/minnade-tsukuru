@@ -1,6 +1,7 @@
 // app/works/[id]/page.tsx
 import Link from 'next/link'
 import PostAttachment from '../PostAttachment'
+import MarkReadOnView from '../MarkReadOnView' // ✅ 追加（最小修正）
 import { supabase } from '../../../lib/supabase/client'
 
 type RoomRow = {
@@ -95,7 +96,9 @@ export default async function WorkDetailPage({
 
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level')
+    .select(
+      'id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level'
+    )
     .eq('id', roomId)
     .maybeSingle<RoomRow>()
 
@@ -140,13 +143,18 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
-  const normalizedLogPosts = (logPosts ?? []).filter((p) => !p.post_type || p.post_type === 'log')
+  const normalizedLogPosts = (logPosts ?? []).filter(
+    (p) => !p.post_type || p.post_type === 'log'
+  )
 
   const ai = aiLabel(room.ai_level)
   const likes = room.like_count ?? 0
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
+      {/* ✅ 追加（最小修正）：worksを閲覧したら既読化（ログイン中のみ） */}
+      <MarkReadOnView roomId={room.id} />
+
       {/* header nav */}
       <div
         style={{
@@ -161,7 +169,9 @@ export default async function WorkDetailPage({
         <Link href={`/rooms/${room.id}`}>制作ルームを見る</Link>
       </div>
 
-      <h1 style={{ marginTop: 10, marginBottom: 6, fontSize: 24, fontWeight: 900 }}>{room.title}</h1>
+      <h1 style={{ marginTop: 10, marginBottom: 6, fontSize: 24, fontWeight: 900 }}>
+        {room.title}
+      </h1>
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={pill('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
@@ -187,9 +197,15 @@ export default async function WorkDetailPage({
         </div>
       )}
 
-      {/* errors (optional display) */}
       {(finalErr || logErr) && (
-        <div style={{ marginTop: 14, padding: 12, borderRadius: 12, background: 'rgba(176,0,32,0.08)' }}>
+        <div
+          style={{
+            marginTop: 14,
+            padding: 12,
+            borderRadius: 12,
+            background: 'rgba(176,0,32,0.08)',
+          }}
+        >
           <div style={{ fontWeight: 900, color: '#b00020' }}>読み込みエラー</div>
           <div style={{ marginTop: 6, fontSize: 13, color: '#7a0016' }}>
             {finalErr?.message ? `final: ${finalErr.message}` : ''}
@@ -224,9 +240,11 @@ export default async function WorkDetailPage({
                   </span>
                 </div>
 
-                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                  {p.content}
+                </div>
 
-                {/* ✅ 画像表示（署名URL取得） */}
+                {/* 画像表示（署名URL取得） */}
                 <PostAttachment attachment_url={p.attachment_url} attachment_type={p.attachment_type} />
               </div>
             ))}
@@ -259,9 +277,11 @@ export default async function WorkDetailPage({
                   </span>
                 </div>
 
-                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>
+                  {p.content}
+                </div>
 
-                {/* ✅ 画像表示（署名URL取得） */}
+                {/* 画像表示（署名URL取得） */}
                 <PostAttachment attachment_url={p.attachment_url} attachment_type={p.attachment_type} />
               </div>
             ))}
