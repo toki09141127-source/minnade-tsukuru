@@ -1,6 +1,7 @@
 // app/works/[id]/page.tsx
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
+import AttachmentView from './AttachmentView'
 
 type RoomRow = {
   id: string
@@ -108,7 +109,7 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: false })
     .returns<PostRow[]>()
 
-  // ✅ ここが修正ポイント：NULL を拾うために OR を使う
+  // ログ：post_type が NULL の古い投稿も拾う
   const { data: logPosts } = await supabase
     .from('posts')
     .select(baseSelect)
@@ -182,6 +183,9 @@ export default async function WorkDetailPage({
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+
+                {/* ✅ 添付（最終提出） */}
+                <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
           </div>
@@ -214,6 +218,9 @@ export default async function WorkDetailPage({
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+
+                {/* ✅ 添付（ログ） */}
+                <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
           </div>
