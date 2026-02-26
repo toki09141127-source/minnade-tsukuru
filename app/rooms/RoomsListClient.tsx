@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useCallback } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 type RoomRow = {
@@ -75,6 +76,7 @@ function unreadBadgeStyle(): React.CSSProperties {
 
 export default function RoomsListClient() {
   const supabase = createClient()
+  const pathname = usePathname()
 
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
@@ -95,27 +97,14 @@ export default function RoomsListClient() {
   const [userId, setUserId] = useState<string | null>(null)
 
   // -----------------------------------------
-  // 1) userId 取得（ログイン/ログアウトでも追従）
+  // 1) userId 取得
   // -----------------------------------------
   useEffect(() => {
-    let mounted = true
-
     const init = async () => {
       const { data } = await supabase.auth.getUser()
-      if (!mounted) return
       setUserId(data.user?.id ?? null)
     }
-
     init()
-
-    const { data: sub } = supabase.auth.onAuthStateChange(() => {
-      init()
-    })
-
-    return () => {
-      mounted = false
-      sub.subscription.unsubscribe()
-    }
   }, [supabase])
 
   // -----------------------------------------
@@ -128,9 +117,7 @@ export default function RoomsListClient() {
 
       let base = supabase
         .from('rooms_with_counts_v2')
-        .select(
-          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at'
-        )
+        .select('id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at')
         .eq('is_hidden', false)
         .is('deleted_at', null)
 
@@ -144,9 +131,7 @@ export default function RoomsListClient() {
 
       const sorted =
         sort === 'like'
-          ? base
-              .order('like_count', { ascending: false, nullsFirst: false })
-              .order('created_at', { ascending: false })
+          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
       const { data, error } = await sorted
@@ -191,36 +176,38 @@ export default function RoomsListClient() {
     setMemberRoomSet(set)
   }, [supabase, userId])
 
-  // 初回 & userId 変化で取得
+  // 初回
   useEffect(() => {
     loadUnread()
   }, [loadUnread])
 
-  // ✅ 重要：画面復帰（/rooms に戻った時・タブ復帰）で未読を再取得
+  // ✅ 追加A: /rooms に戻ってきたら未読を再取得（コンポーネント再マウントされない問題に対応）
+  useEffect(() => {
+    if (pathname === '/rooms') {
+      loadUnread()
+    }
+  }, [pathname, loadUnread])
+
+  // ✅ 追加B: タブ復帰/フォーカス復帰でも未読を再取得
   useEffect(() => {
     if (!userId) return
 
-    const onFocus = () => {
-      loadUnread()
-    }
-    const onVisibility = () => {
-      if (document.visibilityState === 'visible') {
-        loadUnread()
-      }
+    const onFocus = () => loadUnread()
+    const onVis = () => {
+      if (document.visibilityState === 'visible') loadUnread()
     }
 
     window.addEventListener('focus', onFocus)
-    document.addEventListener('visibilitychange', onVisibility)
+    document.addEventListener('visibilitychange', onVis)
 
     return () => {
       window.removeEventListener('focus', onFocus)
-      document.removeEventListener('visibilitychange', onVisibility)
+      document.removeEventListener('visibilitychange', onVis)
     }
   }, [userId, loadUnread])
 
   // -----------------------------------------
   // 4) Realtime: posts INSERT を拾って unread を増やす
-  //    条件：deleted_at null / 自分の投稿は除外 / 参加中roomのみ加算
   // -----------------------------------------
   useEffect(() => {
     if (!userId) return
@@ -229,15 +216,10 @@ export default function RoomsListClient() {
       .channel('realtime-unread-posts')
       .on(
         'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'posts',
-        },
+        { event: 'INSERT', schema: 'public', table: 'posts' },
         (payload) => {
           const post = payload.new as any
           if (!post) return
-
           if (post.deleted_at) return
           if (String(post.user_id) === String(userId)) return
 
@@ -258,6 +240,21 @@ export default function RoomsListClient() {
       supabase.removeChannel(channel)
     }
   }, [supabase, userId, memberRoomSet])
+
+  // ✅ 追加C: クリック時に既読化（楽観的に0） + RPCでlast_seen更新
+  const handleOpenRoom = useCallback(
+    async (roomId: string) => {
+      // 見た目を即0にする（戻ってきた時にも残りにくい）
+      setUnreadMap((prev) => ({ ...prev, [roomId]: 0 }))
+
+      // ログインしていればDB側も更新（既読問題の根治）
+      const { data } = await supabase.auth.getUser()
+      if (!data.user) return
+
+      await supabase.rpc('mark_room_seen', { p_room_id: roomId })
+    },
+    [supabase]
+  )
 
   // -----------------------------------------
   // UI側フィルタ
@@ -280,16 +277,6 @@ export default function RoomsListClient() {
       return true
     })
   }, [rooms, q, category, adultOnly])
-
-  // ✅ クリック時に「そのルームの未読だけ」即0にして体感改善（実データはページ側で既読化される）
-  const optimisticClearUnread = useCallback((roomId: string) => {
-    setUnreadMap((prev) => {
-      if (!prev[roomId]) return prev
-      const next = { ...prev }
-      next[roomId] = 0
-      return next
-    })
-  }, [])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -409,7 +396,7 @@ export default function RoomsListClient() {
               href={`/rooms/${r.id}`}
               prefetch={false}
               style={{ textDecoration: 'none', color: 'inherit' }}
-              onClick={() => optimisticClearUnread(r.id)}
+              onClick={() => handleOpenRoom(r.id)}
             >
               <div
                 style={{
@@ -421,7 +408,6 @@ export default function RoomsListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
-                {/* ✅ 未読バッジ */}
                 {unread > 0 && <span style={unreadBadgeStyle()}>{unread > 99 ? '99+' : unread}</span>}
 
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
