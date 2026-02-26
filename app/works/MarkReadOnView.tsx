@@ -12,18 +12,28 @@ export default function MarkReadOnView({ roomId }: { roomId: string }) {
       const { data } = await supabase.auth.getSession()
       const token = data?.session?.access_token
 
-      // ログアウト中は既読化しない（壊さない）
-      if (!token) return
+      if (!token) {
+        console.log('[MarkReadOnView] no session (logged out), skip')
+        return
+      }
       if (canceled) return
 
-      await fetch('/api/rooms/mark-read', {
+      const res = await fetch('/api/rooms/mark-read', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
           authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ roomId }),
-      }).catch(() => {})
+      }).catch((e) => {
+        console.log('[MarkReadOnView] fetch error', e)
+        return null
+      })
+
+      if (!res) return
+
+      const json = await res.json().catch(() => ({}))
+      console.log('[MarkReadOnView]', res.status, json)
     }
 
     run()

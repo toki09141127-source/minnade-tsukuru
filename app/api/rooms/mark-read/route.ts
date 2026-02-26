@@ -26,20 +26,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
     }
 
-    // ---- 既読化（room_members の last_read_at を now() に更新）
-    // ※あなたの room_members に last_read_at が無い場合は、この方式は使えないので教えて
-    const { error: updErr } = await supabaseAdmin
+    const now = new Date().toISOString()
+
+    // ✅ 終了済みでも更新できるように left_at 条件を外す
+    // ✅ さらに "更新できたか" を可視化するため select を付ける
+    const { data: updated, error: updErr } = await supabaseAdmin
       .from('room_members')
-      .update({ last_read_at: new Date().toISOString() })
+      .update({ last_read_at: now })
       .eq('room_id', roomId)
       .eq('user_id', user.id)
-      .is('left_at', null)
+      .select('room_id, user_id, last_read_at, left_at')
+      .maybeSingle()
 
     if (updErr) {
       return NextResponse.json({ ok: false, error: updErr.message }, { status: 500 })
     }
 
-    return NextResponse.json({ ok: true })
+    // ✅ 1行も更新されてない（＝該当 membership が無い等）
+    if (!updated) {
+      return NextResponse.json(
+        { ok: false, error: 'room_members row not found for this user/room' },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({ ok: true, updated })
   } catch {
     return NextResponse.json({ ok: false, error: 'server error' }, { status: 500 })
   }
