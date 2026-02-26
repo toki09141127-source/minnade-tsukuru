@@ -10,6 +10,9 @@ import RoomDetailClient from './RoomDetailClient'
 import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
 import InviteCodeForCreator from './InviteCodeForCreator'
 
+// ✅ 追加（最小修正）：roomsページでも既読化
+import MarkReadOnView from '../../works/MarkReadOnView'
+
 export const dynamic = 'force-dynamic'
 
 type Params = { id?: string }
@@ -105,6 +108,9 @@ export default async function RoomDetailPage({
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
+      {/* ✅ 追加（最小修正）：rooms を開いた時点でも既読化（ログイン中のみ） */}
+      <MarkReadOnView roomId={room.id} />
+
       <Link href="/rooms">← ルーム一覧へ戻る</Link>
 
       <h1 style={{ marginTop: 10 }}>{room.title}</h1>
@@ -149,7 +155,15 @@ export default async function RoomDetailPage({
       </div>
 
       {/* Like/Report/Delete は常時表示 */}
-      <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
+      <div
+        style={{
+          marginTop: 14,
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 10,
+          alignItems: 'center',
+        }}
+      >
         <LikeButton roomId={room.id} />
         <ReportButton targetType="room" targetId={room.id} />
         <DeleteRoomButton roomId={room.id} />
@@ -161,9 +175,20 @@ export default async function RoomDetailPage({
       </div>
 
       {isForced && (
-        <div style={{ marginTop: 16, padding: 16, borderRadius: 14, border: '1px solid #f3d08a', background: '#fff7e6', lineHeight: 1.7 }}>
+        <div
+          style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 14,
+            border: '1px solid #f3d08a',
+            background: '#fff7e6',
+            lineHeight: 1.7,
+          }}
+        >
           <div style={{ fontWeight: 900, fontSize: 16 }}>このルームは公開済みです</div>
-          <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>参加・投稿はできません</div>
+          <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>
+            参加・投稿はできません
+          </div>
           <div style={{ marginTop: 12 }}>
             <Link
               href={`/works/${room.id}`}
@@ -184,9 +209,20 @@ export default async function RoomDetailPage({
       )}
 
       {!isForced && isEnded && (
-        <div style={{ marginTop: 16, padding: 16, borderRadius: 14, border: '1px solid #f3d08a', background: '#fff7e6', lineHeight: 1.7 }}>
+        <div
+          style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 14,
+            border: '1px solid #f3d08a',
+            background: '#fff7e6',
+            lineHeight: 1.7,
+          }}
+        >
           <div style={{ fontWeight: 900, fontSize: 16 }}>このルームはすでに終了しました</div>
-          <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>参加・投稿はできません</div>
+          <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>
+            参加・投稿はできません
+          </div>
           <div style={{ marginTop: 12 }}>
             <Link
               href={`/works/${room.id}`}
