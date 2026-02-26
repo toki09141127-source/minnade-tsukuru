@@ -216,7 +216,7 @@ export default function ProfilePage() {
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="例：ねーそ"
+              placeholder="例：あかさたな"
               style={{
                 width: '100%',
                 border: '1px solid #ccc',
