@@ -1,5 +1,6 @@
 // app/works/[id]/page.tsx
 import Link from 'next/link'
+import PostAttachment from '../PostAttachment'
 import { supabase } from '../../../lib/supabase/client'
 
 type RoomRow = {
@@ -38,7 +39,7 @@ function aiLabel(v: string | null | undefined) {
   return 'なし'
 }
 
-// ✅ 追加：公開プロフィールリンク用コンポーネント
+// ✅ 公開プロフィールリンク用
 function UserLink({ username }: { username: string | null }) {
   const name = (username ?? '').trim()
 
@@ -61,6 +62,20 @@ function UserLink({ username }: { username: string | null }) {
   )
 }
 
+function pill(bg: string, fg: string) {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '4px 10px',
+    borderRadius: 999,
+    fontSize: 12,
+    fontWeight: 900,
+    background: bg,
+    color: fg,
+    border: '1px solid rgba(0,0,0,0.06)',
+  } as const
+}
+
 export default async function WorkDetailPage({
   params,
 }: {
@@ -80,9 +95,7 @@ export default async function WorkDetailPage({
 
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select(
-      'id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level'
-    )
+    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level')
     .eq('id', roomId)
     .maybeSingle<RoomRow>()
 
@@ -107,7 +120,7 @@ export default async function WorkDetailPage({
   const baseSelect =
     'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
-  const { data: finalPosts } = await supabase
+  const { data: finalPosts, error: finalErr } = await supabase
     .from('posts')
     .select(baseSelect)
     .eq('room_id', roomId)
@@ -117,7 +130,7 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: false })
     .returns<PostRow[]>()
 
-  const { data: logPosts } = await supabase
+  const { data: logPosts, error: logErr } = await supabase
     .from('posts')
     .select(baseSelect)
     .eq('room_id', roomId)
@@ -127,12 +140,14 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
-  const normalizedLogPosts = (logPosts ?? []).filter(
-    (p) => !p.post_type || p.post_type === 'log'
-  )
+  const normalizedLogPosts = (logPosts ?? []).filter((p) => !p.post_type || p.post_type === 'log')
+
+  const ai = aiLabel(room.ai_level)
+  const likes = room.like_count ?? 0
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
+      {/* header nav */}
       <div
         style={{
           display: 'flex',
@@ -146,19 +161,50 @@ export default async function WorkDetailPage({
         <Link href={`/rooms/${room.id}`}>制作ルームを見る</Link>
       </div>
 
-      <h1 style={{ marginTop: 10 }}>{room.title}</h1>
+      <h1 style={{ marginTop: 10, marginBottom: 6, fontSize: 24, fontWeight: 900 }}>{room.title}</h1>
 
-      <div style={{ marginTop: 6, color: '#444', fontSize: 14 }}>
-        {room.work_type} / 🤖AI: {aiLabel(room.ai_level)} / ❤️{' '}
-        {room.like_count ?? 0}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={pill('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
+        <span style={pill('rgba(0,0,0,0.06)', '#111')}>{room.work_type}</span>
+        <span style={pill('rgba(16,185,129,0.14)', '#065f46')}>AI:{ai}</span>
+        <span style={pill('rgba(239,68,68,0.10)', '#7f1d1d')}>❤️ {likes}</span>
       </div>
+
+      {room.concept && room.concept.trim() && (
+        <div
+          style={{
+            marginTop: 14,
+            padding: 12,
+            border: '1px solid rgba(0,0,0,0.10)',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.92)',
+          }}
+        >
+          <div style={{ fontWeight: 900, fontSize: 13, opacity: 0.85 }}>コンセプト</div>
+          <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7, color: '#222' }}>
+            {room.concept}
+          </div>
+        </div>
+      )}
+
+      {/* errors (optional display) */}
+      {(finalErr || logErr) && (
+        <div style={{ marginTop: 14, padding: 12, borderRadius: 12, background: 'rgba(176,0,32,0.08)' }}>
+          <div style={{ fontWeight: 900, color: '#b00020' }}>読み込みエラー</div>
+          <div style={{ marginTop: 6, fontSize: 13, color: '#7a0016' }}>
+            {finalErr?.message ? `final: ${finalErr.message}` : ''}
+            {finalErr?.message && logErr?.message ? ' / ' : ''}
+            {logErr?.message ? `log: ${logErr.message}` : ''}
+          </div>
+        </div>
+      )}
 
       {/* ===== 完成作品 ===== */}
       <section style={{ marginTop: 18 }}>
-        <h2 style={{ fontSize: 16 }}>完成作品（最終提出）</h2>
+        <h2 style={{ fontSize: 16, margin: 0 }}>完成作品（最終提出）</h2>
 
         {!finalPosts || finalPosts.length === 0 ? (
-          <p style={{ color: '#666' }}>最終提出がありません。</p>
+          <p style={{ marginTop: 10, color: '#666' }}>最終提出がありません。</p>
         ) : (
           <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
             {finalPosts.map((p) => (
@@ -171,30 +217,17 @@ export default async function WorkDetailPage({
                   background: 'rgba(255,255,255,0.92)',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: 10,
-                  }}
-                >
-                  {/* ✅ ここを変更 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                   <UserLink username={p.username} />
-
                   <span style={{ fontSize: 12, color: '#666' }}>
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    marginTop: 8,
-                    whiteSpace: 'pre-wrap',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {p.content}
-                </div>
+                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+
+                {/* ✅ 画像表示（署名URL取得） */}
+                <PostAttachment attachment_url={p.attachment_url} attachment_type={p.attachment_type} />
               </div>
             ))}
           </div>
@@ -203,10 +236,10 @@ export default async function WorkDetailPage({
 
       {/* ===== 制作ログ ===== */}
       <section style={{ marginTop: 18 }}>
-        <h2 style={{ fontSize: 16 }}>制作ログ（掲示板）</h2>
+        <h2 style={{ fontSize: 16, margin: 0 }}>制作ログ（掲示板）</h2>
 
         {!normalizedLogPosts || normalizedLogPosts.length === 0 ? (
-          <p style={{ color: '#666' }}>投稿がありません。</p>
+          <p style={{ marginTop: 10, color: '#666' }}>投稿がありません。</p>
         ) : (
           <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
             {normalizedLogPosts.map((p) => (
@@ -219,30 +252,17 @@ export default async function WorkDetailPage({
                   background: 'rgba(255,255,255,0.9)',
                 }}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    gap: 10,
-                  }}
-                >
-                  {/* ✅ ここも変更 */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                   <UserLink username={p.username} />
-
                   <span style={{ fontSize: 12, color: '#666' }}>
                     {new Date(p.created_at).toLocaleString('ja-JP')}
                   </span>
                 </div>
 
-                <div
-                  style={{
-                    marginTop: 8,
-                    whiteSpace: 'pre-wrap',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {p.content}
-                </div>
+                <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
+
+                {/* ✅ 画像表示（署名URL取得） */}
+                <PostAttachment attachment_url={p.attachment_url} attachment_type={p.attachment_type} />
               </div>
             ))}
           </div>
