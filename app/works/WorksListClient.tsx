@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
+import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
 
 type RoomRow = {
   id: string
@@ -17,8 +18,6 @@ type RoomRow = {
   member_count: number | null
   is_hidden: boolean | null
   deleted_at: string | null
-
-  // ✅ 追加
   ai_level: string | null
 }
 
@@ -38,29 +37,6 @@ const CATEGORY_OPTIONS = [
 
 type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
-
-function badgeStyle(bg: string, fg: string): CSSProperties {
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '4px 10px',
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 800,
-    background: bg,
-    color: fg,
-    border: '1px solid rgba(0,0,0,0.06)',
-  }
-}
-
-function aiLabel(v: string | null | undefined) {
-  const s = (v ?? '').toLowerCase()
-  if (s === 'high') return '多め'
-  if (s === 'mid') return 'ふつう'
-  if (s === 'low') return '少し'
-  return 'なし'
-}
 
 export default function WorksListClient() {
   const supabase = useMemo(() => createClient(), [])
@@ -90,9 +66,7 @@ export default function WorksListClient() {
 
       const query =
         sort === 'like'
-          ? base
-              .order('like_count', { ascending: false, nullsFirst: false })
-              .order('created_at', { ascending: false })
+          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
       const { data, error } = await query
@@ -214,18 +188,11 @@ export default function WorksListClient() {
       >
         {filtered.map((r) => {
           const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
-          const isAdult = Boolean(r.is_adult)
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
-          const ai = aiLabel(r.ai_level)
 
           return (
-            <Link
-              key={r.id}
-              href={`/works/${r.id}`}
-              prefetch={false}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+            <Link key={r.id} href={`/works/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
                   border: '1px solid rgba(0,0,0,0.10)',
@@ -235,16 +202,15 @@ export default function WorksListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
+                {/* ✅ バッジ統一 */}
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={badgeStyle('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
-                  <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>
-                  <span style={badgeStyle('rgba(16,185,129,0.14)', '#065f46')}>AI:{ai}</span>
-                  {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
+                  {statusBadge(r.status)}
+                  {categoryBadge(cat)}
+                  {aiBadge(r.ai_level)}
+                  {adultBadge(r.is_adult)}
                 </div>
 
-                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>
-                  {r.title}
-                </div>
+                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>
 
                 <div
                   style={{
@@ -267,9 +233,7 @@ export default function WorksListClient() {
         })}
       </div>
 
-      {!loading && !error && filtered.length === 0 && (
-        <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>
-      )}
+      {!loading && !error && filtered.length === 0 && <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>}
     </div>
   )
 }

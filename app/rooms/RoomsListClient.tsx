@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
 
 type RoomRow = {
   id: string
@@ -18,6 +18,7 @@ type RoomRow = {
   member_count: number | null
   is_hidden: boolean | null
   deleted_at: string | null
+  ai_level: string | null
 }
 
 const CATEGORY_OPTIONS = [
@@ -34,233 +35,57 @@ const CATEGORY_OPTIONS = [
   'その他',
 ] as const
 
+type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
-type StatusFilter = 'all' | 'open' | 'forced_publish'
-
-function badgeStyle(bg: string, fg: string): React.CSSProperties {
-  return {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '4px 10px',
-    borderRadius: 999,
-    fontSize: 12,
-    fontWeight: 800,
-    background: bg,
-    color: fg,
-    border: '1px solid rgba(0,0,0,0.06)',
-  }
-}
-
-function unreadBadgeStyle(): React.CSSProperties {
-  return {
-    position: 'absolute',
-    top: 10,
-    right: 10,
-    minWidth: 28,
-    height: 22,
-    padding: '0 8px',
-    borderRadius: 999,
-    background: '#111',
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 900,
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 8px 18px rgba(0,0,0,0.18)',
-    border: '1px solid rgba(255,255,255,0.15)',
-    lineHeight: 1,
-  }
-}
 
 export default function RoomsListClient() {
-  const supabase = createClient()
-  const pathname = usePathname()
+  const supabase = useMemo(() => createClient(), [])
 
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   const [q, setQ] = useState('')
-  const [category, setCategory] = useState<(typeof CATEGORY_OPTIONS)[number]>('全カテゴリー')
+  const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
-  const [sort, setSort] = useState<SortKey>('like')
+  const [sort, setSort] = useState<SortKey>('new')
 
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-
-  // ✅ 未読マップ（roomId -> count）
-  const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
-  // ✅ 自分が参加中のroom集合（Realtimeの増分フィルタに使う）
-  const [memberRoomSet, setMemberRoomSet] = useState<Set<string>>(new Set())
-  // ✅ 自分のuserId
-  const [userId, setUserId] = useState<string | null>(null)
-
-  // -----------------------------------------
-  // 1) userId 取得
-  // -----------------------------------------
-  useEffect(() => {
-    const init = async () => {
-      const { data } = await supabase.auth.getUser()
-      setUserId(data.user?.id ?? null)
-    }
-    init()
-  }, [supabase])
-
-  // -----------------------------------------
-  // 2) rooms を取得
-  // -----------------------------------------
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true)
       setError('')
 
-      let base = supabase
+      const base = supabase
         .from('rooms_with_counts_v2')
-        .select('id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at')
+        .select(
+          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
+        )
         .eq('is_hidden', false)
         .is('deleted_at', null)
 
-      if (statusFilter === 'open') {
-        base = base.eq('status', 'open')
-      } else if (statusFilter === 'forced_publish') {
-        base = base.eq('status', 'forced_publish')
-      } else {
-        base = base.in('status', ['open', 'forced_publish'])
-      }
-
-      const sorted =
+      const query =
         sort === 'like'
           ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
-      const { data, error } = await sorted
+      const { data, error } = await query
 
-      if (error) setError(error.message)
-      else setRooms((data ?? []) as RoomRow[])
+      if (error) {
+        setError(error.message)
+        setRooms([])
+      } else {
+        setRooms((data ?? []) as RoomRow[])
+      }
 
       setLoading(false)
     }
 
     fetchRooms()
-  }, [sort, statusFilter, supabase])
+  }, [supabase, sort])
 
-  // -----------------------------------------
-  // 3) 未読を RPC で取得（ログイン時のみ）
-  //    unreadMap + memberRoomSet を構築
-  // -----------------------------------------
-  const loadUnread = useCallback(async () => {
-    if (!userId) {
-      setUnreadMap({})
-      setMemberRoomSet(new Set())
-      return
-    }
-
-    const { data, error } = await supabase.rpc('unread_counts_for_me')
-    if (error) {
-      // 未読は失敗しても一覧表示は壊さない
-      return
-    }
-
-    const map: Record<string, number> = {}
-    const set = new Set<string>()
-
-    ;(data ?? []).forEach((row: any) => {
-      const rid = String(row.room_id)
-      const cnt = Number(row.unread_count ?? 0)
-      map[rid] = cnt
-      set.add(rid)
-    })
-
-    setUnreadMap(map)
-    setMemberRoomSet(set)
-  }, [supabase, userId])
-
-  // 初回
-  useEffect(() => {
-    loadUnread()
-  }, [loadUnread])
-
-  // ✅ 追加A: /rooms に戻ってきたら未読を再取得（コンポーネント再マウントされない問題に対応）
-  useEffect(() => {
-    if (pathname === '/rooms') {
-      loadUnread()
-    }
-  }, [pathname, loadUnread])
-
-  // ✅ 追加B: タブ復帰/フォーカス復帰でも未読を再取得
-  useEffect(() => {
-    if (!userId) return
-
-    const onFocus = () => loadUnread()
-    const onVis = () => {
-      if (document.visibilityState === 'visible') loadUnread()
-    }
-
-    window.addEventListener('focus', onFocus)
-    document.addEventListener('visibilitychange', onVis)
-
-    return () => {
-      window.removeEventListener('focus', onFocus)
-      document.removeEventListener('visibilitychange', onVis)
-    }
-  }, [userId, loadUnread])
-
-  // -----------------------------------------
-  // 4) Realtime: posts INSERT を拾って unread を増やす
-  // -----------------------------------------
-  useEffect(() => {
-    if (!userId) return
-
-    const channel = supabase
-      .channel('realtime-unread-posts')
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'posts' },
-        (payload) => {
-          const post = payload.new as any
-          if (!post) return
-          if (post.deleted_at) return
-          if (String(post.user_id) === String(userId)) return
-
-          const rid = String(post.room_id ?? '')
-          if (!rid) return
-          if (!memberRoomSet.has(rid)) return
-
-          setUnreadMap((prev) => {
-            const next = { ...prev }
-            next[rid] = (next[rid] ?? 0) + 1
-            return next
-          })
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [supabase, userId, memberRoomSet])
-
-  // ✅ 追加C: クリック時に既読化（楽観的に0） + RPCでlast_seen更新
-  const handleOpenRoom = useCallback(
-    async (roomId: string) => {
-      // 見た目を即0にする（戻ってきた時にも残りにくい）
-      setUnreadMap((prev) => ({ ...prev, [roomId]: 0 }))
-
-      // ログインしていればDB側も更新（既読問題の根治）
-      const { data } = await supabase.auth.getUser()
-      if (!data.user) return
-
-      await supabase.rpc('mark_room_seen', { p_room_id: roomId })
-    },
-    [supabase]
-  )
-
-  // -----------------------------------------
-  // UI側フィルタ
-  // -----------------------------------------
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
+
     return rooms.filter((r) => {
       if (adultOnly && !r.is_adult) return false
 
@@ -280,7 +105,6 @@ export default function RoomsListClient() {
 
   return (
     <div style={{ marginTop: 14 }}>
-      {/* Controls */}
       <div
         style={{
           display: 'grid',
@@ -304,10 +128,10 @@ export default function RoomsListClient() {
           }}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <select
             value={category}
-            onChange={(e) => setCategory(e.target.value as any)}
+            onChange={(e) => setCategory(e.target.value as CategoryOption)}
             style={{
               width: '100%',
               padding: '10px 12px',
@@ -334,24 +158,8 @@ export default function RoomsListClient() {
               background: '#fff',
             }}
           >
-            <option value="like">いいね順</option>
             <option value="new">新着順</option>
-          </select>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 12,
-              border: '1px solid rgba(0,0,0,0.18)',
-              background: '#fff',
-            }}
-          >
-            <option value="all">公開中＋公開済み</option>
-            <option value="open">open（公開中）</option>
-            <option value="forced_publish">forced_publish（公開済み）</option>
+            <option value="like">いいね順</option>
           </select>
         </div>
 
@@ -379,28 +187,13 @@ export default function RoomsListClient() {
       >
         {filtered.map((r) => {
           const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
-          const isAdult = Boolean(r.is_adult)
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
 
-          const statusBadge =
-            r.status === 'open'
-              ? { bg: 'rgba(16,185,129,0.14)', fg: '#065f46', label: 'open' }
-              : { bg: 'rgba(59,130,246,0.14)', fg: '#1e40af', label: 'forced_publish' }
-
-          const unread = unreadMap[r.id] ?? 0
-
           return (
-            <Link
-              key={r.id}
-              href={`/rooms/${r.id}`}
-              prefetch={false}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-              onClick={() => handleOpenRoom(r.id)}
-            >
+            <Link key={r.id} href={`/rooms/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
-                  position: 'relative',
                   border: '1px solid rgba(0,0,0,0.10)',
                   borderRadius: 18,
                   padding: 14,
@@ -408,12 +201,11 @@ export default function RoomsListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
-                {unread > 0 && <span style={unreadBadgeStyle()}>{unread > 99 ? '99+' : unread}</span>}
-
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={badgeStyle(statusBadge.bg, statusBadge.fg)}>{statusBadge.label}</span>
-                  <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{cat}</span>
-                  {isAdult && <span style={badgeStyle('rgba(239,68,68,0.14)', '#7f1d1d')}>成人向け</span>}
+                  {statusBadge(r.status)}
+                  {categoryBadge(cat)}
+                  {aiBadge(r.ai_level)}
+                  {adultBadge(r.is_adult)}
                 </div>
 
                 <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>

@@ -11,6 +11,8 @@ import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
 import InviteCodeForCreator from './InviteCodeForCreator'
 import MarkRoomSeenOnView from '@/app/components/MarkRoomSeenOnView'
 
+import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
+
 export const dynamic = 'force-dynamic'
 
 type Params = { id?: string }
@@ -33,13 +35,17 @@ type RoomRow = {
   enable_core_approval: boolean
   enable_core_invite: boolean
   core_invite_code: string | null
+
+  // ✅ 追加（表示統一用）
+  category?: string | null
+  ai_level?: string | null
 }
 
 async function fetchRoomWithOptionalEndedAt(roomId: string): Promise<RoomRow | null> {
   const withEndedAt = await supabaseAdmin
     .from('rooms')
     .select(
-      'id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden, concept, ended_at, enable_core_approval, enable_core_invite, core_invite_code'
+      'id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden, concept, ended_at, enable_core_approval, enable_core_invite, core_invite_code, category, ai_level'
     )
     .eq('id', roomId)
     .maybeSingle()
@@ -49,7 +55,7 @@ async function fetchRoomWithOptionalEndedAt(roomId: string): Promise<RoomRow | n
   const withoutEndedAt = await supabaseAdmin
     .from('rooms')
     .select(
-      'id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden, concept, enable_core_approval, enable_core_invite, core_invite_code'
+      'id, title, work_type, status, created_at, expires_at, time_limit_hours, like_count, is_adult, deleted_at, is_hidden, concept, enable_core_approval, enable_core_invite, core_invite_code, category, ai_level'
     )
     .eq('id', roomId)
     .maybeSingle()
@@ -63,20 +69,14 @@ function computeIsEnded(room: RoomRow) {
   const endedByStatus = room.status === 'forced_publish' || room.status === 'closed'
 
   const expiresMs =
-    room.expires_at && !Number.isNaN(new Date(room.expires_at).getTime())
-      ? new Date(room.expires_at).getTime()
-      : null
+    room.expires_at && !Number.isNaN(new Date(room.expires_at).getTime()) ? new Date(room.expires_at).getTime() : null
 
   const endedByExpireSafety = expiresMs !== null && expiresMs <= nowMs && room.status !== 'open'
   const endedByEndedAt = room.ended_at != null && room.ended_at !== ''
   return endedByStatus || endedByExpireSafety || endedByEndedAt
 }
 
-export default async function RoomDetailPage({
-  params,
-}: {
-  params: Params | Promise<Params>
-}) {
+export default async function RoomDetailPage({ params }: { params: Params | Promise<Params> }) {
   const p = await Promise.resolve(params)
   const roomId = p?.id ?? ''
 
@@ -104,25 +104,23 @@ export default async function RoomDetailPage({
   const isForced = room.status === 'forced_publish'
   const isOpen = room.status === 'open'
 
+  const cat = (room.category ?? room.work_type ?? 'その他').trim() || 'その他'
+
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
-      {/* ✅ 追加：ルーム詳細を開いたら既読化（room_members.last_seen_at 更新） */}
       <MarkRoomSeenOnView roomId={room.id} />
 
       <Link href="/rooms">← ルーム一覧へ戻る</Link>
 
       <h1 style={{ marginTop: 10 }}>{room.title}</h1>
 
-      <div style={{ marginTop: 8, fontSize: 13, color: '#555', lineHeight: 1.8 }}>
-        <div>
-          <b>種別:</b> {room.work_type ?? '-'}
-          {'  '}|{'  '}
-          <b>ステータス:</b> {room.status}
-          {'  '}|{'  '}
-          <b>いいね:</b> {room.like_count ?? 0}
-          {'  '}|{'  '}
-          <b>成人向け:</b> {room.is_adult ? 'はい' : 'いいえ'}
-        </div>
+      {/* ✅ 表記統一：バッジで揃える */}
+      <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        {statusBadge(room.status)}
+        {categoryBadge(cat)}
+        {aiBadge(room.ai_level)}
+        {adultBadge(room.is_adult)}
+        <span style={{ fontSize: 13, opacity: 0.8 }}>❤️ {room.like_count ?? 0}</span>
       </div>
 
       <div style={{ marginTop: 12 }}>
@@ -162,7 +160,16 @@ export default async function RoomDetailPage({
       </div>
 
       {isForced && (
-        <div style={{ marginTop: 16, padding: 16, borderRadius: 14, border: '1px solid #f3d08a', background: '#fff7e6', lineHeight: 1.7 }}>
+        <div
+          style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 14,
+            border: '1px solid #f3d08a',
+            background: '#fff7e6',
+            lineHeight: 1.7,
+          }}
+        >
           <div style={{ fontWeight: 900, fontSize: 16 }}>このルームは公開済みです</div>
           <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>参加・投稿はできません</div>
           <div style={{ marginTop: 12 }}>
@@ -185,7 +192,16 @@ export default async function RoomDetailPage({
       )}
 
       {!isForced && isEnded && (
-        <div style={{ marginTop: 16, padding: 16, borderRadius: 14, border: '1px solid #f3d08a', background: '#fff7e6', lineHeight: 1.7 }}>
+        <div
+          style={{
+            marginTop: 16,
+            padding: 16,
+            borderRadius: 14,
+            border: '1px solid #f3d08a',
+            background: '#fff7e6',
+            lineHeight: 1.7,
+          }}
+        >
           <div style={{ fontWeight: 900, fontSize: 16 }}>このルームはすでに終了しました</div>
           <div style={{ marginTop: 6, color: '#6b4a00', fontWeight: 700 }}>参加・投稿はできません</div>
           <div style={{ marginTop: 12 }}>

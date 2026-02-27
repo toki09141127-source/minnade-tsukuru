@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
 import AttachmentView from './AttachmentView'
+import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
 
 type RoomRow = {
   id: string
@@ -14,6 +15,8 @@ type RoomRow = {
   deleted_at?: string | null
   concept?: string | null
   ai_level?: string | null
+  is_adult?: boolean | null
+  category?: string | null
 }
 
 type PostRow = {
@@ -31,14 +34,6 @@ type PostRow = {
 
 export const dynamic = 'force-dynamic'
 
-function aiLabel(v: string | null | undefined) {
-  const s = (v ?? '').toLowerCase()
-  if (s === 'high') return '多め'
-  if (s === 'mid' || s === 'normal') return 'ふつう'
-  if (s === 'low') return '少し'
-  return 'なし'
-}
-
 // 公開プロフィールリンク用
 function UserLink({ username }: { username: string | null }) {
   const name = (username ?? '').trim()
@@ -55,11 +50,7 @@ function UserLink({ username }: { username: string | null }) {
   )
 }
 
-export default async function WorkDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }> | { id: string }
-}) {
+export default async function WorkDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
   const p = await Promise.resolve(params)
   const roomId = p?.id
 
@@ -74,7 +65,7 @@ export default async function WorkDetailPage({
 
   const { data: room, error: roomErr } = await supabase
     .from('rooms')
-    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level')
+    .select('id, title, work_type, status, created_at, like_count, is_hidden, deleted_at, concept, ai_level, is_adult, category')
     .eq('id', roomId)
     .maybeSingle<RoomRow>()
 
@@ -96,8 +87,7 @@ export default async function WorkDetailPage({
     )
   }
 
-  const baseSelect =
-    'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
+  const baseSelect = 'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
   const { data: finalPosts } = await supabase
     .from('posts')
@@ -120,25 +110,24 @@ export default async function WorkDetailPage({
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
+  const cat = (room.category ?? room.work_type ?? 'その他').trim() || 'その他'
+
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 12,
-          alignItems: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
+      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <Link href="/works">← 完成作品一覧へ</Link>
         <Link href={`/rooms/${room.id}`}>制作ルームを見る</Link>
       </div>
 
       <h1 style={{ marginTop: 10 }}>{room.title}</h1>
 
-      <div style={{ marginTop: 6, color: '#444', fontSize: 14 }}>
-        {room.work_type} / 🤖AI: {aiLabel(room.ai_level)} / ❤️ {room.like_count ?? 0}
+      {/* ✅ 表記統一：バッジで揃える */}
+      <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        {statusBadge(room.status)}
+        {categoryBadge(cat)}
+        {aiBadge(room.ai_level)}
+        {adultBadge(room.is_adult)}
+        <span style={{ fontSize: 13, opacity: 0.8 }}>❤️ {room.like_count ?? 0}</span>
       </div>
 
       {room.concept && (
@@ -177,14 +166,11 @@ export default async function WorkDetailPage({
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                   <UserLink username={p.username} />
-                  <span style={{ fontSize: 12, color: '#666' }}>
-                    {new Date(p.created_at).toLocaleString('ja-JP')}
-                  </span>
+                  <span style={{ fontSize: 12, color: '#666' }}>{new Date(p.created_at).toLocaleString('ja-JP')}</span>
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
 
-                {/* ✅ 添付（最終提出） */}
                 <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
@@ -212,14 +198,11 @@ export default async function WorkDetailPage({
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
                   <UserLink username={p.username} />
-                  <span style={{ fontSize: 12, color: '#666' }}>
-                    {new Date(p.created_at).toLocaleString('ja-JP')}
-                  </span>
+                  <span style={{ fontSize: 12, color: '#666' }}>{new Date(p.created_at).toLocaleString('ja-JP')}</span>
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
 
-                {/* ✅ 添付（ログ） */}
                 <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
