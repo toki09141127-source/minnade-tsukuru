@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
 import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
+import { AI_LEVEL_OPTIONS, normalizeAiLevel, type AiLevel } from '@/lib/aiLevel'
 
 type RoomRow = {
   id: string
@@ -38,6 +39,9 @@ const CATEGORY_OPTIONS = [
 type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
 
+// ✅ AIフィルタ用（全て + 3段階）
+type AiFilter = 'all' | AiLevel
+
 export default function WorksListClient() {
   const supabase = useMemo(() => createClient(), [])
 
@@ -49,6 +53,9 @@ export default function WorksListClient() {
   const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('like')
+
+  // ✅ 追加：AIフィルタ（RoomCreateClientと完全一致）
+  const [aiFilter, setAiFilter] = useState<AiFilter>('all')
 
   useEffect(() => {
     const fetchWorks = async () => {
@@ -95,6 +102,12 @@ export default function WorksListClient() {
         if (c !== category) return false
       }
 
+      // ✅ AIフィルタ（DB不正値でも normalize で吸収）
+      if (aiFilter !== 'all') {
+        const lv = normalizeAiLevel(r.ai_level, 'assist')
+        if (lv !== aiFilter) return false
+      }
+
       if (query) {
         const title = (r.title ?? '').toLowerCase()
         if (!title.includes(query)) return false
@@ -102,7 +115,7 @@ export default function WorksListClient() {
 
       return true
     })
-  }, [rooms, q, category, adultOnly])
+  }, [rooms, q, category, adultOnly, aiFilter])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -129,7 +142,8 @@ export default function WorksListClient() {
           }}
         />
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        {/* ✅ フィルタ3列：カテゴリ / AI / 並び替え */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as CategoryOption)}
@@ -144,6 +158,27 @@ export default function WorksListClient() {
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
+              </option>
+            ))}
+          </select>
+
+          {/* ✅ AIフィルタ（RoomCreateClientの3段階と同じ） */}
+          <select
+            value={aiFilter}
+            onChange={(e) => setAiFilter(e.target.value as AiFilter)}
+            style={{
+              width: '100%',
+              padding: '10px 12px',
+              borderRadius: 12,
+              border: '1px solid rgba(0,0,0,0.18)',
+              background: '#fff',
+              fontWeight: 800,
+            }}
+          >
+            <option value="all">AI：全て</option>
+            {AI_LEVEL_OPTIONS.map((x) => (
+              <option key={x.value} value={x.value}>
+                {x.label}
               </option>
             ))}
           </select>
@@ -202,7 +237,6 @@ export default function WorksListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
-                {/* ✅ バッジ統一 */}
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {statusBadge(r.status)}
                   {categoryBadge(cat)}
