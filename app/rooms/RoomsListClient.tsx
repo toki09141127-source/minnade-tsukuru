@@ -20,6 +20,8 @@ type RoomRow = {
   is_hidden: boolean | null
   deleted_at: string | null
   ai_level: string | null
+
+  // ✅ 追加：未読（参加しているルームのみmapに入る想定）
   unread_count?: number
 }
 
@@ -40,6 +42,8 @@ const CATEGORY_OPTIONS = [
 type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
 type AiFilter = 'all' | AiLevel
+
+// ✅ 追加：ステータスフィルタ
 type StatusFilter = 'all' | 'open' | 'forced_publish'
 
 export default function RoomsListClient() {
@@ -48,15 +52,22 @@ export default function RoomsListClient() {
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+
+  // ✅ 追加：未読map（room_id -> unread_count）
   const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
 
   const [q, setQ] = useState('')
   const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('new')
+
+  // ✅ AIフィルタ（RoomCreateClientと一致）
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
+
+  // ✅ ステータスフィルタ（制作中＋公開済み / 制作中 / 公開済み）
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
+  // ✅ selectの見た目を統一（太字ズレ防止）
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
@@ -71,6 +82,9 @@ export default function RoomsListClient() {
       setLoading(true)
       setError('')
 
+      // -------------------------
+      // ① rooms一覧（既存）
+      // -------------------------
       const base = supabase
         .from('rooms_with_counts_v2')
         .select(
@@ -81,7 +95,7 @@ export default function RoomsListClient() {
 
       const query =
         sort === 'like'
-          ? base.order('like_count', { ascending: false }).order('created_at', { ascending: false })
+          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
           : base.order('created_at', { ascending: false })
 
       const { data, error } = await query
@@ -97,10 +111,13 @@ export default function RoomsListClient() {
       const list = (data ?? []) as RoomRow[]
       setRooms(list)
 
-      // 未読取得
+      // -------------------------
+      // ② unread-map（ログイン時のみ）
+      // -------------------------
       const { data: u } = await supabase.auth.getUser()
       const user = u.user
       if (!user) {
+        // 未ログインなら未読は表示しない
         setUnreadMap({})
         setLoading(false)
         return
@@ -116,15 +133,19 @@ export default function RoomsListClient() {
 
       try {
         const res = await fetch('/api/rooms/unread-map?excludeSelf=1', {
+          method: 'GET',
           headers: { Authorization: `Bearer ${token}` },
         })
         const json = await res.json().catch(() => ({}))
-        if (res.ok) {
-          setUnreadMap(json?.map ?? {})
-        } else {
+
+        if (!res.ok) {
+          console.error('[unread-map]', json)
           setUnreadMap({})
+        } else {
+          setUnreadMap((json?.map ?? {}) as Record<string, number>)
         }
-      } catch {
+      } catch (e) {
+        console.error('[unread-map] fetch failed', e)
         setUnreadMap({})
       }
 
@@ -134,6 +155,7 @@ export default function RoomsListClient() {
     fetchRooms()
   }, [supabase, sort])
 
+  // ✅ roomsに unread_count を合体（参加してないルームは0扱い）
   const roomsWithUnread = useMemo(() => {
     return rooms.map((r) => ({
       ...r,
@@ -146,33 +168,43 @@ export default function RoomsListClient() {
 
     return roomsWithUnread.filter((r) => {
       if (adultOnly && !r.is_adult) return false
+
       if (category !== '全カテゴリー') {
         const c = (r.category ?? r.type ?? '').trim()
         if (c !== category) return false
       }
+
+      // ✅ ステータスフィルタ
       if (statusFilter !== 'all') {
         if ((r.status ?? '').trim() !== statusFilter) return false
       }
+
+      // ✅ AIフィルタ
       if (aiFilter !== 'all') {
         const lv = normalizeAiLevel(r.ai_level, 'assist')
         if (lv !== aiFilter) return false
       }
-      if (query && !(r.title ?? '').toLowerCase().includes(query)) return false
+
+      if (query) {
+        const title = (r.title ?? '').toLowerCase()
+        if (!title.includes(query)) return false
+      }
+
       return true
     })
   }, [roomsWithUnread, q, category, adultOnly, aiFilter, statusFilter])
 
   return (
     <div style={{ marginTop: 14 }}>
-      {/* フィルタボックス */}
       <div
         style={{
           display: 'grid',
-          gap: 12,
-          padding: 16,
+          gridTemplateColumns: '1fr',
+          gap: 10,
+          padding: 14,
           border: '1px solid rgba(0,0,0,0.10)',
           borderRadius: 16,
-          background: 'rgba(255,255,255,0.95)',
+          background: 'rgba(255,255,255,0.85)',
         }}
       >
         <input
@@ -181,129 +213,157 @@ export default function RoomsListClient() {
           placeholder="ルーム名で検索…"
           style={{
             width: '100%',
-            padding: '12px 14px',
+            padding: '10px 12px',
             borderRadius: 12,
             border: '1px solid rgba(0,0,0,0.18)',
           }}
         />
 
-        {/* レスポンシブフィルタ */}
+        {/* ✅ フィルタ4列：カテゴリ / ステータス / AI / 並び替え */}
+        {/* ✅ 最小修正：スマホで潰れないよう auto-fit + minmax */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-            gap: 12,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: 10,
           }}
         >
-          <div>
-            <div style={{ fontSize: 12, marginBottom: 4 }}>カテゴリー</div>
-            <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
-              {CATEGORY_OPTIONS.map((c) => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
+          <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
 
-          <div>
-            <div style={{ fontSize: 12, marginBottom: 4 }}>ステータス</div>
-            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
-              <option value="all">制作中＋公開済み</option>
-              <option value="open">制作中</option>
-              <option value="forced_publish">公開済み</option>
-            </select>
-          </div>
+          {/* ✅ 追加：制作中 / 公開済み */}
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
+            <option value="all">制作中＋公開済み</option>
+            <option value="open">制作中</option>
+            <option value="forced_publish">公開済み</option>
+          </select>
 
-          <div>
-            <div style={{ fontSize: 12, marginBottom: 4 }}>AIレベル</div>
-            <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
-              <option value="all">全て</option>
-              {AI_LEVEL_OPTIONS.map((x) => (
-                <option key={x.value} value={x.value}>{x.label}</option>
-              ))}
-            </select>
-          </div>
+          <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
+            <option value="all">AI：全て</option>
+            {AI_LEVEL_OPTIONS.map((x) => (
+              <option key={x.value} value={x.value}>
+                {x.label}
+              </option>
+            ))}
+          </select>
 
-          <div>
-            <div style={{ fontSize: 12, marginBottom: 4 }}>並び替え</div>
-            <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
-              <option value="new">新着順</option>
-              <option value="like">いいね順</option>
-            </select>
-          </div>
+          <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
+            <option value="new">新着順</option>
+            <option value="like">いいね順</option>
+          </select>
         </div>
 
-        <label style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <label style={{ display: 'flex', gap: 10, alignItems: 'center', userSelect: 'none' }}>
           <input type="checkbox" checked={adultOnly} onChange={(e) => setAdultOnly(e.target.checked)} />
-          <span style={{ fontWeight: 600 }}>成人向けのみ表示</span>
+          <span style={{ fontWeight: 800 }}>成人向けのみ表示</span>
+          <span style={{ fontSize: 12, opacity: 0.7 }}>（閲覧は自己責任）</span>
         </label>
       </div>
 
-      {/* 一覧 */}
-      <div style={{ marginTop: 14, fontSize: 13, opacity: 0.75 }}>
+      <div style={{ marginTop: 12, fontSize: 13, opacity: 0.75 }}>
         表示：<b>{filtered.length}</b> / {rooms.length}
       </div>
 
+      {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
+      {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
+
       <div
         style={{
-          marginTop: 14,
+          marginTop: 12,
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          gap: 14,
+          gap: 12,
         }}
       >
         {filtered.map((r) => {
+          const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
+          const memberCount = r.member_count ?? 0
+          const likes = r.like_count ?? 0
           const unread = r.unread_count ?? 0
+
           return (
-            <Link key={r.id} href={`/rooms/${r.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link
+              key={r.id}
+              href={`/rooms/${r.id}`}
+              prefetch={false}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              {/* ✅ relative にして右上バッジを置く */}
               <div
                 style={{
                   position: 'relative',
                   border: '1px solid rgba(0,0,0,0.10)',
                   borderRadius: 18,
-                  padding: 16,
-                  background: '#fff',
-                  boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+                  padding: 14,
+                  background: 'rgba(255,255,255,0.9)',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
+                {/* ✅ 未読バッジ（参加中ルームのみ出る想定） */}
                 {unread > 0 && (
                   <div
                     style={{
                       position: 'absolute',
                       top: 10,
                       right: 10,
-                      minWidth: 24,
-                      height: 24,
+                      minWidth: 22,
+                      height: 22,
+                      padding: '0 7px',
                       borderRadius: 999,
                       background: '#d32f2f',
                       color: '#fff',
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 900,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(0,0,0,0.18)',
                     }}
+                    aria-label={`未読 ${unread} 件`}
+                    title={`未読 ${unread} 件`}
                   >
                     {unread > 99 ? '99+' : unread}
                   </div>
                 )}
 
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {statusBadge(r.status)}
-                  {categoryBadge(r.category ?? r.type ?? 'その他')}
+                  {categoryBadge(cat)}
                   {aiBadge(r.ai_level)}
                   {adultBadge(r.is_adult)}
                 </div>
 
-                <div style={{ marginTop: 12, fontSize: 17, fontWeight: 800 }}>{r.title}</div>
+                <div style={{ marginTop: 10, fontSize: 16, fontWeight: 900, lineHeight: 1.3 }}>{r.title}</div>
 
-                <div style={{ marginTop: 10, fontSize: 13, opacity: 0.8 }}>
-                  👥 {r.member_count ?? 0} ｜ ❤️ {r.like_count ?? 0}
+                <div
+                  style={{
+                    marginTop: 10,
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 8,
+                    fontSize: 13,
+                    opacity: 0.85,
+                  }}
+                >
+                  <div>👥 参加者：{memberCount}</div>
+                  <div>❤️ いいね：{likes}</div>
+                  <div>🕒 作成：{new Date(r.created_at).toLocaleDateString()}</div>
+                  <div>🔗 詳細へ</div>
                 </div>
               </div>
             </Link>
           )
         })}
       </div>
+
+      {!loading && !error && filtered.length === 0 && (
+        <p style={{ marginTop: 14, opacity: 0.75 }}>該当するルームがありません。</p>
+      )}
     </div>
   )
 }
