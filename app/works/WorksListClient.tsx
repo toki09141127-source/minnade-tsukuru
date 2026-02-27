@@ -153,7 +153,14 @@ export default function WorksListClient() {
         />
 
         {/* ✅ フィルタ3列：カテゴリ / AI / 並び替え */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        {/* ✅ 最小修正：スマホで潰れないよう auto-fit + minmax */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gap: 10,
+          }}
+        >
           <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
