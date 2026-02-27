@@ -172,9 +172,9 @@ export default function RoomsListClient() {
 
           {/* ✅ 追加：制作中 / 公開済み */}
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
-            <option value="all">制作：全て</option>
-            <option value="open">制作：制作中</option>
-            <option value="forced_publish">制作：公開済み</option>
+            <option value="all">全て</option>
+            <option value="open">制作中</option>
+            <option value="forced_publish">公開済み</option>
           </select>
 
           <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
