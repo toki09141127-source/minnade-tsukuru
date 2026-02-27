@@ -40,6 +40,9 @@ type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
 type AiFilter = 'all' | AiLevel
 
+// ✅ 追加：ステータスフィルタ
+type StatusFilter = 'all' | 'open' | 'forced_publish'
+
 export default function RoomsListClient() {
   const supabase = useMemo(() => createClient(), [])
 
@@ -52,17 +55,20 @@ export default function RoomsListClient() {
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('new')
 
-  // ✅ AIフィルタ（RoomCreateClientと完全一致）
+  // ✅ AIフィルタ（RoomCreateClientと一致）
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
 
-  // ✅ 3つのselectを完全に同じ見た目にする（ここがポイント）
+  // ✅ ステータスフィルタ（制作中＋公開済み / 制作中 / 公開済み）
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+
+  // ✅ selectの見た目を統一（太字ズレ防止）
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
     borderRadius: 12,
     border: '1px solid rgba(0,0,0,0.18)',
     background: '#fff',
-    fontWeight: 400, // ← 太字差が出ないよう統一（全てこれ）
+    fontWeight: 400,
   }
 
   useEffect(() => {
@@ -109,6 +115,11 @@ export default function RoomsListClient() {
         if (c !== category) return false
       }
 
+      // ✅ ステータスフィルタ
+      if (statusFilter !== 'all') {
+        if ((r.status ?? '').trim() !== statusFilter) return false
+      }
+
       // ✅ AIフィルタ
       if (aiFilter !== 'all') {
         const lv = normalizeAiLevel(r.ai_level, 'assist')
@@ -122,7 +133,7 @@ export default function RoomsListClient() {
 
       return true
     })
-  }, [rooms, q, category, adultOnly, aiFilter])
+  }, [rooms, q, category, adultOnly, aiFilter, statusFilter])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -149,14 +160,21 @@ export default function RoomsListClient() {
           }}
         />
 
-        {/* ✅ フィルタ3列：カテゴリ / AI / 並び替え */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+        {/* ✅ フィルタ4列：カテゴリ / ステータス / AI / 並び替え */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 10 }}>
           <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
               </option>
             ))}
+          </select>
+
+          {/* ✅ 追加：制作中 / 公開済み */}
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
+            <option value="all">制作：全て</option>
+            <option value="open">制作：制作中</option>
+            <option value="forced_publish">制作：公開済み</option>
           </select>
 
           <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
