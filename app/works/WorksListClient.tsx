@@ -57,6 +57,16 @@ export default function WorksListClient() {
   // ✅ 追加：AIフィルタ（RoomCreateClientと完全一致）
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
 
+  // ✅ 3つのselectを完全に同じ見た目にする（ここがポイント）
+  const selectStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 12px',
+    borderRadius: 12,
+    border: '1px solid rgba(0,0,0,0.18)',
+    background: '#fff',
+    fontWeight: 400, // ← 太字差が出ないよう統一
+  }
+
   useEffect(() => {
     const fetchWorks = async () => {
       setLoading(true)
@@ -144,17 +154,7 @@ export default function WorksListClient() {
 
         {/* ✅ フィルタ3列：カテゴリ / AI / 並び替え */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value as CategoryOption)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 12,
-              border: '1px solid rgba(0,0,0,0.18)',
-              background: '#fff',
-            }}
-          >
+          <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -163,18 +163,7 @@ export default function WorksListClient() {
           </select>
 
           {/* ✅ AIフィルタ（RoomCreateClientの3段階と同じ） */}
-          <select
-            value={aiFilter}
-            onChange={(e) => setAiFilter(e.target.value as AiFilter)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 12,
-              border: '1px solid rgba(0,0,0,0.18)',
-              background: '#fff',
-              fontWeight: 800,
-            }}
-          >
+          <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
             <option value="all">AI：全て</option>
             {AI_LEVEL_OPTIONS.map((x) => (
               <option key={x.value} value={x.value}>
@@ -183,17 +172,7 @@ export default function WorksListClient() {
             ))}
           </select>
 
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value as SortKey)}
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              borderRadius: 12,
-              border: '1px solid rgba(0,0,0,0.18)',
-              background: '#fff',
-            }}
-          >
+          <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
             <option value="like">いいね順</option>
             <option value="new">新着順</option>
           </select>
@@ -227,7 +206,12 @@ export default function WorksListClient() {
           const likes = r.like_count ?? 0
 
           return (
-            <Link key={r.id} href={`/works/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <Link
+              key={r.id}
+              href={`/works/${r.id}`}
+              prefetch={false}
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <div
                 style={{
                   border: '1px solid rgba(0,0,0,0.10)',
@@ -267,7 +251,9 @@ export default function WorksListClient() {
         })}
       </div>
 
-      {!loading && !error && filtered.length === 0 && <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>}
+      {!loading && !error && filtered.length === 0 && (
+        <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>
+      )}
     </div>
   )
 }
