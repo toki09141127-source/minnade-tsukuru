@@ -20,6 +20,9 @@ type RoomRow = {
   is_hidden: boolean | null
   deleted_at: string | null
   ai_level: string | null
+
+  // ✅ 追加：未読（参加しているルームのみmapに入る想定）
+  unread_count?: number
 }
 
 const CATEGORY_OPTIONS = [
@@ -50,6 +53,9 @@ export default function RoomsListClient() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // ✅ 追加：未読map（room_id -> unread_count）
+  const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
+
   const [q, setQ] = useState('')
   const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
@@ -76,6 +82,9 @@ export default function RoomsListClient() {
       setLoading(true)
       setError('')
 
+      // -------------------------
+      // ① rooms一覧（既存）
+      // -------------------------
       const base = supabase
         .from('rooms_with_counts_v2')
         .select(
@@ -94,8 +103,50 @@ export default function RoomsListClient() {
       if (error) {
         setError(error.message)
         setRooms([])
-      } else {
-        setRooms((data ?? []) as RoomRow[])
+        setUnreadMap({})
+        setLoading(false)
+        return
+      }
+
+      const list = (data ?? []) as RoomRow[]
+      setRooms(list)
+
+      // -------------------------
+      // ② unread-map（ログイン時のみ）
+      // -------------------------
+      const { data: u } = await supabase.auth.getUser()
+      const user = u.user
+      if (!user) {
+        // 未ログインなら未読は表示しない
+        setUnreadMap({})
+        setLoading(false)
+        return
+      }
+
+      const { data: sess } = await supabase.auth.getSession()
+      const token = sess.session?.access_token
+      if (!token) {
+        setUnreadMap({})
+        setLoading(false)
+        return
+      }
+
+      try {
+        const res = await fetch('/api/rooms/unread-map?excludeSelf=1', {
+          method: 'GET',
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        const json = await res.json().catch(() => ({}))
+
+        if (!res.ok) {
+          console.error('[unread-map]', json)
+          setUnreadMap({})
+        } else {
+          setUnreadMap((json?.map ?? {}) as Record<string, number>)
+        }
+      } catch (e) {
+        console.error('[unread-map] fetch failed', e)
+        setUnreadMap({})
       }
 
       setLoading(false)
@@ -104,10 +155,18 @@ export default function RoomsListClient() {
     fetchRooms()
   }, [supabase, sort])
 
+  // ✅ roomsに unread_count を合体（参加してないルームは0扱い）
+  const roomsWithUnread = useMemo(() => {
+    return rooms.map((r) => ({
+      ...r,
+      unread_count: unreadMap[r.id] ?? 0,
+    }))
+  }, [rooms, unreadMap])
+
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
 
-    return rooms.filter((r) => {
+    return roomsWithUnread.filter((r) => {
       if (adultOnly && !r.is_adult) return false
 
       if (category !== '全カテゴリー') {
@@ -133,7 +192,7 @@ export default function RoomsListClient() {
 
       return true
     })
-  }, [rooms, q, category, adultOnly, aiFilter, statusFilter])
+  }, [roomsWithUnread, q, category, adultOnly, aiFilter, statusFilter])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -218,6 +277,7 @@ export default function RoomsListClient() {
           const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
+          const unread = r.unread_count ?? 0
 
           return (
             <Link
@@ -226,8 +286,10 @@ export default function RoomsListClient() {
               prefetch={false}
               style={{ textDecoration: 'none', color: 'inherit' }}
             >
+              {/* ✅ relative にして右上バッジを置く */}
               <div
                 style={{
+                  position: 'relative',
                   border: '1px solid rgba(0,0,0,0.10)',
                   borderRadius: 18,
                   padding: 14,
@@ -235,6 +297,33 @@ export default function RoomsListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
+                {/* ✅ 未読バッジ（参加中ルームのみ出る想定） */}
+                {unread > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      minWidth: 22,
+                      height: 22,
+                      padding: '0 7px',
+                      borderRadius: 999,
+                      background: '#d32f2f',
+                      color: '#fff',
+                      fontSize: 12,
+                      fontWeight: 900,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(0,0,0,0.18)',
+                    }}
+                    aria-label={`未読 ${unread} 件`}
+                    title={`未読 ${unread} 件`}
+                  >
+                    {unread > 99 ? '99+' : unread}
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {statusBadge(r.status)}
                   {categoryBadge(cat)}
