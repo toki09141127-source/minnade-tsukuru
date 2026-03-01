@@ -20,8 +20,6 @@ type RoomRow = {
   is_hidden: boolean | null
   deleted_at: string | null
   ai_level: string | null
-
-  // ✅ 追加：未読（参加しているルームのみmapに入る想定）
   unread_count?: number
 }
 
@@ -42,9 +40,11 @@ const CATEGORY_OPTIONS = [
 type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
 type AiFilter = 'all' | AiLevel
-
-// ✅ 追加：ステータスフィルタ
 type StatusFilter = 'all' | 'open' | 'forced_publish'
+
+// ✅ 未読キャッシュ設定（最小）
+const UNREAD_CACHE_KEY = 'unread_map_v1'
+const UNREAD_CACHE_TTL_MS = 30_000 // 30秒だけ信用（短いほど安全）
 
 export default function RoomsListClient() {
   const supabase = useMemo(() => createClient(), [])
@@ -53,7 +53,6 @@ export default function RoomsListClient() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  // ✅ 追加：未読map（room_id -> unread_count）
   const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
 
   const [q, setQ] = useState('')
@@ -61,13 +60,9 @@ export default function RoomsListClient() {
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('new')
 
-  // ✅ AIフィルタ（RoomCreateClientと一致）
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
-
-  // ✅ ステータスフィルタ（制作中＋公開済み / 制作中 / 公開済み）
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
-  // ✅ selectの見た目を統一（太字ズレ防止）
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
@@ -77,85 +72,116 @@ export default function RoomsListClient() {
     fontWeight: 400,
   }
 
+  // ✅ 追加：unreadMap をキャッシュから即復元（初回描画の体感を上げる）
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(UNREAD_CACHE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
+      if (!parsed?.ts || !parsed?.map) return
+      if (Date.now() - parsed.ts > UNREAD_CACHE_TTL_MS) return
+      setUnreadMap(parsed.map)
+    } catch {
+      // ignore
+    }
+  }, [])
+
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true)
       setError('')
 
       // -------------------------
+      // ② unread-map を「並列で」走らせる（roomsを待たない）
+      // -------------------------
+      const fetchUnread = async () => {
+        try {
+          const { data: u } = await supabase.auth.getUser()
+          const user = u.user
+          if (!user) {
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
+
+          const { data: sess } = await supabase.auth.getSession()
+          const token = sess.session?.access_token
+          if (!token) {
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
+
+          const res = await fetch('/api/rooms/unread-map?excludeSelf=1', {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          const json = await res.json().catch(() => ({}))
+
+          if (!res.ok) {
+            console.error('[unread-map]', json)
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
+
+          const map = (json?.map ?? {}) as Record<string, number>
+          setUnreadMap(map)
+
+          // ✅ キャッシュ更新（次回一覧を開いた瞬間に即表示）
+          try {
+            sessionStorage.setItem(UNREAD_CACHE_KEY, JSON.stringify({ ts: Date.now(), map }))
+          } catch {}
+        } catch (e) {
+          console.error('[unread-map] fetch failed', e)
+          // キャッシュがあるならそれで表示し続けてOK（最小のため上書きしない）
+        }
+      }
+
+      // -------------------------
       // ① rooms一覧（既存）
       // -------------------------
-      const base = supabase
-        .from('rooms_with_counts_v2')
-        .select(
-          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
-        )
-        .eq('is_hidden', false)
-        .is('deleted_at', null)
+      const fetchRoomsList = async () => {
+        const base = supabase
+          .from('rooms_with_counts_v2')
+          .select(
+            'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
+          )
+          .eq('is_hidden', false)
+          .is('deleted_at', null)
 
-      const query =
-        sort === 'like'
-          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
-          : base.order('created_at', { ascending: false })
+        const query =
+          sort === 'like'
+            ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+            : base.order('created_at', { ascending: false })
 
-      const { data, error } = await query
+        const { data, error } = await query
 
-      if (error) {
-        setError(error.message)
-        setRooms([])
-        setUnreadMap({})
-        setLoading(false)
-        return
-      }
-
-      const list = (data ?? []) as RoomRow[]
-      setRooms(list)
-
-      // -------------------------
-      // ② unread-map（ログイン時のみ）
-      // -------------------------
-      const { data: u } = await supabase.auth.getUser()
-      const user = u.user
-      if (!user) {
-        // 未ログインなら未読は表示しない
-        setUnreadMap({})
-        setLoading(false)
-        return
-      }
-
-      const { data: sess } = await supabase.auth.getSession()
-      const token = sess.session?.access_token
-      if (!token) {
-        setUnreadMap({})
-        setLoading(false)
-        return
-      }
-
-      try {
-        const res = await fetch('/api/rooms/unread-map?excludeSelf=1', {
-          method: 'GET',
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        const json = await res.json().catch(() => ({}))
-
-        if (!res.ok) {
-          console.error('[unread-map]', json)
-          setUnreadMap({})
-        } else {
-          setUnreadMap((json?.map ?? {}) as Record<string, number>)
+        if (error) {
+          setError(error.message)
+          setRooms([])
+          setLoading(false)
+          return
         }
-      } catch (e) {
-        console.error('[unread-map] fetch failed', e)
-        setUnreadMap({})
+
+        setRooms((data ?? []) as RoomRow[])
+        setLoading(false) // ✅ 重要：roomsが来たら先に描画。未読は後から差し込まれる
       }
 
-      setLoading(false)
+      // ✅ 並列実行（rooms表示を最優先）
+      void fetchUnread()
+      await fetchRoomsList()
     }
 
     fetchRooms()
   }, [supabase, sort])
 
-  // ✅ roomsに unread_count を合体（参加してないルームは0扱い）
   const roomsWithUnread = useMemo(() => {
     return rooms.map((r) => ({
       ...r,
@@ -174,12 +200,10 @@ export default function RoomsListClient() {
         if (c !== category) return false
       }
 
-      // ✅ ステータスフィルタ
       if (statusFilter !== 'all') {
         if ((r.status ?? '').trim() !== statusFilter) return false
       }
 
-      // ✅ AIフィルタ
       if (aiFilter !== 'all') {
         const lv = normalizeAiLevel(r.ai_level, 'assist')
         if (lv !== aiFilter) return false
@@ -219,8 +243,6 @@ export default function RoomsListClient() {
           }}
         />
 
-        {/* ✅ フィルタ4列：カテゴリ / ステータス / AI / 並び替え */}
-        {/* ✅ 最小修正：スマホで潰れないよう auto-fit + minmax */}
         <div
           style={{
             display: 'grid',
@@ -236,7 +258,6 @@ export default function RoomsListClient() {
             ))}
           </select>
 
-          {/* ✅ 追加：制作中 / 公開済み */}
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
             <option value="all">制作中＋公開済み</option>
             <option value="open">制作中</option>
@@ -287,13 +308,7 @@ export default function RoomsListClient() {
           const unread = r.unread_count ?? 0
 
           return (
-            <Link
-              key={r.id}
-              href={`/rooms/${r.id}`}
-              prefetch={false}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
-              {/* ✅ relative にして右上バッジを置く */}
+            <Link key={r.id} href={`/rooms/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
                   position: 'relative',
@@ -304,7 +319,6 @@ export default function RoomsListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
-                {/* ✅ 未読バッジ（参加中ルームのみ出る想定） */}
                 {unread > 0 && (
                   <div
                     style={{
@@ -361,9 +375,7 @@ export default function RoomsListClient() {
         })}
       </div>
 
-      {!loading && !error && filtered.length === 0 && (
-        <p style={{ marginTop: 14, opacity: 0.75 }}>該当するルームがありません。</p>
-      )}
+      {!loading && !error && filtered.length === 0 && <p style={{ marginTop: 14, opacity: 0.75 }}>該当するルームがありません。</p>}
     </div>
   )
 }
