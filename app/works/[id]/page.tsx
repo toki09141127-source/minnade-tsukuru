@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
 import AttachmentView from './AttachmentView'
+import MarkReadOnView from '../MarkReadOnView' // ✅ 追加
 import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
 
 type RoomRow = {
@@ -114,6 +115,9 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
+      {/* ✅ 追加：作品ページを開いた瞬間に既読更新（+キャッシュ削除は MarkReadOnView 側で） */}
+      <MarkReadOnView roomId={room.id} />
+
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <Link href="/works">← 完成作品一覧へ</Link>
         <Link href={`/rooms/${room.id}`}>制作ルームを見る</Link>
