@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
 import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
@@ -20,6 +20,7 @@ type RoomRow = {
   is_hidden: boolean | null
   deleted_at: string | null
   ai_level: string | null
+  unread_count?: number
 }
 
 const CATEGORY_OPTIONS = [
@@ -38,73 +39,165 @@ const CATEGORY_OPTIONS = [
 
 type CategoryOption = (typeof CATEGORY_OPTIONS)[number]
 type SortKey = 'like' | 'new'
-
-// ✅ AIフィルタ用（全て + 3段階）
 type AiFilter = 'all' | AiLevel
 
-export default function WorksListClient() {
+// ✅ 未読キャッシュ（RoomsListClientと同じキー）
+const UNREAD_CACHE_KEY = 'unread_map_v1'
+const UNREAD_CACHE_TTL_MS = 30_000
+
+export default function WorksListClient(props: { initialUnreadMap?: Record<string, number> }) {
   const supabase = useMemo(() => createClient(), [])
 
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  // ✅ SSRで即表示
+  const [unreadMap, setUnreadMap] = useState<Record<string, number>>(props.initialUnreadMap ?? {})
+
   const [q, setQ] = useState('')
   const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
   const [adultOnly, setAdultOnly] = useState(false)
   const [sort, setSort] = useState<SortKey>('like')
-
-  // ✅ 追加：AIフィルタ（RoomCreateClientと完全一致）
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
 
-  // ✅ 3つのselectを完全に同じ見た目にする（ここがポイント）
   const selectStyle: React.CSSProperties = {
     width: '100%',
     padding: '10px 12px',
     borderRadius: 12,
     border: '1px solid rgba(0,0,0,0.18)',
     background: '#fff',
-    fontWeight: 400, // ← 太字差が出ないよう統一
+    fontWeight: 400,
   }
+
+  // ✅ キャッシュ復元（あれば優先）→なければSSR値をキャッシュ化
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(UNREAD_CACHE_KEY)
+      if (raw) {
+        const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
+        if (parsed?.ts && parsed?.map && Date.now() - parsed.ts <= UNREAD_CACHE_TTL_MS) {
+          setUnreadMap(parsed.map)
+          return
+        }
+      }
+
+      sessionStorage.setItem(
+        UNREAD_CACHE_KEY,
+        JSON.stringify({ ts: Date.now(), map: props.initialUnreadMap ?? {} })
+      )
+    } catch {
+      // ignore
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const fetchWorks = async () => {
       setLoading(true)
       setError('')
 
-      const base = supabase
-        .from('rooms_with_counts_v2')
-        .select(
-          'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
-        )
-        .eq('status', 'forced_publish')
-        .eq('is_hidden', false)
-        .is('deleted_at', null)
+      // -------------------------
+      // ✅ unread-map を裏で更新（roomsを待たない）
+      // -------------------------
+      const fetchUnread = async () => {
+        try {
+          const { data: u } = await supabase.auth.getUser()
+          const user = u.user
+          if (!user) {
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
 
-      const query =
-        sort === 'like'
-          ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
-          : base.order('created_at', { ascending: false })
+          const { data: sess } = await supabase.auth.getSession()
+          const token = sess.session?.access_token
+          if (!token) {
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
 
-      const { data, error } = await query
+          const res = await fetch('/api/rooms/unread-map?excludeSelf=1', {
+            method: 'GET',
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          const json = await res.json().catch(() => ({}))
 
-      if (error) {
-        setError(error.message)
-        setRooms([])
-      } else {
-        setRooms((data ?? []) as RoomRow[])
+          if (!res.ok) {
+            console.error('[unread-map]', json)
+            setUnreadMap({})
+            try {
+              sessionStorage.removeItem(UNREAD_CACHE_KEY)
+            } catch {}
+            return
+          }
+
+          const map = (json?.map ?? {}) as Record<string, number>
+          setUnreadMap(map)
+
+          try {
+            sessionStorage.setItem(UNREAD_CACHE_KEY, JSON.stringify({ ts: Date.now(), map }))
+          } catch {}
+        } catch (e) {
+          console.error('[unread-map] fetch failed', e)
+          // SSR/キャッシュ表示を維持
+        }
       }
 
-      setLoading(false)
+      // -------------------------
+      // ✅ works一覧（既存）
+      // -------------------------
+      const fetchWorksList = async () => {
+        const base = supabase
+          .from('rooms_with_counts_v2')
+          .select(
+            'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
+          )
+          .eq('status', 'forced_publish')
+          .eq('is_hidden', false)
+          .is('deleted_at', null)
+
+        const query =
+          sort === 'like'
+            ? base.order('like_count', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
+            : base.order('created_at', { ascending: false })
+
+        const { data, error } = await query
+
+        if (error) {
+          setError(error.message)
+          setRooms([])
+        } else {
+          setRooms((data ?? []) as RoomRow[])
+        }
+
+        setLoading(false)
+      }
+
+      // ✅ 並列実行
+      void fetchUnread()
+      await fetchWorksList()
     }
 
     fetchWorks()
   }, [supabase, sort])
 
+  const roomsWithUnread = useMemo(() => {
+    return rooms.map((r) => ({
+      ...r,
+      unread_count: unreadMap[r.id] ?? 0,
+    }))
+  }, [rooms, unreadMap])
+
   const filtered = useMemo(() => {
     const query = q.trim().toLowerCase()
 
-    return rooms.filter((r) => {
+    return roomsWithUnread.filter((r) => {
       if (adultOnly && !r.is_adult) return false
 
       if (category !== '全カテゴリー') {
@@ -112,7 +205,6 @@ export default function WorksListClient() {
         if (c !== category) return false
       }
 
-      // ✅ AIフィルタ（DB不正値でも normalize で吸収）
       if (aiFilter !== 'all') {
         const lv = normalizeAiLevel(r.ai_level, 'assist')
         if (lv !== aiFilter) return false
@@ -125,7 +217,7 @@ export default function WorksListClient() {
 
       return true
     })
-  }, [rooms, q, category, adultOnly, aiFilter])
+  }, [roomsWithUnread, q, category, adultOnly, aiFilter])
 
   return (
     <div style={{ marginTop: 14 }}>
@@ -152,8 +244,6 @@ export default function WorksListClient() {
           }}
         />
 
-        {/* ✅ フィルタ3列：カテゴリ / AI / 並び替え */}
-        {/* ✅ 最小修正：スマホで潰れないよう auto-fit + minmax */}
         <div
           style={{
             display: 'grid',
@@ -169,7 +259,6 @@ export default function WorksListClient() {
             ))}
           </select>
 
-          {/* ✅ AIフィルタ（RoomCreateClientの3段階と同じ） */}
           <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
             <option value="all">AI：全て</option>
             {AI_LEVEL_OPTIONS.map((x) => (
@@ -211,16 +300,13 @@ export default function WorksListClient() {
           const cat = (r.category ?? r.type ?? 'その他').trim() || 'その他'
           const memberCount = r.member_count ?? 0
           const likes = r.like_count ?? 0
+          const unread = r.unread_count ?? 0
 
           return (
-            <Link
-              key={r.id}
-              href={`/works/${r.id}`}
-              prefetch={false}
-              style={{ textDecoration: 'none', color: 'inherit' }}
-            >
+            <Link key={r.id} href={`/works/${r.id}`} prefetch={false} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div
                 style={{
+                  position: 'relative',
                   border: '1px solid rgba(0,0,0,0.10)',
                   borderRadius: 18,
                   padding: 14,
@@ -228,6 +314,33 @@ export default function WorksListClient() {
                   boxShadow: '0 8px 24px rgba(0,0,0,0.06)',
                 }}
               >
+                {/* ✅ 作品一覧でも即時未読 */}
+                {unread > 0 && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      minWidth: 22,
+                      height: 22,
+                      padding: '0 7px',
+                      borderRadius: 999,
+                      background: '#d32f2f',
+                      color: '#fff',
+                      fontSize: 12,
+                      fontWeight: 900,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: '0 6px 16px rgba(0,0,0,0.18)',
+                    }}
+                    aria-label={`未読 ${unread} 件`}
+                    title={`未読 ${unread} 件`}
+                  >
+                    {unread > 99 ? '99+' : unread}
+                  </div>
+                )}
+
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
                   {statusBadge(r.status)}
                   {categoryBadge(cat)}
@@ -258,9 +371,7 @@ export default function WorksListClient() {
         })}
       </div>
 
-      {!loading && !error && filtered.length === 0 && (
-        <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>
-      )}
+      {!loading && !error && filtered.length === 0 && <p style={{ marginTop: 14, opacity: 0.75 }}>該当する作品がありません。</p>}
     </div>
   )
 }
