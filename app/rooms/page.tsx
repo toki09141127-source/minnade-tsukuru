@@ -1,8 +1,14 @@
 // app/rooms/page.tsx
 import RoomsListClient from './RoomsListClient'
 import Link from 'next/link'
+import { getUnreadMapForUser } from '@/lib/rooms/getUnreadMapForUser'
 
-export default function RoomsPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function RoomsPage() {
+  // ✅ SSRで未読Mapを先取り（開いた瞬間に未読が出る）
+  const initialUnreadMap = await getUnreadMapForUser({ excludeSelf: true })
+
   return (
     <div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}>
       {/* ← 上の作成ボタンだけ残す */}
@@ -24,7 +30,7 @@ export default function RoomsPage() {
       </div>
 
       {/* 一覧 */}
-      <RoomsListClient />
+      <RoomsListClient initialUnreadMap={initialUnreadMap} />
     </div>
   )
 }

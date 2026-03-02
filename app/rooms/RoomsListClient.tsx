@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { statusBadge, categoryBadge, aiBadge, adultBadge } from '@/app/components/RoomBadges'
@@ -46,14 +46,15 @@ type StatusFilter = 'all' | 'open' | 'forced_publish'
 const UNREAD_CACHE_KEY = 'unread_map_v1'
 const UNREAD_CACHE_TTL_MS = 30_000 // 30秒だけ信用（短いほど安全）
 
-export default function RoomsListClient() {
+export default function RoomsListClient(props: { initialUnreadMap?: Record<string, number> }) {
   const supabase = useMemo(() => createClient(), [])
 
   const [rooms, setRooms] = useState<RoomRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const [unreadMap, setUnreadMap] = useState<Record<string, number>>({})
+  // ✅ SSRで即表示できるよう初期値に入れる
+  const [unreadMap, setUnreadMap] = useState<Record<string, number>>(props.initialUnreadMap ?? {})
 
   const [q, setQ] = useState('')
   const [category, setCategory] = useState<CategoryOption>('全カテゴリー')
@@ -72,18 +73,26 @@ export default function RoomsListClient() {
     fontWeight: 400,
   }
 
-  // ✅ 追加：unreadMap をキャッシュから即復元（初回描画の体感を上げる）
+  // ✅ キャッシュがあれば優先して復元。なければ SSR 値をキャッシュに保存。
   useEffect(() => {
     try {
       const raw = sessionStorage.getItem(UNREAD_CACHE_KEY)
-      if (!raw) return
-      const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
-      if (!parsed?.ts || !parsed?.map) return
-      if (Date.now() - parsed.ts > UNREAD_CACHE_TTL_MS) return
-      setUnreadMap(parsed.map)
+      if (raw) {
+        const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
+        if (parsed?.ts && parsed?.map && Date.now() - parsed.ts <= UNREAD_CACHE_TTL_MS) {
+          setUnreadMap(parsed.map)
+          return
+        }
+      }
+
+      sessionStorage.setItem(
+        UNREAD_CACHE_KEY,
+        JSON.stringify({ ts: Date.now(), map: props.initialUnreadMap ?? {} })
+      )
     } catch {
       // ignore
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -140,7 +149,7 @@ export default function RoomsListClient() {
           } catch {}
         } catch (e) {
           console.error('[unread-map] fetch failed', e)
-          // キャッシュがあるならそれで表示し続けてOK（最小のため上書きしない）
+          // キャッシュ or SSR 表示を維持（最小）
         }
       }
 
@@ -171,7 +180,7 @@ export default function RoomsListClient() {
         }
 
         setRooms((data ?? []) as RoomRow[])
-        setLoading(false) // ✅ 重要：roomsが来たら先に描画。未読は後から差し込まれる
+        setLoading(false) // ✅ roomsが来たら先に描画。未読は後から差し込まれる（がSSRで初回から出る）
       }
 
       // ✅ 並列実行（rooms表示を最優先）
