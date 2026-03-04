@@ -178,6 +178,7 @@ export default function LoginPage() {
     <div style={{ padding: 24 }}>
       <h1>ログイン</h1>
 
+      {/* ✅ 丁寧版：手順説明 */}
       <div
         style={{
           marginTop: 12,
@@ -189,25 +190,56 @@ export default function LoginPage() {
         }}
       >
         <div style={{ fontWeight: 700, marginBottom: 6 }}>手順（メール＋パスワード方式）</div>
-        <ol style={{ margin: 0, paddingLeft: 18, lineHeight: 1.7 }}>
+
+        <div style={{ fontSize: 13, color: '#333', lineHeight: 1.7, marginBottom: 8 }}>
+          このサイトは<strong>「メール＋パスワード」</strong>でログインします。
+          <br />
+          <strong>マジックリンク（メールのURLを押すだけでログイン）方式ではありません。</strong>
+        </div>
+
+        <ol style={{ margin: 0, paddingLeft: 18, lineHeight: 1.75 }}>
           <li>
-            <strong>初めての人</strong>は、メールとパスワードを入力して「<strong>新規登録</strong>」を押す
+            <strong>初めての人</strong>は、メールアドレスとパスワードを入力して「<strong>新規登録</strong>」を押す
           </li>
+
           <li>
-            新規登録後、確認メールが届いたら<strong>メール内リンクをクリックして有効化</strong>
+            新規登録後、確認メールが届いたら<strong>メール内リンクをクリックして有効化</strong>する
+            <div style={{ fontSize: 12, color: '#666', marginTop: 6, lineHeight: 1.6 }}>
+              ※迷惑メールフォルダもご確認ください。<br />
+              ※リンクを押しただけでは、この画面で自動的にログインされない場合があります（仕様です）。
+            </div>
           </li>
+
           <li>
             <strong>有効化後</strong>にこの画面に戻り、「<strong>ログイン</strong>」を押す
+            <div style={{ fontSize: 12, color: '#666', marginTop: 6, lineHeight: 1.6 }}>
+              ※ここで使うのは「登録時に設定したパスワード」です。<br />
+              ※スマホの自動入力で別のパスワードが入ることがあるので注意してください。
+            </div>
           </li>
+
           <li>
-            うまくいかない時は、<strong>入力ミス</strong>（コピペ末尾空白/CapsLock/自動入力）をチェック
+            <strong>登録済みの人</strong>は、メールアドレスとパスワードを入力して「<strong>ログイン</strong>」だけでOK
+          </li>
+
+          <li>
+            うまくいかない時は、まず<strong>入力ミス</strong>をチェック（特に多いもの）
+            <div style={{ fontSize: 12, color: '#666', marginTop: 6, lineHeight: 1.6 }}>
+              ・コピペ末尾の空白 / 全角スペース / CapsLock（大文字固定）<br />
+              ・メールアドレスの打ち間違い（@の前後）<br />
+              ・パスワードが1文字違う / 自動入力で別パスワードが入っている
+            </div>
           </li>
         </ol>
-        <div style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
-          ※このサイトは<strong>マジックリンクではありません</strong>。メール＋パスワードでログインします。
+
+        <div style={{ fontSize: 12, color: '#666', marginTop: 10, lineHeight: 1.7 }}>
+          ✅ 確認メールが届かない場合は「<strong>確認メールを再送する</strong>」をお試しください（下に表示されます）。
+          <br />
+          ✅ パスワードを忘れた／ログインできない場合は「<strong>パスワード再設定</strong>」から復旧できます。
         </div>
       </div>
 
+      {/* ✅ 入力欄 */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
         <input
           type="email"
@@ -241,6 +273,7 @@ export default function LoginPage() {
         />
       </div>
 
+      {/* ✅ ボタン */}
       <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={signUp} style={{ minWidth: 120 }} disabled={loading}>
           {loading ? '処理中…' : '新規登録'}
@@ -248,8 +281,6 @@ export default function LoginPage() {
         <button onClick={signIn} style={{ minWidth: 120 }} disabled={loading}>
           {loading ? '処理中…' : 'ログイン'}
         </button>
-
-        {/* ✅ 追加：復旧導線 */}
         <button onClick={sendPasswordReset} style={{ minWidth: 160 }} disabled={loading}>
           {loading ? '送信中…' : 'パスワード再設定'}
         </button>
@@ -288,6 +319,7 @@ export default function LoginPage() {
         </div>
       )}
 
+      {/* ✅ message表示 */}
       {message && (
         <pre
           style={{
