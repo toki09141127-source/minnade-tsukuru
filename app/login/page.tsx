@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
 
@@ -10,41 +10,137 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('')
 
-  // ✅ 新規登録成功専用UI
   const [signupSuccess, setSignupSuccess] = useState(false)
-
-  // ✅ 確認メール再送中
   const [resending, setResending] = useState(false)
+
+  // ✅ 追加：送信中（連打防止）
+  const [loading, setLoading] = useState(false)
+
+  const eTrim = useMemo(() => email.trim(), [email])
+
+  const normalizePassword = (p: string) => {
+    // ✅ コピペ末尾空白事故を減らす（前後だけ）
+    return p.replace(/^\s+|\s+$/g, '')
+  }
+
+  const setFriendlyError = (raw: string) => {
+    if (raw.includes('Invalid login credentials')) {
+      setMessage(
+        [
+          'メールアドレス or パスワードが違います。',
+          '・コピペ末尾の空白 / CapsLock / 自動入力の別パスワードに注意',
+          '・不明な場合は「パスワード再設定」をお試しください',
+        ].join('\n')
+      )
+      return
+    }
+
+    if (raw.toLowerCase().includes('email not confirmed')) {
+      setMessage(
+        [
+          'メール認証が完了していません。',
+          '確認メールのリンクをクリックして有効化してからログインしてください。',
+          '届かない場合は「確認メールを再送する」を押してください。',
+        ].join('\n')
+      )
+      return
+    }
+
+    setMessage(raw)
+  }
 
   const signUp = async () => {
     setMessage('')
     setSignupSuccess(false)
 
-    const e = email.trim()
+    const e = eTrim
+    const p = normalizePassword(password)
+
     if (!e) {
       setMessage('メールアドレスを入力してください')
       return
     }
-    if (password.length < 6) {
+    if (p.length < 6) {
       setMessage('パスワードは6文字以上にしてください')
       return
     }
 
-    const { error } = await supabase.auth.signUp({ email: e, password })
-    if (error) {
-      setMessage(error.message)
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.signUp({ email: e, password: p })
+      if (error) {
+        setFriendlyError(error.message)
+        return
+      }
+      setSignupSuccess(true)
+      setMessage('')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const signIn = async () => {
+    setMessage('')
+
+    const e = eTrim
+    const p = normalizePassword(password)
+
+    if (!e) {
+      setMessage('メールアドレスを入力してください')
+      return
+    }
+    if (!p) {
+      setMessage('パスワードを入力してください')
       return
     }
 
-    // ✅ 成功：専用UIを表示（messageは通知専用にするのでここでは出さない）
-    setSignupSuccess(true)
-    setMessage('')
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email: e, password: p })
+      if (error) {
+        setFriendlyError(error.message)
+        return
+      }
+      router.replace('/')
+      router.refresh()
+    } finally {
+      setLoading(false)
+    }
   }
 
+  // ✅ 追加：パスワード再設定（復旧導線）
+  const sendPasswordReset = async () => {
+    setMessage('')
+
+    const e = eTrim
+    if (!e) {
+      setMessage('メールアドレスを入力してください（再設定メールの送信に必要です）')
+      return
+    }
+
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(e, {
+        redirectTo:
+          typeof window !== 'undefined'
+            ? `${window.location.origin}/auth/callback`
+            : undefined,
+      })
+      if (error) {
+        setFriendlyError(error.message)
+        return
+      }
+      setMessage('パスワード再設定メールを送信しました ✅（迷惑メールもご確認ください）')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // ✅ 確認メール再送：supabase-js のバージョン差を吸収
   const resendConfirmation = async () => {
     setMessage('')
 
-    const e = email.trim()
+    const e = eTrim
     if (!e) {
       setMessage('メールアドレスを入力してください（確認メール再送に必要です）')
       return
@@ -52,41 +148,31 @@ export default function LoginPage() {
 
     setResending(true)
     try {
-      // ✅ 正式APIが存在する場合のみ使う（存在しないAPIは呼ばない）
       const authAny = supabase.auth as any
 
+      // v2系で resend がある場合
       if (typeof authAny?.resend === 'function') {
         const { error } = await authAny.resend({ type: 'signup', email: e })
         if (error) {
-          setMessage(error.message)
+          setFriendlyError(error.message)
           return
         }
         setMessage('確認メールを再送しました ✅（迷惑メールもご確認ください）')
         return
       }
 
-      // resend が無い場合：SDK/型の都合（本番では明確に案内）
       setMessage(
-        'この環境では確認メールの再送APIが利用できません（supabase-jsのバージョン確認・更新が必要です）'
+        'この環境では確認メール再送APIが利用できません（supabase-jsのバージョン確認が必要です）'
       )
     } finally {
       setResending(false)
     }
   }
 
-  const signIn = async () => {
-    setMessage('')
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
-    if (error) {
-      setMessage(error.message)
-      return
-    }
-    router.replace('/')
-    router.refresh()
-  }
-
   const isSuccessMsg =
-    message.includes('✅') || message.includes('再送しました') || message.includes('送信しました')
+    message.includes('✅') ||
+    message.includes('再送しました') ||
+    message.includes('送信しました')
 
   return (
     <div style={{ padding: 24 }}>
@@ -108,29 +194,20 @@ export default function LoginPage() {
             <strong>初めての人</strong>は、メールとパスワードを入力して「<strong>新規登録</strong>」を押す
           </li>
           <li>
-            新規登録後、確認メールが届いたら<strong>メール内リンクをクリックして有効化</strong>（必要な場合があります）
+            新規登録後、確認メールが届いたら<strong>メール内リンクをクリックして有効化</strong>
           </li>
           <li>
             <strong>有効化後</strong>にこの画面に戻り、「<strong>ログイン</strong>」を押す
           </li>
           <li>
-            <strong>登録済みの人</strong>は、「ログイン」だけでOK
-          </li>
-          <li>
-            パスワードは<strong>6文字以上推奨</strong>（短いと登録できないことがあります）
-          </li>
-          <li>
-            うまくいかない時は、<strong>入力ミス</strong>（全角スペース/CapsLock/コピペ末尾の空白）をチェック
+            うまくいかない時は、<strong>入力ミス</strong>（コピペ末尾空白/CapsLock/自動入力）をチェック
           </li>
         </ol>
         <div style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
           ※このサイトは<strong>マジックリンクではありません</strong>。メール＋パスワードでログインします。
-          <br />
-          ※Supabaseの設定で Confirm Email がONの場合、<strong>新規登録後にメール内リンククリックで有効化が必要</strong>なことがあります。
         </div>
       </div>
 
-      {/* ✅ 入力欄：常に wrap 前提 + minWidth（縦積み固定はしない） */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
         <input
           type="email"
@@ -164,17 +241,21 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* ✅ ボタン：wrap 前提（狭ければ自然に2段へ） */}
       <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button onClick={signUp} style={{ minWidth: 120 }}>
-          新規登録
+        <button onClick={signUp} style={{ minWidth: 120 }} disabled={loading}>
+          {loading ? '処理中…' : '新規登録'}
         </button>
-        <button onClick={signIn} style={{ minWidth: 120 }}>
-          ログイン
+        <button onClick={signIn} style={{ minWidth: 120 }} disabled={loading}>
+          {loading ? '処理中…' : 'ログイン'}
+        </button>
+
+        {/* ✅ 追加：復旧導線 */}
+        <button onClick={sendPasswordReset} style={{ minWidth: 160 }} disabled={loading}>
+          {loading ? '送信中…' : 'パスワード再設定'}
         </button>
       </div>
 
-      {/* ✅ 新規登録成功時の専用UI（messageとは別枠） */}
+      {/* ✅ 新規登録成功時の専用UI */}
       {signupSuccess && (
         <div
           style={{
@@ -202,15 +283,15 @@ export default function LoginPage() {
           </div>
 
           <div style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
-            ※確認メールが届くまで数分かかることがあります。届かない場合は、メールアドレスの入力ミスや末尾の空白も確認してください。
+            ※届かない場合は、メールアドレスの入力ミスや末尾の空白も確認してください。
           </div>
         </div>
       )}
 
-      {/* ✅ message表示（成功/失敗色） */}
       {message && (
-        <p
+        <pre
           style={{
+            whiteSpace: 'pre-wrap',
             marginTop: 12,
             padding: 10,
             border: '1px solid #ddd',
@@ -221,7 +302,7 @@ export default function LoginPage() {
           }}
         >
           {message}
-        </p>
+        </pre>
       )}
     </div>
   )
