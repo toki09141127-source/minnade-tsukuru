@@ -25,9 +25,10 @@ export async function POST(req: Request) {
     if (!roomId || !content) {
       return NextResponse.json({ error: 'roomId / content is required' }, { status: 400 })
     }
-    if (content.length > 2000) {
-      return NextResponse.json({ error: 'content is too long (max 2000)' }, { status: 400 })
-    }
+
+    // ✅ 2000文字制限を撤廃（限度なし）
+    // ※本当に「無制限」だと荒らし/事故のリスクは上がるので、
+    //   運用で問題が出たら MAX を設ける（例: 200000）ことを推奨。
 
     const authHeader = req.headers.get('authorization') ?? ''
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
@@ -65,7 +66,6 @@ export async function POST(req: Request) {
     }
 
     // ✅ 参加者チェック（left_at is null のみ参加中）
-    // ここで role も取る
     const { data: mem, error: memErr } = await admin
       .from('room_members')
       .select('id, role')
@@ -84,10 +84,7 @@ export async function POST(req: Request) {
       const role = String((mem as MemberRow).role ?? '')
       const ok = role === 'creator' || role === 'core'
       if (!ok) {
-        return NextResponse.json(
-          { error: '最終提出はcore/creatorのみ投稿できます' },
-          { status: 403 }
-        )
+        return NextResponse.json({ error: '最終提出はcore/creatorのみ投稿できます' }, { status: 403 })
       }
     }
 
