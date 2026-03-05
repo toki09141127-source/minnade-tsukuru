@@ -11,8 +11,15 @@ export async function createUserClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value
+        // ✅ 読み取り（全件）
+        getAll() {
+          return cookieStore.getAll()
+        },
+        // ✅ 書き込み（重要：refreshで更新されたcookieを反映）
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => {
+            cookieStore.set(name, value, options)
+          })
         },
       },
     }
