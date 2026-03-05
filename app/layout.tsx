@@ -3,6 +3,8 @@ import './globals.css'
 import Header from '@/components/Header'
 import type { Metadata } from 'next'
 
+const ICON_VERSION = '2026-03-05'
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://minnade-tsukuru.vercel.app'),
 
@@ -11,17 +13,41 @@ export const metadata: Metadata = {
     template: '%s | みんなで作ろう（仮）',
   },
 
-  description: 'みんなの創作でアイデアいっぱい！最大50人で共同制作できるクリエイター向けサイト。',
+  description:
+    'みんなの創作でアイデアいっぱい！最大50人で共同制作できるクリエイター向けサイト。',
 
+  /*
+  favicon完全対応
+  Safari / iOS / Chrome / Edge
+  全部カバー
+  */
   icons: {
-    icon: '/favicon-32x32.png',
+    icon: [
+      {
+        url: `/favicon.ico?v=${ICON_VERSION}`,
+      },
+      {
+        url: `/icon.png?v=${ICON_VERSION}`,
+        type: 'image/png',
+      },
+    ],
+
+    apple: [
+      {
+        url: `/apple-icon.png?v=${ICON_VERSION}`,
+      },
+    ],
+
+    shortcut: [`/favicon.ico?v=${ICON_VERSION}`],
   },
 
   openGraph: {
     title: 'みんなで作ろう（仮）',
-    description: '最大50人で共同制作。制限時間付きの創作ルームで、みんなのアイデアを形に。',
+    description:
+      '最大50人で共同制作。制限時間付きの創作ルームで、みんなのアイデアを形に。',
     url: 'https://minnade-tsukuru.vercel.app',
     siteName: 'みんなで作ろう（仮）',
+
     images: [
       {
         url: '/ogp.png',
@@ -30,6 +56,7 @@ export const metadata: Metadata = {
         alt: 'みんなで作ろう（仮）',
       },
     ],
+
     locale: 'ja_JP',
     type: 'website',
   },
@@ -42,7 +69,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="ja">
       <body>
