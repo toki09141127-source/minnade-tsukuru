@@ -100,20 +100,53 @@ export async function POST(req: Request) {
     }
 
     // -------------------------
-    // 4) ルーム存在確認
+    // 4) ルーム存在 + 状態確認
     // -------------------------
     const { data: room, error: roomErr } = await supabaseAdmin
       .from('rooms')
-      .select('id')
+      .select('id, status')
       .eq('id', roomId)
       .maybeSingle()
 
-    if (roomErr || !room) {
+    if (roomErr) {
+      return NextResponse.json({ error: roomErr.message }, { status: 500 })
+    }
+
+    if (!room) {
       return NextResponse.json({ error: 'Room not found' }, { status: 404 })
     }
 
+    if (room.status !== 'open') {
+      return NextResponse.json(
+        { error: `This room is ${room.status} and cannot accept uploads` },
+        { status: 403 }
+      )
+    }
+
     // -------------------------
-    // 5) Storage Path（images/videos に分岐）
+    // 5) 参加者チェック
+    // -------------------------
+    const { data: member, error: memberErr } = await supabaseAdmin
+      .from('room_members')
+      .select('id')
+      .eq('room_id', roomId)
+      .eq('user_id', user.id)
+      .is('left_at', null)
+      .maybeSingle()
+
+    if (memberErr) {
+      return NextResponse.json({ error: memberErr.message }, { status: 500 })
+    }
+
+    if (!member) {
+      return NextResponse.json(
+        { error: 'You must join the room before uploading' },
+        { status: 403 }
+      )
+    }
+
+    // -------------------------
+    // 6) Storage Path（images/videos に分岐）
     // rooms/{roomId}/images/xxxx.jpg
     // rooms/{roomId}/videos/xxxx.mp4
     // -------------------------
@@ -126,7 +159,7 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(arrayBuffer)
 
     // -------------------------
-    // 6) Upload（private bucket 前提）
+    // 7) Upload（private bucket 前提）
     // -------------------------
     const { error: upErr } = await supabaseAdmin.storage
       .from(BUCKET)
@@ -136,38 +169,20 @@ export async function POST(req: Request) {
       })
 
     if (upErr) {
-      // デバッグ情報（必要最小限）
-      const { data: buckets, error: bErr } = await supabaseAdmin.storage.listBuckets()
-
-      return NextResponse.json(
-        {
-          error: upErr.message,
-          debug: {
-            bucketTried: BUCKET,
-            hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
-            buckets: bErr
-              ? `listBuckets error: ${bErr.message}`
-              : (buckets ?? []).map((b) => ({
-                  id: b.id,
-                  name: b.name,
-                  public: b.public,
-                })),
-          },
-        },
-        { status: 400 }
-      )
+      console.error('Upload failed:', upErr)
+      return NextResponse.json({ error: 'Upload failed' }, { status: 400 })
     }
 
     // -------------------------
-    // 7) 成功
+    // 8) 成功
     // -------------------------
     return NextResponse.json({
       ok: true,
       storagePath,
       mimeType: mime,
-      // size: file.size, // 必要ならデバッグ用に返してもOK
     })
   } catch (e: any) {
+    console.error('Upload route error:', e)
     return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
   }
 }
