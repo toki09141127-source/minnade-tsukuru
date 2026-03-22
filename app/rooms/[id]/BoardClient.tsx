@@ -23,8 +23,6 @@ type PostRow = {
   marked_at?: string | null
 }
 
-const ACCEPT = 'image/*,video/mp4,video/webm'
-
 export default function BoardClient({
   roomId,
   roomStatus,
@@ -105,7 +103,7 @@ export default function BoardClient({
     const markSeen = async () => {
       try {
         if (!userId) return
-        if (!isMember) return // 未参加なら更新しない（仕様）
+        if (!isMember) return
         const token = await getToken()
         if (!token) return
 
@@ -210,7 +208,6 @@ export default function BoardClient({
       return
     }
 
-    // ✅ フロント側の二重ガード（UIで消しても、念のため）
     if (type === 'final' && !canFinal) {
       alert('最終提出はcore/creatorのみ投稿できます')
       return
@@ -220,7 +217,7 @@ export default function BoardClient({
     const file = type === 'log' ? logFile : finalFile
 
     if (!text && !file) {
-      alert('本文か画像/動画のどちらかを入力してください')
+      alert('本文か添付ファイルのどちらかを入力してください')
       return
     }
 
@@ -285,7 +282,6 @@ export default function BoardClient({
     setLoading(false)
   }
 
-  // ✅ 取り消し：confirm()廃止 → モーダルを開くだけ
   const deletePost = async (postId: string) => {
     if (roomStatus === 'open' && memberChecked && !isMember) {
       alert('ルームに参加してから操作してください')
@@ -294,7 +290,6 @@ export default function BoardClient({
     setConfirmTarget({ postId })
   }
 
-  // ✅ 実際の削除処理（モーダルの「取り消す」から呼ぶ）
   const executeDeletePost = async (postId: string) => {
     if (deleting) return
     setDeleting(true)
@@ -416,12 +411,14 @@ export default function BoardClient({
       return <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>添付を読み込み中…</div>
     }
 
+    const fileName = p.attachment_url.split('/').pop()?.split('?')[0] ?? 'download'
+
     if (mime.startsWith('image/')) {
       return (
         <div style={{ marginTop: 8 }}>
           <img
             src={signedUrl}
-            alt="attachment"
+            alt={fileName}
             style={{
               maxWidth: '100%',
               borderRadius: 10,
@@ -452,13 +449,32 @@ export default function BoardClient({
     }
 
     return (
-      <div style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>
-        添付ファイル（未対応形式）：{mime || 'unknown'}
+      <div
+        style={{
+          marginTop: 8,
+          padding: 10,
+          border: '1px solid rgba(0,0,0,0.10)',
+          borderRadius: 10,
+          background: '#fafafa',
+        }}
+      >
+        <div style={{ fontSize: 13, fontWeight: 700 }}>{fileName}</div>
+        <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>
+          {mime || 'application/octet-stream'}
+        </div>
+        <a
+          href={signedUrl}
+          target="_blank"
+          rel="noreferrer"
+          download
+          style={{ display: 'inline-block', marginTop: 8, textDecoration: 'underline' }}
+        >
+          ダウンロード
+        </a>
       </div>
     )
   }
 
-  // ✅ フォーム表示条件
   const showPostForms = roomStatus === 'open' && userId && memberChecked && isMember
   const showFinalForm = showPostForms && canFinal
   const showJoinHint = roomStatus === 'open' && userId && memberChecked && !isMember
@@ -622,7 +638,6 @@ export default function BoardClient({
         </div>
       )}
 
-      {/* ✅ 最終提出フォーム（コア限定） */}
       {showPostForms && (
         <div
           style={{
@@ -648,7 +663,7 @@ export default function BoardClient({
               <textarea
                 value={finalContent}
                 onChange={(e) => setFinalContent(e.target.value)}
-                placeholder="最終提出を書く…（画像/動画のみでもOK）"
+                placeholder="最終提出を書く…（添付ファイルのみでもOK）"
                 style={{
                   width: '100%',
                   minHeight: 90,
@@ -659,7 +674,7 @@ export default function BoardClient({
               />
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-                <input type="file" accept={ACCEPT} onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
+                <input type="file" onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
                 {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
                 <button
                   disabled={loading}
@@ -747,7 +762,7 @@ export default function BoardClient({
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="制作ログを書く…（画像/動画のみでもOK）"
+            placeholder="制作ログを書く…（添付ファイルのみでもOK）"
             style={{
               width: '100%',
               minHeight: 90,
@@ -758,7 +773,7 @@ export default function BoardClient({
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-            <input type="file" accept={ACCEPT} onChange={(e) => setLogFile(e.target.files?.[0] ?? null)} />
+            <input type="file" onChange={(e) => setLogFile(e.target.files?.[0] ?? null)} />
             {logFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{logFile.name}</span>}
             <button
               disabled={loading}

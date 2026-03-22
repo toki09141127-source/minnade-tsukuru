@@ -6,28 +6,31 @@ export const dynamic = 'force-dynamic'
 
 const BUCKET = 'room_uploads'
 
-// 許可MIME
-const ALLOWED_MIME = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'video/mp4',
-  'video/webm',
-])
-
 // 容量制限
 const MAX_IMAGE = 10 * 1024 * 1024 // 10MB
 const MAX_VIDEO = 50 * 1024 * 1024 // 50MB
+const MAX_FILE = 25 * 1024 * 1024 // 25MB
+
+// 危険な実行系だけブロック
+const BLOCKED_EXT = new Set([
+  'exe',
+  'bat',
+  'cmd',
+  'com',
+  'msi',
+  'sh',
+  'js',
+  'jar',
+  'apk',
+])
 
 function safeExtFromName(name: string) {
   const raw = name.split('.').pop()?.toLowerCase() || ''
-  // 変な拡張子を防ぐ（最低限）
-  if (!/^[a-z0-9]{1,8}$/.test(raw)) return ''
+  if (!/^[a-z0-9]{1,12}$/.test(raw)) return ''
   return raw
 }
 
 function extFromMime(mime: string, fallback: string) {
-  // mimeから拡張子を寄せる（保険）
   switch (mime) {
     case 'image/jpeg':
       return 'jpg'
@@ -35,10 +38,20 @@ function extFromMime(mime: string, fallback: string) {
       return 'png'
     case 'image/webp':
       return 'webp'
+    case 'image/gif':
+      return 'gif'
     case 'video/mp4':
       return 'mp4'
     case 'video/webm':
       return 'webm'
+    case 'application/pdf':
+      return 'pdf'
+    case 'text/plain':
+      return 'txt'
+    case 'application/zip':
+      return 'zip'
+    case 'application/x-zip-compressed':
+      return 'zip'
     default:
       return fallback || 'bin'
   }
@@ -73,28 +86,31 @@ export async function POST(req: Request) {
     }
 
     // -------------------------
-    // 3) バリデーション（MIME / size）
+    // 3) バリデーション（size / ext）
     // -------------------------
-    const mime = String(file.type ?? '').toLowerCase()
+    const mime = String(file.type ?? '').toLowerCase().trim()
+    const nameExt = safeExtFromName(file.name)
 
-    if (!ALLOWED_MIME.has(mime)) {
+    if (nameExt && BLOCKED_EXT.has(nameExt)) {
       return NextResponse.json(
-        { error: `Unsupported file type: ${mime || 'unknown'}` },
+        { error: `This file type is not allowed: .${nameExt}` },
         { status: 400 }
       )
     }
 
     const isImage = mime.startsWith('image/')
     const isVideo = mime.startsWith('video/')
-
-    const max = isImage ? MAX_IMAGE : isVideo ? MAX_VIDEO : 0
-    if (!max) {
-      return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 })
-    }
+    const max = isImage ? MAX_IMAGE : isVideo ? MAX_VIDEO : MAX_FILE
 
     if (file.size > max) {
       return NextResponse.json(
-        { error: isImage ? 'File too large (max 10MB)' : 'File too large (max 50MB)' },
+        {
+          error: isImage
+            ? 'File too large (max 10MB)'
+            : isVideo
+            ? 'File too large (max 50MB)'
+            : 'File too large (max 25MB)',
+        },
         { status: 400 }
       )
     }
@@ -146,12 +162,9 @@ export async function POST(req: Request) {
     }
 
     // -------------------------
-    // 6) Storage Path（images/videos に分岐）
-    // rooms/{roomId}/images/xxxx.jpg
-    // rooms/{roomId}/videos/xxxx.mp4
+    // 6) Storage Path
     // -------------------------
-    const folder = isImage ? 'images' : 'videos'
-    const nameExt = safeExtFromName(file.name)
+    const folder = isImage ? 'images' : isVideo ? 'videos' : 'files'
     const ext = extFromMime(mime, nameExt)
     const storagePath = `rooms/${roomId}/${folder}/${crypto.randomUUID()}.${ext}`
 
@@ -159,12 +172,12 @@ export async function POST(req: Request) {
     const buffer = Buffer.from(arrayBuffer)
 
     // -------------------------
-    // 7) Upload（private bucket 前提）
+    // 7) Upload
     // -------------------------
     const { error: upErr } = await supabaseAdmin.storage
       .from(BUCKET)
       .upload(storagePath, buffer, {
-        contentType: mime,
+        contentType: mime || 'application/octet-stream',
         upsert: false,
       })
 
@@ -179,7 +192,9 @@ export async function POST(req: Request) {
     return NextResponse.json({
       ok: true,
       storagePath,
-      mimeType: mime,
+      mimeType: mime || 'application/octet-stream',
+      fileName: file.name,
+      fileSize: file.size,
     })
   } catch (e: any) {
     console.error('Upload route error:', e)
