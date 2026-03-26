@@ -263,7 +263,7 @@ export default function TermsConsentGate() {
                 style={{ marginTop: 4 }}
               />
               <span>
-                <Link href="/privacy" target="_blank">
+                <Link href="/terms?tab=privacy" target="_blank">
                   プライバシーポリシー
                 </Link>
                 を確認し、同意します。

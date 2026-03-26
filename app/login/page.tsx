@@ -339,7 +339,7 @@ export default function LoginPage() {
             style={{ marginTop: 4 }}
           />
           <span style={{ lineHeight: 1.7 }}>
-            <Link href="/privacy" target="_blank">
+            <Link href="/terms?tab=privacy" target="_blank">
               プライバシーポリシー
             </Link>
             に同意します

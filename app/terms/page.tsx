@@ -1,412 +1,68 @@
-import React from 'react'
-import { CURRENT_TERMS_VERSION } from '@/lib/legalVersions'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import TermsContent from '@/components/legal/TermsContent'
+import PrivacyContent from '@/components/legal/PrivacyContent'
 
-export const metadata = {
+export const metadata: Metadata = {
   title: '利用規約 | みんなで作ろう（仮）',
 }
 
-const LAST_UPDATED = CURRENT_TERMS_VERSION
+type SearchParamsValue = string | string[] | undefined
 
-function getContactEmail() {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_SUPPORT_EMAIL ||
-    process.env.SUPPORT_EMAIL ||
-    process.env.CONTACT_EMAIL ||
-    ''
-  return fromEnv.trim()
+type TermsPageProps = {
+  searchParams?: Promise<{
+    tab?: SearchParamsValue
+  }>
 }
 
-type Section = {
-  id: string
-  title: string
-  body: React.ReactNode
+function normalizeTab(tab: SearchParamsValue) {
+  const value = Array.isArray(tab) ? tab[0] : tab
+  return value === 'privacy' ? 'privacy' : 'terms'
 }
 
-export default function TermsPage() {
-  const contactEmail = getContactEmail()
+function tabButtonStyle(active: boolean): React.CSSProperties {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 42,
+    padding: '10px 16px',
+    borderRadius: 10,
+    border: active ? '1px solid #111' : '1px solid #ccc',
+    background: active ? '#111' : '#fff',
+    color: active ? '#fff' : '#111',
+    fontWeight: 800,
+    textDecoration: 'none',
+    lineHeight: 1.2,
+  }
+}
 
-  const sections: Section[] = [
-    {
-      id: 'apply',
-      title: '第1条（適用）',
-      body: (
-        <>
-          <p>
-            本利用規約（以下「本規約」といいます。）は、みんなで作ろう（仮）（以下「本サービス」といいます。）の提供条件および
-            本サービスの利用に関する運営者とユーザーの権利義務関係を定めるものです。
-          </p>
-          <ul>
-            <li>ユーザーは、本規約に同意のうえ本サービスを利用するものとします。</li>
-            <li>本サービス内で別途定めるガイドライン・注意事項等は、本規約の一部を構成します。</li>
-          </ul>
-        </>
-      ),
-    },
-    {
-      id: 'defs',
-      title: '第2条（定義）',
-      body: (
-        <ul>
-          <li>「運営者」：本サービスを運営・提供する者</li>
-          <li>「ユーザー」：本規約に同意し、本サービスを利用するすべての者</li>
-          <li>「ルーム」：最大50人程度が同一の制作空間に参加し、制限時間内に共同制作を行う単位</li>
-          <li>「投稿」：文章、画像、漫画、イラスト、リンク、コメントその他一切の情報</li>
-          <li>「成果物」：ルーム等で制作・共有される作品およびその制作過程の出力</li>
-          <li>「AI利用レベル」：ルームごとに設定されるAI使用の可否区分</li>
-          <li>「強制公開（forced_publish）」：ルームの制限時間到来時に成果物を自動公開状態へ移行させる機能</li>
-          <li>「creator」：ルーム作成者</li>
-          <li>「core」：共同制作の意思決定および最終提出の中心となる参加者</li>
-          <li>「supporter」：応援、アイデア、感想、資料共有、制作ログ等に参加するユーザー</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'account',
-      title: '第3条（利用登録・アカウント）',
-      body: (
-        <ul>
-          <li>本サービスの利用には、運営者が指定する方法によるアカウント登録が必要です。</li>
-          <li>ユーザーは、登録情報を真実、正確かつ最新の内容に保つものとします。</li>
-          <li>ユーザーは、自己の責任において認証情報を管理し、第三者に利用させてはなりません。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'consent-record',
-      title: '第3条の2（同意の取得および記録）',
-      body: (
-        <ul>
-          <li>
-            ユーザーは、本サービスの利用開始時、ルーム参加時、core参加時その他運営者が必要と定める場面において、
-            本規約、プライバシーポリシー、個別規定、ルーム固有の注意事項等に対し明示的な同意を行う場合があります。
-          </li>
-          <li>
-            運営者は、同意の有無、同意日時、規約またはポリシーの版、対象ルームIDその他必要な情報を記録できます。
-          </li>
-        </ul>
-      ),
-    },
-    {
-      id: 'minor',
-      title: '第4条（未成年の利用）',
-      body: (
-        <ul>
-          <li>未成年のユーザーは、親権者その他法定代理人の同意を得たうえで本サービスを利用するものとします。</li>
-          <li>R18コンテンツに関する年齢制限措置を行う場合があります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'prohibited',
-      title: '第5条（禁止事項）',
-      body: (
-        <ul>
-          <li>法令または公序良俗に違反する行為</li>
-          <li>第三者の著作権、商標権、肖像権、プライバシーその他の権利・利益を侵害する行為</li>
-          <li>個人情報の晒し、収集、共有、なりすまし行為</li>
-          <li>誹謗中傷、差別、脅迫、嫌がらせ、ストーキング</li>
-          <li>AI禁止または利用制限ルームにおいて、ルールに反してAI生成物を投稿する行為</li>
-          <li>他ユーザーの投稿・素材・成果物を、権利者の許諾なく本サービス外へ転載、公開、配布、販売、商用利用する行為</li>
-          <li>その他、運営者が不適切と合理的に判断する行為</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'ai',
-      title: '第6条（AI利用レベル・AI生成物の取扱い）',
-      body: (
-        <>
-          <h3 style={{ marginTop: 0 }}>1. AI利用レベル</h3>
-          <ul>
-            <li>ルームごとにAI利用レベルが設定されます。ユーザーは表示されるAI利用レベルに従って制作を行うものとします。</li>
-            <li>AI禁止ルームにおいてAI生成物を投稿した場合、運営者は削除・非表示、参加制限等の措置を行うことがあります。</li>
-          </ul>
-
-          <h3>2. AI生成物の権利・責任</h3>
-          <ul>
-            <li>ユーザーは、AI利用作品について第三者権利を侵害しないよう自己の責任で確認し、必要な権利処理を行うものとします。</li>
-            <li>運営者は、AI生成物またはAI利用作品の権利帰属、適法性、商用利用可能性等を保証しません。</li>
-          </ul>
-        </>
-      ),
-    },
-    {
-      id: 'content-handling',
-      title: '第7条（投稿内容・コンテンツの取扱い）',
-      body: (
-        <ul>
-          <li>ユーザーは、自身の投稿について必要な権利を有すること、または適法な許諾を得ていることを保証します。</li>
-          <li>運営者は、本サービスの運営・改善・不正対策・問い合わせ対応等のため、投稿やログ等を閲覧・確認する場合があります。</li>
-          <li>ユーザーは、他ユーザーの投稿や成果物を、権利者の許諾なく転載・再配布・販売してはなりません。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'ip',
-      title: '第8条（著作権・知的財産権・外部利用の制限）',
-      body: (
-        <>
-          <h3 style={{ marginTop: 0 }}>1. 権利帰属（投稿単位）</h3>
-          <ul>
-            <li>ユーザーが投稿したコンテンツの著作権その他の権利は、原則として当該ユーザーまたは正当な権利者に帰属します。</li>
-          </ul>
-
-          <h3>2. ルーム内利用のための相互ライセンス</h3>
-          <ul>
-            <li>
-              ユーザーは、ルーム内の共同制作目的の範囲に限り、自己の投稿を他の参加者および運営者が閲覧、引用、編集、
-              組込み、要約、抜粋、トリミング、サイズ変更、表示形式変更その他成果物制作に必要な範囲で利用することを、
-              無償かつ非独占的に許諾するものとします。
-            </li>
-          </ul>
-
-          <h3>3. 成果物の外部利用は原則禁止</h3>
-          <ul>
-            <li>成果物および制作過程の出力は、原則として本サービス内で完結することを前提とします。</li>
-            <li>ユーザーは、成果物を本サービス外において公開、転載、配布、販売、商用利用、出版、映像化、商品化してはなりません。</li>
-          </ul>
-
-          <h3>4. 運営者による利用</h3>
-          <ul>
-            <li>
-              ユーザーは、運営者に対し、本サービスの提供、運営、改善、不正対策、障害対応、紹介、宣伝等に必要な範囲で、
-              投稿を無償で利用する非独占的ライセンスを許諾するものとします。
-            </li>
-          </ul>
-        </>
-      ),
-    },
-    {
-      id: 'fanwork',
-      title: '第8条の2（二次創作・既存IP利用）',
-      body: (
-        <ul>
-          <li>ユーザーは、既存IPを利用した投稿または成果物を作成・公開する場合、自己の責任において必要な許諾等を確認するものとします。</li>
-          <li>「ファン創作」「非公式」「二次創作」等の表示は、権利侵害を正当化しません。</li>
-          <li>運営者は、既存IPを利用した投稿または成果物について、公開制限、検索除外、削除、非表示、収益化禁止等を行うことがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'collab',
-      title: '第9条（共同制作に関する注意）',
-      body: (
-        <ul>
-          <li>本サービスは、最大50人が同一ルームで制限時間内に共同制作を行うサービスです。</li>
-          <li>共同制作では、成果物の権利関係や利用範囲について、参加者間で認識違いが生じやすい点にご注意ください。</li>
-          <li>成果物の外部利用は原則禁止です。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'withdraw-delete',
-      title: '第9条の2（退会・投稿削除・公開済み成果物の取扱い）',
-      body: (
-        <ul>
-          <li>ユーザーが退会し、または自己の投稿の削除を求めた場合でも、共同制作の成果物に組み込まれている場合は直ちに削除されないことがあります。</li>
-          <li>公開済み成果物、制作ログ、監査記録、権利侵害対応記録、バックアップ等は一定期間保持されることがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'core-lock',
-      title: '第10条（core固定（退出制限））',
-      body: (
-        <ul>
-          <li>core は共同制作の意思決定および最終提出の中心となる役割です。</li>
-          <li>core は、参加後5分を経過した後は原則として退出できません。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'forced-publish',
-      title: '第11条（強制公開（forced_publish））',
-      body: (
-        <ul>
-          <li>ルームには制限時間が設定されます。</li>
-          <li>制限時間が到来した時点で、成果物は自動的に公開状態へ移行することがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'privacy',
-      title: '第12条（個人情報・プライバシー）',
-      body: (
-        <ul>
-          <li>運営者は、ユーザーの個人情報およびプライバシーを、適用法令および別途定めるプライバシーポリシーに従って取り扱います。</li>
-          <li>詳細はプライバシーポリシーに定めるものとします。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'service-change',
-      title: '第13条（サービスの変更・停止・終了）',
-      body: (
-        <ul>
-          <li>運営者は、運営上必要な場合、本サービスの内容を変更できることがあります。</li>
-          <li>システム保守、障害対応等により、本サービスの全部または一部を停止することがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'takedown',
-      title: '第14条（削除申立て・権利侵害対応手続き）',
-      body: (
-        <ul>
-          <li>権利侵害その他の違法・不適切な投稿が疑われる場合、権利者または正当な代理人は削除等の申立てを行うことができます。</li>
-          <li>運営者は、必要に応じて当該コンテンツの一時非表示・削除等の措置を行うことがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'moderation',
-      title: '第15条（投稿の削除・非表示・アカウント停止等）',
-      body: (
-        <ul>
-          <li>運営者は、本規約違反、権利侵害の申告、スパム・荒らし等の場合に、削除・非表示・機能制限・アカウント停止等の措置を行うことがあります。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'appeal',
-      title: '第15条の2（異議申立て）',
-      body: (
-        <ul>
-          <li>ユーザーは、削除、非表示、機能制限、アカウント停止その他の運営措置について異議がある場合、運営者所定の方法により異議申立てを行うことができます。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'disclaimer',
-      title: '第16条（免責）',
-      body: (
-        <ul>
-          <li>運営者は、本サービスがユーザーの特定の目的に適合することを保証しません。</li>
-          <li>共同制作における成果物の品質、権利関係、クレジット、収益分配等について、運営者は保証しません。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'limitation',
-      title: '第17条（責任制限）',
-      body: (
-        <ul>
-          <li>運営者が損害賠償責任を負う場合であっても、運営者に故意または重過失がある場合を除き、通常生ずべき直接損害に限られます。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'antisocial',
-      title: '第18条（反社会的勢力の排除）',
-      body: (
-        <ul>
-          <li>ユーザーは、反社会的勢力に該当しないことを表明し、保証します。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'billing',
-      title: '第19条（有償サービス・特定商取引法に関する予備条項）',
-      body: (
-        <ul>
-          <li>運営者は、将来、本サービスの全部または一部を有償化する場合があります。</li>
-          <li>有償化を行う場合、必要な表示を行います。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'changes',
-      title: '第20条（規約の変更）',
-      body: (
-        <ul>
-          <li>運営者は、必要に応じて本規約を変更できます。</li>
-          <li>変更後の規約は、本サービス上で周知します。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'law',
-      title: '第21条（準拠法・裁判管轄）',
-      body: (
-        <ul>
-          <li>本規約の準拠法は日本法とします。</li>
-          <li>本サービスに関して紛争が生じた場合、運営者の所在地を管轄する日本国内の裁判所を第一審の専属的合意管轄裁判所とします。</li>
-        </ul>
-      ),
-    },
-    {
-      id: 'contact',
-      title: '第22条（お問い合わせ）',
-      body: (
-        <>
-          <p>本規約や本サービスに関するお問い合わせは、以下の窓口までお願いします。</p>
-          {contactEmail ? (
-            <ul>
-              <li>
-                メール：<a href={`mailto:${contactEmail}`}>{contactEmail}</a>
-              </li>
-            </ul>
-          ) : (
-            <div
-              style={{
-                marginTop: 10,
-                padding: 12,
-                border: '1px solid rgba(0,0,0,0.12)',
-                borderRadius: 12,
-                background: 'rgba(0,0,0,0.03)',
-              }}
-            >
-              <div style={{ fontWeight: 800, marginBottom: 6 }}>問い合わせ先メールが未設定です</div>
-              <div style={{ fontSize: 14, lineHeight: 1.8 }}>
-                本番運用では環境変数で設定してください：
-                <br />
-                <code>NEXT_PUBLIC_SUPPORT_EMAIL</code>（推奨） または <code>SUPPORT_EMAIL</code>
-              </div>
-            </div>
-          )}
-        </>
-      ),
-    },
-  ]
-
-  const toc = sections.map((s) => ({ id: s.id, title: s.title }))
+export default async function TermsPage({ searchParams }: TermsPageProps) {
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const activeTab = normalizeTab(resolvedSearchParams?.tab)
 
   return (
     <div className="main">
       <h1 className="h1">利用規約</h1>
 
-      <div className="muted" style={{ marginTop: 8 }}>
-        最終更新日：{LAST_UPDATED}
+      <div style={{ marginTop: 14, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <Link href="/terms" style={tabButtonStyle(activeTab === 'terms')}>
+          利用規約
+        </Link>
+        <Link href="/terms?tab=privacy" style={tabButtonStyle(activeTab === 'privacy')}>
+          プライバシーポリシー
+        </Link>
       </div>
 
-      <div className="readableBox" style={{ marginTop: 14 }}>
-        <div style={{ fontWeight: 900, marginBottom: 8 }}>目次</div>
-        <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.9 }}>
-          {toc.map((t) => (
-            <li key={t.id}>
-              <a href={`#${t.id}`}>{t.title}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="readableBox" style={{ marginTop: 14 }}>
-        <p className="muted" style={{ marginTop: 0 }}>
-          本サービスは「最大50人が同一ルームで制限時間内に制作する共同制作サービス」です。
-          共同制作は権利・クレジット・二次利用の扱いがトラブルになりやすいため、
-          本規約では<strong>成果物の外部利用を原則禁止</strong>とし、揉めにくい設計を優先しています。
-          ルーム参加前に、AI利用レベル・強制公開（forced_publish）・core退出制限を必ず確認してください。
-        </p>
-
-        {sections.map((sec) => (
-          <section key={sec.id} id={sec.id} style={{ marginTop: 18 }}>
-            <h2 style={{ fontSize: 16, margin: '18px 0 8px', lineHeight: 1.35 }}>
-              {sec.title}
-            </h2>
-            <div className="prose">{sec.body}</div>
-          </section>
-        ))}
-      </div>
+      {activeTab === 'privacy' ? (
+        <div style={{ marginTop: 14 }}>
+          <PrivacyContent />
+        </div>
+      ) : (
+        <div style={{ marginTop: 14 }}>
+          <TermsContent />
+        </div>
+      )}
     </div>
   )
 }
