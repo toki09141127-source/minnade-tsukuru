@@ -2,6 +2,7 @@
 import './globals.css'
 import Header from '@/components/Header'
 import TermsConsentGate from '@/components/TermsConsentGate'
+import ScrollButtons from '@/components/ScrollButtons'
 import type { Metadata } from 'next'
 
 const ICON_VERSION = '2026-03-05'
@@ -76,6 +77,7 @@ export default function RootLayout({
         <Header />
         <TermsConsentGate />
         <main className="main">{children}</main>
+        <ScrollButtons />
       </body>
     </html>
   )
