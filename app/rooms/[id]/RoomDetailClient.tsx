@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import BoardClient from './BoardClient'
 import ConfirmModal from '@/app/components/ConfirmModal'
+import { CURRENT_ROOM_TERMS_VERSION } from '@/lib/legalVersions'
 
 type RoomFlags = {
   id: string
@@ -24,6 +25,196 @@ type JoinRequestRow = {
   created_at: string
 }
 
+type PendingAction =
+  | null
+  | 'joinSupporter'
+  | 'requestCore'
+  | 'joinCoreFirstCome'
+  | 'joinCoreByInvite'
+
+type ConsentPayload = {
+  roomTermsVersion: string
+  roomAgreedAt: string
+  forcedPublishAckAt: string
+  coreLockAgreedAt?: string
+}
+
+function ConsentModal({
+  open,
+  title,
+  description,
+  requireCoreLock,
+  loading,
+  error,
+  onClose,
+  onConfirm,
+}: {
+  open: boolean
+  title: string
+  description: string
+  requireCoreLock: boolean
+  loading: boolean
+  error: string
+  onClose: () => void
+  onConfirm: (consent: ConsentPayload) => void
+}) {
+  const [agreeRoom, setAgreeRoom] = useState(false)
+  const [agreeForcedPublish, setAgreeForcedPublish] = useState(false)
+  const [agreeCoreLock, setAgreeCoreLock] = useState(false)
+
+  useEffect(() => {
+    if (!open) {
+      setAgreeRoom(false)
+      setAgreeForcedPublish(false)
+      setAgreeCoreLock(false)
+    }
+  }, [open])
+
+  if (!open) return null
+
+  const canConfirm =
+    agreeRoom && agreeForcedPublish && (!requireCoreLock || agreeCoreLock) && !loading
+
+  return (
+    <div
+      aria-modal="true"
+      role="dialog"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        background: 'rgba(0,0,0,0.55)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          maxWidth: 680,
+          background: '#fff',
+          borderRadius: 16,
+          padding: 20,
+          boxShadow: '0 12px 32px rgba(0,0,0,0.2)',
+        }}
+      >
+        <h2 style={{ marginTop: 0 }}>{title}</h2>
+
+        <p style={{ lineHeight: 1.8 }}>{description}</p>
+
+        <div
+          style={{
+            marginTop: 12,
+            padding: 12,
+            border: '1px solid #eee',
+            borderRadius: 12,
+            background: '#fafafa',
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 8 }}>ルーム参加に関する確認</div>
+          <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
+            <li>あなたの投稿は他の参加者に閲覧・引用・編集・組込みされる場合があります</li>
+            <li>投稿内容は完成作品として公開される場合があります</li>
+            <li>作品制作上、投稿が要約・トリミング・形式変更される場合があります</li>
+            <li>成果物の外部利用は原則禁止です</li>
+          </ul>
+        </div>
+
+        <div
+          style={{
+            marginTop: 12,
+            padding: 12,
+            border: '1px solid #eee',
+            borderRadius: 12,
+            background: '#fafafa',
+          }}
+        >
+          <div style={{ fontWeight: 700, marginBottom: 8 }}>強制公開について</div>
+          <div style={{ lineHeight: 1.8 }}>
+            制限時間が終了すると、成果物は自動的に公開状態へ移行する場合があります（forced_publish）。
+          </div>
+        </div>
+
+        <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
+          <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            <input
+              type="checkbox"
+              checked={agreeRoom}
+              onChange={(e) => setAgreeRoom(e.target.checked)}
+              style={{ marginTop: 4 }}
+            />
+            <span style={{ lineHeight: 1.7 }}>
+              共同制作に伴う投稿の編集・組込み・公開範囲について理解し、利用規約に同意します。
+            </span>
+          </label>
+
+          <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+            <input
+              type="checkbox"
+              checked={agreeForcedPublish}
+              onChange={(e) => setAgreeForcedPublish(e.target.checked)}
+              style={{ marginTop: 4 }}
+            />
+            <span style={{ lineHeight: 1.7 }}>
+              制限時間終了時に成果物が自動公開される可能性があることを理解し、同意します。
+            </span>
+          </label>
+
+          {requireCoreLock && (
+            <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+              <input
+                type="checkbox"
+                checked={agreeCoreLock}
+                onChange={(e) => setAgreeCoreLock(e.target.checked)}
+                style={{ marginTop: 4 }}
+              />
+              <span style={{ lineHeight: 1.7 }}>
+                core は参加から5分経過後、原則として退出できないことを理解し、同意します。
+              </span>
+            </label>
+          )}
+        </div>
+
+        {!!error && (
+          <div style={{ marginTop: 10, color: '#b00020', fontWeight: 800, fontSize: 13 }}>
+            {error}
+          </div>
+        )}
+
+        <div style={{ marginTop: 18, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => {
+              const now = new Date().toISOString()
+              const consent: ConsentPayload = {
+                roomTermsVersion: CURRENT_ROOM_TERMS_VERSION,
+                roomAgreedAt: now,
+                forcedPublishAckAt: now,
+                ...(requireCoreLock ? { coreLockAgreedAt: now } : {}),
+              }
+              onConfirm(consent)
+            }}
+            disabled={!canConfirm}
+            style={{
+              minWidth: 160,
+              opacity: canConfirm ? 1 : 0.6,
+              cursor: canConfirm ? 'pointer' : 'not-allowed',
+              fontWeight: 900,
+            }}
+          >
+            {loading ? '処理中…' : '同意して進む'}
+          </button>
+
+          <button onClick={onClose} disabled={loading}>
+            キャンセル
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   const [userId, setUserId] = useState<string | null>(null)
   const [myMember, setMyMember] = useState<MyMember>(null)
@@ -33,12 +224,13 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
   const [pendingRequests, setPendingRequests] = useState<JoinRequestRow[]>([])
   const [busy, setBusy] = useState(false)
 
-  // ✅ UI内エラー表示（alert依存を減らす）
   const [uiError, setUiError] = useState<string>('')
+  const [uiNotice, setUiNotice] = useState<string>('')
+
+  const [pendingAction, setPendingAction] = useState<PendingAction>(null)
 
   const isOpen = room.status === 'open'
 
-  // left_at が null のときだけ「参加中」とみなす
   const myRole = myMember?.left_at == null ? myMember?.role : null
 
   const coreLeaveAllowed = useMemo(() => {
@@ -50,13 +242,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   const canPost = isOpen && (myRole === 'supporter' || myRole === 'core' || myRole === 'creator')
 
-  // ✅ 未参加者だけが「招待コードでcore参加」を使える
   const canJoinByInvite = isOpen && room.enable_core_invite && !myRole
-
-  // ✅ 承認OFFのときは「先着core参加」ボタン
   const canJoinCoreFirstCome = isOpen && !room.enable_core_approval && !myRole
 
-  // ✅ iPhone対応：退出confirmをモーダル化
   const [leaveOpen, setLeaveOpen] = useState(false)
 
   const getToken = async () => {
@@ -78,7 +266,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       return
     }
 
-    // 自分の参加状態（RLSでselect可能前提）
     const { data: mem } = await supabase
       .from('room_members')
       .select('role, joined_at, left_at')
@@ -88,7 +275,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
     setMyMember((mem as any) ?? null)
 
-    // creatorなら pending一覧（RLSでcreatorのみ見える想定）
     if (mem?.left_at == null && mem?.role === 'creator') {
       const { data: reqs } = await supabase
         .from('room_join_requests')
@@ -110,9 +296,9 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [room.id])
 
-  // --- actions ---
-  const joinSupporter = async () => {
+  const joinSupporter = async (consent: ConsentPayload) => {
     setUiError('')
+    setUiNotice('')
     if (!isOpen) return setUiError('このルームは参加できません')
     const token = await getToken()
     if (!token) return setUiError('ログインしてください')
@@ -122,18 +308,20 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       const res = await fetch('/api/rooms/join-supporter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ roomId: room.id }),
+        body: JSON.stringify({ roomId: room.id, consent }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
+      setPendingAction(null)
       await reloadMyState()
     } finally {
       setBusy(false)
     }
   }
 
-  const requestCore = async () => {
+  const requestCore = async (consent: ConsentPayload) => {
     setUiError('')
+    setUiNotice('')
     if (!isOpen) return setUiError('このルームは申請できません')
     if (!room.enable_core_approval) return
     const token = await getToken()
@@ -144,19 +332,21 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       const res = await fetch('/api/rooms/request-core', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ roomId: room.id }),
+        body: JSON.stringify({ roomId: room.id, consent }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '申請に失敗しました')
-      alert('core申請を送信しました')
+      setPendingAction(null)
+      setUiNotice('core申請を送信しました')
       await reloadMyState()
     } finally {
       setBusy(false)
     }
   }
 
-  const joinCoreFirstCome = async () => {
+  const joinCoreFirstCome = async (consent: ConsentPayload) => {
     setUiError('')
+    setUiNotice('')
     if (myRole) return setUiError('すでに参加しています')
     if (!isOpen) return setUiError('このルームは参加できません')
     if (room.enable_core_approval) return setUiError('このルームは承認制です（先着参加はできません）')
@@ -169,19 +359,20 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       const res = await fetch('/api/rooms/join-core-first-come', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ roomId: room.id }),
+        body: JSON.stringify({ roomId: room.id, consent }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
+      setPendingAction(null)
       await reloadMyState()
     } finally {
       setBusy(false)
     }
   }
 
-  const joinCoreByInvite = async () => {
+  const joinCoreByInvite = async (consent: ConsentPayload) => {
     setUiError('')
-    // ✅ 二重ガード：未参加者以外は操作させない（creatorを含む）
+    setUiNotice('')
     if (myRole) return setUiError('すでに参加しています（招待コード参加は未参加者のみ）')
 
     if (!isOpen) return setUiError('このルームは参加できません')
@@ -198,19 +389,20 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       const res = await fetch('/api/rooms/join-core-by-invite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ roomId: room.id, inviteCode: code }),
+        body: JSON.stringify({ roomId: room.id, inviteCode: code, consent }),
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '参加に失敗しました')
+      setPendingAction(null)
       await reloadMyState()
     } finally {
       setBusy(false)
     }
   }
 
-  // ✅ 退出：confirm()廃止 → モーダルから実行
   const executeLeaveRoom = async () => {
     setUiError('')
+    setUiNotice('')
     const token = await getToken()
     if (!token) {
       setUiError('ログインしてください')
@@ -236,6 +428,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   const approve = async (requestId: string) => {
     setUiError('')
+    setUiNotice('')
     const token = await getToken()
     if (!token) return setUiError('ログインしてください')
 
@@ -248,6 +441,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '承認に失敗しました')
+      setUiNotice('承認しました')
       await reloadMyState()
     } finally {
       setBusy(false)
@@ -256,6 +450,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
   const reject = async (requestId: string) => {
     setUiError('')
+    setUiNotice('')
     const token = await getToken()
     if (!token) return setUiError('ログインしてください')
 
@@ -268,13 +463,13 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
       })
       const json = await res.json().catch(() => ({}))
       if (!res.ok) return setUiError(json?.error ?? '却下に失敗しました')
+      setUiNotice('却下しました')
       await reloadMyState()
     } finally {
       setBusy(false)
     }
   }
 
-  // --- UI ---
   return (
     <div style={{ marginTop: 14 }}>
       <div
@@ -301,17 +496,24 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 12 }}>
           <button
-            onClick={joinSupporter}
+            onClick={() => {
+              setUiError('')
+              setUiNotice('')
+              setPendingAction('joinSupporter')
+            }}
             disabled={busy || !isOpen || checking || !!myRole}
             style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
           >
             supporter参加
           </button>
 
-          {/* ✅ 承認制ON：core申請 */}
           {room.enable_core_approval && (
             <button
-              onClick={requestCore}
+              onClick={() => {
+                setUiError('')
+                setUiNotice('')
+                setPendingAction('requestCore')
+              }}
               disabled={busy || !isOpen || checking || myRole === 'core' || myRole === 'creator'}
               style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
             >
@@ -319,10 +521,13 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
             </button>
           )}
 
-          {/* ✅ 承認制OFF：先着core参加 */}
           {!room.enable_core_approval && (
             <button
-              onClick={joinCoreFirstCome}
+              onClick={() => {
+                setUiError('')
+                setUiNotice('')
+                setPendingAction('joinCoreFirstCome')
+              }}
               disabled={busy || !isOpen || checking || !!myRole}
               style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
             >
@@ -333,6 +538,7 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           <button
             onClick={() => {
               setUiError('')
+              setUiNotice('')
               setLeaveOpen(true)
             }}
             disabled={busy || checking || !myRole || myRole === 'creator' || (myRole === 'core' && !coreLeaveAllowed)}
@@ -349,7 +555,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
           </button>
         </div>
 
-        {/* ✅ 招待コードでcore参加（未参加者のみ） */}
         {canJoinByInvite && (
           <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(0,0,0,0.08)' }}>
             <div style={{ fontWeight: 900, marginBottom: 6 }}>招待コードでcore参加</div>
@@ -361,7 +566,11 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
                 style={{ padding: 10, borderRadius: 10, border: '1px solid rgba(0,0,0,0.18)' }}
               />
               <button
-                onClick={joinCoreByInvite}
+                onClick={() => {
+                  setUiError('')
+                  setUiNotice('')
+                  setPendingAction('joinCoreByInvite')
+                }}
                 disabled={busy || checking}
                 style={{ padding: '10px 14px', borderRadius: 12, fontWeight: 900 }}
               >
@@ -382,9 +591,14 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
             {uiError}
           </div>
         )}
+
+        {!!uiNotice && (
+          <div style={{ marginTop: 10, color: '#0a7', fontWeight: 800, fontSize: 13 }}>
+            {uiNotice}
+          </div>
+        )}
       </div>
 
-      {/* creator 承認UI（承認制ONのみ） */}
       {myRole === 'creator' && room.enable_core_approval && (
         <div
           style={{
@@ -449,7 +663,6 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         </div>
       )}
 
-      {/* ✅ iPhone対応：退出confirm代替モーダル */}
       <ConfirmModal
         open={leaveOpen}
         title="このルームから退出しますか？"
@@ -464,6 +677,50 @@ export default function RoomDetailClient({ room }: { room: RoomFlags }) {
         loading={busy}
         onCancel={() => !busy && setLeaveOpen(false)}
         onConfirm={executeLeaveRoom}
+      />
+
+      <ConsentModal
+        open={pendingAction === 'joinSupporter'}
+        title="supporter参加前の確認"
+        description="supporterとして参加する前に、共同制作と強制公開に関する内容を確認してください。"
+        requireCoreLock={false}
+        loading={busy}
+        error={uiError}
+        onClose={() => !busy && setPendingAction(null)}
+        onConfirm={joinSupporter}
+      />
+
+      <ConsentModal
+        open={pendingAction === 'requestCore'}
+        title="core申請前の確認"
+        description="承認制のcore申請を送る前に、共同制作、強制公開、およびcore退出制限に関する内容を確認してください。"
+        requireCoreLock={true}
+        loading={busy}
+        error={uiError}
+        onClose={() => !busy && setPendingAction(null)}
+        onConfirm={requestCore}
+      />
+
+      <ConsentModal
+        open={pendingAction === 'joinCoreFirstCome'}
+        title="core参加前の確認"
+        description="このルームでは承認制ではないcore参加モードが有効です。参加前に同意内容を確認してください。"
+        requireCoreLock={true}
+        loading={busy}
+        error={uiError}
+        onClose={() => !busy && setPendingAction(null)}
+        onConfirm={joinCoreFirstCome}
+      />
+
+      <ConsentModal
+        open={pendingAction === 'joinCoreByInvite'}
+        title="招待コードでcore参加"
+        description="招待コードによるcore参加前に、同意内容を確認してください。"
+        requireCoreLock={true}
+        loading={busy}
+        error={uiError}
+        onClose={() => !busy && setPendingAction(null)}
+        onConfirm={joinCoreByInvite}
       />
     </div>
   )

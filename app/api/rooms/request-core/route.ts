@@ -23,11 +23,40 @@ async function getUserIdFromBearer(req: Request) {
   return { userId: data.user.id, error: null }
 }
 
+function parseConsent(body: any) {
+  const consent = body?.consent ?? {}
+  const roomTermsVersion = String(consent?.roomTermsVersion ?? '').trim()
+  const roomAgreedAt = String(consent?.roomAgreedAt ?? '').trim()
+  const forcedPublishAckAt = String(consent?.forcedPublishAckAt ?? '').trim()
+  const coreLockAgreedAt = String(consent?.coreLockAgreedAt ?? '').trim()
+
+  if (!roomTermsVersion || !roomAgreedAt || !forcedPublishAckAt || !coreLockAgreedAt) {
+    return { ok: false as const, error: 'core申請同意情報が不足しています' }
+  }
+
+  return {
+    ok: true as const,
+    value: {
+      roomTermsVersion,
+      roomAgreedAt,
+      forcedPublishAckAt,
+      coreLockAgreedAt,
+    },
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json().catch(() => ({}))
     const roomId = String(body?.roomId ?? '').trim()
-    if (!roomId) return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
+    if (!roomId) {
+      return NextResponse.json({ ok: false, error: 'roomId is required' }, { status: 400 })
+    }
+
+    const consentResult = parseConsent(body)
+    if (!consentResult.ok) {
+      return NextResponse.json({ ok: false, error: consentResult.error }, { status: 400 })
+    }
 
     const { userId, error } = await getUserIdFromBearer(req)
     if (!userId) return NextResponse.json({ ok: false, error }, { status: 401 })
@@ -43,10 +72,13 @@ export async function POST(req: Request) {
 
     if (roomErr) return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
     if (!room) return NextResponse.json({ ok: false, error: 'ルームが見つかりません' }, { status: 404 })
-    if (room.status !== 'open') return NextResponse.json({ ok: false, error: 'openルームのみ申請できます' }, { status: 400 })
-    if (!room.enable_core_approval) return NextResponse.json({ ok: false, error: 'このルームは承認制がOFFです' }, { status: 400 })
+    if (room.status !== 'open') {
+      return NextResponse.json({ ok: false, error: 'openルームのみ申請できます' }, { status: 400 })
+    }
+    if (!room.enable_core_approval) {
+      return NextResponse.json({ ok: false, error: 'このルームは承認制がOFFです' }, { status: 400 })
+    }
 
-    // 既に core/creator なら申請不要
     const { data: mem } = await admin
       .from('room_members')
       .select('role, left_at')
@@ -58,7 +90,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: true, requested: false, message: 'すでにcoreです' })
     }
 
-    // pending があれば再作成しない
     const { data: existingReq, error: reqErr } = await admin
       .from('room_join_requests')
       .select('id, status')
@@ -70,6 +101,13 @@ export async function POST(req: Request) {
     if (reqErr) return NextResponse.json({ ok: false, error: reqErr.message }, { status: 500 })
     if (existingReq) return NextResponse.json({ ok: true, requested: true, requestId: existingReq.id })
 
+    const {
+      roomTermsVersion,
+      roomAgreedAt,
+      forcedPublishAckAt,
+      coreLockAgreedAt,
+    } = consentResult.value
+
     const { data: ins, error: insErr } = await admin
       .from('room_join_requests')
       .insert({
@@ -77,6 +115,10 @@ export async function POST(req: Request) {
         user_id: userId,
         requested_role: 'core',
         status: 'pending',
+        room_terms_version: roomTermsVersion,
+        room_agreed_at: roomAgreedAt,
+        forced_publish_ack_at: forcedPublishAckAt,
+        core_lock_agreed_at: coreLockAgreedAt,
       })
       .select('id')
       .maybeSingle()
@@ -85,6 +127,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, requested: true, requestId: ins?.id ?? null })
   } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+    return NextResponse.json(
+      { ok: false, error: e?.message ?? 'server error' },
+      { status: 500 }
+    )
   }
 }

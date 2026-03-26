@@ -1,8 +1,13 @@
 'use client'
 
 import React, { useMemo, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
+import {
+  CURRENT_PRIVACY_VERSION,
+  CURRENT_TERMS_VERSION,
+} from '@/lib/legalVersions'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -13,13 +18,14 @@ export default function LoginPage() {
   const [signupSuccess, setSignupSuccess] = useState(false)
   const [resending, setResending] = useState(false)
 
-  // ✅ 追加：送信中（連打防止）
+  const [agreeTerms, setAgreeTerms] = useState(false)
+  const [agreePrivacy, setAgreePrivacy] = useState(false)
+
   const [loading, setLoading] = useState(false)
 
   const eTrim = useMemo(() => email.trim(), [email])
 
   const normalizePassword = (p: string) => {
-    // ✅ コピペ末尾空白事故を減らす（前後だけ）
     return p.replace(/^\s+|\s+$/g, '')
   }
 
@@ -64,14 +70,52 @@ export default function LoginPage() {
       setMessage('パスワードは6文字以上にしてください')
       return
     }
+    if (!agreeTerms || !agreePrivacy) {
+      setMessage('新規登録には、利用規約とプライバシーポリシーへの同意が必要です。')
+      return
+    }
 
     setLoading(true)
     try {
-      const { error } = await supabase.auth.signUp({ email: e, password: p })
+      const { data, error } = await supabase.auth.signUp({
+        email: e,
+        password: p,
+      })
+
       if (error) {
         setFriendlyError(error.message)
         return
       }
+
+      const userId = data.user?.id
+
+      if (userId) {
+        const now = new Date().toISOString()
+
+        const { error: upsertError } = await supabase.from('profiles').upsert(
+          {
+            id: userId,
+            terms_version: CURRENT_TERMS_VERSION,
+            terms_agreed_at: now,
+            privacy_version: CURRENT_PRIVACY_VERSION,
+            privacy_agreed_at: now,
+            updated_at: now,
+          },
+          { onConflict: 'id' }
+        )
+
+        if (upsertError) {
+          setMessage(
+            [
+              'アカウント登録自体は成功しましたが、同意記録の保存に失敗しました。',
+              '管理者にお問い合わせください。',
+              `詳細: ${upsertError.message}`,
+            ].join('\n')
+          )
+          return
+        }
+      }
+
       setSignupSuccess(true)
       setMessage('')
     } finally {
@@ -108,7 +152,6 @@ export default function LoginPage() {
     }
   }
 
-  // ✅ 追加：パスワード再設定（復旧導線）
   const sendPasswordReset = async () => {
     setMessage('')
 
@@ -136,7 +179,6 @@ export default function LoginPage() {
     }
   }
 
-  // ✅ 確認メール再送：supabase-js のバージョン差を吸収
   const resendConfirmation = async () => {
     setMessage('')
 
@@ -150,7 +192,6 @@ export default function LoginPage() {
     try {
       const authAny = supabase.auth as any
 
-      // v2系で resend がある場合
       if (typeof authAny?.resend === 'function') {
         const { error } = await authAny.resend({ type: 'signup', email: e })
         if (error) {
@@ -178,7 +219,6 @@ export default function LoginPage() {
     <div style={{ padding: 24 }}>
       <h1>ログイン</h1>
 
-      {/* ✅ 丁寧版：手順説明 */}
       <div
         style={{
           marginTop: 12,
@@ -194,12 +234,13 @@ export default function LoginPage() {
         <div style={{ fontSize: 13, color: '#333', lineHeight: 1.7, marginBottom: 8 }}>
           このサイトは<strong>「メール＋パスワード」</strong>でログインします。
           <br />
-          <strong>マジックリンク（メールのURLを押すだけでログイン）方式ではありません。</strong>
+          <strong>マジックリンク方式ではありません。</strong>
         </div>
 
         <ol style={{ margin: 0, paddingLeft: 18, lineHeight: 1.75 }}>
           <li>
-            <strong>初めての人</strong>は、メールアドレスとパスワードを入力して「<strong>新規登録</strong>」を押す
+            <strong>初めての人</strong>は、メールアドレスとパスワードを入力し、
+            利用規約・プライバシーポリシーに同意のうえ「<strong>新規登録</strong>」を押す
           </li>
 
           <li>
@@ -212,34 +253,14 @@ export default function LoginPage() {
 
           <li>
             <strong>有効化後</strong>にこの画面に戻り、「<strong>ログイン</strong>」を押す
-            <div style={{ fontSize: 12, color: '#666', marginTop: 6, lineHeight: 1.6 }}>
-              ※ここで使うのは「登録時に設定したパスワード」です。<br />
-              ※スマホの自動入力で別のパスワードが入ることがあるので注意してください。
-            </div>
           </li>
 
           <li>
             <strong>登録済みの人</strong>は、メールアドレスとパスワードを入力して「<strong>ログイン</strong>」だけでOK
           </li>
-
-          <li>
-            うまくいかない時は、まず<strong>入力ミス</strong>をチェック（特に多いもの）
-            <div style={{ fontSize: 12, color: '#666', marginTop: 6, lineHeight: 1.6 }}>
-              ・コピペ末尾の空白 / 全角スペース / CapsLock（大文字固定）<br />
-              ・メールアドレスの打ち間違い（@の前後）<br />
-              ・パスワードが1文字違う / 自動入力で別パスワードが入っている
-            </div>
-          </li>
         </ol>
-
-        <div style={{ fontSize: 12, color: '#666', marginTop: 10, lineHeight: 1.7 }}>
-          ✅ 確認メールが届かない場合は「<strong>確認メールを再送する</strong>」をお試しください（下に表示されます）。
-          <br />
-          ✅ パスワードを忘れた／ログインできない場合は「<strong>パスワード再設定</strong>」から復旧できます。
-        </div>
       </div>
 
-      {/* ✅ 入力欄 */}
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
         <input
           type="email"
@@ -273,7 +294,53 @@ export default function LoginPage() {
         />
       </div>
 
-      {/* ✅ ボタン */}
+      <div
+        style={{
+          marginTop: 14,
+          maxWidth: 720,
+          padding: 12,
+          border: '1px solid #eee',
+          borderRadius: 10,
+          background: '#fafafa',
+        }}
+      >
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>新規登録時の同意</div>
+
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 10 }}>
+          <input
+            type="checkbox"
+            checked={agreeTerms}
+            onChange={(e) => setAgreeTerms(e.target.checked)}
+            style={{ marginTop: 4 }}
+          />
+          <span style={{ lineHeight: 1.7 }}>
+            <Link href="/terms" target="_blank">
+              利用規約
+            </Link>
+            に同意します
+          </span>
+        </label>
+
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+          <input
+            type="checkbox"
+            checked={agreePrivacy}
+            onChange={(e) => setAgreePrivacy(e.target.checked)}
+            style={{ marginTop: 4 }}
+          />
+          <span style={{ lineHeight: 1.7 }}>
+            <Link href="/privacy" target="_blank">
+              プライバシーポリシー
+            </Link>
+            に同意します
+          </span>
+        </label>
+
+        <div style={{ fontSize: 12, color: '#666', marginTop: 10, lineHeight: 1.6 }}>
+          ※ この同意は新規登録時に必要です。ログインだけならチェック不要です。
+        </div>
+      </div>
+
       <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <button onClick={signUp} style={{ minWidth: 120 }} disabled={loading}>
           {loading ? '処理中…' : '新規登録'}
@@ -286,7 +353,6 @@ export default function LoginPage() {
         </button>
       </div>
 
-      {/* ✅ 新規登録成功時の専用UI */}
       {signupSuccess && (
         <div
           style={{
@@ -312,14 +378,9 @@ export default function LoginPage() {
               {resending ? '送信中…' : '確認メールを再送する'}
             </button>
           </div>
-
-          <div style={{ fontSize: 12, color: '#666', marginTop: 8 }}>
-            ※届かない場合は、メールアドレスの入力ミスや末尾の空白も確認してください。
-          </div>
         </div>
       )}
 
-      {/* ✅ message表示 */}
       {message && (
         <pre
           style={{

@@ -1,6 +1,7 @@
 // app/layout.tsx
 import './globals.css'
 import Header from '@/components/Header'
+import TermsConsentGate from '@/components/TermsConsentGate'
 import type { Metadata } from 'next'
 
 const ICON_VERSION = '2026-03-05'
@@ -16,11 +17,6 @@ export const metadata: Metadata = {
   description:
     'みんなの創作でアイデアいっぱい！最大50人で共同制作できるクリエイター向けサイト。',
 
-  /*
-  favicon完全対応
-  Safari / iOS / Chrome / Edge
-  全部カバー
-  */
   icons: {
     icon: [
       {
@@ -78,6 +74,7 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <Header />
+        <TermsConsentGate />
         <main className="main">{children}</main>
       </body>
     </html>

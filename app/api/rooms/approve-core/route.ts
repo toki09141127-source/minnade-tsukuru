@@ -37,6 +37,22 @@ export async function POST(req: Request) {
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
 
+    const { data: reqRow, error: reqRowErr } = await admin
+      .from('room_join_requests')
+      .select(
+        'id, user_id, room_terms_version, room_agreed_at, forced_publish_ack_at, core_lock_agreed_at'
+      )
+      .eq('id', requestId)
+      .eq('room_id', roomId)
+      .maybeSingle()
+
+    if (reqRowErr) {
+      return NextResponse.json({ ok: false, error: reqRowErr.message }, { status: 500 })
+    }
+    if (!reqRow) {
+      return NextResponse.json({ ok: false, error: '申請が見つかりません' }, { status: 404 })
+    }
+
     const { data, error: rpcErr } = await admin.rpc('approve_core_request', {
       p_room_id: roomId,
       p_creator_user_id: userId,
@@ -52,6 +68,22 @@ export async function POST(req: Request) {
       if (msg.includes('CORE_FULL')) return NextResponse.json({ ok: false, error: 'core枠が満員です（最大5）' }, { status: 409 })
 
       return NextResponse.json({ ok: false, error: msg }, { status: 500 })
+    }
+
+    const { error: updateErr } = await admin
+      .from('room_members')
+      .update({
+        room_terms_version: reqRow.room_terms_version,
+        room_agreed_at: reqRow.room_agreed_at,
+        forced_publish_ack_at: reqRow.forced_publish_ack_at,
+        core_lock_agreed_at: reqRow.core_lock_agreed_at,
+      })
+      .eq('room_id', roomId)
+      .eq('user_id', reqRow.user_id)
+      .is('left_at', null)
+
+    if (updateErr) {
+      return NextResponse.json({ ok: false, error: updateErr.message }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true, data })
