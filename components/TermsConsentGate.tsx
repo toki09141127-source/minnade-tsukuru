@@ -11,10 +11,22 @@ import {
 
 type ProfileConsentRow = {
   id: string
+  username: string | null
   terms_version: string | null
   terms_agreed_at: string | null
   privacy_version: string | null
   privacy_agreed_at: string | null
+}
+
+function buildFallbackUsername(user: {
+  id: string
+  email?: string | null
+}) {
+  const emailPrefix = (user.email ?? '').split('@')[0]?.trim()
+  if (emailPrefix) {
+    return `${emailPrefix}_${user.id.slice(0, 8)}`
+  }
+  return `user_${user.id.slice(0, 8)}`
 }
 
 export default function TermsConsentGate() {
@@ -68,7 +80,7 @@ export default function TermsConsentGate() {
 
         const { data, error: profileError } = await supabase
           .from('profiles')
-          .select('id, terms_version, terms_agreed_at, privacy_version, privacy_agreed_at')
+          .select('id, username, terms_version, terms_agreed_at, privacy_version, privacy_agreed_at')
           .eq('id', user.id)
           .maybeSingle<ProfileConsentRow>()
 
@@ -117,21 +129,47 @@ export default function TermsConsentGate() {
 
       const now = new Date().toISOString()
 
-      const { error: upsertError } = await supabase
+      const { data: existingProfile, error: selectError } = await supabase
         .from('profiles')
-        .upsert(
-          {
-            id: user.id,
+        .select('id, username')
+        .eq('id', user.id)
+        .maybeSingle<{ id: string; username: string | null }>()
+
+      if (selectError) throw selectError
+
+      if (existingProfile) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({
             terms_version: CURRENT_TERMS_VERSION,
             terms_agreed_at: now,
             privacy_version: CURRENT_PRIVACY_VERSION,
             privacy_agreed_at: now,
             updated_at: now,
-          },
-          { onConflict: 'id' }
-        )
+          })
+          .eq('id', user.id)
 
-      if (upsertError) throw upsertError
+        if (updateError) throw updateError
+      } else {
+        const username = buildFallbackUsername({
+          id: user.id,
+          email: user.email,
+        })
+
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            username,
+            terms_version: CURRENT_TERMS_VERSION,
+            terms_agreed_at: now,
+            privacy_version: CURRENT_PRIVACY_VERSION,
+            privacy_agreed_at: now,
+            updated_at: now,
+          })
+
+        if (insertError) throw insertError
+      }
 
       setNeedsConsent(false)
       setAgreeTerms(false)

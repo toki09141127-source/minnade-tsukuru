@@ -29,6 +29,14 @@ export default function LoginPage() {
     return p.replace(/^\s+|\s+$/g, '')
   }
 
+  const buildFallbackUsername = (userId: string, mail: string) => {
+    const emailPrefix = mail.split('@')[0]?.trim()
+    if (emailPrefix) {
+      return `${emailPrefix}_${userId.slice(0, 8)}`
+    }
+    return `user_${userId.slice(0, 8)}`
+  }
+
   const setFriendlyError = (raw: string) => {
     if (raw.includes('Invalid login credentials')) {
       setMessage(
@@ -91,10 +99,12 @@ export default function LoginPage() {
 
       if (userId) {
         const now = new Date().toISOString()
+        const fallbackUsername = buildFallbackUsername(userId, e)
 
         const { error: upsertError } = await supabase.from('profiles').upsert(
           {
             id: userId,
+            username: fallbackUsername,
             terms_version: CURRENT_TERMS_VERSION,
             terms_agreed_at: now,
             privacy_version: CURRENT_PRIVACY_VERSION,
