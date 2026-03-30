@@ -204,17 +204,37 @@ export default function TermsConsentGate() {
         style={{
           width: '100%',
           maxWidth: 640,
+          maxHeight: 'min(92dvh, 760px)',
           background: '#fff',
           borderRadius: 16,
-          padding: 20,
           boxShadow: '0 10px 30px rgba(0,0,0,0.18)',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        <h2 id="terms-consent-title" style={{ marginTop: 0, marginBottom: 12 }}>
-          利用規約・プライバシーポリシーの再同意
-        </h2>
+        <div
+          style={{
+            padding: '20px 20px 14px',
+            borderBottom: '1px solid #eee',
+            flexShrink: 0,
+          }}
+        >
+          <h2 id="terms-consent-title" style={{ marginTop: 0, marginBottom: 12 }}>
+            利用規約・プライバシーポリシーの再同意
+          </h2>
+        </div>
 
-        <div style={{ lineHeight: 1.8, color: '#333' }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: 20,
+            WebkitOverflowScrolling: 'touch',
+            lineHeight: 1.8,
+            color: '#333',
+          }}
+        >
           <p style={{ marginTop: 0 }}>
             利用規約およびプライバシーポリシーが更新されました。
             引き続き本サービスを利用するには、最新の内容への同意が必要です。
@@ -245,7 +265,7 @@ export default function TermsConsentGate() {
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
-                style={{ marginTop: 4 }}
+                style={{ marginTop: 4, flexShrink: 0 }}
               />
               <span>
                 <Link href="/terms" target="_blank">
@@ -260,7 +280,7 @@ export default function TermsConsentGate() {
                 type="checkbox"
                 checked={agreePrivacy}
                 onChange={(e) => setAgreePrivacy(e.target.checked)}
-                style={{ marginTop: 4 }}
+                style={{ marginTop: 4, flexShrink: 0 }}
               />
               <span>
                 <Link href="/terms?tab=privacy" target="_blank">
@@ -289,15 +309,31 @@ export default function TermsConsentGate() {
               {error}
             </div>
           ) : null}
+        </div>
 
-          <div style={{ marginTop: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div
+          style={{
+            padding: '16px 20px calc(16px + env(safe-area-inset-bottom))',
+            borderTop: '1px solid #eee',
+            background: '#fff',
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button
               onClick={handleAgree}
               disabled={!canSubmit}
               style={{
                 minWidth: 180,
+                minHeight: 44,
+                padding: '10px 14px',
+                borderRadius: 12,
+                border: '1px solid #111',
+                background: '#111',
+                color: '#fff',
                 opacity: canSubmit ? 1 : 0.6,
                 cursor: canSubmit ? 'pointer' : 'not-allowed',
+                fontWeight: 800,
               }}
             >
               {submitting ? '保存中…' : '同意して続ける'}
