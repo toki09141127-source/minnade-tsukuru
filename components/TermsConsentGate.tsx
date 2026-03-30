@@ -29,6 +29,17 @@ function buildFallbackUsername(user: {
   return `user_${user.id.slice(0, 8)}`
 }
 
+function isAuthSessionMissingError(err: unknown) {
+  const msg = String((err as any)?.message ?? '')
+  return (
+    msg.includes('Auth session missing') ||
+    msg.includes('session missing') ||
+    msg.includes('JWT') ||
+    msg.includes('invalid claim: missing sub claim') ||
+    msg.includes('session_not_found')
+  )
+}
+
 export default function TermsConsentGate() {
   const pathname = usePathname()
 
@@ -94,11 +105,18 @@ export default function TermsConsentGate() {
           setLoading(false)
         }
       } catch (err: any) {
-        if (mounted) {
-          setError(err?.message ?? '利用規約の確認に失敗しました。')
-          setNeedsConsent(true)
+        if (!mounted) return
+
+        if (isAuthSessionMissingError(err)) {
+          setError('')
+          setNeedsConsent(false)
           setLoading(false)
+          return
         }
+
+        setError(err?.message ?? '利用規約の確認に失敗しました。')
+        setNeedsConsent(true)
+        setLoading(false)
       }
     }
 
@@ -124,8 +142,18 @@ export default function TermsConsentGate() {
         error: authError,
       } = await supabase.auth.getUser()
 
-      if (authError) throw authError
-      if (!user) throw new Error('ログイン状態を確認できませんでした。')
+      if (authError) {
+        if (isAuthSessionMissingError(authError)) {
+          setError('ログイン後に再度お試しください。')
+          return
+        }
+        throw authError
+      }
+
+      if (!user) {
+        setError('ログイン後に再度お試しください。')
+        return
+      }
 
       const now = new Date().toISOString()
 
@@ -175,6 +203,10 @@ export default function TermsConsentGate() {
       setAgreeTerms(false)
       setAgreePrivacy(false)
     } catch (err: any) {
+      if (isAuthSessionMissingError(err)) {
+        setError('ログイン後に再度お試しください。')
+        return
+      }
       setError(err?.message ?? '再同意の保存に失敗しました。')
     } finally {
       setSubmitting(false)
