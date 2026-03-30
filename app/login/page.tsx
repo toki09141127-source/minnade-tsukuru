@@ -4,10 +4,6 @@ import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
-import {
-  CURRENT_PRIVACY_VERSION,
-  CURRENT_TERMS_VERSION,
-} from '@/lib/legalVersions'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -27,14 +23,6 @@ export default function LoginPage() {
 
   const normalizePassword = (p: string) => {
     return p.replace(/^\s+|\s+$/g, '')
-  }
-
-  const buildFallbackUsername = (userId: string, mail: string) => {
-    const emailPrefix = mail.split('@')[0]?.trim()
-    if (emailPrefix) {
-      return `${emailPrefix}_${userId.slice(0, 8)}`
-    }
-    return `user_${userId.slice(0, 8)}`
   }
 
   const setFriendlyError = (raw: string) => {
@@ -85,7 +73,7 @@ export default function LoginPage() {
 
     setLoading(true)
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: e,
         password: p,
       })
@@ -93,37 +81,6 @@ export default function LoginPage() {
       if (error) {
         setFriendlyError(error.message)
         return
-      }
-
-      const userId = data.user?.id
-
-      if (userId) {
-        const now = new Date().toISOString()
-        const fallbackUsername = buildFallbackUsername(userId, e)
-
-        const { error: upsertError } = await supabase.from('profiles').upsert(
-          {
-            id: userId,
-            username: fallbackUsername,
-            terms_version: CURRENT_TERMS_VERSION,
-            terms_agreed_at: now,
-            privacy_version: CURRENT_PRIVACY_VERSION,
-            privacy_agreed_at: now,
-            updated_at: now,
-          },
-          { onConflict: 'id' }
-        )
-
-        if (upsertError) {
-          setMessage(
-            [
-              'アカウント登録自体は成功しましたが、同意記録の保存に失敗しました。',
-              '管理者にお問い合わせください。',
-              `詳細: ${upsertError.message}`,
-            ].join('\n')
-          )
-          return
-        }
       }
 
       setSignupSuccess(true)
