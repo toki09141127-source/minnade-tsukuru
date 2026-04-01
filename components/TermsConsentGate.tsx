@@ -40,6 +40,17 @@ function isAuthSessionMissingError(err: unknown) {
   )
 }
 
+function isAbortLikeError(err: unknown) {
+  const name = String((err as any)?.name ?? '')
+  const msg = String((err as any)?.message ?? '')
+  return (
+    name === 'AbortError' ||
+    msg.includes('signal is aborted') ||
+    msg.includes('aborted without reason') ||
+    msg.includes('The operation was aborted')
+  )
+}
+
 export default function TermsConsentGate() {
   const pathname = usePathname()
 
@@ -107,6 +118,13 @@ export default function TermsConsentGate() {
       } catch (err: any) {
         if (!mounted) return
 
+        if (isAbortLikeError(err)) {
+          setError('')
+          setNeedsConsent(false)
+          setLoading(false)
+          return
+        }
+
         if (isAuthSessionMissingError(err)) {
           setError('')
           setNeedsConsent(false)
@@ -114,8 +132,8 @@ export default function TermsConsentGate() {
           return
         }
 
-        setError(err?.message ?? '利用規約の確認に失敗しました。')
-        setNeedsConsent(true)
+        setError('利用規約の確認に一時的に失敗しました。ページを再読み込みしてください。')
+        setNeedsConsent(false)
         setLoading(false)
       }
     }
