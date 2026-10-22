@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-22T19:13:31.124Z",
+  "mvpFunctionsUnchanged": true,
+  "http": {
+    "/login": 200,
+    "/rooms": 200,
+    "/works": 200
+  },
+  "pass": true
+}

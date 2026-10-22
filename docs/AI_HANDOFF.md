@@ -1695,3 +1695,25 @@ Status: in_progress。本人の登録済み返信を受け接続前検査を実�
 Status: in_progress。登録済みstaging session pooler接続成功。Vaultの専用秘密をパラメーターで登録し、DB tick→Vercel dry-runは200。pg_cron定期実行もsucceeded/HTTP200、queueとattempts不変、送信0。一時cron解除、staging scheduler/auto-send OFFへ戻した。223テストPASS、hosted認証なし401/認証付き同時200。最終TEST成功のため追加TESTなし。
 本番read-only事前検査: /・/login・/rooms・/works・Auth200、退会pause=false、不明副作用0、RLS不足0、Buffer既存表なし。既存MVP関数hash保存。Supabase statusはMonitoring継続だが現在の接続と主要経路に異常なし。
 新規本番データ搬出は自動承認レビューで保存先の明示承認不足として拒否。搬出せず、既存バックアップ/復旧検証記録の整合性を確認。導入はBuffer専用追加のみ、各migrationのトランザクションと既存MVP関数hash/RLSを検査。036はstagingで無効だったpg_net ACL試行のため本番不要、040/041は手動TEST/staging認証用のため本番不要。本番対象029-035,037-039を個別適用予定。
+
+
+## Buffer/X本番投入完了（2026-10-23 04:15 JST、最新）
+Status: done。追加TESTなしでcron検収から再開し、本番投入COMPLETE。最終TESTは既存の2113339419771982087だけ、再予約/再送なし。
+
+staging: 保存されたsession pooler URLでTLS接続成功。専用cron/automation秘密をVaultへパラメーター登録。DB tick→Vercel dry-run200、pg_cron定期実行succeeded/HTTP200、queue/attempts不変、送信0。一時job解除、staging auto-send/scheduler OFF。最終TEST許可OFF。
+
+本番: 029,030,031,032,033,034,035,037,038,039を1件ずつhash照合・トランザクション適用し、全段階でRLS PASS・既存MVP関数hash不変。036は無効なACL試行、040/041は手動TEST/staging限定のため本番不要。新規バックアップ搬出は自動承認レビューで拒否され実施せず、既存バックアップ/復旧検証の整合性を確認して進めた。本番既存データの書換・MVP関数変更なし。
+
+Git: bd17bf9（最終TEST/cron検収）、2ac2cf9（本番運用コード）をfeatureへpush、origin/mainへ通常fast-forward。forceなし。Vercel production dpl_5gabHTQsoTiomHnwpcUiNDmBHFFD / commit2ac2cf9 Ready。既存MVPフラグ・CRON_SECRET・Buffer API keyは変更せず、Buffer専用cron認証/運用モードだけ追加。既存publish cron維持。
+
+本番検収: Buffer official channel接続200/BUFFER_CONNECTED、無認証401、dry-run200/candidates0/planned0/queued0/preSendEligible0/writes0/sends0。DB OFFで同時automatic呼出2件ともstopped/送信0。DB scheduler smoke200。/login,/rooms,/works200、既存MVP関数hash不変。223件tests・typecheck・関連lint・build PASS。最新運用script lint PASS。秘密実値のcommitなし。
+
+04:13:42 JSTにBuffer専用auto-sendと毎分pg_cron minntuku-buffer-automaticをON。04:14の初回定期実行succeeded/HTTP200、連続失敗0、queue0、duplicate0、control enabled=true。現在レビュー/PII確認済み候補0のため一般作品の投稿0。公開許可レビュー必須の既存ルールを緩めていない。
+
+監視: automation buffer-x-24 ACTIVE、15分ごと96回、2026-10-24 04:14 JSTまで。毎分workerのauto-stopに加え、重大異常ならBufferだけOFF、正常時は静かに記録。既存MVP heartbeat24は変更なし。24時間経過の完了を現時点で主張しない。Supabase status Monitoringは継続中だが今回staging/本番検収は成功。provider障害を監視継続。
+
+Production app impact: Buffer専用DBオブジェクト・Vault/環境変数・API route・毎分cron追加。本体の既存関数/フラグ/ユーザーデータを保持。rollbackはBuffer controlをOFFにして新規送信停止、schedulerは取消/照合のため維持。旧デプロイへ戻す前に未処理予約の取消/照合を確認する。自動resume禁止。
+
+証跡: buffer-production-migrations.json / buffer-production-smoke-result.json / buffer-production-app-health.json / buffer-production-enabled.json / buffer-production-monitor-latest.json / buffer-staging-scheduler-*-result.json。
+Next: 本番Buffer専用監視を継続し、V2.1の実装へ専念可能。本人の追加操作不要。追加TESTは禁止のまま。
+Updated at: 2026-10-23 04:15 JST

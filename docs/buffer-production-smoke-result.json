@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-22T19:13:08.792Z",
+  "account": {
+    "status": 200,
+    "ok": true,
+    "code": "BUFFER_CONNECTED"
+  },
+  "unauthorized": {
+    "status": 401,
+    "code": "UNAUTHORIZED"
+  },
+  "dry": {
+    "status": 200,
+    "mode": "dry-run",
+    "candidates": 0,
+    "planned": 0,
+    "queued": 0,
+    "preSendEligible": 0,
+    "writes": 0,
+    "sends": 0
+  },
+  "overlap": [
+    {
+      "status": 200,
+      "mode": "automatic",
+      "stopped": true,
+      "reason": "NOT_ENABLED",
+      "processed": 0,
+      "sends": 0
+    },
+    {
+      "status": 200,
+      "mode": "automatic",
+      "stopped": true,
+      "reason": "NOT_ENABLED",
+      "processed": 0,
+      "sends": 0
+    }
+  ],
+  "schedulerTick": 200,
+  "queueCount": 0,
+  "pass": true,
+  "autoSend": "OFF"
+}
