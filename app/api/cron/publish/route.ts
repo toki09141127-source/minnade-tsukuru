@@ -1,3 +1,4 @@
+import {v2Enabled} from '@/lib/v2/server'
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../../lib/supabase/admin'
 
@@ -11,6 +12,7 @@ export async function GET(req: Request) {
   }
   try {
     if (process.env.MVP_DRAFTS_ENABLED === 'true') {
+      if(v2Enabled())await import('@/lib/ai/worker').then(m=>m.scheduleAi()).catch(()=>{})
       const {data,error}=await supabaseAdmin.rpc('mvp_publish_due')
       if(error) return NextResponse.json({ok:false,error:'公開処理に失敗しました'}, {status:503})
       return NextResponse.json({ok:true,updated:data})

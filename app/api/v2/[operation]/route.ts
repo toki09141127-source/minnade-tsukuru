@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import {runAiTask} from '@/lib/ai/worker'
+import { after,NextResponse } from 'next/server'
 import { v2Client,v2Enabled } from '@/lib/v2/server'
 import { departedAuthorLabels } from '@/lib/departedAuthorLabels'
 import { ERRORS,GENRES,safeText,uuid,validBlocks } from '@/lib/v2/domain'
@@ -18,7 +19,7 @@ export async function GET(req:Request,{params}:{params:Promise<{operation:string
    if(r.error)return failure(r.error.message)
    const rows=r.data??[],labels=await departedAuthorLabels(client,rows.map((row:{user_id:string})=>row.user_id));return reply({posts:rows.slice(0,30).map((row:{user_id:string;username:string|null})=>({...row,username:labels.get(row.user_id)??row.username})),hasMore:rows.length>30})
   }
-  if(operation==='work'){const r=await client.from('v2_work_snapshots').select('room_id,title,description,genre,blocks,incomplete,published_at,highlight_post_ids').eq('room_id',id).maybeSingle();return r.error?reply({error:'作品を読み込めませんでした。'},503):r.data?reply(r.data):reply({error:'作品が見つかりません。'},404)}
+  if(operation==='work'){const r=await client.from('v2_work_snapshots').select('room_id,title,description,genre,blocks,incomplete,published_at,highlight_post_ids,contains_ai_assistance').eq('room_id',id).maybeSingle();if(r.error)return reply({error:'作品を読み込めませんでした。'},503);if(!r.data)return reply({error:'作品が見つかりません。'},404);const ai=await client.rpc('v22_ai_work',{p_room:id});const room=await client.rpc('v2_room_state',{p_room:id});return reply({...r.data,aiLevel:room.data?.room?.aiLevel??'forbidden',aiAssistance:ai.error?null:ai.data})}
   return reply({error:'操作が見つかりません。'},404)
  }catch{return reply({error:'読み込めませんでした。'},503)}
 }
@@ -46,6 +47,6 @@ export async function POST(req:Request,{params}:{params:Promise<{operation:strin
     name='v2_save_draft';args={p_room:b.roomId,p_version:b.version,p_blocks:b.blocks,p_reviewed:true}
    }else return reply({error:'操作が見つかりません。'},404)
   }
-  const result=await client.rpc(name,args);return result.error?failure(result.error.message):reply({ok:true,data:result.data})
+  const result=await client.rpc(name,args);if(!result.error&&operation==='create')after(async()=>{await runAiTask(result.data).catch(()=>{})});return result.error?failure(result.error.message):reply({ok:true,data:result.data})
  }catch{return reply({error:'処理結果を確認できませんでした。再読み込みで状態を確認してください。'},503)}
 }

@@ -1,0 +1,36 @@
+'use client'
+import {useCallback,useEffect,useRef,useState} from 'react'
+import {v2Request} from '@/lib/v2/client'
+import type {AiItem,AiKind,AiOutput} from '@/lib/ai/safety'
+import type {Block} from '@/lib/v2/domain'
+import styles from '@/app/components/v2/v2.module.css'
+type Output={id:string;kind:AiKind;payload:AiOutput&{decisions:AiItem[]};sources:string[];created_at:string;trigger_type:string;base_version:number;accepted_at:string|null}
+type State={identity:string|null;enabled:boolean;outputs:Output[];tasks:{id:string;kind:string;status:string;error_code:string|null;created_at:string;trigger_type:string}[]}
+const kinds:Record<AiKind,string>={question:'質問する',idea:'アイデアの候補',organize:'整理する',summarize:'まとめを更新',draft_assist:'ドラフトの提案'}
+const triggers:Record<string,string>={manual:'Creator/Coreからの依頼',greeting:'はじめの挨拶',posts:'制作の節目',highlight:'ハイライトの更新',inactivity:'制作のふりかえり',deadline:'締切前',publication:'公開時の整理'}
+const statuses:Record<string,string>={pending:'処理待ち',running:'AIが整理しています',succeeded:'完了',failed:'AIを利用できませんでした',skipped:'状態が変わったため見送り',stuck:'結果を確認できなかったため停止'}
+export default function AiCreator({roomId,editable,open,mode,onAccepted}:{roomId:string;editable:boolean;open:boolean;mode:string;onAccepted:()=>void}){
+ const [state,setState]=useState<State|null>(null),[kind,setKind]=useState<AiKind>('question'),[text,setText]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false),[tab,setTab]=useState<'summary'|'messages'>('summary'),[proposal,setProposal]=useState<{output:Output;text:string;blocks:Block[]}|null>(null),[reviewed,setReviewed]=useState(false)
+ const generation=useRef(0),request=useRef<{body:string;id:string}|null>(null)
+ const load=useCallback(async()=>{const n=++generation.current;try{const s=await v2Request('ai',undefined,new URLSearchParams({roomId}));if(n===generation.current)setState(s)}catch{if(n===generation.current)setError('AIの状態を読み込めません。人間の制作は続けられます。')}},[roomId])
+ // The generation ref is a request counter, not a DOM ref; invalidate stale requests on cleanup.
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ useEffect(()=>{if(mode==='forbidden')return;let active=true;const refresh=()=>{if(active)void load()};refresh();const timer=setInterval(refresh,10000);return()=>{active=false;generation.current++;clearInterval(timer)}},[mode,load])
+ async function invoke(e:React.FormEvent){e.preventDefault();setBusy(true);setError('');try{const body=JSON.stringify({kind,text});if(request.current?.body!==body)request.current={body,id:crypto.randomUUID()};await v2Request('ai',{roomId,requestId:request.current.id,kind,text});setText('');request.current=null;await load()}catch(e){setError(e instanceof Error?e.message:'AIを利用できません。')}finally{setBusy(false)}}
+ async function preview(o:Output){setError('');try{const current=await v2Request('state',undefined,new URLSearchParams({roomId}));if((current.draft?.version??0)!==o.base_version){setError('提案後にドラフトが更新されました。新しい提案を依頼してください。');return}setProposal({output:o,text:o.payload.draftText,blocks:current.draft?.blocks??[]});setReviewed(false)}catch{setError('最新版を確認できません。')}}
+ async function accept(){if(!proposal)return;setBusy(true);setError('');try{await v2Request('ai',{action:'accept',roomId,outputId:proposal.output.id,version:proposal.output.base_version,reviewed,blocks:[...proposal.blocks,{id:'ai-'+proposal.output.id,type:'text',text:proposal.text}]});setProposal(null);onAccepted();await load()}catch(e){setError(e instanceof Error?e.message:'提案を保存できません。')}finally{setBusy(false)}}
+ async function hide(id:string){setBusy(true);try{await v2Request('ai',{action:'hide',roomId,outputId:id});await load()}catch(e){setError(e instanceof Error?e.message:'非表示にできません。')}finally{setBusy(false)}}
+ const items=(label:string,list:AiItem[])=><div><h4>{label}</h4>{list.length?<ul>{list.map((item,i)=><li key={i}>{item.text}{item.refs.length>0&&<small className={styles.muted}>（同じルームの制作ログ {item.refs.length}件を参照）</small>}</li>)}</ul>:<p className={styles.muted}>まだありません。</p>}</div>
+ if(mode==='forbidden')return <section className={styles.panel}><h2>AI Creator</h2><p>このルームはAI禁止です。作品の内容を生成AIへ送りません。</p></section>
+ const latest=state?.outputs.find(o=>['summarize','organize'].includes(o.kind)&&o.trigger_type!=='greeting')
+ return <section className={styles.panel} aria-labelledby="ai-title"><h2 id="ai-title">AI Creator <span className={styles.badge}>AI</span></h2><p>人間が主役です。AIの整理・提案は誤る場合があります。決定と採用は人間が確認してください。</p><p className={styles.muted}>同じルームの安全確認を通過した文章だけを外部AIへ送ります。個人情報・秘密情報は入力しないでください。</p>
+ <div className={styles.row} role="group" aria-label="AI表示切り替え"><button aria-pressed={tab==='summary'} onClick={()=>setTab('summary')}>AIまとめ</button><button aria-pressed={tab==='messages'} onClick={()=>setTab('messages')}>AI発言・履歴</button></div>
+ {!state?<p role="status">AIの状態を読み込んでいます…</p>:!state.identity?<p>このルームにはAI Creatorがありません。</p>:<>
+ {!state.enabled&&<p role="status">AIは現在停止中です。人間の投稿・ドラフト編集は続けられます。</p>}
+ {tab==='summary'?latest?<article><p>更新: <time dateTime={latest.created_at}>{new Date(latest.created_at).toLocaleString('ja-JP')}</time> · {triggers[latest.trigger_type]}</p>{items('人間が明示した決定事項',latest.payload.decisions)}{items('未決事項・確認候補',latest.payload.unresolved)}{items('次の行動の提案',latest.payload.nextActions)}{items('ハイライトの整理（決定ではありません）',latest.payload.highlightNotes)}</article>:<p>制作が進むとAI Creatorがここに整理します。</p>:<div>{state.outputs.length===0&&<p>AIからの発言はまだありません。</p>}{state.outputs.map(o=><article key={o.id} className={styles.block}><strong>AI Creator · AI</strong><p className={styles.muted}>{triggers[o.trigger_type]} · <time dateTime={o.created_at}>{new Date(o.created_at).toLocaleString('ja-JP')}</time></p><p className={styles.body}>{o.payload.message}</p>{o.payload.draftText&&<><h4>ドラフトの提案（未採用）</h4><p className={styles.body}>{o.payload.draftText}</p>{editable&&open&&!o.accepted_at&&<button disabled={busy} onClick={()=>preview(o)}>編集して採用を確認</button>}{o.accepted_at&&<p>人間が採用済み</p>}</>}{editable&&<button disabled={busy} onClick={()=>hide(o.id)}>このAI発言を非表示</button>}</article>)}</div>}
+ <details><summary>AIの処理状況・履歴</summary><ul>{state.tasks.map(t=><li key={t.id}>{triggers[t.trigger_type]} · {statuses[t.status]??'確認中'}</li>)}</ul></details>
+ </>}
+ {editable&&open&&<form onSubmit={invoke}><fieldset disabled={busy||!state?.enabled}><legend>AIに聞く（Creator/Core専用）</legend><label>依頼の種類<select value={kind} onChange={e=>setKind(e.target.value as AiKind)}>{Object.entries(kinds).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label><label>AIへの質問・依頼<textarea rows={3} maxLength={1200} value={text} onChange={e=>setText(e.target.value)}/></label><button type="submit">{busy?'送信中…':'AIに依頼する'}</button></fieldset></form>}
+ {proposal&&<section className={styles.block}><h3>提案を編集してドラフト末尾へ追加</h3><p>現在のドラフトを保持して追加します。競合時は保存しません。</p><label>採用する提案<textarea rows={6} maxLength={6000} value={proposal.text} onChange={e=>{setProposal({...proposal,text:e.target.value});setReviewed(false)}}/></label><label><input type="checkbox" checked={reviewed} onChange={e=>setReviewed(e.target.checked)}/>個人情報・権利・内容を確認して採用します</label><button disabled={busy||!reviewed} onClick={accept}>確認してドラフトへ追加</button><button disabled={busy} onClick={()=>setProposal(null)}>キャンセル</button></section>}
+ <p role="alert" className={styles.error}>{error}</p></section>
+}

@@ -9,6 +9,7 @@ import MarkRoomSeenOnView from '@/app/components/MarkRoomSeenOnView'
 import DeleteRoomButton from '@/app/rooms/[id]/DeleteRoomButton'
 import ReportButton from '@/app/rooms/[id]/ReportButton'
 import DraftEditor from './DraftEditor'
+import AiCreator from './AiCreator'
 import Log from './Log'
 import styles from './v2.module.css'
 type Member={user_id:string;name:string;role:Role}
@@ -40,6 +41,7 @@ export default function Room({roomId}:{roomId:string}){
  <h3>参加者</h3>{state.members.filter(m=>m.role!=='creator').map(m=><div key={m.user_id} className={styles.block}><strong>{m.name} · {m.role==='member'?'Member':'Core'}</strong><div className={styles.row}>{m.role==='core'&&<button disabled={busy} onClick={()=>setPending({action:'demote',target:m.user_id,label:m.name+'をMemberへ変更しますか？'})}>Memberへ降格</button>}<button disabled={busy} onClick={()=>setPending({action:'kick',target:m.user_id,label:m.name+'を追放しますか？ 再参加できなくなります。過去の投稿は残ります。'})}>追放</button></div></div>)}</section>}
  <p role="alert" className={styles.error}>{error}</p>
  <Log key={state.myUserId??'anon'} roomId={roomId} publicView={room.status==='forced_publish'} canManage={manager&&open} canPost={!!state.myRole&&open} myUserId={state.myUserId} refreshKey={revision}/>
+ {(state.myRole||room.status==='forced_publish')&&<AiCreator key={'ai-'+(state.myUserId??'anon')} roomId={roomId} editable={manager} open={open} mode={room.aiLevel} onAccepted={()=>{void load();setRevision(n=>n+1)}}/>}
  {state.myRole&&open&&<DraftEditor key={'draft-'+state.myUserId} roomId={roomId} title={room.title} genre={room.genre} initial={state.draft} editable={manager}/>}
  {!!state.events.length&&<section className={styles.panel}><h2>制作の節目</h2><ul>{state.events.map(e=><li key={e.id}>{eventLabels[e.kind]??'制作の状態が更新されました'} · <time>{new Date(e.created_at).toLocaleString('ja-JP')}</time></li>)}</ul></section>}
  <dialog ref={dialog} aria-labelledby="confirmation-title" onCancel={e=>{e.preventDefault();if(!busy)setPending(null)}}><h2 id="confirmation-title">操作の確認</h2><p>{pending?.label}</p><div className={styles.row}><button autoFocus disabled={busy} onClick={()=>setPending(null)}>キャンセル</button><button disabled={busy} onClick={()=>pending&&action(pending.action,pending.target,pending.requestId)}>確認して実行</button></div></dialog></main>

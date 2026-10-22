@@ -24,6 +24,7 @@ export default function CreateRoom(){
  <label>制作期間<select aria-label="制作期間" value={hours} onChange={e=>setHours(e.target.value)}>{[6,24,48,72,168,336].map(n=><option key={n} value={n}>{n<24?n+'時間':n/24+'日'}</option>)}<option value="custom">締切を指定</option></select></label>
  {hours==='custom'&&<label>締切日時<input type="datetime-local" required value={customDeadline} onChange={e=>setCustomDeadline(e.target.value)}/></label>}
  <label>AIの利用方針<select aria-label="AIの利用方針" value={ai} onChange={e=>setAi(e.target.value)}><option value="forbidden">禁止</option><option value="assist">補助可</option><option value="free">自由</option></select></label>
+ {ai!=='forbidden'&&<p>AI Creatorは同じルームの文章を外部AI（OpenAI）へ送り、制作を整理・提案します。個人情報・秘密情報は入力しないでください。AIが人間の代わりに決定することはありません。</p>}
  <p>定員・締切・AIの利用方針は作成後に変更できません。締切は1時間以上先、最大2週間です。</p>
  <label><input type="checkbox" required checked={consent} onChange={e=>setConsent(e.target.checked)}/>{CONSENT_TEXT} 同意して作成します。</label>
  <button className={styles.primary} disabled={busy||!consent}>{busy?'作成中…':'ルームを作る'}</button></fieldset><p role="alert" className={styles.error}>{error}</p></form></div>
