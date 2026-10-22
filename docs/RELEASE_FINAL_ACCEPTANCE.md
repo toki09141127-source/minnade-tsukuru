@@ -1,3 +1,66 @@
+# Production Release — 第52節最終結果（2026-10-22）
+
+## 1. Production Release
+COMPLETE。初期5〜10人の限定公開についてProduction GO。2026-10-22 18:52 JSTに最後の退会検収を完了。24時間の観察は開始済みで、完了済みとは扱わない。
+
+## 2. Backup
+PASS。Free/PITRなし。停止後18:24〜18:26 JSTのDB/Auth 49表とStorage16個をREAD ONLY snapshot・roles password除外で取得。DB custom 2,161,963 bytes、Storage 6,270,480 bytes。Git外のWindowsユーザー限定ACLでAES-256-GCM＋DPAPI保存。初回backupも保持。公開結果: release52-backup-result.json。
+
+## 3. Restore
+PASS。実backupの隔離復元68比較、全28migration試適用とAuth/Storage件数保持2件成功。127.0.0.1/SCRAM、全復元role NOLOGIN、終了後server停止・plaintext作業領域削除。managedサービス/SMTP/OAuth/Vault keyの完全再現と別Windows端末でのDPAPI復号は未実証。
+
+## 4. Maintenance
+PASS。stagingでアプリ停止/再開16、一時DB guard停止8/解除後7、既存退会pause/recovery29を確認。本番も17表guardを適用し、互換app Ready後に解除0件。退会pauseは最後の検収後false。公開後の緊急停止手順はPRODUCTION_ROLLOUT_PLAN.md。
+
+## 5. Git
+security/fix-storage-signで4a1faea（release）、baa1e1b（DB証跡）、2f3ab11（本番smoke）をcommit/push、mainへ履歴を保持するfast-forward反映。後続は検収証跡・監視・runbookのみ。app/lib/components/packageは検収済みbaa1e1bから変更なし。既存差分・削除2件・Buffer並行作業を保持。force push/reset/clean/stash/branch削除なし。
+
+## 6. Production migrations
+001〜028全適用PASS。7phase・各transaction/hash/new-table RLS・構造確認。production joedeuyrzimqyjapqpyh。台帳release52-production-migrations.json。全28ファイルのbytesは凍結維持。CLIのschema_migrationsへの登録は別途未実施であり、supabase db pushを重ねて実行しない。
+
+## 7. Vercel
+Production Ready。検収時の通常app dpl_A4jAPa853bcHAVNYP77wtNen7pgG、退会flag込みdpl_F68amKKbPxDp3Tgy4fqWZsXEvnMC（2f3ab11）。本番URLへ割当確認。非退会12flag・退会2flag有効、DB pause=false。後続の文書/監視だけのcommitでも同一appの再buildが走る場合がある。
+
+## 8. Production smoke
+PASS（18グループ）。TEST3名でlogin/同意/profile/room作成/Member参加/投稿/画像/添付/Core却下→承認/作品draft/公開review/期限公開/作品/like/report/logout/relogin。公開cronは他のopen roomを短時間ロックしSKIP LOCKEDでTEST1件だけ公開、再試行0件。既存user本文は閲覧していない。新規signupメール送信は別TEST宛先で成功。
+
+## 9. Security smoke
+PASS。通常検収のforeign profile/membership/attachment・直接Storage・旧API/RPC拒否に加え10グループで非表示/削除の添付拒否、他人削除拒否、運営hide/restore監査、全public/private表RLSを確認。一時TEST運営権限は撤去。本番運営UIへ恒久的に登録するアカウントは未指定、所有者のDashboard/CLI停止経路を利用可能とする。
+
+## 10. Account deletion
+PASS（15グループ）。TEST Member1名のみ。共同作品/使用済み画像bytes保持・匿名名義/独立保持主体、台帳済み未使用画像1件のcleanup、Auth最後に削除、旧password/refresh/JWT拒否。Auth effect1回・Storage effect1回・不明副作用0。並行workerはcompleted/200とbusy/202、続く単独再試行completed。退会は再開済み。
+
+## 11. SMTP
+本番Gmail custom SMTPで確認メール1通を送信成功、専用運営Gmail別名への到着をmessage ID検索で確認。本文/token/link非取得。production確認linkの実クリックは未検収。既存production Site URL/callback許可を確認。30通/時、初期5〜10人を小分け招待。429/遅延/不達で招待停止、件数増加前に専用トランザクションメール基盤を検討。
+
+## 12. Android
+PASS（staging実機、ユーザーの訂正後の個別報告）。主要操作と同じChromeでメール復帰/password reset、旧password拒否・session維持。本番での実機再検収と混同しない。
+
+## 13. iPhone
+KNOWN UNVERIFIED PLATFORM: iPhone Safari / POST-LAUNCH REQUIRED CHECK。今回受容済みの一時リスク。
+
+## 14. Monitoring
+毎時24回のこの会話への監視を設定、automation ID 24/ACTIVE。2026-10-23 19:00 JSTまで。初回18:55 JST: HTTP/Auth200、TEST添付hash一致、4xx/5xx/429=0、runtime error0、退会滞留/不明副作用/通報滞留/RLS未設定/公開遅延=0。初回証拠release52-monitor-latest.json、履歴jsonl。正常時は通知しない。Windows/Codex稼働時の毎時確認であり常時有人監視ではない。Supabase管理Auth/SMTP providerログは自動収集外、送信不達時はDashboard確認が必要。
+
+## 15. Incidents
+データ消失・権限漏洩・実ユーザー削除は検証範囲で検出なし。停止SQLの文字列置換ミス2回は構文エラー/rollbackで変更0、修正後成功。公開レビューのconfirm欠落と並行workerを全件completedとする誤った期待はテストコードを修正、app変更なし。後者で退会を一時pauseし、完了/副作用件数確認後に安全復旧。私的stderr表示の自動レビュー拒否は固定boolean診断で代替し本文非表示。過去staging確認tokenは使用済み・ファイル保存なし・production tokenではない。秘密値は今回出力していない。
+
+## 16. Production GO
+GO（初期5〜10人β）。Technical既存871、今回通常18/security10/退会15グループと保全復旧証拠を使用。100人一斉招待や24時間無障害を保証する判定ではない。全体lintの旧7ファイル8error/5warningは既存、対象lintは0error。初回ステージ全体の既存末尾空白/空行161件は記録し凍結SQLを保持。通常tracked diff checkはPASS、最後の対象差分checkを別途記録する。
+
+## 17. Production URL
+https://minnade-tsukuru.vercel.app
+
+## 18. 次に人間がやること
+1. 5〜10人だけ小分けに招待し、困りごととメール不達を確認。
+2. 本番運営UIに使うアカウントを指定する（恒久的な運営権限は未付与）。窓口/通報を毎日確認。
+3. 監視中はWindows/Codexを稼働させる。代理なしの不在時は招待拡大を止める。
+4. iPhone Safari実機を確保後に認証・投稿・画像等を確認。
+5. 暗号化backup/Windows profileを別媒体でも保全し、復旧用鍵の別端末復旧を整備。
+
+<details>
+<summary>以前のフェーズの記録（現在の判定は上記）</summary>
+
 # 第52節・最新チェックポイント（2026-10-22）
 
 **Production APPLY GO / 公開GOは本番smoke待ち。** 暗号化DB/Auth/Storage backup、隔離復元68比較、実backupへの001〜028試適用28件＋Auth/Storage件数保持2件PASS。本番read-only preflight PASS。停止/再開16+8+7、退会停止復旧29 PASS。既存871・Android/reset PASSを再利用する。iPhoneは受容済みの公開後確認。実本番反映結果は後続記録を優先。
@@ -212,3 +275,5 @@ Dashboard: Healthy、Free、No migrations、No backups。Freeのproject backup�
 
 </details>
 
+
+</details>

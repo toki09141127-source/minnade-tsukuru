@@ -1,3 +1,7 @@
+# 第52節最終状態（2026-10-22）
+
+**Production Release COMPLETE / Production GO（初期5〜10人β）**。001〜028適用、Vercel本番Ready、通常18/security10/退会15グループPASS。backup/隔離restore/停止復旧PASS。退会再開済み、24時間毎時監視を開始。詳細と限界は[RELEASE_FINAL_ACCEPTANCE](RELEASE_FINAL_ACCEPTANCE.md)を優先する。本番運営UIの恒久アカウント指定とiPhone/別端末鍵復旧は残る。
+
 # Feature flags（第51節）
 
 最新staging Preview dpl_DsDczF9LzAakarptA5Yv7jUsVRHEは第50節と同じsafe設定。退会REQUESTS/FINALIZE=false、その他12=true、STAGING_TEST=true、DB pause=true、cronなし。本番envは未変更。flagは全体maintenanceではなく直接Supabase/旧deploymentまで停止しない。[最終検収](RELEASE_FINAL_ACCEPTANCE.md)。

@@ -1,0 +1,10 @@
+{
+  "id": "24",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "frequency": "hourly",
+  "runs": 24,
+  "endBy": "2026-10-23T10:00:00Z",
+  "initialResult": "release52-monitor-latest.json",
+  "quietWhenHealthy": true
+}

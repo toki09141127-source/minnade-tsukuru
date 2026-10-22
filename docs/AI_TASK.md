@@ -2,41 +2,31 @@
 
 ## Status
 
-in_progress
+done
 
 ## Objective
 
-第52節: 最新添付6a13bc98に従い保全・隔離restore・stop/recoveryを優先し、条件成立後同じ実行でproduction反映まで進める。
+第52節: みんつくWeb MVPの本番反映・TEST検収・24時間監視開始。
 
 ## Context
 
-最新添付6a13bc98が優先。本番DB data/Auth/Storageの安全な非公開backupと隔離restore、条件成立後commit/push/migration/deploy/smokeが明示承認された。PII/秘密の表示は禁止。Android reset/メール復帰は今回の同一端末検収でPASS。iPhoneはKNOWN UNVERIFIED PLATFORM: iPhone Safari / POST-LAUNCH REQUIRED CHECK。Production APPLY GO成立。公開GOは本番smoke待ち。
+最新添付6a13bc98の明示承認に従い実施。Production COMPLETE / GO（初期5〜10人β）。詳細はRELEASE_FINAL_ACCEPTANCE.md。
 
 ## Tasks
 
-1. 完了: 全28 SQL/台帳不変・既存554ファイル保持・候補Preview一致・関連検査871・型/対象lint/build/diff。
-2. 完了: SMTPエラーを特定、本人が新しいアプリパスワードを設定し、Androidだけでresetの7段階をPASS。最新Preview Readyと認証callback2件を承認後保存。
-3. 第52節: 本番暗号化backup取得済み。実stagingアプリ停止16/一時DB guard停止8/解除後7 PASS。隔離restore68比較・28migration試適用・件数保持2件PASS。承認済み段階反映へ進む。
-4. 全条件PASS後のみcommit/push/個別migration/app配信/smoke/退会最後/限定公開24h監視。
-
-## Do not
-
-Go未達時のcommit/push/merge/production変更、force push、reset/clean/stash/既存差分破棄、秘密/env値表示、production PII/本文の表示、手動DELETE/Storage一括削除、blind migration。
+backup/隔離restore/maintenance、commit/push/main反映、production001〜028、Vercel本番Ready、TEST通常/security/退会、監視設定、記録を完了。pending: none。
 
 ## Validation
 
-871 = offline720（auth UI17含む）+監査schema PG137+実staging合成14。型/変更lint/最新Preview build/diff PASS。全体lintは未変更7ファイルに既存8エラー5警告。最終証拠はRELEASE_FINAL_ACCEPTANCE.md（18項目）とrelease51-change-inventory.json。
+既存871のPASSを再利用。実backupの68比較＋28migration試適用＋件数保持2、staging停止/再開16+8+7、既存退会停止復旧29。本番通常18/security10/退会15グループPASS。秘密形状582text候補0、28hash一致、app source不変、対象lint0error。初回監視異常0。
 
-## Exact blockers / next steps
+## Do not
 
-1. 本番Free backup/PITRなし。暗号化保全先/担当・DB/Auth/Storageの整合backupと隔離restoreが未実証。schema-onlyではdata rollback不可。
-2. app flag/027 deletion pauseは全体maintenanceではない。直接REST/旧RPC/Auth/Storage/旧deployment/cronを含めた停止と管理接続維持をstaging実証する必要がある。
-3. 運営担当・停止時間・通常通報/監査の体制を確定する。本番custom SMTPの実送信は未試験。
-4. iPhoneはblockerではない。password resetはPASS。包括的な本番承認を再度求めることが残作業ではなく、上記の安全条件を実証することが必要。
+新規依頼のない本番変更、実ユーザーへの検証、秘密/token/PII表示、force push/reset/clean/stash/既存差分破棄。監視は読み取りのみ。
 
-## Expected output
+## Remaining operational work
 
-Release BLOCKED（上記exact reason）。全18項目はRELEASE_FINAL_ACCEPTANCE.md。実行記録はAI_HANDOFF第51節、変更一覧はrelease51-change-inventory.json。
+24時間観察は進行中。毎時監視ID24。本番運営UI用アカウント指定、iPhone実機、別端末backup鍵復旧は人間の次作業。再承認なしに実ユーザーへ運営権限を付けない。
 
 ## Updated at
 

@@ -1,3 +1,24 @@
+# 公開後の緊急操作（第52節最終）
+
+現在は本番GO、全14flag有効・退会pause=false。運営者はリポジトリで次を実行する。現在のWindows profileに暗号化DB password/鍵が必要。
+
+```powershell
+Set-Location C:\dev\minnade\minnade-tsukuru
+node scripts/release/production.cjs emergency-stop joedeuyrzimqyjapqpyh
+```
+
+まず退会pause=true。未確定のStorage/Auth副作用があれば全体guard追加を中止し、退会を止めたまま下のcheckpoint/reconcile手順を確認する。副作用がなければ既存public/Auth/Storage表を一時guardで停止する。通常利用者のログインも止まる。既発行signed URLと読み取りは失効しない。今回と同じguard SQLはstaging33表で停止/解除実証済み。公開後コマンド分岐はlint/構成確認のみで本番に再停止はしていない。
+
+原因修正・互換app Ready・データとAuth/Storage照合後：
+
+```powershell
+node scripts/release/production.cjs emergency-resume joedeuyrzimqyjapqpyh
+```
+
+一時guardだけ解除し、退会pause=trueは維持する。TEST smoke後、DB所有者が `SELECT public.mvp_set_deletion_pause(false);` を実行して退会を最後に再開する。旧権限や旧APIを復活させない。限定停止はFEATURE_FLAG_MATRIXの該当flagを無効化して再配信する。env変更だけでは旧deploymentへ反映されない。
+
+復元済みbackupはGit外の %LOCALAPPDATA%/minnade-release-private/release52。復元は本番へblind実行せず隔離コピーで照合し、既公開/既退会の削除・非表示を再適用する。Free/PITRなし、DPAPIはWindows profile依存。
+
 # 第52節・実行可能な本番停止/復旧（最新）
 
 最新添付6a13bc98で本番操作承認済み。実行者はこのCodexセッション、運営窓口はプロジェクト所有者が管理する minnadetsukuru.auth@gmail.com。旧節の別承認待ち/未実証記述より本節を優先。通常日次確認は所有者が担当し、不在時は募集拡大を止める。24時間有人対応を保証しない。

@@ -1,3 +1,7 @@
+# 第52節最終状態（2026-10-22）
+
+**Production Release COMPLETE / Production GO（初期5〜10人β）**。001〜028適用、Vercel本番Ready、通常18/security10/退会15グループPASS。backup/隔離restore/停止復旧PASS。退会再開済み、24時間毎時監視を開始。詳細と限界は[RELEASE_FINAL_ACCEPTANCE](RELEASE_FINAL_ACCEPTANCE.md)を優先する。本番運営UIの恒久アカウント指定とiPhone/別端末鍵復旧は残る。
+
 # Migration acceptance（第51節）
 
 001〜028全て開始時bytes不変・全台帳hash一致を再確認。追加SQLなし。本番適用なし。監査schema PG137と実staging合成14を再検証。既存全28本のレビュー内容を維持し、005再実行/019重複/023未知FK/025managed Trigger/物理削除の停止条件を再確認。[最終検収](RELEASE_FINAL_ACCEPTANCE.md)。

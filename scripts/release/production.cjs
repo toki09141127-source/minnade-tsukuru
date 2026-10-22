@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),tls=require('node:tls');
 const P=require('./private.cjs'),REF='joedeuyrzimqyjapqpyh';
 async function main(){
- const [mode,confirm,range]=process.argv.slice(2);if(confirm!==REF||!['preflight','stop','apply','status','resume'].includes(mode))throw Error('EXPLICIT_PRODUCTION_TARGET_REQUIRED');
+ const [mode,confirm,range]=process.argv.slice(2);if(confirm!==REF||!['preflight','stop','apply','status','resume','emergency-stop','emergency-resume'].includes(mode))throw Error('EXPLICIT_PRODUCTION_TARGET_REQUIRED');
  const read=f=>JSON.parse(fs.readFileSync('docs/'+f));
  const b=read('release52-backup-result.json'),v=read('release52-restore-result.json');
  if(!b.complete||!v.complete||v.backupSha256!==b.database.sha256||v.migrationRehearsal?.length!==28||v.migrationRehearsal.some(x=>!x.pass))throw Error('BACKUP_RESTORE_REHEARSAL_GATE');
@@ -19,10 +19,12 @@ async function main(){
   if(mode==='preflight'){
    await c.query('BEGIN READ ONLY');const facts=await scalar("SELECT (SELECT count(*)::int FROM pg_tables WHERE schemaname='public') AS public_tables,to_regclass('public.attachment_uploads') IS NULL AS ledger_absent,to_regnamespace('mvp_private') IS NULL AS private_absent,(SELECT count(*)::int FROM (SELECT 1 FROM public.room_join_requests WHERE status='pending' GROUP BY room_id,user_id HAVING count(*)>1) q) AS pending_duplicates,(SELECT count(*)::int FROM pg_constraint k JOIN pg_class t ON t.oid=k.conrelid JOIN pg_namespace n ON n.oid=t.relnamespace WHERE k.contype='f' AND k.confrelid='auth.users'::regclass AND n.nspname='public' AND t.relname NOT IN ('profiles','public_profiles') AND (cardinality(k.conkey)<>1 OR t.relname<>ALL(ARRAY['decisions','event_members','events','novel_drafts','post_likes','posts','room_join_requests','room_members','room_pre_archive_notes','rooms','attachment_uploads']) OR (SELECT attname FROM pg_attribute WHERE attrelid=k.conrelid AND attnum=k.conkey[1])<>ALL(ARRAY['decided_by','user_id','created_by','updated_by','marked_by','approved_by','author_id']))) AS unknown_auth_fk");await c.query('ROLLBACK');
    const pass=facts.public_tables===14&&facts.ledger_absent&&facts.private_absent&&facts.pending_duplicates===0&&facts.unknown_auth_fk===0;fs.writeFileSync('docs/release52-production-preflight.json',JSON.stringify({projectRef:REF,at:new Date().toISOString(),facts,pass},null,2)+'\n');console.log(JSON.stringify({mode,...facts,pass}));if(!pass)throw Error('PRODUCTION_PREFLIGHT_FAILED');
-  }else if(mode==='stop'){
-   if(!read('release52-production-preflight.json').pass||journal.migrations.length)throw Error('INITIAL_PREFLIGHT_REQUIRED');
+  }else if(mode==='stop'||mode==='emergency-stop'){
+   if(mode==='stop'){if(!read('release52-production-preflight.json').pass||journal.migrations.length)throw Error('INITIAL_PREFLIGHT_REQUIRED');}
+   else {if(journal.migrations.length!==28||journal.migrations.some(x=>x.state!=='applied'))throw Error('VERIFIED_RELEASE_REQUIRED');await c.query('SELECT public.mvp_set_deletion_pause(true)');const activity=await scalar("SELECT count(*)::int AS outstanding FROM mvp_private.deletion_effects WHERE state<>'finished'");if(activity.outstanding!==0)throw Error('DELETION_EFFECT_DRAIN_REQUIRES_REVIEW');if((await guard()).count>0){console.log('MAINTENANCE_ALREADY_ACTIVE');return;}}
    let sql=fs.readFileSync('docs/release52-staging-stop.sql','utf8');sql=sql.replace('rehearsal target: fwqucffxdmbdczspkcyr ONLY.','approved production target: '+REF+'.').replace('SELECT public.mvp_set_deletion_pause(true);',()=>"DO $$ BEGIN IF to_regprocedure('public.mvp_set_deletion_pause(boolean)') IS NOT NULL THEN PERFORM public.mvp_set_deletion_pause(true); END IF; END $$;");
-   await c.query(sql);const state=await guard();if(state.count!==17)throw Error('PRODUCTION_GUARD_COUNT_UNEXPECTED');console.log(JSON.stringify({mode,guardedTables:state.count}));
+   const expected=mode==='stop'?17:(await scalar("SELECT count(*)::int AS n FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE c.relkind IN ('r','p') AND (n.nspname='public' OR (n.nspname='auth' AND c.relname='users') OR (n.nspname='storage' AND c.relname IN ('objects','buckets')))")).n;
+   await c.query(sql);const state=await guard();if(state.count!==expected)throw Error('PRODUCTION_GUARD_COUNT_UNEXPECTED');console.log(JSON.stringify({mode,guardedTables:state.count}));
   }else if(mode==='apply'){
    const m=/^(\d{1,2})-(\d{1,2})$/.exec(range||'');if(!m)throw Error('SMALL_PHASE_RANGE_REQUIRED');const first=Number(m[1]),last=Number(m[2]);if(first<1||last>28||last<first||last-first>5)throw Error('SMALL_PHASE_RANGE_REQUIRED');
    if(journal.migrations.some(x=>x.state!=='applied')||first!==journal.migrations.length+1)throw Error('ORDER_OR_UNKNOWN_OUTCOME_REQUIRES_REVIEW');if((await guard()).count<17)throw Error('MAINTENANCE_REQUIRED');

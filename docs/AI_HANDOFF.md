@@ -1595,3 +1595,11 @@ mainへbaa1e1bを通常fast-forward push、Vercel dpl_A4jAPa853bcHAVNYP77wtNen7p
 本番signup確認メールを運営Gmailの新規TEST別名へ1通だけ送信成功、Gmail ID検索で到着1件を確認。本文/token/確認URLは読まない。実メールlink clickは未検収。実本番Site URLとproduction/** callback許可を既存設定で確認、設定変更なし。
 
 通常/security成功後に退会2flagの次回配信設定を有効化。DB pauseは維持して次のReady後に最後のTEST退会1名を検収する。
+
+### 第52節完了（2026-10-22）
+
+Production COMPLETE / GO（5〜10人β）。退会flag配信dpl_F68amKKbPxDp3Tgy4fqWZsXEvnMC、2f3ab11、本番Ready。TEST Member1名の退会15グループPASS、作品/使用済み画像保持・未使用1件cleanup・Auth1回・旧password/refresh/JWT拒否。並行workerはbusy/202とcompleted/200が正常なlease競合で、単独再実行completed。不明副作用0を照合してDB pause=falseへ復旧。初回の全件completed期待は検収コードだけ修正。通常18/security10グループもPASS。
+
+18:55初回監視: HTTP/Auth200・添付hash一致・4xx/5xx/429/runtimeerror0・退会/通報滞留/不明副作用/RLS未設定/公開遅延0。毎時24回のheartbeat ID24 ACTIVEを作成/保存確認、2026-10-23 19:00 JSTまで。正常時通知なし、異常時のみこの会話へ。PC/Codex稼働が必要、管理Auth/SMTPログは自動収集外。
+
+最終秘密形状582text候補0、全28hash一致、appコードはbaa1e1bから不変、release scripts対象lint0error。既存871を再実行せず、追加は実本番とrunnerだけ。最終18項目はRELEASE_FINAL_ACCEPTANCE.md。AI_TASK done（本番反映・監視開始）。運営UIの恒久アカウント未指定、iPhone実機・別端末DPAPI復旧は残る。旧節のBLOCKED/本番未適用を最新状態と混同しない。

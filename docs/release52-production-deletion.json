@@ -1,0 +1,87 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "f2af82c3-a2ad-4400-b993-bebc49fc892b",
+  "startedAt": "2026-10-22T09:48:41.971Z",
+  "checks": [
+    {
+      "name": "OWNER_RESUME_AFTER_CORE_SECURITY_PASS",
+      "pass": true
+    },
+    {
+      "name": "TEST_WITHDRAWAL_PREPARE_AND_AUTH_LAST_COMPLETED",
+      "pass": true
+    },
+    {
+      "name": "EXACT_TEST_AUTH_ABSENCE",
+      "pass": true
+    },
+    {
+      "name": "PUBLISHED_CONTRIBUTION_RETAINED_ANONYMOUS",
+      "pass": true
+    },
+    {
+      "name": "SHARED_PUBLISHED_WORK_RETAINED",
+      "pass": true
+    },
+    {
+      "name": "USED_STORAGE_BYTES_RETAINED",
+      "pass": true
+    },
+    {
+      "name": "ONLY_LEDGER_UNUSED_OBJECT_REMOVED",
+      "pass": true
+    },
+    {
+      "name": "OLD_PASSWORD_REJECTED",
+      "pass": true
+    },
+    {
+      "name": "OLD_REFRESH_REJECTED",
+      "pass": true
+    },
+    {
+      "name": "OLD_SESSION_WRITE_REJECTED",
+      "pass": true
+    },
+    {
+      "name": "DUPLICATE_WORKERS_IDEMPOTENT",
+      "pass": true
+    },
+    {
+      "name": "COMPLETED_JOB_SEQUENTIAL_REPLAY",
+      "pass": true
+    },
+    {
+      "name": "ONE_AUTH_DELETE_ONE_UNUSED_STORAGE_EFFECT",
+      "pass": true
+    },
+    {
+      "name": "NO_UNCERTAIN_EFFECTS_OR_PENDING_TEST_JOB",
+      "pass": true
+    },
+    {
+      "name": "PUBLIC_ATTACHMENT_STILL_AVAILABLE_AFTER_DELETION",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "jobId": "fa90241e-1153-44f3-94ec-56c7fcb2eff2",
+  "safelyPausedAfterFailure": true,
+  "concurrentReplay": [
+    {
+      "status": 202,
+      "state": "busy"
+    },
+    {
+      "status": 200,
+      "state": "completed"
+    }
+  ],
+  "previousHarnessFailure": {
+    "code": "ERR_ASSERTION",
+    "after": "OLD_SESSION_WRITE_REJECTED"
+  },
+  "harnessCorrection": "Concurrent lease loser returns busy/202, followed by completed sequential retry; no extra side effects",
+  "finishedAt": "2026-10-22T09:52:00.140Z",
+  "deletionEnabled": true
+}
