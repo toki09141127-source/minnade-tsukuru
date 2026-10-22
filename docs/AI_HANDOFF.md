@@ -1639,3 +1639,37 @@ staging Auth12合成アカウント、専用room、16px合成PNGだけ使用。�
 次: V2.2 AI Creatorへ分離して着手可能。本番へ出す場合は別途、実機/Previewと移行・停止/復旧を含む公開判断が必要。今回の実装承認待ちはなし。
 
 最終Git検査: Gitの改行正規化が040/041の適用hashと異なったため、新V2 4ファイルだけ-text属性で実バイトを保持。既存001〜028と作業中SQLは変更せず、indexの4hashも適用manifestと一致させた。SQL処理内容の変更ではない。
+
+### V2.2開始（2026-10-23）
+専用develop/v2・HEAD f7f3f96 cleanを確認。添付e6ffcd30に従い実装とstaging検収を開始。production操作なし。AIキー未設定のため合成providerで独立検証を先行。既存040〜043は変更せず、新044以降。Buffer側に後から追加された040との既存番号衝突は記録し、将来の一括migrationは要整理。
+
+### V2.2実装・検収途中（2026-10-23）
+044〜047の追加SQLを作成。044/045/046 staging適用成功、047とexact synthetic clock helperは適用成功を確認。旧migration不変。新AI identity/task/output、二重context/output検証、role/lease/epoch/rate、manual/auto、AIまとめ・提案採用UI、非表示監査、公開snapshotのAI参照とhuman fallbackを実装。
+隔離DB144件、AI unit44件、型検査、build、MVP21suite成功。staging合成AIのUI/API/Member拒否/提案採用/AI停止/320・375・390・1280px成功。追加自動・期限・公開E2E実行中。
+実AIはstagingキー存在を確認後、合成内容3回の呼出がHTTP429。既知エラー分類は返らず原因未確定。実AI成功扱いにしない。ユーザーへ利用枠・制限の確認を依頼し、連続再送停止。未知429/利用枠不足は自動再試行しないようadapterを修正。
+Vercel staging project prj_Qo1OsPU4tdgA2fluqzbAr1kTk6Dyへローカルlink。CLIが取得した設定はGit外へ保持。Previewだけにstaging設定27件を登録、AI_ENABLED=falseで準備。秘密値出力なし。まだPreviewデプロイ前、commit前。継続中。
+
+### V2.2 hosted Preview検収・残課題（2026-10-23 JST）
+develop/v2 / C:/dev/minnade/minnade-tsukuru-v2、実装commit8090808。044〜047をstaging fwqucffxdmbdczspkcyrへ適用しhashを記録。最終メタデータ確認でAI関連5table RLS、Member claim拒否、anon request拒否、immutable trigger有効、一時v22_fixture_clock撤去を確認。旧migration/main/Buffer/productionは変更なし。
+
+隔離DB144、unit/provider52、staging合成UI/API19、自動/公開10、MVP既存21suiteがPASS。型検査・関連lint・local build成功。エラー分類の追加8unitで未知429/利用枠/既知rate/timeout/refusalのfail-safeを検証。Git対象ファイルと91 client bundleファイルへの既存秘密値混入0。秘密値・ユーザー本文・raw provider responseは出力していない（検収は合成内容のみ）。
+
+staging Preview: https://minnade-tsukuru-staging-m85sazjk6-sonetokiyas-projects.vercel.app
+既存minnade-tsukuru-staging / sonetokiyas-projectsへPreview配信、READYを確認。production deployなし。送信sourceはapp/components/lib/publicとbuild設定だけ。既存Vercel認証を持つin-app browserで9項目PASS: login、保存済みAI summary、AI停止/依頼無効、履歴、人間投稿、人間draft保存、Work disclosureと非表示反映、戻りlink、公開制作ログ。
+
+実AIは3回のHTTP429で未成功。原因未確定、最新分類unknown。ユーザー回答は「API側の利用枠・制限を確認する」であり、復旧確認ではない。連続再送は停止。DB controlとPreview AI_ENABLEDの両方OFF。生成成功・実AI E2EはPASS扱いにしない。V2.2 PARTIAL、AI_TASKはin_progress。
+
+USER APPROVAL REQUIRED: 自動Preview検収はDeployment Protectionへ到達し未完了。HTTP200がVercel login HTMLだったため合格を取り消し、判定を修正。既存CLI認証によるPreviewアクセスCookie取得・Git外一時保存は、自動承認レビューが「具体的な方法の承認がない保護境界の回避」として拒否。実行されていない。ユーザーへこのPreview限定の許可を質問し、既存ログイン済みブラウザで独立検収を継続した。保護無効化・代替手段によるCookie取得は行わない。
+
+変更範囲: app/api/v2・AI/公開cron、app/components/v2、lib/ai、migrations044〜047、scripts/ai、SPEC/SAFETY/ACCEPTANCE/JSON結果、AI_TASK/HANDOFF、SQL hash属性。公開WorkのAI開示が戻りlinkに入っていた軽微表示を修正しhosted buildと画面確認済み。
+
+未確認: 実AI成功、Hostedでの新規AI生成・320/375/390自動検収、無人schedulerの配信、実Android/iPhone。既存homeコピーのMVP role説明はV2 roleと異なるためV2.3で整理候補。安全filterはheuristic、provider保持と送信後の取り消しには限界。既存Buffer/V2の040番号衝突は将来merge前に整理、一括db push禁止。
+次: API利用可能の連絡後に上限付き1回の疎通、成功なら必要な残検収のみ追加。Preview検収Cookieの許可後に保護を維持して自動UI検収。詳細はV2_2_ACCEPTANCE.md。production変更 NONE。
+### V2.2 Preview承認待ち解消・最終結果（2026-10-23 JST）
+直前節のPreview Cookie承認待ちは解消済み。ユーザーが「このPreview限定の取得・一時使用を承認する」と明示回答後、既存CLI認証から当該PreviewのCookieだけを取得して検収。Protection設定は不変。検収後にheadless browserを終了し、今回のCookie JSON・HTTP header・redirect responseの3一時ファイルを削除した。値の表示/Git追加なし。
+
+Hosted自動19項目PASS: アプリlogin判定、保存済み合成AI summary、未認証401、AI OFF503、GET/manualで新taskなし、作成、投稿、draft保存、停止時greetingのskipped監査と出力0、Work開示/非表示、公開log、未認証cron拒否、browser login、320/375/390/1280表示・切替、戻りlink、公開AI log。既存in-app browserの手動9項目もPASS。Hosted配信HTML/JS17件に既存秘密値混入0。
+
+検収期待値の訂正も記録: HTTP200だけではVercel loginを成功扱いできずapp内容まで確認。作成用合成actorの3rooms/hour上限はそのまま維持し、空き枠のある既存合成Creatorで1room検収。AI OFFはtask自体を作らない仕様ではなくskipped監査履歴を保持するため、期待をskipped＋AI output0へ修正。これらのためDB設定・本番コード変更は行っていない。
+
+最新判定V2.2 PARTIALの残件は実OpenAI成功検収と、成功後のhosted新規生成確認。API復旧の連絡はまだなく再送なし。定時scheduler/実機は未検収として明記。既存040〜043はf7f3f96との差分0。検収・仕様文書と再実行スクリプトをV2ブランチでcommitする。Production Changes NONE。

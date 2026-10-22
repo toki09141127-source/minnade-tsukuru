@@ -1,0 +1,27 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "files": [
+    {
+      "file": "202610230044_ai_creator.sql",
+      "sha256": "508af940a5a7461b923c514a24a6a76abd8e1a12fe397cd63200bc4a6ba0118b",
+      "applied": true
+    },
+    {
+      "file": "202610230045_ai_publication.sql",
+      "sha256": "fdddf9763ff1dadd4442a18713cadcd39b316fafe2912f829e819e977a426193",
+      "applied": true
+    },
+    {
+      "file": "202610230046_ai_control_scope.sql",
+      "sha256": "a7c0762eb0c028b59236c0dc67bab44f35d12e2b1fd3b303a0ce2b75eb39e7af",
+      "applied": true
+    },
+    {
+      "file": "202610230047_ai_bounded_publication.sql",
+      "sha256": "72da871b19ea5215da2c210cbfa4f765f97578852db34bc452f9546a49d903a2",
+      "applied": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "aiEnabled": false
+}

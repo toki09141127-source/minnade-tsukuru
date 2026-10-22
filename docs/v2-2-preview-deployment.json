@@ -1,0 +1,13 @@
+{
+  "url": "https://minnade-tsukuru-staging-m85sazjk6-sonetokiyas-projects.vercel.app",
+  "project": "minnade-tsukuru-staging",
+  "projectId": "prj_Qo1OsPU4tdgA2fluqzbAr1kTk6Dy",
+  "scope": "sonetokiyas-projects",
+  "target": "preview",
+  "sourceCommit": "8090808b7f0e945882613dc1753e27ad245495ad",
+  "state": "READY",
+  "aiGenerationEnabled": false,
+  "productionChanges": "NONE",
+  "deploymentId": "dpl_FEQSa6AoDEgPRT5kog1EPJpA2nQ2",
+  "observedAt": "2026-10-22T19:34:23.155Z"
+}

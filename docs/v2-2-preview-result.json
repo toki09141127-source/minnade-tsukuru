@@ -1,0 +1,85 @@
+{
+  "scope": "hosted staging Preview; synthetic users/data; AI generation OFF",
+  "url": "https://minnade-tsukuru-staging-m85sazjk6-sonetokiyas-projects.vercel.app",
+  "checks": [
+    {
+      "name": "Hosted application login page verified",
+      "pass": true
+    },
+    {
+      "name": "Stored synthetic AI summary remains readable while OFF",
+      "pass": true
+    },
+    {
+      "name": "Anonymous invocation rejected",
+      "pass": true
+    },
+    {
+      "name": "Hosted AI OFF rejects manual generation",
+      "pass": true
+    },
+    {
+      "name": "OFF invocation and state polling create no new tasks",
+      "pass": true
+    },
+    {
+      "name": "Hosted room creation works with AI stopped",
+      "pass": true
+    },
+    {
+      "name": "Hosted human post succeeds during AI stop",
+      "pass": true
+    },
+    {
+      "name": "Hosted reviewed human draft save succeeds",
+      "pass": true
+    },
+    {
+      "name": "Stopped room skips greeting without generating AI output",
+      "pass": true
+    },
+    {
+      "name": "Published Work disclosure persists; hidden AI text stays absent",
+      "pass": true
+    },
+    {
+      "name": "Public production log API remains readable",
+      "pass": true
+    },
+    {
+      "name": "Unauthenticated hosted AI scheduler is denied",
+      "pass": true
+    },
+    {
+      "name": "Hosted browser password login succeeds",
+      "pass": true
+    },
+    {
+      "name": "Hosted AI summary/messages/stopped UI fits 320",
+      "pass": true
+    },
+    {
+      "name": "Hosted AI summary/messages/stopped UI fits 375",
+      "pass": true
+    },
+    {
+      "name": "Hosted AI summary/messages/stopped UI fits 390",
+      "pass": true
+    },
+    {
+      "name": "Hosted AI summary/messages/stopped UI fits 1280",
+      "pass": true
+    },
+    {
+      "name": "Hosted Work disclosure and return link are separate",
+      "pass": true
+    },
+    {
+      "name": "Hosted Work opens public human/AI production log",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "realAiVerified": false,
+  "productionChanges": "NONE"
+}

@@ -1,0 +1,83 @@
+{
+  "scope": "real staging; synthetic data and synthetic provider",
+  "checks": [
+    {
+      "name": "assist greeting appears once",
+      "pass": true
+    },
+    {
+      "name": "free greeting appears once",
+      "pass": true
+    },
+    {
+      "name": "Greeting dedupe in real staging",
+      "pass": true
+    },
+    {
+      "name": "Forbidden creates zero AI tasks",
+      "pass": true
+    },
+    {
+      "name": "Forbidden AI API denied",
+      "pass": true
+    },
+    {
+      "name": "Member direct manual call denied",
+      "pass": true
+    },
+    {
+      "name": "Foreign room invocation denied",
+      "pass": true
+    },
+    {
+      "name": "Core manual idea completes",
+      "pass": true
+    },
+    {
+      "name": "Summary retains explicit human decision",
+      "pass": true
+    },
+    {
+      "name": "Draft remains an unaccepted proposal",
+      "pass": true
+    },
+    {
+      "name": "Member cannot accept draft proposal",
+      "pass": true
+    },
+    {
+      "name": "AI UI viewport 320",
+      "pass": true
+    },
+    {
+      "name": "AI UI viewport 375",
+      "pass": true
+    },
+    {
+      "name": "AI UI viewport 390",
+      "pass": true
+    },
+    {
+      "name": "AI UI viewport 1280",
+      "pass": true
+    },
+    {
+      "name": "UI human reviews and accepts proposal",
+      "pass": true
+    },
+    {
+      "name": "Accepted draft advances version without overwriting earlier blocks",
+      "pass": true
+    },
+    {
+      "name": "DB kill switch rejects manual AI",
+      "pass": true
+    },
+    {
+      "name": "Human posting remains available when AI stops",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

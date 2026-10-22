@@ -1,0 +1,20 @@
+{
+  "scope": "Hosted staging Preview, existing authenticated in-app browser, synthetic fixtures only",
+  "url": "https://minnade-tsukuru-staging-m85sazjk6-sonetokiyas-projects.vercel.app",
+  "checks": [
+    {"name":"Password login reaches authenticated home","pass":true},
+    {"name":"Assist room shows stored synthetic summary with human decision and source count","pass":true},
+    {"name":"AI OFF message and disabled manual invocation","pass":true},
+    {"name":"AI summary/messages controls and task history visible","pass":true},
+    {"name":"Human post saved and visible while AI OFF","pass":true},
+    {"name":"Reviewed human draft saved while AI OFF","pass":true},
+    {"name":"Published Work disclosure visible and hidden publication AI output absent","pass":true},
+    {"name":"Return link is separate from AI disclosure","pass":true},
+    {"name":"Work-to-public-log navigation displays human log and safe AI panel","pass":true}
+  ],
+  "completeForListedChecks": true,
+  "realAiVerified": false,
+  "mobileHostedVerified": false,
+  "generationEnabled": false,
+  "productionChanges":"NONE"
+}

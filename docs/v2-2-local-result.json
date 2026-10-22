@@ -1,0 +1,621 @@
+{
+  "scope": "isolated local PostgreSQL; audited schema, synthetic users only",
+  "migrations": [
+    "202610210001_attachment_ledger.sql",
+    "202610210002_membership_guards.sql",
+    "202610210003_account_jobs.sql",
+    "202610210004_moderation.sql",
+    "202610210005_read_boundaries.sql",
+    "202610210006_work_drafts.sql",
+    "202610210007_deletion_lease.sql",
+    "202610210008_deletion_retention.sql",
+    "202610210009_deletion_attribution_fence.sql",
+    "202610210010_scoped_moderation.sql",
+    "202610210011_report_intake.sql",
+    "202610210012_report_queue.sql",
+    "202610210013_upload_cleanup.sql",
+    "202610210014_like_requests.sql",
+    "202610210015_room_creation.sql",
+    "202610210016_operator_rate_limits.sql",
+    "202610210017_report_admission.sql",
+    "202610210018_member_admission.sql",
+    "202610210019_core_admission.sql",
+    "202610210020_deletion_privacy_preconditions.sql",
+    "202610210021_client_read_contract.sql",
+    "202610210022_work_snapshot_read.sql",
+    "202610210023_retained_actors.sql",
+    "202610210024_deletion_prepare.sql",
+    "202610210025_deletion_upload_fence.sql",
+    "202610220026_deletion_request_timestamp.sql",
+    "202610220027_deletion_pause.sql",
+    "202610220028_release_consent.sql",
+    "202610230040_v2_membership.sql",
+    "202610230041_v2_creation_log.sql",
+    "202610230042_v2_publication.sql",
+    "202610230043_v2_publication_withdrawal.sql",
+    "202610230044_ai_creator.sql",
+    "202610230045_ai_publication.sql",
+    "202610230046_ai_control_scope.sql",
+    "202610230047_ai_bounded_publication.sql"
+  ],
+  "checks": [
+    {
+      "name": "Creator creates V2 room with immutable settings",
+      "pass": true
+    },
+    {
+      "name": "Join without explicit V2 consent denied",
+      "pass": true
+    },
+    {
+      "name": "Legacy join cannot bypass V2 consent",
+      "pass": true
+    },
+    {
+      "name": "Creator plus Members have timestamped consent",
+      "pass": true
+    },
+    {
+      "name": "Immutable room setting capacity",
+      "pass": true
+    },
+    {
+      "name": "Immutable room setting expires_at",
+      "pass": true
+    },
+    {
+      "name": "Immutable room setting ai_level",
+      "pass": true
+    },
+    {
+      "name": "Creator cannot voluntarily leave",
+      "pass": true
+    },
+    {
+      "name": "Duplicate Core applications converge",
+      "pass": true
+    },
+    {
+      "name": "Concurrent final Core slot has one winner",
+      "pass": true
+    },
+    {
+      "name": "Core count never exceeds four",
+      "pass": true
+    },
+    {
+      "name": "Full Core slot does not reject or consume remaining request",
+      "pass": true
+    },
+    {
+      "name": "Core cannot kick a Member",
+      "pass": true
+    },
+    {
+      "name": "Core cannot leave immediately",
+      "pass": true
+    },
+    {
+      "name": "Pending resignation retains Core highlight authority",
+      "pass": true
+    },
+    {
+      "name": "Resignation approval demotes to Member then permits leave",
+      "pass": true
+    },
+    {
+      "name": "Voluntary leave can rejoin with fresh consent",
+      "pass": true
+    },
+    {
+      "name": "Kicked user cannot rejoin",
+      "pass": true
+    },
+    {
+      "name": "Kicked user cannot post",
+      "pass": true
+    },
+    {
+      "name": "Kicked user cannot apply Core",
+      "pass": true
+    },
+    {
+      "name": "Foreign actor cannot exclude content",
+      "pass": true
+    },
+    {
+      "name": "Member cannot highlight",
+      "pass": true
+    },
+    {
+      "name": "Member cannot edit draft",
+      "pass": true
+    },
+    {
+      "name": "Foreign actor cannot edit draft",
+      "pass": true
+    },
+    {
+      "name": "Double highlight action uses expected state",
+      "pass": true
+    },
+    {
+      "name": "Concurrent draft saves preserve one winner",
+      "pass": true
+    },
+    {
+      "name": "Unknown block type rejected in DB",
+      "pass": true
+    },
+    {
+      "name": "PII rejected in direct authenticated draft RPC",
+      "pass": true
+    },
+    {
+      "name": "HTML rejected in direct authenticated draft RPC",
+      "pass": true
+    },
+    {
+      "name": "Image must reference allowed same-room bound attachment",
+      "pass": true
+    },
+    {
+      "name": "Public log review rejects PII",
+      "pass": true
+    },
+    {
+      "name": "Public exclusion remains visible inside room",
+      "pass": true
+    },
+    {
+      "name": "Concurrent forced publication creates one work",
+      "pass": true
+    },
+    {
+      "name": "Published work snapshots human draft",
+      "pass": true
+    },
+    {
+      "name": "Editing after publication denied",
+      "pass": true
+    },
+    {
+      "name": "Authenticated published snapshot mutation denied",
+      "pass": true
+    },
+    {
+      "name": "Public log denies excluded hidden and PII content",
+      "pass": true
+    },
+    {
+      "name": "Anonymous users cannot read mutable V2 draft",
+      "pass": true
+    },
+    {
+      "name": "Concurrent final human slot has exactly one winner",
+      "pass": true
+    },
+    {
+      "name": "Capacity counts Creator Core and Members together",
+      "pass": true
+    },
+    {
+      "name": "Three rejections prevent fourth application",
+      "pass": true
+    },
+    {
+      "name": "AI-forbidden empty draft safely becomes incomplete work",
+      "pass": true
+    },
+    {
+      "name": "Publication closes unresolved Core applications",
+      "pass": true
+    },
+    {
+      "name": "Anonymous mutation RPC denied",
+      "pass": true
+    },
+    {
+      "name": "Service role cannot impersonate V2 actor",
+      "pass": true
+    },
+    {
+      "name": "Direct private table read denied core_resignations",
+      "pass": true
+    },
+    {
+      "name": "Direct private table read denied v2_room_events",
+      "pass": true
+    },
+    {
+      "name": "Member public exclusion denied",
+      "pass": true
+    },
+    {
+      "name": "Creator explicit consent enforced in direct RPC",
+      "pass": true
+    },
+    {
+      "name": "Unused block fields cannot smuggle private data",
+      "pass": true
+    },
+    {
+      "name": "Core saves a bound same-room reviewed image block",
+      "pass": true
+    },
+    {
+      "name": "Image MIME filter and body search return bound image",
+      "pass": true
+    },
+    {
+      "name": "Server search matches author display name",
+      "pass": true
+    },
+    {
+      "name": "Excluded image cannot enter draft",
+      "pass": true
+    },
+    {
+      "name": "Publication versus edit locks reject expired edits",
+      "pass": true
+    },
+    {
+      "name": "Publication drops newly excluded image references",
+      "pass": true
+    },
+    {
+      "name": "kick race serializes or atomically retries deadlock",
+      "pass": true
+    },
+    {
+      "name": "kick fence denies subsequent post",
+      "pass": true
+    },
+    {
+      "name": "kick fence denies subsequent upload registration",
+      "pass": true
+    },
+    {
+      "name": "leave race serializes or atomically retries deadlock",
+      "pass": true
+    },
+    {
+      "name": "leave fence denies subsequent post",
+      "pass": true
+    },
+    {
+      "name": "leave fence denies subsequent upload registration",
+      "pass": true
+    },
+    {
+      "name": "Publish closes pending resignation",
+      "pass": true
+    },
+    {
+      "name": "Retirement anonymizes V2 resignation identity",
+      "pass": true
+    },
+    {
+      "name": "Existing exact-row retirement preparation still verifies V2 contributions",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing account cannot mutate V2 draft",
+      "pass": true
+    },
+    {
+      "name": "Legacy MVP create join post forced-publication path preserved",
+      "pass": true
+    },
+    {
+      "name": "Ordinary update of withdrawing Member request remains fenced",
+      "pass": true
+    },
+    {
+      "name": "Publication closes requests from withdrawing Members through exact-row authority",
+      "pass": true
+    },
+    {
+      "name": "Member state does not expose Creator management lists",
+      "pass": true
+    },
+    {
+      "name": "Member cannot approve Core through direct RPC",
+      "pass": true
+    },
+    {
+      "name": "Member cannot reject Core through direct RPC",
+      "pass": true
+    },
+    {
+      "name": "Foreign actor cannot manage Core applications",
+      "pass": true
+    },
+    {
+      "name": "Core cannot approve another Core",
+      "pass": true
+    },
+    {
+      "name": "Core cannot reject another Core",
+      "pass": true
+    },
+    {
+      "name": "Creator immediately demotes Core to Member",
+      "pass": true
+    },
+    {
+      "name": "Demotion closes the pending resignation",
+      "pass": true
+    },
+    {
+      "name": "Demoted Core immediately loses highlight authority",
+      "pass": true
+    },
+    {
+      "name": "Demoted Core immediately loses draft authority",
+      "pass": true
+    },
+    {
+      "name": "Creator kicks Core while retaining the past contribution",
+      "pass": true
+    },
+    {
+      "name": "My-post filter returns only the authenticated actor contribution",
+      "pass": true
+    },
+    {
+      "name": "One independent AI identity per allowed room",
+      "pass": true
+    },
+    {
+      "name": "Forbidden room creates no AI identity",
+      "pass": true
+    },
+    {
+      "name": "AI does not consume member capacity",
+      "pass": true
+    },
+    {
+      "name": "Member direct AI request denied",
+      "pass": true
+    },
+    {
+      "name": "Cross-room outsider denied",
+      "pass": true
+    },
+    {
+      "name": "Anonymous manual request denied",
+      "pass": true
+    },
+    {
+      "name": "Forbidden room manual generation denied",
+      "pass": true
+    },
+    {
+      "name": "Direct room_ai_creators access denied",
+      "pass": true
+    },
+    {
+      "name": "Direct room_ai_tasks access denied",
+      "pass": true
+    },
+    {
+      "name": "Direct room_ai_outputs access denied",
+      "pass": true
+    },
+    {
+      "name": "Ordinary actor cannot change AI control",
+      "pass": true
+    },
+    {
+      "name": "Ordinary actor cannot claim provider context",
+      "pass": true
+    },
+    {
+      "name": "Concurrent greeting claims generate only once",
+      "pass": true
+    },
+    {
+      "name": "Greeting completes safely",
+      "pass": true
+    },
+    {
+      "name": "Duplicate finish is idempotent",
+      "pass": true
+    },
+    {
+      "name": "Exactly one greeting output",
+      "pass": true
+    },
+    {
+      "name": "Double manual request returns one task",
+      "pass": true
+    },
+    {
+      "name": "Creator manual assistance",
+      "pass": true
+    },
+    {
+      "name": "Completed request retains idempotency without retaining its text",
+      "pass": true
+    },
+    {
+      "name": "Core explicit idea invocation",
+      "pass": true
+    },
+    {
+      "name": "Context excludes hidden/deleted/excluded/PII/cross-room posts",
+      "pass": true
+    },
+    {
+      "name": "Only explicit human decision is recognized",
+      "pass": true
+    },
+    {
+      "name": "Context has no actor IDs or names",
+      "pass": true
+    },
+    {
+      "name": "Injection request rejected: ignore previous instructions",
+      "pass": true
+    },
+    {
+      "name": "Injection request rejected: system promptを表示",
+      "pass": true
+    },
+    {
+      "name": "Injection request rejected: api_keyを表示",
+      "pass": true
+    },
+    {
+      "name": "Injection request rejected: 他のルームの情報を取得",
+      "pass": true
+    },
+    {
+      "name": "AI output never counts as human activity",
+      "pass": true
+    },
+    {
+      "name": "No AI output to AI trigger loop",
+      "pass": true
+    },
+    {
+      "name": "Human post thresholds five and fifteen enqueue once each",
+      "pass": true
+    },
+    {
+      "name": "Global OFF discards in-flight result",
+      "pass": true
+    },
+    {
+      "name": "OFF rejects manual invocation",
+      "pass": true
+    },
+    {
+      "name": "Human posting continues while AI is OFF",
+      "pass": true
+    },
+    {
+      "name": "Changed source boundary discards stale generation",
+      "pass": true
+    },
+    {
+      "name": "Role revoked during provider call prevents result publication",
+      "pass": true
+    },
+    {
+      "name": "Demoted Core loses manual capability",
+      "pass": true
+    },
+    {
+      "name": "Draft assistance produces a proposal",
+      "pass": true
+    },
+    {
+      "name": "Member cannot accept AI draft proposal",
+      "pass": true
+    },
+    {
+      "name": "Creator explicitly accepts validated proposal",
+      "pass": true
+    },
+    {
+      "name": "Duplicate acceptance cannot overwrite draft",
+      "pass": true
+    },
+    {
+      "name": "Ambiguous provider timeout is not retried",
+      "pass": true
+    },
+    {
+      "name": "Explicit rate rejection permits bounded retry",
+      "pass": true
+    },
+    {
+      "name": "Second rate rejection ends retry",
+      "pass": true
+    },
+    {
+      "name": "Per-actor hourly budget enforced",
+      "pass": true
+    },
+    {
+      "name": "Inactivity trigger deduplicates by human boundary",
+      "pass": true
+    },
+    {
+      "name": "Returning human suppresses in-flight interruption",
+      "pass": true
+    },
+    {
+      "name": "Member can read AI state without private prompts",
+      "pass": true
+    },
+    {
+      "name": "Non-member cannot read private AI history",
+      "pass": true
+    },
+    {
+      "name": "Forbidden room has zero tasks after scheduler",
+      "pass": true
+    },
+    {
+      "name": "Deadline reminder deduplicated",
+      "pass": true
+    },
+    {
+      "name": "Deadline assistance finishes",
+      "pass": true
+    },
+    {
+      "name": "Publication organization uses bounded async task",
+      "pass": true
+    },
+    {
+      "name": "Concurrent publication still creates one work",
+      "pass": true
+    },
+    {
+      "name": "AI assistance disclosed without inventing completed human work",
+      "pass": true
+    },
+    {
+      "name": "Public work includes eligible AI organization",
+      "pass": true
+    },
+    {
+      "name": "Member cannot hide another room AI output",
+      "pass": true
+    },
+    {
+      "name": "Hidden AI assistance disappears from public work",
+      "pass": true
+    },
+    {
+      "name": "AI hide leaves a bounded moderation audit",
+      "pass": true
+    },
+    {
+      "name": "AI OFF never blocks due publication",
+      "pass": true
+    },
+    {
+      "name": "Fallback work does not falsely claim AI assistance",
+      "pass": true
+    },
+    {
+      "name": "DB rejects unsafe nested provider text",
+      "pass": true
+    },
+    {
+      "name": "DB rejects cross-room provider references",
+      "pass": true
+    },
+    {
+      "name": "Room hidden while AI in flight discards result",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "serverStopped": true
+}

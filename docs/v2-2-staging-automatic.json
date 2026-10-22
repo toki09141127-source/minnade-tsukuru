@@ -1,0 +1,47 @@
+{
+  "scope": "real staging synthetic-only; exact fixture clock accelerated",
+  "checks": [
+    {
+      "name": "Five and fifteen human posts produce exactly two summaries",
+      "pass": true
+    },
+    {
+      "name": "AI responses cannot schedule an AI loop",
+      "pass": true
+    },
+    {
+      "name": "Free inactivity proposal cancelled when a human returns",
+      "pass": true
+    },
+    {
+      "name": "Deadline reminder once",
+      "pass": true
+    },
+    {
+      "name": "Parallel bounded publication creates one snapshot",
+      "pass": true
+    },
+    {
+      "name": "AI organization is disclosed on public work",
+      "pass": true
+    },
+    {
+      "name": "Public AI organization visible through safe boundary",
+      "pass": true
+    },
+    {
+      "name": "Moderation removes AI text from published work",
+      "pass": true
+    },
+    {
+      "name": "Outage and AI OFF still publish incomplete human-only snapshot",
+      "pass": true
+    },
+    {
+      "name": "Forbidden room remains zero tasks after every scheduler path",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

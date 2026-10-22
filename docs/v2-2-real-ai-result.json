@@ -1,0 +1,48 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "provider": "openai",
+  "model": "gpt-4.1-mini-2025-04-14",
+  "apiCalls": 3,
+  "checks": [
+    {
+      "kind": "greeting",
+      "pass": false,
+      "status": "pending",
+      "providerError": "PROVIDER_RATE",
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "kind": "greeting",
+      "pass": false,
+      "status": "failed",
+      "providerError": "PROVIDER_UNAVAILABLE",
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "durationMs": 0
+      }
+    },
+    {
+      "kind": "question",
+      "pass": false,
+      "status": "failed",
+      "providerError": "PROVIDER_UNAVAILABLE",
+      "diagnostic": {
+        "httpStatus": 429,
+        "providerCode": "unknown"
+      },
+      "usage": {
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "durationMs": 0
+      }
+    }
+  ],
+  "complete": false,
+  "productionChanges": "NONE",
+  "failure": "REAL_question_PROVIDER_UNAVAILABLE"
+}
