@@ -1,0 +1,13 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "at": "2026-10-22T09:40:52.616Z",
+  "smtpRequestAccepted": true,
+  "confirmationPending": true,
+  "testRecipient": "minnadetsukuru.auth+prod52-8bc6c2b5@gmail.com",
+  "errorCode": null,
+  "realEmailLinkClickVerified": false,
+  "gmailDeliveryConfirmed": true,
+  "gmailEvidence": "Dedicated recipient search returned exactly one message; no body/token/link read",
+  "redirectConfigurationVerified": true,
+  "siteUrl": "https://minnade-tsukuru.vercel.app"
+}

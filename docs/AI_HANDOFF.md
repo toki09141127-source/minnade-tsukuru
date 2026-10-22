@@ -1585,3 +1585,13 @@ commit/push/merge/production migration/production deploy/production smoke/24h監
 release commit 4a1faeaをfeature branchへ通常push済み。本番停止SQLの文字列置換に構文エラーが2回あり、両方rollback・適用0を確認後にrunnerを修正。17表の一時guardを適用成功。18:24〜18:26 JSTの停止後backup（DB49表/Storage16個）を更新し、隔離restore68比較＋全28試適用＋Auth/Storage件数保持2件PASS、guard17件はlocalコピーだけ解除して試適用。元backupと初回証拠を保持。
 
 18:29〜18:31 JSTに本番001〜028を7phase/個別transaction/hash/RLS確認で全件適用成功。台帳release52-production-migrations.json。退会pause=true、全体guardは互換app Readyまで維持。本番Vercel非退会12flagを有効にする次回配信設定、退会2flagは無効。秘密env変更なし。次はmainへの通常fast-forward pushで既存本番workflowを起動する。
+
+### 第52節・本番appと通常/security smoke
+
+mainへbaa1e1bを通常fast-forward push、Vercel dpl_A4jAPa853bcHAVNYP77wtNen7pgGがProduction Ready、本番minnade-tsukuru.vercel.appへ割当。18:35頃一時guardを解除し0件、退会pause=trueを確認。TEST3アカウントによるHTTP/API検収18グループPASS（release52-production-smoke.json）。最初の公開レビュー要求はテストコードにconfirmが欠け400拒否、実UI契約を修正し既存TESTドラフト照合後に継続。app修正なし。
+
+追加security10グループPASS（release52-production-security.json）：非表示/削除投稿・ルームの添付拒否、他人の削除拒否、全public/private表RLS有効、一時TEST運営者を撤去。通常検収でもforeignプロフィール/role/添付/直接Storage/旧API/旧RPCを拒否。公開cron検収時は他のopen roomを短時間ロックしてSKIP LOCKEDでTESTだけ1件公開→再試行0件、他のroomを変更していない。
+
+本番signup確認メールを運営Gmailの新規TEST別名へ1通だけ送信成功、Gmail ID検索で到着1件を確認。本文/token/確認URLは読まない。実メールlink clickは未検収。実本番Site URLとproduction/** callback許可を既存設定で確認、設定変更なし。
+
+通常/security成功後に退会2flagの次回配信設定を有効化。DB pauseは維持して次のReady後に最後のTEST退会1名を検収する。

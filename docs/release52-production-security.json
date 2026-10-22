@@ -1,0 +1,52 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "f2af82c3-a2ad-4400-b993-bebc49fc892b",
+  "checks": [
+    {
+      "name": "OPERATOR_HIDE_TEST_ROOM",
+      "pass": true
+    },
+    {
+      "name": "HIDDEN_ROOM_PUBLIC_ATTACHMENT_DENIED",
+      "pass": true
+    },
+    {
+      "name": "OPERATOR_RESTORE_TEST_ROOM",
+      "pass": true
+    },
+    {
+      "name": "FOREIGN_POST_DELETE_DENIED",
+      "pass": true
+    },
+    {
+      "name": "OWNER_TEST_POST_SOFT_DELETE",
+      "pass": true
+    },
+    {
+      "name": "DELETED_POST_ATTACHMENT_DENIED",
+      "pass": true
+    },
+    {
+      "name": "FOREIGN_ROOM_DELETE_DENIED",
+      "pass": true
+    },
+    {
+      "name": "OWNER_TEST_ROOM_SOFT_DELETE",
+      "pass": true
+    },
+    {
+      "name": "DELETED_ROOM_ATTACHMENT_DENIED",
+      "pass": true
+    },
+    {
+      "name": "FINAL_RLS_AND_PRIVILEGE_CLEANUP",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "catalog": {
+    "tables_without_rls": 0,
+    "temporary_operators": 0,
+    "deletion_paused": true
+  }
+}

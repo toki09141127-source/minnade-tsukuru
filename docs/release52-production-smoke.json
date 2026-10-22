@@ -1,0 +1,82 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "f2af82c3-a2ad-4400-b993-bebc49fc892b",
+  "startedAt": "2026-10-22T09:37:50.812Z",
+  "checks": [
+    {
+      "name": "TEST_AUTH_LOGIN_AND_CURRENT_CONSENT",
+      "pass": true
+    },
+    {
+      "name": "PUBLIC_ENTRY_HEADS_AND_DELETION_DISABLED",
+      "pass": true
+    },
+    {
+      "name": "PROFILE_UPDATE_AND_SELF_ONLY_READ",
+      "pass": true
+    },
+    {
+      "name": "ROOM_CREATE",
+      "pass": true
+    },
+    {
+      "name": "JOIN_CONSENT_REQUIRED_AND_ACCEPTED",
+      "pass": true
+    },
+    {
+      "name": "TEXT_POST",
+      "pass": true
+    },
+    {
+      "name": "IMAGE_UPLOAD_BOUND_AND_UNUSED",
+      "pass": true
+    },
+    {
+      "name": "ATTACHMENT_BYTES_AND_OWNERSHIP_DENIALS",
+      "pass": true
+    },
+    {
+      "name": "DIRECT_RLS_AND_OLD_RPC_DENIALS",
+      "pass": true
+    },
+    {
+      "name": "LEGACY_APIS_CLOSED",
+      "pass": true
+    },
+    {
+      "name": "CORE_REJECT_AND_APPROVE_AUTHORIZATION",
+      "pass": true
+    },
+    {
+      "name": "KICKED_USER_CANNOT_REJOIN",
+      "pass": true
+    },
+    {
+      "name": "MODERATION_PERMISSION_HIDE_RESTORE_AUDIT",
+      "pass": true
+    },
+    {
+      "name": "DRAFT_AND_LOG_PUBLICATION_REVIEW",
+      "pass": true
+    },
+    {
+      "name": "FORCED_PUBLISH_TEST_ONLY_AND_RETRY",
+      "pass": true
+    },
+    {
+      "name": "PUBLISHED_WORK_AND_PUBLIC_SIGNED_BYTES",
+      "pass": true
+    },
+    {
+      "name": "LIKE_AND_REPORT_RECEIPT",
+      "pass": true
+    },
+    {
+      "name": "LOGOUT_AND_RELOGIN",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "finishedAt": "2026-10-22T09:40:33.711Z",
+  "deletionStillPaused": true
+}
