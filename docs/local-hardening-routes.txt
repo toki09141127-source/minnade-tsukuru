@@ -1,0 +1,41 @@
+1. FIXED: retired expire has no DB access
+2. FIXED: retired debug has no Storage access
+3. GAP: old join bypasses consent/capacity and demotes existing core: app/api/rooms/join/route.ts
+4. GAP: old join leaves is_core inconsistent: app/api/rooms/join/route.ts
+5. Old join still denies unauthenticated caller: app/api/rooms/join/route.ts
+6. GAP: old join then leave bypasses aged-core leave lock
+7. Control: aged core leave alone denied
+8. FIXED: current supporter join rejects hidden/deleted room
+9. Control: current supporter join requires consent
+10. FIXED: legacy expire/join has no DB access
+11. GAP: legacy creator approval inserts core without capacity/consent checks
+12. Control: legacy approval denies noncreator
+13. FIXED: former member cannot delete own post
+14. Control: cron denies missing secret
+15. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=true
+16. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=false
+17. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=true
+18. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=false
+19. Retired endpoint never reaches service: app/rooms/join/route.ts token=true
+20. Retired endpoint never reaches service: app/rooms/join/route.ts token=false
+21. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=true
+22. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=false
+23. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":true}
+24. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"deleted_at":"2026-01-01"}
+25. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":null}
+26. Visible open room still accepts valid join/request: app/api/rooms/join-supporter/route.ts
+27. Closed room denies join/request: app/api/rooms/join-supporter/route.ts
+28. No bearer denies join/request: app/api/rooms/join-supporter/route.ts
+29. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":true}
+30. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"deleted_at":"2026-01-01"}
+31. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":null}
+32. Visible open room still accepts valid join/request: app/api/rooms/request-core/route.ts
+33. Closed room denies join/request: app/api/rooms/request-core/route.ts
+34. No bearer denies join/request: app/api/rooms/request-core/route.ts
+35. Supporter capacity still enforced for sequential requests
+36. Current supporter route preserves existing active core
+37. Active owner can still delete own post
+38. Nonmember cannot delete own post
+39. Active member cannot delete another owner post
+40. GAP: documented Vercel cron Authorization header is rejected by query-only route
+Completed 40 offline audit cases; GAP means vulnerability reproduced, not fixed. DB triggers/RLS are not simulated.

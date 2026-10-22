@@ -1,0 +1,12 @@
+PASS Last Core slot: exactly one winner and four active Cores
+PASS Losing approval leaves request pending, no partial decision
+PASS Concurrent repeated approval safely replays
+PASS Concurrent leave leaves no active Core and never revives departed membership
+PASS Concurrent kick leaves target inactive and rejoin forbidden
+PASS Concurrent Core requests converge on one pending row
+PASS Non-Creator direct privileged call is rejected
+PASS Cross-room approval rejected
+PASS Wrong consent version rejected
+PASS Old Core approval RPC is revoked even for service client
+PASS Anon new Core approval RPC denied
+PASS Authenticated direct Core approval RPC denied

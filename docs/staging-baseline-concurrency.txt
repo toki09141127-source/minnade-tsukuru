@@ -1,0 +1,35 @@
+Synthetic PostgreSQL 17.10; loopback only
+1. Simultaneous hide/no-action: one winner, no overwrite
+2. Exactly one committed resolution
+3. Concurrent duplicate request replays after commit
+4. Rolled-back first handler lets waiting handler complete
+5. Operator revocation waits for already authorized operation
+6. New operation denied after revocation
+7. Revocation winning race prevents waiting resolution
+8. Operator withdrawal winning race prevents resolution
+9. Target withdrawal still permits narrowly authorized hide
+10. No bypass capability survives concurrent operations
+11. Concurrent duplicate post creates one canonical post
+12. Used upload rejected for competing request
+13. Concurrent duplicate like creates one row
+14. Concurrent cron skips locked publication
+15. Repeated cron does not republish committed room
+16. Concurrent report retries return one receipt
+17. New ID cannot inflate duplicate reporter count
+18. 100 requests over 20 connections admit exactly 30 in one window
+19. Concurrent rate counter is capped without lost increments
+Synthetic 100-request rate batch elapsed_ms=144; not a Supabase capacity benchmark.
+20. Last Member slot race admits exactly one
+21. Duplicate concurrent join preserves unique membership
+22. Member retry never demotes Creator
+23. Admission saves consent in same transaction
+24. Concurrent kicked rejoin attempts always denied
+25. Core final slot serialized by DB guard (not legacy approval RPC)
+26. Admission rejects stale snapshot isolation
+27. Direct authenticated admission RPC denied
+28. Withdrawing actor cannot replay join
+29. Publication trigger failure rolls back draft creation
+30. Retrying publication still excludes simultaneous cron
+31. Publication recovery creates exactly one completed draft
+Completed 31 real multi-connection checks; synthetic PostgreSQL only, no Supabase.
+Synthetic server stopped; test data retained in dedicated temporary directory.

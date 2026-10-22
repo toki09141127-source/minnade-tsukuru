@@ -1,84 +1,22 @@
-// app/api/cron/publish/route.ts
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../../lib/supabase/admin'
 
 export const dynamic = 'force-dynamic'
 
 export async function GET(req: Request) {
+  const secret = process.env.CRON_SECRET
+  if (!secret) return NextResponse.json({ ok: false, error: '公開処理を利用できません' }, { status: 503 })
+  if (req.headers.get('authorization') !== `Bearer ${secret}`) {
+    return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 })
+  }
   try {
-    const url = new URL(req.url)
-    const key = url.searchParams.get('key')
-
-    const secret = process.env.CRON_SECRET
-
-    // ===== デバッグ情報 =====
-    const nowIso = new Date().toISOString()
-    const isVercel = !!process.env.VERCEL
-    const hasServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY
-
-    // secret 未設定
-    if (!secret) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'CRON_SECRET is not set',
-          debug: { nowIso, isVercel, hasServiceRole },
-        },
-        { status: 500 }
-      )
+    if (process.env.MVP_DRAFTS_ENABLED === 'true') {
+      const {data,error}=await supabaseAdmin.rpc('mvp_publish_due')
+      if(error) return NextResponse.json({ok:false,error:'公開処理に失敗しました'}, {status:503})
+      return NextResponse.json({ok:true,updated:data})
     }
-
-    // 認証失敗
-    if (!key || key !== secret) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'Unauthorized',
-          debug: { nowIso, isVercel, hasServiceRole },
-        },
-        { status: 401 }
-      )
-    }
-
-    // ===== 期限切れルームを forced_publish に更新 =====
-    const { data, error } = await supabaseAdmin
-      .from('rooms')
-      .update({ status: 'forced_publish' })
-      .eq('status', 'open')
-      .not('expires_at', 'is', null)
-      .lte('expires_at', nowIso)
-      .select('id')
-
-    if (error) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: error.message,
-          debug: { nowIso, isVercel, hasServiceRole },
-        },
-        { status: 400 }
-      )
-    }
-
-    // ===== 成功レスポンス（デバッグ付き）=====
-    return NextResponse.json({
-      ok: true,
-      updated: data?.length ?? 0,
-      debug: {
-        nowIso,
-        isVercel,
-        hasServiceRole,
-        checkedStatus: 'open',
-        condition: 'expires_at <= now',
-      },
-    })
-  } catch (e: any) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: e?.message ?? 'server error',
-      },
-      { status: 500 }
-    )
+    return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ ok: false, error: '公開処理に失敗しました' }, { status: 503 })
   }
 }

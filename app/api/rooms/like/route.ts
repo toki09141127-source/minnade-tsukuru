@@ -1,40 +1,32 @@
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../../lib/supabase/admin'
-import { createClient } from '@supabase/supabase-js'
-
-function userClientFromToken(token: string) {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { global: { headers: { Authorization: `Bearer ${token}` } } }
-  )
-}
+import { limitAction } from '../../../../lib/apiGuards'
 
 export async function POST(req: Request) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) return NextResponse.json({ ok: false, error: 'no token' }, { status: 401 })
-
-  const supaUser = userClientFromToken(token)
-  const { data: u } = await supaUser.auth.getUser()
-  const uid = u.user?.id
-  if (!uid) return NextResponse.json({ ok: false, error: 'no user' }, { status: 401 })
-
-  const { roomId } = await req.json()
-  if (!roomId) return NextResponse.json({ ok: false, error: 'roomId required' }, { status: 400 })
-
-  const { data: exists } = await supabaseAdmin
-    .from('room_likes')
-    .select('room_id')
-    .eq('room_id', roomId)
-    .eq('user_id', uid)
-    .maybeSingle()
-
-  if (exists) {
-    await supabaseAdmin.from('room_likes').delete().eq('room_id', roomId).eq('user_id', uid)
-    return NextResponse.json({ ok: true, liked: false })
-  } else {
-    const { error } = await supabaseAdmin.from('room_likes').insert({ room_id: roomId, user_id: uid })
-    if (error) return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
-    return NextResponse.json({ ok: true, liked: true })
+  try {
+    const auth = req.headers.get('authorization') ?? ''
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : ''
+    if (!token) return NextResponse.json({ ok: false, error: 'ログインしてください' }, { status: 401 })
+    const { data, error: authError } = await supabaseAdmin.auth.getUser(token)
+    const uid = data.user?.id
+    if (authError || !uid) return NextResponse.json({ ok: false, error: 'ログインしてください' }, { status: 401 })
+    const body = await req.json().catch(() => null)
+    const roomId = typeof body?.roomId === 'string' ? body.roomId.trim() : ''
+    if (!roomId) return NextResponse.json({ ok: false, error: 'ルームを指定してください' }, { status: 400 })
+    const limited = await limitAction(supabaseAdmin, uid, 'like')
+    if (limited) return limited
+    if(process.env.MVP_LIKE_REQUESTS_ENABLED==='true'){
+      const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+      if(typeof body?.expected!=='boolean'||typeof body?.desired!=='boolean'||!uuid.test(body?.requestId??''))
+        return NextResponse.json({ok:false,error:'一覧を更新して操作してください'},{status:400,headers:{'Cache-Control':'no-store'}})
+      const {data:liked,error}=await supabaseAdmin.rpc('mvp_set_room_like',{
+        p_actor:uid,p_room:roomId,p_expected:body.expected,p_desired:body.desired,p_request:body.requestId,
+      })
+      if(error||typeof liked!=='boolean')return NextResponse.json({ok:false,error:'状態を確認できません。同じ操作の再試行、または再読み込みで確認してください'},{status:409,headers:{'Cache-Control':'no-store'}})
+      return NextResponse.json({ok:true,liked},{headers:{'Cache-Control':'no-store'}})
+    }
+    return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ ok: false, error: '更新できませんでした' }, { status: 503 })
   }
 }

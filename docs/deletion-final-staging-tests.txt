@@ -1,0 +1,24 @@
+PASS Active Core withdrawal denied
+PASS Unpublished Creator withdrawal denied
+PASS Concurrent duplicate request uses one job
+PASS User cannot invoke worker prepare
+PASS Process interruption after prepare leaves resumable durable state
+PASS Storage failure retries before any Auth deletion
+PASS Auth remains after Storage failure
+PASS Auth deletion failure remains retryable
+PASS Auth remains after injected Auth failure
+PASS Retry completes real Auth deletion
+PASS Completed deletion replay is idempotent
+PASS Auth absence verified explicitly
+PASS Used attachment retained after Auth deletion
+PASS Unused attachment removed through Storage SDK
+PASS Late upload registration rejected after completed deletion
+PASS Post retained with anonymous non-Auth identity
+PASS Other user post unchanged
+PASS Deleted user login rejected
+PASS Deleted user refresh rejected
+PASS Old JWT cannot write consent/profile
+PASS Core demoted to Member can complete withdrawal
+PASS Published Creator withdrawal completes
+PASS Shared published work survives Creator Auth deletion
+PASS Remaining member can like departed Creator work

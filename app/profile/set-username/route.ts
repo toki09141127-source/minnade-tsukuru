@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const user = userRes.user
 
     const body = await req.json().catch(() => ({}))
-    const username = String((body as any).username ?? '').trim()
+    const username = String(body.username ?? '').trim()
 
     if (username.length < 2 || username.length > 20) {
       return NextResponse.json({ ok: false, error: 'username must be 2-20 chars' }, { status: 400 })
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
       .upsert({ id: user.id, username }, { onConflict: 'id' })
 
     if (upsertErr) {
-      return NextResponse.json({ ok: false, error: upsertErr.message }, { status: 400 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 400 })
     }
 
     // ② public_profiles 同期（username必須なのでここで確実に作る）
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
       .maybeSingle()
 
     if (pubErr) {
-      return NextResponse.json({ ok: false, error: pubErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     const { error: pubUpErr } = await supabaseAdmin.from('public_profiles').upsert(
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
         id: user.id,
         username,
         bio: (pub?.bio ?? null) as string | null,
-        links: (pub?.links ?? null) as any,
+        links: pub?.links ?? null,
         avatar_url: (pub?.avatar_url ?? null) as string | null,
         updated_at: new Date().toISOString(),
       },
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
     )
 
     if (pubUpErr) {
-      return NextResponse.json({ ok: false, error: pubUpErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     // ③ 過去投稿の username を一括更新（任意だが体験が良くなる）
@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     await supabaseAdmin.from('room_members').update({ username }).eq('user_id', user.id)
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

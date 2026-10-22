@@ -1,0 +1,24 @@
+▲ Next.js 16.1.6 (webpack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (133kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+✓ Compiled successfully in 62s
+  Running TypeScript ...
+Failed to compile.
+
+.next/types/app/rooms/[id]/page.ts:36:29
+Type error: Type '{ params: Params | Promise<Params>; }' does not satisfy the constraint 'PageProps'.
+  Types of property 'params' are incompatible.
+    Type 'Params | Promise<Params>' is not assignable to type 'Promise<any> | undefined'.
+      Type 'Params' is missing the following properties from type 'Promise<any>': then, catch, finally, [Symbol.toStringTag]
+
+  34 |
+  35 | // Check the prop type of the entry function
+> 36 | checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
+     |                             ^
+  37 |
+  38 | // Check the arguments and return type of the generateMetadata function
+  39 | if ('generateMetadata' in entry) {
+Next.js build worker exited with code: 1 and signal: null

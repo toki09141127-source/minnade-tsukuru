@@ -7,7 +7,6 @@ import AdultGate from './AdultGate'
 import ReportButton from './ReportButton'
 import LikeButton from './LikeButton'
 import RoomDetailClient from './RoomDetailClient'
-import OwnerCoreRequestsPanel from './OwnerCoreRequestsPanel'
 import InviteCodeForCreator from './InviteCodeForCreator'
 import MarkRoomSeenOnView from '@/app/components/MarkRoomSeenOnView'
 
@@ -50,7 +49,7 @@ async function fetchRoomWithOptionalEndedAt(roomId: string): Promise<RoomRow | n
     .eq('id', roomId)
     .maybeSingle()
 
-  if (!withEndedAt.error) return (withEndedAt.data ?? null) as any
+  if (!withEndedAt.error) return (withEndedAt.data ?? null) as RoomRow | null
 
   const withoutEndedAt = await supabaseAdmin
     .from('rooms')
@@ -61,7 +60,7 @@ async function fetchRoomWithOptionalEndedAt(roomId: string): Promise<RoomRow | n
     .maybeSingle()
 
   if (withoutEndedAt.error) throw withoutEndedAt.error
-  return (withoutEndedAt.data ?? null) as any
+  return (withoutEndedAt.data ?? null) as RoomRow | null
 }
 
 function computeIsEnded(room: RoomRow) {
@@ -76,7 +75,7 @@ function computeIsEnded(room: RoomRow) {
   return endedByStatus || endedByExpireSafety || endedByEndedAt
 }
 
-export default async function RoomDetailPage({ params }: { params: Params | Promise<Params> }) {
+export default async function RoomDetailPage({ params }: { params: Promise<Params> }) {
   const p = await Promise.resolve(params)
   const roomId = p?.id ?? ''
 
@@ -152,11 +151,7 @@ export default async function RoomDetailPage({ params }: { params: Params | Prom
       <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center' }}>
         <LikeButton roomId={room.id} />
         <ReportButton targetType="room" targetId={room.id} />
-        <DeleteRoomButton roomId={room.id} />
-      </div>
-
-      <div style={{ marginTop: 18 }}>
-        <OwnerCoreRequestsPanel roomId={room.id} />
+        {room.status === 'open' && <DeleteRoomButton roomId={room.id} />}
       </div>
 
       {isForced && (
@@ -230,6 +225,7 @@ export default async function RoomDetailPage({ params }: { params: Params | Prom
             status: room.status,
             enable_core_approval: !!room.enable_core_approval,
             enable_core_invite: !!room.enable_core_invite,
+            draftsEnabled: process.env.MVP_DRAFTS_ENABLED === 'true',
           }}
         />
       )}

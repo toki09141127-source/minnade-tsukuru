@@ -1,0 +1,30 @@
+1. Nonoperator cannot read reasons or aggregate
+2. Queue returns bounded lookahead plus accurate overdue count
+3. List excludes reporter identity and internal errors
+4. Stable cursor handles equal timestamps
+5. Malformed cursor refused
+6. Authorized operator resolves retiring owner report and hides target
+7. Same request idempotent
+8. Conflicting retry refused
+9. Already resolved receipt cannot be overwritten
+10. Service role cannot rewrite resolution audit directly
+11. Hidden target committed
+12. Legacy processing state preserved
+13. Resolved receipt excluded from queue and backlog
+14. No-action resolution records reason
+15. Empty resolution reason rejected
+16. Audit insertion failure aborts completion
+17. Resolution failure rolls back hiding
+18. Resolution failure rolls back moderation audit too
+19. Standalone moderation ID cannot be reused as resolution
+20. Browser cannot spoof operator RPC
+21. JWT actor mismatch denied
+22. Second operator cannot overwrite first committed resolution
+23. Revocation blocks list and even successful request replay
+24. Transaction abort leaves receipt unresolved
+25. Retry after abort or lost response records exactly one resolution
+26. Cancellation rolls back resolution and moderation audit
+27. Same request succeeds after transient cancellation
+28. Withdrawing operator cannot list or resolve
+29. Withdrawal blocks successful request replay too
+Completed 29 report queue checks; synthetic only.

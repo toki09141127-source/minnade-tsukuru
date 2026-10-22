@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/client'
 import { AI_LEVEL_OPTIONS, type AiLevel } from '../../../lib/aiLevel'
@@ -25,10 +25,9 @@ const INVITE_CODE_VIEWABLE_IN_ROOM_DETAIL = true
 // 招待コード生成：8桁英数字（I/O/1/0 を避けて読みやすく）
 function generateInviteCode(len = 8) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
+  const random = crypto.getRandomValues(new Uint8Array(len))
   let out = ''
-  for (let i = 0; i < len; i++) {
-    out += chars[Math.floor(Math.random() * chars.length)]
-  }
+  for (const value of random) out += chars[value % chars.length]
   return out
 }
 
@@ -36,6 +35,7 @@ export default function RoomCreateClient() {
   const router = useRouter()
   const supabase = createClient()
 
+  const createRequests = useRef(new Map<string,string>())
   const [title, setTitle] = useState('')
   const [category, setCategory] = useState('その他')
   const [isAdult, setIsAdult] = useState(false)
@@ -47,8 +47,8 @@ export default function RoomCreateClient() {
   // ✅ コンセプト
   const [concept, setConcept] = useState('')
 
-  // ✅ core参加方式（承認制デフォルトOFF）
-  const [enableCoreApproval, setEnableCoreApproval] = useState(false)
+  // CoreはMemberからの申請・Creator承認を使用する。
+  const [enableCoreApproval, setEnableCoreApproval] = useState(true)
   const [enableCoreInvite, setEnableCoreInvite] = useState(false)
   const [coreInviteCode, setCoreInviteCode] = useState<string>('')
 
@@ -62,18 +62,12 @@ export default function RoomCreateClient() {
   const conceptLen = concept.length
   const conceptTooLong = conceptLen > CONCEPT_MAX
 
-  // 招待コードONにした瞬間に自動生成（空なら）
-  useEffect(() => {
-    if (enableCoreInvite && !coreInviteCode) {
-      setCoreInviteCode(generateInviteCode(8))
-    }
-    if (!enableCoreInvite) {
-      setCoreInviteCode('')
-      setCopyMsg('')
-      setCopyBusy(false)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enableCoreInvite])
+  function changeInvite(enabled:boolean) {
+    setEnableCoreInvite(enabled)
+    setCoreInviteCode(enabled ? coreInviteCode || generateInviteCode(8) : '')
+    setCopyMsg('')
+    setCopyBusy(false)
+  }
 
   const inviteCodeInvalid = useMemo(() => {
     if (!enableCoreInvite) return false
@@ -140,7 +134,7 @@ export default function RoomCreateClient() {
     try {
       const { data: sessionData, error: sessionErr } = await supabase.auth.getSession()
       if (sessionErr) {
-        setError(sessionErr.message)
+        setError('ログイン状態を確認できません')
         return
       }
 
@@ -152,6 +146,8 @@ export default function RoomCreateClient() {
 
       const h = Math.max(1, Math.min(150, Math.floor(Number(hours) || 1)))
 
+      const intentKey=JSON.stringify([sessionData.session?.user.id,t,category,isAdult,h,aiLevel,c,enableCoreApproval,enableCoreInvite,inviteCode])
+      if(!createRequests.current.has(intentKey))createRequests.current.set(intentKey,crypto.randomUUID())
       const res = await fetch('/api/rooms/create', {
         method: 'POST',
         headers: {
@@ -159,6 +155,7 @@ export default function RoomCreateClient() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          requestId: createRequests.current.get(intentKey),
           title: t,
           category,
           isAdult,
@@ -184,8 +181,8 @@ export default function RoomCreateClient() {
       const roomId = json?.room?.id
       if (roomId) router.push(`/rooms/${roomId}`)
       else router.push('/rooms')
-    } catch (e: any) {
-      setError(e?.message ?? '作成に失敗しました')
+    } catch {
+      setError('作成結果を確認できません。同じ内容で再試行してください')
     } finally {
       setLoading(false)
     }
@@ -206,6 +203,7 @@ export default function RoomCreateClient() {
       >
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>タイトル</label>
         <input
+          aria-label="タイトル"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
@@ -222,6 +220,7 @@ export default function RoomCreateClient() {
 
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>カテゴリ</label>
         <select
+          aria-label="カテゴリ"
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           style={{
@@ -242,6 +241,7 @@ export default function RoomCreateClient() {
 
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>対象</label>
         <select
+          aria-label="対象"
           value={String(isAdult)}
           onChange={(e) => setIsAdult(e.target.value === 'true')}
           style={{
@@ -260,6 +260,7 @@ export default function RoomCreateClient() {
         {/* ✅ AIレベル */}
         <label style={{ display: 'block', marginBottom: 6, fontWeight: 700 }}>AIレベル</label>
         <select
+          aria-label="AIレベル"
           value={aiLevel}
           onChange={(e) => setAiLevel(e.target.value as AiLevel)}
           style={{
@@ -288,6 +289,7 @@ export default function RoomCreateClient() {
           min={1}
           max={150}
           step={1}
+          aria-label="制限時間（時間）"
           value={hours}
           onChange={(e) => setHours(Number(e.target.value))}
           style={{
@@ -340,18 +342,19 @@ export default function RoomCreateClient() {
             </label>
           </div>
           <div style={{ fontSize: 12, opacity: 0.75, marginBottom: 12, lineHeight: 1.6 }}>
-            ON：ユーザーは「コア申請」→制作者が承認すると core になります。
+            ON：参加中のメンバーが申請し、制作者が承認するとCoreになります。OFF：Core申請を受け付けません。
           </div>
 
           <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10 }}>
             <input
               id="enableCoreInvite"
+              disabled
               type="checkbox"
               checked={enableCoreInvite}
-              onChange={(e) => setEnableCoreInvite(e.target.checked)}
+              onChange={(e) => changeInvite(e.target.checked)}
             />
             <label htmlFor="enableCoreInvite" style={{ fontWeight: 800 }}>
-              招待コード枠を有効にする（入力で即core）
+              招待コードでのCore参加は利用停止中です
             </label>
           </div>
 
@@ -436,7 +439,8 @@ export default function RoomCreateClient() {
               )}
 
               <input
-                value={coreInviteCode}
+                aria-label="招待コード"
+          value={coreInviteCode}
                 onChange={(e) => setCoreInviteCode(e.target.value.toUpperCase())}
                 placeholder="例：ABCD1234"
                 style={{
@@ -452,7 +456,7 @@ export default function RoomCreateClient() {
               />
 
               <div style={{ fontSize: 12, opacity: 0.75, marginTop: 8, lineHeight: 1.6 }}>
-                招待コードを知っている人は「招待コードでcore参加」から即coreになれます（最大5人枠）。
+                招待コードを知っている人は「招待コードでcore参加」から即coreになれます（Coreは最大4人、Creatorは別枠）。
               </div>
 
               {inviteCodeInvalid && (
@@ -480,7 +484,8 @@ export default function RoomCreateClient() {
           </div>
 
           <textarea
-            value={concept}
+            aria-label="作品コンセプト（任意）"
+          value={concept}
             onChange={(e) => setConcept(e.target.value)}
             placeholder={
               '例）雰囲気：青春 × SF\n' +

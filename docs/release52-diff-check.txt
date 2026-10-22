@@ -1,0 +1,161 @@
+app/api/cron/account-deletion/route.ts:26: new blank line at EOF.
+app/api/integrations/buffer/check/route.ts:51: new blank line at EOF.
+docs/AI_HANDOFF.md:1303: trailing whitespace.
+docs/AI_HANDOFF.md:1313: trailing whitespace.
+docs/AI_HANDOFF.md:1322: trailing whitespace.
+docs/AI_HANDOFF.md:1332: trailing whitespace.
+docs/AI_TASK.md:72: trailing whitespace.
+docs/AI_TASK.md:76: trailing whitespace.
+docs/AI_TASK.md:80: trailing whitespace.
+docs/AI_TASK.md:84: trailing whitespace.
+docs/AI_TASK.md:88: trailing whitespace.
+docs/AI_TASK.md:92: trailing whitespace.
+docs/AI_TASK.md:165: new blank line at EOF.
+docs/BUFFER_CONNECTION_SETUP.md:40: new blank line at EOF.
+docs/FINAL_FINISHING_ACCEPTANCE.md:81: new blank line at EOF.
+docs/PRODUCTION_GO_NO_GO.md:203: new blank line at EOF.
+docs/PRODUCTION_PREFLIGHT.md:194: new blank line at EOF.
+docs/RELEASE_FINAL_ACCEPTANCE.md:214: new blank line at EOF.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:81: trailing whitespace.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:85: trailing whitespace.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:89: trailing whitespace.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:93: trailing whitespace.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:97: trailing whitespace.
+docs/WEB_MVP_100_PERCENT_CHECKLIST.md:101: trailing whitespace.
+docs/acceptance-build.txt:21: trailing whitespace.
+docs/acceptance-build.txt:22: trailing whitespace.
+docs/acceptance-build.txt:23: trailing whitespace.
+docs/acceptance-build.txt:97: new blank line at EOF.
+docs/account-deletion-db-check.cjs:69: new blank line at EOF.
+docs/audit-build-after-types.txt:10: trailing whitespace.
+docs/audit-build-after-types.txt:11: trailing whitespace.
+docs/audit-build-after-types.txt:12: trailing whitespace.
+docs/audit-build-after-types.txt:80: new blank line at EOF.
+docs/audit-lint-result.txt:6: new blank line at EOF.
+docs/audit-no-network.cjs:19: new blank line at EOF.
+docs/buffer-connection-check.cjs:68: new blank line at EOF.
+docs/completion-build-webpack.txt:21: trailing whitespace.
+docs/completion-build-webpack.txt:22: trailing whitespace.
+docs/completion-build-webpack.txt:23: trailing whitespace.
+docs/completion-build-webpack.txt:96: new blank line at EOF.
+docs/completion-build.txt:58: trailing whitespace.
+docs/completion-build.txt:63: trailing whitespace.
+docs/completion-build.txt:75: trailing whitespace.
+docs/completion-existing-lint.txt:19: new blank line at EOF.
+docs/completion-final-lint.txt:16: new blank line at EOF.
+docs/deletion-attribution-build.txt:21: trailing whitespace.
+docs/deletion-attribution-build.txt:22: trailing whitespace.
+docs/deletion-attribution-build.txt:23: trailing whitespace.
+docs/deletion-attribution-build.txt:96: new blank line at EOF.
+docs/deletion-p1-build.txt:21: trailing whitespace.
+docs/deletion-p1-build.txt:22: trailing whitespace.
+docs/deletion-p1-build.txt:23: trailing whitespace.
+docs/deletion-p1-build.txt:98: new blank line at EOF.
+docs/deletion-pause-build.txt:11: trailing whitespace.
+docs/deletion-pause-build.txt:12: trailing whitespace.
+docs/deletion-pause-build.txt:13: trailing whitespace.
+docs/final-staging-build.txt:15: trailing whitespace.
+docs/final-staging-build.txt:16: trailing whitespace.
+docs/final-staging-build.txt:17: trailing whitespace.
+docs/final-staging-build.txt:91: new blank line at EOF.
+docs/finishing-build.txt:17: trailing whitespace.
+docs/finishing-build.txt:18: trailing whitespace.
+docs/finishing-build.txt:19: trailing whitespace.
+docs/finishing-build.txt:93: new blank line at EOF.
+docs/legacy-api-build.txt:10: trailing whitespace.
+docs/legacy-api-build.txt:11: trailing whitespace.
+docs/legacy-api-build.txt:12: trailing whitespace.
+docs/legacy-api-build.txt:80: new blank line at EOF.
+docs/legacy-api-lint.txt:6: new blank line at EOF.
+docs/local-hardening-build.txt:10: trailing whitespace.
+docs/local-hardening-build.txt:11: trailing whitespace.
+docs/local-hardening-build.txt:12: trailing whitespace.
+docs/local-hardening-build.txt:80: new blank line at EOF.
+docs/local-hardening-lint.txt:6: new blank line at EOF.
+docs/mvp-build.txt:17: trailing whitespace.
+docs/mvp-build.txt:18: trailing whitespace.
+docs/mvp-build.txt:19: trailing whitespace.
+docs/mvp-build.txt:87: new blank line at EOF.
+docs/mvp-final-pass-build.txt:21: trailing whitespace.
+docs/mvp-final-pass-build.txt:22: trailing whitespace.
+docs/mvp-final-pass-build.txt:23: trailing whitespace.
+docs/mvp-final-pass-build.txt:97: new blank line at EOF.
+docs/mvp-lint.txt:9: new blank line at EOF.
+docs/mvp-privacy-check.cjs:8: new blank line at EOF.
+docs/release-build.txt:11: trailing whitespace.
+docs/release-build.txt:12: trailing whitespace.
+docs/release-build.txt:13: trailing whitespace.
+docs/release-preview-first-build.txt:13: trailing whitespace.
+docs/release-preview-first-build.txt:15: trailing whitespace.
+docs/release-preview-first-build.txt:25: trailing whitespace.
+docs/release-preview-first-build.txt:28: trailing whitespace.
+docs/release-preview-first-build.txt:31: trailing whitespace.
+docs/release-preview-second-build.txt:13: trailing whitespace.
+docs/release-preview-second-build.txt:15: trailing whitespace.
+docs/release-preview-second-build.txt:25: trailing whitespace.
+docs/release-preview-second-build.txt:28: trailing whitespace.
+docs/release-preview-second-build.txt:36: trailing whitespace.
+docs/release-preview-second-build.txt:37: trailing whitespace.
+docs/release-preview-second-build.txt:39: trailing whitespace.
+docs/release-preview-second-build.txt:42: trailing whitespace.
+docs/release-preview-second-build.txt:47: trailing whitespace.
+docs/release-preview-second-build.txt:51: trailing whitespace.
+docs/release-preview-second-build.txt:57: trailing whitespace.
+docs/release-preview-second-build.txt:61: trailing whitespace.
+docs/release-preview-second-build.txt:67: trailing whitespace.
+docs/release-preview-second-build.txt:80: trailing whitespace.
+docs/release-preview-second-build.txt:147: trailing whitespace.
+docs/release-preview-second-build.txt:148: trailing whitespace.
+docs/release-preview-second-build.txt:150: trailing whitespace.
+docs/release-preview-second-build.txt:153: trailing whitespace.
+docs/release-preview-second-build.txt:155: trailing whitespace.
+docs/release-preview-second-build.txt:157: trailing whitespace.
+docs/release-preview-second-build.txt:159: trailing whitespace.
+docs/release51-build.txt:11: trailing whitespace.
+docs/release51-build.txt:12: trailing whitespace.
+docs/release51-build.txt:13: trailing whitespace.
+docs/release51-changed-lint.txt:15: new blank line at EOF.
+docs/release51-lint.txt:82: new blank line at EOF.
+docs/release51-preview-inspect.txt:41: trailing whitespace.
+docs/release51-preview-inspect.txt:41: new blank line at EOF.
+docs/report-intake-build.txt:21: trailing whitespace.
+docs/report-intake-build.txt:22: trailing whitespace.
+docs/report-intake-build.txt:23: trailing whitespace.
+docs/report-intake-build.txt:96: new blank line at EOF.
+docs/report-intake-check.cjs:75: new blank line at EOF.
+docs/report-queue-build.txt:21: trailing whitespace.
+docs/report-queue-build.txt:22: trailing whitespace.
+docs/report-queue-build.txt:23: trailing whitespace.
+docs/report-queue-build.txt:97: new blank line at EOF.
+docs/report-queue-check.cjs:105: new blank line at EOF.
+docs/report-queue-hardening-build.txt:21: trailing whitespace.
+docs/report-queue-hardening-build.txt:22: trailing whitespace.
+docs/report-queue-hardening-build.txt:23: trailing whitespace.
+docs/report-queue-hardening-build.txt:97: new blank line at EOF.
+docs/retention-build.txt:17: trailing whitespace.
+docs/retention-build.txt:18: trailing whitespace.
+docs/retention-build.txt:19: trailing whitespace.
+docs/retention-build.txt:87: new blank line at EOF.
+docs/scoped-moderation-check.cjs:79: new blank line at EOF.
+docs/security-audit-check.cjs:54: trailing whitespace.
+docs/security-audit-check.cjs:438: new blank line at EOF.
+docs/staging-local-build.txt:21: trailing whitespace.
+docs/staging-local-build.txt:22: trailing whitespace.
+docs/staging-local-build.txt:23: trailing whitespace.
+docs/staging-local-build.txt:97: new blank line at EOF.
+docs/supabase-policy-view-review.sql:164: new blank line at EOF.
+lib/accountDeletionPreparation.ts:49: new blank line at EOF.
+scripts/staging/client-read-integration.cjs:32: new blank line at EOF.
+scripts/staging/client-read-local.cjs:44: new blank line at EOF.
+scripts/staging/deletion-final-integration.cjs:94: new blank line at EOF.
+scripts/staging/deletion-final-local.cjs:87: new blank line at EOF.
+scripts/staging/deletion-privacy-integration.cjs:50: new blank line at EOF.
+scripts/staging/deletion-privacy-local.cjs:33: new blank line at EOF.
+scripts/staging/web-full.cjs:117: new blank line at EOF.
+scripts/staging/work-read-local.cjs:35: new blank line at EOF.
+supabase/migrations/202610210020_deletion_privacy_preconditions.sql:38: new blank line at EOF.
+supabase/migrations/202610210021_client_read_contract.sql:91: new blank line at EOF.
+supabase/migrations/202610210022_work_snapshot_read.sql:26: new blank line at EOF.
+supabase/migrations/202610210023_retained_actors.sql:68: new blank line at EOF.
+supabase/migrations/202610210024_deletion_prepare.sql:254: new blank line at EOF.
+supabase/migrations/202610210025_deletion_upload_fence.sql:37: new blank line at EOF.

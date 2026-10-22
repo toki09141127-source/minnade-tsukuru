@@ -1,0 +1,10 @@
+{
+  "scope": "Specified staging test account metadata only",
+  "found": true,
+  "emailConfirmed": true,
+  "lastSignInExists": true,
+  "recoveryRequested": false,
+  "emailConfirmedAt": "2026-10-22T05:27:06.790517Z",
+  "lastSignInAt": "2026-10-22T05:27:06.807705Z",
+  "recoverySentAt": null
+}

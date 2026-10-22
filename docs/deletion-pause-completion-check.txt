@@ -1,0 +1,76 @@
+1. Deletion first result none
+2. Deletion resumes without duplicate external deletion none
+3. Deletion first result prepare
+4. Deletion resumes without duplicate external deletion prepare
+5. Deletion first result lookup
+6. Deletion resumes without duplicate external deletion lookup
+7. Deletion first result delete
+8. Deletion resumes without duplicate external deletion delete
+9. Deletion first result finalize
+10. Deletion resumes without duplicate external deletion finalize
+11. Deletion first result record
+12. Deletion resumes without duplicate external deletion record
+13. Review requirement never reaches Auth
+14. Busy lease prevents duplicate worker
+15. PII deterministic signal
+16. PII deterministic signal
+17. PII deterministic signal
+18. PII deterministic signal
+19. Unsafe log excluded
+20. Unsafe log excluded
+21. Unsafe log excluded
+22. Unsafe log excluded
+23. Unsafe log excluded
+24. Unsafe log excluded
+25. Reviewed clean log retained
+26. No provider fallback invents no content
+27. Generated PII fails closed
+28. Image EXIF/XMP/IPTC removed after re-encode
+29. Image dimensions retained
+30. Truncated image rejected by decoder
+31. Noncreator cannot kick
+32. Demotion retains membership
+33. Kick terminates membership without deleting
+34. Kicked rejoin denied at DB trigger
+35. Kicked Core request denied
+36. Kicked member cannot highlight
+37. Creator atomic highlight succeeds
+38. Stale highlight write conflicts
+39. Published room management denied
+40. Creator is not automatically a moderation operator
+41. Operator can hide published work
+42. Moderation replay creates one audit event
+43. Moderation key cannot change action on retry
+44. Core maximum is four besides Creator
+45. Deletion intake is idempotent
+46. Deletion retry cannot silently change attribution consent
+47. Durable lease excludes duplicate claim
+48. Cannot skip deletion stages
+49. Wrong lease cannot advance
+50. Durable stage transition
+51. Untrusted role denied jobs and management RPC anon
+52. Untrusted role denied jobs and management RPC authenticated
+53. Restrictive boundary overrides unconditional SELECT for private posts
+54. Invite secret column is not public
+55. Existing SECURITY DEFINER actor RPC is not public
+56. Direct role escalation denied by grants
+57. Active Creator retains private post read
+58. Kicked participant cannot read private posts
+59. Published visible posts remain readable
+60. Hidden work cannot leak posts through permissive policy
+61. Kicked participant cannot edit completion draft
+62. Creator saves draft with version
+63. Stale draft version cannot overwrite another edit
+64. Unsupported block structure rejected
+65. Kicked user cannot approve publication
+66. Creator can approve exact reviewed log content
+67. Deadline rejects edits even before cron runs
+68. Deadline publication freezes draft and missing-draft fallback
+69. Repeated publication is idempotent
+70. Incomplete publication has explicit non-fabricated fallback
+71. Published completion cannot be edited
+72. Approved unchanged log is public
+73. Changed attachment invalidates public approval
+74. Changed content invalidates previous public approval
+75. Unreviewed content blocked at direct SELECT boundary
+Completed 75 completion checks; synthetic/local only.

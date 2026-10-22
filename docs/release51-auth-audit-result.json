@@ -1,0 +1,11 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "scope": "single staging test acceptance account; booleans only",
+  "readOnly": "on",
+  "rolledBack": true,
+  "matchingUsers": 1,
+  "emailConfirmed": true,
+  "confirmationTokenCleared": true,
+  "recoveryRequested": false,
+  "rawCredentialsReadOrRecorded": false
+}

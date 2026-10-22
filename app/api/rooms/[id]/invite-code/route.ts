@@ -39,7 +39,7 @@ export async function GET(
       .maybeSingle()
 
     if (roomErr) {
-      return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
     if (!room) {
       return NextResponse.json({ ok: false, error: 'Room not found' }, { status: 404 })
@@ -55,7 +55,7 @@ export async function GET(
       enable: !!room.enable_core_invite,
       code: room.core_invite_code ?? null,
     })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'Server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

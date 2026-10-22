@@ -1,0 +1,173 @@
+/* eslint-disable @typescript-eslint/no-require-imports -- Dedicated synthetic local PostgreSQL only. */
+const fs=require('node:fs'),path=require('node:path'),os=require('node:os'),net=require('node:net'),assert=require('node:assert/strict'),{spawnSync}=require('node:child_process'),{randomUUID}=require('node:crypto');
+const runtime=process.env.MVP_TEST_RUNTIME;
+if(!runtime)throw Error('MVP_TEST_RUNTIME_REQUIRED: isolated embedded-postgres installation');
+const {Client}=require(path.join(runtime,'node_modules/pg'));
+const bin=path.join(runtime,'node_modules/@embedded-postgres/windows-x64/native/bin');
+const root=path.resolve(__dirname,'..');
+let n=0;const ok=(v,label)=>{assert.ok(v,label);console.log(++n+'. '+label)};
+const pause=()=>new Promise(r=>setTimeout(r,20));
+(async()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'minnade-synthetic-pg-'));
+ const data=path.join(dir,'data');
+ const listener=net.createServer();await new Promise(r=>listener.listen(0,'127.0.0.1',r));const port=listener.address().port;await new Promise(r=>listener.close(r));
+ const run=(exe,args)=>{const r=spawnSync(path.join(bin,exe+'.exe'),args,{windowsHide:true,encoding:'utf8',timeout:30000});if(r.status!==0)throw Error(exe+' failed '+r.status);};
+ const clients=[];let started=false;
+ try{
+  run('initdb',['-D',data,'-U','fixture_admin','--auth=trust','--locale=C','--encoding=UTF8']);
+  fs.appendFileSync(path.join(data,'postgresql.conf'),"\nlisten_addresses='127.0.0.1'\nport="+port+"\n");
+  run('pg_ctl',['-D',data,'-l',path.join(dir,'server.log'),'-w','start']);started=true;
+  async function connect(database='postgres'){const c=new Client({host:'127.0.0.1',port,user:'fixture_admin',database,connectionTimeoutMillis:5000});await c.connect();clients.push(c);await c.query("SET statement_timeout='8s'; SET lock_timeout='6s'");return c}
+  const admin=await connect(),a=await connect(),b=await connect();
+  console.log('Synthetic PostgreSQL '+(await admin.query('SHOW server_version')).rows[0].server_version+'; loopback only');
+  const source=fs.readFileSync(path.join(__dirname,'report-queue-check.cjs'),'utf8');
+  const fixture=source.slice(source.indexOf(' await db.exec('),source.indexOf(' const owner='));
+  await new Function('db','fs','return (async()=>{'+fixture+'})()')({exec:s=>admin.query(s)},fs);
+  const owner=randomUUID(),op=randomUUID(),other=randomUUID();
+  for(const [id,name]of [[owner,'Owner'],[op,'Operator'],[other,'Other']])await admin.query('INSERT INTO profiles VALUES($1,$2)',[id,name]);
+  await admin.query('INSERT INTO moderation_operators VALUES($1),($2)',[op,other]);
+  await admin.query("INSERT INTO posts(id,user_id,username,content) VALUES($1,$1,'Owner','synthetic')",[owner]);
+  const receipt=async()=> (await admin.query("INSERT INTO report_intake(reporter_user_id,request_id,target_type,target_id,reason,state) VALUES($1,$2,'post',$3,'synthetic','pending') RETURNING id",[other,randomUUID(),owner])).rows[0].id;
+  const resolve=(c,actor,id,request,outcome='hidden')=>c.query("SELECT mvp_resolve_report($1,$2,$3,$4,'reviewed')",[actor,id,request,outcome]);
+  const pid=(await b.query('SELECT pg_backend_pid() pid')).rows[0].pid;
+  async function blocked(){for(let i=0;i<200;i++){if((await admin.query("SELECT wait_event_type FROM pg_stat_activity WHERE pid=$1",[pid])).rows[0]?.wait_event_type==='Lock')return;await pause()}throw Error('Expected lock wait not observed')}
+  const settle=p=>p.then(()=>({ok:true}),e=>({ok:false,code:e.message}));
+  let id=await receipt(),key=randomUUID();
+  await a.query('BEGIN');await resolve(a,op,id,key);
+  let pending=settle(resolve(b,other,id,randomUUID(),'no_action'));await blocked();await a.query('COMMIT');
+  ok((await pending).code==='ALREADY_RESOLVED','Simultaneous hide/no-action: one winner, no overwrite');
+  ok((await admin.query('SELECT count(*)::int n FROM report_resolutions WHERE receipt_id=$1',[id])).rows[0].n===1,'Exactly one committed resolution');
+  id=await receipt();key=randomUUID();
+  await a.query('BEGIN');await resolve(a,op,id,key);
+  pending=settle(resolve(b,op,id,key));await blocked();await a.query('COMMIT');
+  ok((await pending).ok,'Concurrent duplicate request replays after commit');
+  id=await receipt();
+  await a.query('BEGIN');await resolve(a,op,id,randomUUID());
+  pending=settle(resolve(b,other,id,randomUUID(),'no_action'));await blocked();await a.query('ROLLBACK');
+  ok((await pending).ok,'Rolled-back first handler lets waiting handler complete');
+  id=await receipt();
+  await a.query('BEGIN');await resolve(a,op,id,randomUUID());
+  pending=settle(b.query('DELETE FROM moderation_operators WHERE user_id=$1',[op]));await blocked();await a.query('COMMIT');
+  ok((await pending).ok,'Operator revocation waits for already authorized operation');
+  await assert.rejects(resolve(a,op,await receipt(),randomUUID()),/FORBIDDEN/);ok(true,'New operation denied after revocation');
+  await admin.query('INSERT INTO moderation_operators VALUES($1)',[op]);
+  id=await receipt();
+  await a.query('BEGIN');await a.query('DELETE FROM moderation_operators WHERE user_id=$1',[op]);
+  pending=settle(resolve(b,op,id,randomUUID()));await blocked();await a.query('COMMIT');
+  ok((await pending).code==='FORBIDDEN','Revocation winning race prevents waiting resolution');
+  await admin.query('INSERT INTO moderation_operators VALUES($1)',[op]);
+  id=await receipt();
+  await a.query('BEGIN');await a.query("SELECT mvp_request_deletion($1,'keep_name','withdrawal-draft-2026-10-21')",[op]);
+  pending=settle(resolve(b,op,id,randomUUID()));await blocked();await a.query('COMMIT');
+  ok((await pending).code==='FORBIDDEN','Operator withdrawal winning race prevents resolution');
+  id=await receipt();
+  await a.query('BEGIN');await a.query("SELECT mvp_request_deletion($1,'anonymous','withdrawal-draft-2026-10-21')",[owner]);
+  pending=settle(resolve(b,other,id,randomUUID()));await blocked();await a.query('COMMIT');
+  ok((await pending).ok,'Target withdrawal still permits narrowly authorized hide');
+  ok((await admin.query('SELECT count(*)::int n FROM mvp_moderation_capabilities')).rows[0].n===0,'No bypass capability survives concurrent operations');
+  await admin.query('CREATE DATABASE synthetic_posts');
+  const pa=await connect('synthetic_posts'),pb=await connect('synthetic_posts'),observer=await connect('synthetic_posts');
+  const postSource=fs.readFileSync(path.join(__dirname,'mvp-database-check.cjs'),'utf8');
+  const postFixture=postSource.slice(postSource.indexOf(' await db.exec('),postSource.indexOf(' async function reset()')).replace('CREATE ROLE anon; CREATE ROLE authenticated; CREATE ROLE service_role BYPASSRLS;','');
+  await new Function('db','fs','path','root','return (async()=>{'+postFixture+'})()')({exec:s=>pa.query(s)},fs,path,root);
+  await pa.query("CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql AS $$ SELECT NULL::uuid $$; CREATE TABLE account_deletion_jobs(actor_id uuid); CREATE TABLE room_likes(room_id uuid,user_id uuid,primary key(room_id,user_id));");
+  await pa.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210014_like_requests.sql'),'utf8'));
+  const actor=randomUUID(),room=randomUUID(),upload=randomUUID(),postKey=randomUUID();
+  await pa.query('INSERT INTO auth.users VALUES($1)',[actor]);
+  await pa.query("INSERT INTO rooms VALUES($1,'open',false,null,now()+interval '1 hour')",[room]);
+  await pa.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'core')",[room,actor]);
+  await pa.query("INSERT INTO public_profiles VALUES($1,'synthetic')",[actor]);
+  await pa.query("INSERT INTO attachment_uploads(id,user_id,room_id,storage_path,status,uploaded_at,mime_type,size_bytes) VALUES($1,$2,$3,$4,'uploaded',now(),'image/png',8)",[upload,actor,room,'rooms/'+room+'/images/'+upload+'.png']);
+  const post=(c,key)=>c.query("SELECT create_post_with_upload($1,$2,'synthetic','log',$3,$4) id",[actor,room,upload,key]);
+  const pbPid=(await pb.query('SELECT pg_backend_pid() pid')).rows[0].pid;
+  async function postBlocked(){for(let i=0;i<200;i++){if((await observer.query('SELECT wait_event_type FROM pg_stat_activity WHERE pid=$1',[pbPid])).rows[0]?.wait_event_type==='Lock')return;await pause()}throw Error('Post lock wait missing')}
+  await pa.query('BEGIN');const created=(await post(pa,postKey)).rows[0].id;
+  const postPending=post(pb,postKey);await postBlocked();await pa.query('COMMIT');
+  ok((await postPending).rows[0].id===created,'Concurrent duplicate post creates one canonical post');
+  await assert.rejects(post(pb,randomUUID()),/UPLOAD_UNAVAILABLE/);ok(true,'Used upload rejected for competing request');
+  const likeKey=randomUUID();
+  const like=(c)=>c.query('SELECT mvp_set_room_like($1,$2,false,true,$3) liked',[actor,room,likeKey]);
+  await pa.query('BEGIN');await like(pa);pending=settle(like(pb));await postBlocked();await pa.query('COMMIT');
+  ok((await pending).ok&&(await observer.query('SELECT count(*)::int n FROM room_likes')).rows[0].n===1,'Concurrent duplicate like creates one row');
+  await pa.query('CREATE TABLE room_join_requests(id uuid)');
+  await pa.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210005_read_boundaries.sql'),'utf8'));
+  await pa.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210006_work_drafts.sql'),'utf8'));
+  await pa.query("UPDATE rooms SET expires_at=now()-interval '1 second'");
+  await pa.query('BEGIN');await pa.query('SELECT mvp_publish_due()');
+  ok((await pb.query('SELECT mvp_publish_due() n')).rows[0].n===0,'Concurrent cron skips locked publication');
+  await pa.query('COMMIT');
+  ok((await pb.query('SELECT mvp_publish_due() n')).rows[0].n===0,'Repeated cron does not republish committed room');
+  await admin.query("ALTER TABLE rooms ADD status text DEFAULT 'open',ADD expires_at timestamptz; ALTER TABLE posts ADD room_id uuid,ADD attachment_url text,ADD attachment_type text; ALTER TABLE room_members ADD room_id uuid,ADD role text,ADD left_at timestamptz;");
+  for(const name of ['005_read_boundaries','006_work_drafts','017_report_admission'])await admin.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210'+name+'.sql'),'utf8'));
+  const reportRoom=randomUUID(),reportPost=randomUUID(),reportKey=randomUUID();
+  await admin.query('INSERT INTO rooms(id,created_by) VALUES($1,$2)',[reportRoom,other]);
+  await admin.query("INSERT INTO posts(id,user_id,room_id,username,content) VALUES($1,$2,$3,'Other','fixture')",[reportPost,other,reportRoom]);
+  await admin.query("INSERT INTO room_members(id,user_id,room_id,role) VALUES($1,$2,$3,'core')",[randomUUID(),other,reportRoom]);
+  const receive=(c,key)=>c.query("SELECT * FROM mvp_receive_report($1,$2,'post',$3,'fixture')",[other,key,reportPost]);
+  await a.query('BEGIN');const firstReceipt=(await receive(a,reportKey)).rows[0].receipt_id;
+  const receiptPending=receive(b,reportKey);await blocked();await a.query('COMMIT');
+  ok((await receiptPending).rows[0].receipt_id===firstReceipt,'Concurrent report retries return one receipt');
+  await assert.rejects(receive(b,randomUUID()),/ALREADY_REPORTED/);ok(true,'New ID cannot inflate duplicate reporter count');
+  await pa.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210016_operator_rate_limits.sql'),'utf8'));
+  const rateClients=await Promise.all(Array.from({length:20},()=>connect('synthetic_posts')));
+  const rateActor=randomUUID(),startedAt=Date.now();
+  const responses=(await Promise.all(rateClients.map(async client=>{
+    const values=[];for(let i=0;i<5;i++)values.push((await client.query("SELECT mvp_take_rate_limit($1,'moderation') ok",[rateActor])).rows[0].ok);
+    return values;
+  }))).flat();
+  // Avoid wall-clock minute rollover making a false claim about a single rate window.
+  const counters=(await pa.query("SELECT hits FROM mvp_rate_limits WHERE actor_id=$1 AND action='moderation'",[rateActor])).rows;
+  if(counters.length!==1)throw Error('Rate test crossed a window boundary; rerun');
+  ok(responses.filter(Boolean).length===30,'100 requests over 20 connections admit exactly 30 in one window');
+  ok(counters[0].hits===31,'Concurrent rate counter is capped without lost increments');
+  console.log('Synthetic 100-request rate batch elapsed_ms='+String(Date.now()-startedAt)+'; not a Supabase capacity benchmark.');
+
+  await pa.query("ALTER TABLE rooms ADD created_by uuid; ALTER TABLE room_members ADD is_core boolean, ADD joined_at timestamptz, ADD approved_at timestamptz, ADD approved_by uuid, ADD room_terms_version text, ADD room_agreed_at timestamptz, ADD forced_publish_ack_at timestamptz; ALTER TABLE room_join_requests ADD room_id uuid,ADD user_id uuid,ADD status text;");
+  for(const file of ['002_membership_guards','018_member_admission'])
+   await pa.query(fs.readFileSync(path.join(root,'supabase/migrations/202610210'+file+'.sql'),'utf8'));
+  const joinRoom=randomUUID(),joinA=randomUUID(),joinB=randomUUID(),creator=randomUUID();
+  await pa.query("INSERT INTO rooms(id,status,is_hidden,expires_at,created_by) VALUES($1,'open',false,now()+interval '1 hour',$2)",[joinRoom,creator]);
+  for(const id of [joinA,joinB,creator])await pa.query('INSERT INTO auth.users VALUES($1)',[id]);
+  await pa.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'creator')",[joinRoom,creator]);
+  for(let i=0;i<44;i++){const id=randomUUID();await pa.query('INSERT INTO auth.users VALUES($1)',[id]);await pa.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'supporter')",[joinRoom,id]);}
+  const join=(c,id)=>c.query("SELECT mvp_join_member($1,$2,'2026-03-24') role",[id,joinRoom]);
+  await pa.query('BEGIN');await join(pa,joinA);pending=settle(join(pb,joinB));await postBlocked();await pa.query('COMMIT');
+  ok((await pending).code==='MEMBER_FULL'&&(await observer.query("SELECT count(*)::int n FROM room_members WHERE room_id=$1 AND role='supporter' AND left_at IS NULL",[joinRoom])).rows[0].n===45,'Last Member slot race admits exactly one');
+  await pa.query('BEGIN');await join(pa,joinA);pending=settle(join(pb,joinA));await postBlocked();await pa.query('COMMIT');
+  ok((await pending).ok&&(await observer.query('SELECT count(*)::int n FROM room_members WHERE room_id=$1 AND user_id=$2',[joinRoom,joinA])).rows[0].n===1,'Duplicate concurrent join preserves unique membership');
+  ok((await join(pa,creator)).rows[0].role==='creator','Member retry never demotes Creator');
+  ok((await pa.query('SELECT room_terms_version,room_agreed_at,forced_publish_ack_at FROM room_members WHERE user_id=$1',[joinA])).rows[0].room_agreed_at!==null,'Admission saves consent in same transaction');
+  await pa.query('INSERT INTO room_exclusions(room_id,user_id,actor_id) VALUES($1,$2,$3)',[joinRoom,joinB,creator]);
+  const deniedJoins=await Promise.all([settle(join(pa,joinB)),settle(join(pb,joinB))]);
+  ok(deniedJoins.every(v=>v.code==='MEMBER_EXCLUDED'),'Concurrent kicked rejoin attempts always denied');
+  const coreA=randomUUID(),coreB=randomUUID();
+  for(const id of [coreA,coreB,...Array.from({length:3},()=>randomUUID())]){
+   await pa.query('INSERT INTO auth.users VALUES($1)',[id]);
+   if(id!==coreA&&id!==coreB)await pa.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'core')",[joinRoom,id]);
+  }
+  await pa.query('BEGIN');await pa.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'core')",[joinRoom,coreA]);
+  pending=settle(pb.query("INSERT INTO room_members(room_id,user_id,role) VALUES($1,$2,'core')",[joinRoom,coreB]));await postBlocked();await pa.query('COMMIT');
+  ok((await pending).code==='CORE_FULL'&&(await observer.query("SELECT count(*)::int n FROM room_members WHERE room_id=$1 AND role='core' AND left_at IS NULL",[joinRoom])).rows[0].n===4,'Core final slot serialized by DB guard (not legacy approval RPC)');
+  await pa.query('BEGIN ISOLATION LEVEL REPEATABLE READ');
+  await assert.rejects(join(pa,joinA),/ISOLATION_UNSUPPORTED/);await pa.query('ROLLBACK');ok(true,'Admission rejects stale snapshot isolation');
+  await pa.query('SET ROLE authenticated');await assert.rejects(join(pa,joinA),/permission denied/);await pa.query('RESET ROLE');ok(true,'Direct authenticated admission RPC denied');
+  await pa.query('INSERT INTO account_deletion_jobs VALUES($1)',[joinA]);
+  await assert.rejects(join(pa,joinA),/ACCOUNT_WITHDRAWAL_PENDING/);ok(true,'Withdrawing actor cannot replay join');
+
+  const failureRoom=randomUUID();
+  await pa.query("INSERT INTO rooms(id,status,is_hidden,expires_at) VALUES($1,'open',false,now()-interval '1 minute')",[failureRoom]);
+  await pa.query("CREATE FUNCTION fixture_publish_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.status='forced_publish' THEN RAISE EXCEPTION 'FIXTURE_PUBLISH_FAILURE'; END IF; RETURN NEW; END $$; CREATE TRIGGER fixture_publish_failure BEFORE UPDATE ON rooms FOR EACH ROW EXECUTE FUNCTION fixture_publish_failure();");
+  await assert.rejects(pa.query('SELECT mvp_publish_due()'),/FIXTURE_PUBLISH_FAILURE/);
+  ok((await pa.query('SELECT count(*)::int n FROM work_drafts WHERE room_id=$1',[failureRoom])).rows[0].n===0,'Publication trigger failure rolls back draft creation');
+  await pa.query('DROP TRIGGER fixture_publish_failure ON rooms');
+  await pa.query('BEGIN');await pa.query('SELECT mvp_publish_due()');
+  ok((await pb.query('SELECT mvp_publish_due() n')).rows[0].n===0,'Retrying publication still excludes simultaneous cron');
+  await pa.query('COMMIT');
+  ok((await pa.query('SELECT count(*)::int n FROM work_drafts WHERE room_id=$1 AND published_at IS NOT NULL',[failureRoom])).rows[0].n===1,'Publication recovery creates exactly one completed draft');
+  console.log('Completed '+n+' real multi-connection checks; synthetic PostgreSQL only, no Supabase.');
+ }finally{
+  for(const c of clients)await c.end().catch(()=>{});
+  if(started)run('pg_ctl',['-D',data,'-m','fast','-w','stop']);
+  console.log('Synthetic server stopped; test data retained in dedicated temporary directory.');
+ }
+})().catch(e=>{console.error(e.message);process.exitCode=1});

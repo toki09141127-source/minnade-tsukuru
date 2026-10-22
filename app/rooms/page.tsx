@@ -12,7 +12,7 @@ export default async function RoomsPage() {
   return (
     <div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}>
       {/* ← 上の作成ボタンだけ残す */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
         <h1 style={{ fontSize: 24, fontWeight: 800 }}>制作ルーム一覧</h1>
         <Link
           href="/rooms/create"

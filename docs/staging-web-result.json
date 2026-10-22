@@ -1,0 +1,46 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Web rejects invalid password",
+      "status": "PASS"
+    },
+    {
+      "name": "Web synthetic login reaches staging Auth successfully",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated browser reload completes",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile viewport 320",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile viewport 375",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile viewport 390",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile viewport 768",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated profile viewport 1280",
+      "status": "PASS"
+    }
+  ],
+  "blockers": [
+    {
+      "flow": "Major authenticated Web flows",
+      "reason": "Staging client ACL denies profiles, room_members and rooms_with_counts_v2; isolated REST prerequisite checks recorded separately"
+    }
+  ],
+  "complete": true,
+  "majorFlowsPassed": false,
+  "serverStopped": true
+}

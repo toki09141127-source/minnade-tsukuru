@@ -1,0 +1,571 @@
+{
+  "scope": "LOCAL ONLY; audited public structure with synthetic Auth stub; NOT staging PASS",
+  "sourceSha256": "9b2b76de621b30c00a13037499fcce132cb60b3dd5147252f04c7950059bdd5c",
+  "migrations": [
+    {
+      "file": "202610210001_attachment_ledger.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210002_membership_guards.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210003_account_jobs.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210004_moderation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210005_read_boundaries.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210006_work_drafts.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210007_deletion_lease.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210008_deletion_retention.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210009_deletion_attribution_fence.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210010_scoped_moderation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210011_report_intake.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210012_report_queue.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210013_upload_cleanup.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210014_like_requests.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210015_room_creation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210016_operator_rate_limits.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210017_report_admission.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210018_member_admission.sql",
+      "pass": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "audited public structure restores locally",
+      "pass": true
+    },
+    {
+      "name": "room creation with audited DEFAULT/CHECK/Trigger succeeds",
+      "pass": true
+    },
+    {
+      "name": "known issue reproduced: old approval revives departed member without core consent",
+      "pass": true
+    },
+    {
+      "name": "actual auto-hide Trigger hides post after three accepted reports",
+      "pass": true
+    },
+    {
+      "name": "internal-name collision rolls back profile and job atomically",
+      "pass": true
+    },
+    {
+      "name": "anonymous internal name fits audited 20-character limit",
+      "pass": true
+    },
+    {
+      "name": "actual Trigger blocked by withdrawal preserves pending receipt",
+      "pass": true
+    },
+    {
+      "name": "failed auto-hide leaves target unchanged",
+      "pass": true
+    },
+    {
+      "name": "pending retry returns same receipt without legacy insert",
+      "pass": true
+    },
+    {
+      "name": "scoped moderator hide remains compatible with audited edit timestamp Trigger",
+      "pass": true
+    },
+    {
+      "name": "ordinary writes to departing author remain blocked",
+      "pass": true
+    },
+    {
+      "name": "005 removes direct anon/authenticated legacy approval access",
+      "pass": true
+    },
+    {
+      "name": "Core request requires active Member",
+      "pass": true
+    },
+    {
+      "name": "Duplicate pending request returns one canonical request",
+      "pass": true
+    },
+    {
+      "name": "Non-Creator approval rejected",
+      "pass": true
+    },
+    {
+      "name": "Cross-room request rejected",
+      "pass": true
+    },
+    {
+      "name": "Core approval and consent commit together, replay is harmless",
+      "pass": true
+    },
+    {
+      "name": "Core cannot file another Member request",
+      "pass": true
+    },
+    {
+      "name": "Departed Member cannot be revived by approval",
+      "pass": true
+    },
+    {
+      "name": "Rejoined membership cannot consume stale request",
+      "pass": true
+    },
+    {
+      "name": "Explicit new request revokes stale membership snapshot",
+      "pass": true
+    },
+    {
+      "name": "Kicked Member cannot be approved or rejoin",
+      "pass": true
+    },
+    {
+      "name": "Deleted Auth applicant cannot be approved",
+      "pass": true
+    },
+    {
+      "name": "Hidden/deleted/published room approval denied",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing Member approval denied",
+      "pass": true
+    },
+    {
+      "name": "Rejected request cannot be approved, same rejection replays",
+      "pass": true
+    },
+    {
+      "name": "Three-request cap and one-pending invariant enforced",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to anon",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to authenticated",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to service_role",
+      "pass": true
+    },
+    {
+      "name": "Injected failure rolls back decision and promotion",
+      "pass": true
+    },
+    {
+      "name": "Unpublished Creator refusal leaves profile and jobs unchanged",
+      "pass": true
+    },
+    {
+      "name": "New withdrawal accepts fixed anonymous policy only",
+      "pass": true
+    },
+    {
+      "name": "Anonymous request retry returns same durable job",
+      "pass": true
+    },
+    {
+      "name": "Audited profile and public profile PII cleared atomically",
+      "pass": true
+    },
+    {
+      "name": "Shared contribution retained",
+      "pass": true
+    },
+    {
+      "name": "Withdrawal write fence still prevents profile rewrite",
+      "pass": true
+    },
+    {
+      "name": "Unreconciled Auth deletion fails safely; no completion claim",
+      "pass": true
+    },
+    {
+      "name": "Internal pre-privacy request denied to every application role",
+      "pass": true
+    },
+    {
+      "name": "Authenticated profile read is self-only",
+      "pass": true
+    },
+    {
+      "name": "Anon private profiles denied",
+      "pass": true
+    },
+    {
+      "name": "Internal deletion state column denied",
+      "pass": true
+    },
+    {
+      "name": "Direct profile UPDATE denied",
+      "pass": true
+    },
+    {
+      "name": "Direct profile DELETE denied",
+      "pass": true
+    },
+    {
+      "name": "Self consent RPC executes with no actor parameter",
+      "pass": true
+    },
+    {
+      "name": "Wrong consent version denied",
+      "pass": true
+    },
+    {
+      "name": "Membership read contains only self",
+      "pass": true
+    },
+    {
+      "name": "Anon cannot enumerate membership identities",
+      "pass": true
+    },
+    {
+      "name": "Direct role escalation denied",
+      "pass": true
+    },
+    {
+      "name": "last_seen does not open arbitrary table UPDATE",
+      "pass": true
+    },
+    {
+      "name": "Public listing has aggregate count without member SELECT",
+      "pass": true
+    },
+    {
+      "name": "Listing has no internal host projection",
+      "pass": true
+    },
+    {
+      "name": "Legacy broad view denied",
+      "pass": true
+    },
+    {
+      "name": "Nonmember private post REST denied",
+      "pass": true
+    },
+    {
+      "name": "Member post reader works under RLS",
+      "pass": true
+    },
+    {
+      "name": "Departed member can inspect own state",
+      "pass": true
+    },
+    {
+      "name": "Departed member loses private posts",
+      "pass": true
+    },
+    {
+      "name": "Hidden room excluded from listing",
+      "pass": true
+    },
+    {
+      "name": "Count helper discloses no hidden-room membership",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing JWT cannot read private profile",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing JWT cannot recreate consent/profile",
+      "pass": true
+    },
+    {
+      "name": "Anonymized public profile not exposed",
+      "pass": true
+    },
+    {
+      "name": "Anon unpublished draft excluded without membership ACL error",
+      "pass": true
+    },
+    {
+      "name": "Nonmember unpublished draft excluded",
+      "pass": true
+    },
+    {
+      "name": "Active member reads draft",
+      "pass": true
+    },
+    {
+      "name": "Left member loses unpublished draft",
+      "pass": true
+    },
+    {
+      "name": "Anon reads published snapshot without membership identity access",
+      "pass": true
+    },
+    {
+      "name": "Public snapshot updater identity denied",
+      "pass": true
+    },
+    {
+      "name": "Direct draft writes denied",
+      "pass": true
+    },
+    {
+      "name": "Hidden published snapshot denied",
+      "pass": true
+    },
+    {
+      "name": "Deleted published snapshot denied",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing JWT snapshot denied",
+      "pass": true
+    },
+    {
+      "name": "Auth cascade collides with write fence; unsafe deletion rolls back",
+      "pass": true
+    },
+    {
+      "name": "Unpublished Creator cannot delete",
+      "pass": true
+    },
+    {
+      "name": "Active Core cannot bypass locked membership via deletion",
+      "pass": true
+    },
+    {
+      "name": "Demoted Core with real approval history can prepare",
+      "pass": true
+    },
+    {
+      "name": "Duplicate request returns same job",
+      "pass": true
+    },
+    {
+      "name": "Forged lease rejected",
+      "pass": true
+    },
+    {
+      "name": "Mid-prepare failure rolls back references and scoped capabilities",
+      "pass": true
+    },
+    {
+      "name": "Prepare and replay complete",
+      "pass": true
+    },
+    {
+      "name": "Incomplete Storage prevents direct Auth deletion",
+      "pass": true
+    },
+    {
+      "name": "Storage failure cannot be marked complete",
+      "pass": true
+    },
+    {
+      "name": "Delayed upload cannot register after quarantine",
+      "pass": true
+    },
+    {
+      "name": "Cleanup completion is idempotent",
+      "pass": true
+    },
+    {
+      "name": "Used attachment remains while unused is cleaned",
+      "pass": true
+    },
+    {
+      "name": "Preparation evidence verifies before Auth",
+      "pass": true
+    },
+    {
+      "name": "Private profile removed before Auth",
+      "pass": true
+    },
+    {
+      "name": "Other person post byte-for-byte unchanged",
+      "pass": true
+    },
+    {
+      "name": "Post preserved with distinct non-Auth anonymous identity",
+      "pass": true
+    },
+    {
+      "name": "Anonymous identity is not a shared Auth user",
+      "pass": true
+    },
+    {
+      "name": "Membership stopped while history retained",
+      "pass": true
+    },
+    {
+      "name": "Anonymous retained history remains frozen",
+      "pass": true
+    },
+    {
+      "name": "Auth deletion no longer collides with public FK/write fence",
+      "pass": true
+    },
+    {
+      "name": "Auth deletion does not cascade posts",
+      "pass": true
+    },
+    {
+      "name": "Event ownership retained under unique anonymous actor",
+      "pass": true
+    },
+    {
+      "name": "Event collaborators survive owner withdrawal",
+      "pass": true
+    },
+    {
+      "name": "Decision history retained",
+      "pass": true
+    },
+    {
+      "name": "Legacy novel content retained",
+      "pass": true
+    },
+    {
+      "name": "Prearchive note name anonymized",
+      "pass": true
+    },
+    {
+      "name": "Report history retained under anonymous identity",
+      "pass": true
+    },
+    {
+      "name": "Published Creator Auth deletion retains room and work",
+      "pass": true
+    },
+    {
+      "name": "Remaining user can like departed Creator work",
+      "pass": true
+    },
+    {
+      "name": "Client cannot finalize another account",
+      "pass": true
+    },
+    {
+      "name": "Pause: A default pause denies new request",
+      "pass": true
+    },
+    {
+      "name": "Pause: anon cannot change global pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: authenticated cannot change global pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: service_role cannot change global pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: F second live worker cannot claim",
+      "pass": true
+    },
+    {
+      "name": "Pause: B prepared work does not advance during pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: Paused retry cannot start",
+      "pass": true
+    },
+    {
+      "name": "Pause: C no Storage permit during pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: D Auth database trigger preserves user during pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: Forged lease cannot acquire effect",
+      "pass": true
+    },
+    {
+      "name": "Pause: In-flight external permit remains observable after pause",
+      "pass": true
+    },
+    {
+      "name": "Pause: Expired or released lease cannot duplicate unfinished external effect",
+      "pass": true
+    },
+    {
+      "name": "Pause: Owner recovery requires paused verified context and records operator",
+      "pass": true
+    },
+    {
+      "name": "Pause: Dispatched effect result can be recorded while paused",
+      "pass": true
+    },
+    {
+      "name": "Pause: E pause resume completes",
+      "pass": true
+    },
+    {
+      "name": "Pause: Final pause has no active effects",
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Auth users/uid are local stubs",
+    "Original client ACL deliberately closed; public policies retained",
+    "Storage policies not copied; managed platform remains separate",
+    "Sequence MAXVALUE uses type default to avoid JSON bigint precision loss",
+    "No production or staging network access"
+  ],
+  "knownIssues": [
+    {
+      "priority": "P1",
+      "code": "LEGACY_CORE_REVIVAL_AND_NONATOMIC_CONSENT",
+      "reproduced": true
+    }
+  ],
+  "serverStopped": true
+}

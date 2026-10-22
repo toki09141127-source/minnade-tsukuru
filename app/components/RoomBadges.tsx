@@ -32,7 +32,7 @@ export function statusBadge(status: RoomStatus) {
   if (s === 'open') return <span style={badgeStyle('rgba(16,185,129,0.14)', '#065f46')}>制作中</span>
   if (s === 'forced_publish')
     return <span style={badgeStyle('rgba(59,130,246,0.14)', '#1e40af')}>公開済み</span>
-  if (s === 'closed') return <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>終了</span>
+  if (s === 'closed') return <span style={badgeStyle('rgba(239,68,68,0.14)', '#991b1b')}>終了</span>
   return <span style={badgeStyle('rgba(0,0,0,0.06)', '#111')}>{statusLabel(status)}</span>
 }
 

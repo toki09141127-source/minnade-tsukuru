@@ -1,0 +1,219 @@
+{
+  "scope": "LOCAL ONLY; audited public structure with synthetic Auth stub; NOT staging PASS",
+  "sourceSha256": "9b2b76de621b30c00a13037499fcce132cb60b3dd5147252f04c7950059bdd5c",
+  "migrations": [
+    {
+      "file": "202610210001_attachment_ledger.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210002_membership_guards.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210003_account_jobs.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210004_moderation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210005_read_boundaries.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210006_work_drafts.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210007_deletion_lease.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210008_deletion_retention.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210009_deletion_attribution_fence.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210010_scoped_moderation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210011_report_intake.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210012_report_queue.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210013_upload_cleanup.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210014_like_requests.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210015_room_creation.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210016_operator_rate_limits.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210017_report_admission.sql",
+      "pass": true
+    },
+    {
+      "file": "202610210018_member_admission.sql",
+      "pass": true
+    }
+  ],
+  "checks": [
+    {
+      "name": "audited public structure restores locally",
+      "pass": true
+    },
+    {
+      "name": "room creation with audited DEFAULT/CHECK/Trigger succeeds",
+      "pass": true
+    },
+    {
+      "name": "known issue reproduced: old approval revives departed member without core consent",
+      "pass": true
+    },
+    {
+      "name": "actual auto-hide Trigger hides post after three accepted reports",
+      "pass": true
+    },
+    {
+      "name": "internal-name collision rolls back profile and job atomically",
+      "pass": true
+    },
+    {
+      "name": "anonymous internal name fits audited 20-character limit",
+      "pass": true
+    },
+    {
+      "name": "actual Trigger blocked by withdrawal preserves pending receipt",
+      "pass": true
+    },
+    {
+      "name": "failed auto-hide leaves target unchanged",
+      "pass": true
+    },
+    {
+      "name": "pending retry returns same receipt without legacy insert",
+      "pass": true
+    },
+    {
+      "name": "scoped moderator hide remains compatible with audited edit timestamp Trigger",
+      "pass": true
+    },
+    {
+      "name": "ordinary writes to departing author remain blocked",
+      "pass": true
+    },
+    {
+      "name": "005 removes direct anon/authenticated legacy approval access",
+      "pass": true
+    },
+    {
+      "name": "Core request requires active Member",
+      "pass": true
+    },
+    {
+      "name": "Duplicate pending request returns one canonical request",
+      "pass": true
+    },
+    {
+      "name": "Non-Creator approval rejected",
+      "pass": true
+    },
+    {
+      "name": "Cross-room request rejected",
+      "pass": true
+    },
+    {
+      "name": "Core approval and consent commit together, replay is harmless",
+      "pass": true
+    },
+    {
+      "name": "Core cannot file another Member request",
+      "pass": true
+    },
+    {
+      "name": "Departed Member cannot be revived by approval",
+      "pass": true
+    },
+    {
+      "name": "Rejoined membership cannot consume stale request",
+      "pass": true
+    },
+    {
+      "name": "Explicit new request revokes stale membership snapshot",
+      "pass": true
+    },
+    {
+      "name": "Kicked Member cannot be approved or rejoin",
+      "pass": true
+    },
+    {
+      "name": "Deleted Auth applicant cannot be approved",
+      "pass": true
+    },
+    {
+      "name": "Hidden/deleted/published room approval denied",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing Member approval denied",
+      "pass": true
+    },
+    {
+      "name": "Rejected request cannot be approved, same rejection replays",
+      "pass": true
+    },
+    {
+      "name": "Three-request cap and one-pending invariant enforced",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to anon",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to authenticated",
+      "pass": true
+    },
+    {
+      "name": "Retired approval denied to service_role",
+      "pass": true
+    },
+    {
+      "name": "Injected failure rolls back decision and promotion",
+      "pass": true
+    }
+  ],
+  "limitations": [
+    "Auth users/uid are local stubs",
+    "Original client ACL deliberately closed; public policies retained",
+    "Storage policies not copied; managed platform remains separate",
+    "Sequence MAXVALUE uses type default to avoid JSON bigint precision loss",
+    "No production or staging network access"
+  ],
+  "knownIssues": [
+    {
+      "priority": "P1",
+      "code": "LEGACY_CORE_REVIVAL_AND_NONATOMIC_CONSENT",
+      "reproduced": true
+    }
+  ],
+  "serverStopped": true
+}

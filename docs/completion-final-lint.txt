@@ -1,0 +1,16 @@
+
+C:\dev\minnade\minnade-tsukuru\app\api\notifications\pending-core-count\route.ts
+  5:27  warning  '_req' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\minnade\minnade-tsukuru\app\api\posts\delete\route.ts
+  91:12  warning  'e' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\dev\minnade\minnade-tsukuru\app\rooms\[id]\BoardClient.tsx
+  435:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\dev\minnade\minnade-tsukuru\app\rooms\[id]\RoomDetailClient.tsx
+  39:10  warning  'userId' is assigned a value but never used                @typescript-eslint/no-unused-vars
+  70:9   warning  'canJoinCoreFirstCome' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 5 problems (0 errors, 5 warnings)
+

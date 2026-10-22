@@ -1,0 +1,79 @@
+{
+  "runId": "83e3ae74-0fcd-4a2e-8623-4ca034a1bd31",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "scope": "Local HTTP app backed by real staging; synthetic fixtures; NOT all connections maintenance",
+  "checks": [
+    {
+      "name": "Staging DB deletion pause is true before rehearsal",
+      "pass": true
+    },
+    {
+      "name": "Room creation OFF returns 503",
+      "pass": true
+    },
+    {
+      "name": "Post OFF returns 503",
+      "pass": true
+    },
+    {
+      "name": "Upload OFF returns 503",
+      "pass": true
+    },
+    {
+      "name": "Deletion intake OFF returns 503",
+      "pass": true
+    },
+    {
+      "name": "Deletion worker OFF returns 503",
+      "pass": true
+    },
+    {
+      "name": "Forced publish OFF returns 503 with valid secret",
+      "pass": true
+    },
+    {
+      "name": "Legacy join stays closed",
+      "pass": true
+    },
+    {
+      "name": "OFF requests leave fixture row counts unchanged",
+      "pass": true
+    },
+    {
+      "name": "Room creation resumes",
+      "pass": true
+    },
+    {
+      "name": "Post resumes",
+      "pass": true
+    },
+    {
+      "name": "Upload resumes with ledger",
+      "pass": true
+    },
+    {
+      "name": "Uploaded TEST object attaches atomically after resume",
+      "pass": true
+    },
+    {
+      "name": "Forced publish resumes on synthetic staging",
+      "pass": true
+    },
+    {
+      "name": "Enabled deletion intake remains blocked by DB pause",
+      "pass": true
+    },
+    {
+      "name": "DB pause remains true at end",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "roomId": "0f7d5165-9a45-464a-a69c-705befef6bcb",
+  "reusedDeletionEvidence": {
+    "file": "deletion-pause-staging-result.json",
+    "checks": 29,
+    "complete": true
+  },
+  "localServersStopped": true
+}

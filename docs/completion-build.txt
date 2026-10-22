@@ -1,0 +1,88 @@
+
+> minnade-tsukuru@0.1.0 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 134ms
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+-----
+FATAL: An unexpected Turbopack error occurred. A panic log has been written to C:\Users\Sonet\AppData\Local\Temp\next-panic-e3068123f2e319c85f6d8c1c758123c9.log.
+
+To help make Turbopack better, report this error by clicking here: https://bugs.nextjs.org/search?category=turbopack-error-report&title=Turbopack%20Error%3A%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29&body=Turbopack%20version%3A%20%602864b177%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0A%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A%0ACaused%20by%3A%0A-%20creating%20new%20process%0A-%20node%20process%20exited%20before%20we%20could%20connect%20to%20it%20with%20exit%20code%3A%201%0A%0ADebug%20info%3A%0A-%20Execution%20of%20get_all_written_entrypoints_with_issues_operation%20failed%0A-%20Execution%20of%20EntrypointsOperation%3A%3Anew%20failed%0A-%20Execution%20of%20all_entrypoints_write_to_disk_operation%20failed%0A-%20Execution%20of%20output_assets_operation%20failed%0A-%20Execution%20of%20%3CMiddlewareEndpoint%20as%20Endpoint%3E%3A%3Aoutput%20failed%0A-%20Execution%20of%20MiddlewareEndpoint%3A%3Aoutput_assets%20failed%0A-%20Execution%20of%20MiddlewareEndpoint%3A%3Aedge_chunk_group%20failed%0A-%20Execution%20of%20%2Aevaluated_chunk_group_assets%20failed%0A-%20Execution%20of%20Project%3A%3Aedge_chunking_context%20failed%0A-%20Execution%20of%20%2Aget_edge_chunking_context%20failed%0A-%20Execution%20of%20Project%3A%3Amodule_ids%20failed%0A-%20Execution%20of%20whole_app_module_graph_operation%20failed%0A-%20Execution%20of%20%2AProject%3A%3Aget_all_additional_entries%20failed%0A-%20Execution%20of%20ModuleGraph%3A%3Afrom_graphs%20failed%0A-%20Execution%20of%20ModuleGraph%3A%3Afrom_graphs_inner%20failed%0A-%20Execution%20of%20SingleModuleGraph%3A%3Anew_with_entries%20failed%0A-%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A-%20Execution%20of%20primary_chunkable_referenced_modules%20failed%0A-%20Execution%20of%20%3CCssModule%20as%20Module%3E%3A%3Areferences%20failed%0A-%20Execution%20of%20parse_css%20failed%0A-%20Execution%20of%20%3CPostCssTransformedAsset%20as%20Asset%3E%3A%3Acontent%20failed%0A-%20Execution%20of%20PostCssTransformedAsset%3A%3Aprocess%20failed%0A-%20Execution%20of%20evaluate_webpack_loader%20failed%0A-%20creating%20new%20process%0A-%20node%20process%20exited%20before%20we%20could%20connect%20to%20it%20with%20exit%20code%3A%201%0A%20%20Process%20output%3A%0A%20%20%0A%20%20Process%20error%20output%3A%0A%20%20C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Bturbopack%5D_runtime.js%3A1009%0A%20%20%20%20%20%20%20%20%20%20throw%20error%3B%0A%20%20%20%20%20%20%20%20%20%20%5E%0A%20%20%0A%20%20Error%3A%20AUDIT_NETWORK_DISABLED%0A%20%20%20%20%20%20at%20deny%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5Cdocs%5Caudit-no-network.cjs%3A2%3A28%29%0A%20%20%20%20%20%20at%20net.Socket.connect%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5Cdocs%5Caudit-no-network.cjs%3A17%3A10%29%0A%20%20%20%20%20%20at%20connect%20%28node%3Anet%3A245%3A17%29%0A%20%20%20%20%20%20at%20createIpc%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Broot-of-the-server%5D__05i36w1t4lzaf._.js%3A131%3A156%29%0A%20%20%20%20%20%20at%20module%20evaluation%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Broot-of-the-server%5D__05i36w1t4lzaf._.js%3A275%3A13%29%0A%20%20%20%20%20%20at%20instantiateModule%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Bturbopack%5D_runtime.js%3A1006%3A9%29%0A%20%20%20%20%20%20at%20getOrInstantiateModuleFromParent%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Bturbopack%5D_runtime.js%3A1030%3A12%29%0A%20%20%20%20%20%20at%20Context.esmImport%20%5Bas%20i%5D%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Bturbopack%5D_runtime.js%3A452%3A20%29%0A%20%20%20%20%20%20at%20module%20evaluation%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Broot-of-the-server%5D__05i36w1t4lzaf._.js%3A10%3A155%29%0A%20%20%20%20%20%20at%20instantiateModule%20%28C%3A%5Cdev%5Cminnade%5Cminnade-tsukuru%5C.next%5Cbuild%5Cchunks%5C%5Bturbopack%5D_runtime.js%3A1006%3A9%29%0A%20%20%0A%20%20Node.js%20v22.17.0%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+
+> Build error occurred
+Error [TurbopackInternalError]: [project]/app/globals.css [app-client] (css)
+
+Caused by:
+- creating new process
+- node process exited before we could connect to it with exit code: 1
+
+Debug info:
+- Execution of get_all_written_entrypoints_with_issues_operation failed
+- Execution of EntrypointsOperation::new failed
+- Execution of all_entrypoints_write_to_disk_operation failed
+- Execution of output_assets_operation failed
+- Execution of <MiddlewareEndpoint as Endpoint>::output failed
+- Execution of MiddlewareEndpoint::output_assets failed
+- Execution of MiddlewareEndpoint::edge_chunk_group failed
+- Execution of *evaluated_chunk_group_assets failed
+- Execution of Project::edge_chunking_context failed
+- Execution of *get_edge_chunking_context failed
+- Execution of Project::module_ids failed
+- Execution of whole_app_module_graph_operation failed
+- Execution of *Project::get_all_additional_entries failed
+- Execution of ModuleGraph::from_graphs failed
+- Execution of ModuleGraph::from_graphs_inner failed
+- Execution of SingleModuleGraph::new_with_entries failed
+- [project]/app/globals.css [app-client] (css)
+- Execution of primary_chunkable_referenced_modules failed
+- Execution of <CssModule as Module>::references failed
+- Execution of parse_css failed
+- Execution of <PostCssTransformedAsset as Asset>::content failed
+- Execution of PostCssTransformedAsset::process failed
+- Execution of evaluate_webpack_loader failed
+- creating new process
+- node process exited before we could connect to it with exit code: 1
+  Process output:
+  
+  Process error output:
+  C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1009
+          throw error;
+          ^
+  
+  Error: AUDIT_NETWORK_DISABLED
+      at deny (C:\dev\minnade\minnade-tsukuru\docs\audit-no-network.cjs:2:28)
+      at net.Socket.connect (C:\dev\minnade\minnade-tsukuru\docs\audit-no-network.cjs:17:10)
+      at connect (node:net:245:17)
+      at createIpc (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:131:156)
+      at module evaluation (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:275:13)
+      at instantiateModule (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1006:9)
+      at getOrInstantiateModuleFromParent (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1030:12)
+      at Context.esmImport [as i] (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:452:20)
+      at module evaluation (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:10:155)
+      at instantiateModule (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1006:9)
+  
+  Node.js v22.17.0
+    at <unknown> (TurbopackInternalError: [project]/app/globals.css [app-client] (css))
+    at deny (C:\dev\minnade\minnade-tsukuru\docs\audit-no-network.cjs:2:28)
+    at net.Socket.connect (C:\dev\minnade\minnade-tsukuru\docs\audit-no-network.cjs:17:10)
+    at createIpc (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:131:156)
+    at module evaluation (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:275:13)
+    at instantiateModule (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1006:9)
+    at getOrInstantiateModuleFromParent (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1030:12)
+    at Context.esmImport [as i] (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:452:20)
+    at module evaluation (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[root-of-the-server]__05i36w1t4lzaf._.js:10:155)
+    at instantiateModule (C:\dev\minnade\minnade-tsukuru\.next\build\chunks\[turbopack]_runtime.js:1006:9) {
+  location: undefined
+}

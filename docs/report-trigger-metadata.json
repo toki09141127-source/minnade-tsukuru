@@ -1,0 +1,72 @@
+{
+  "columns": [
+    {
+      "attname": "id",
+      "type_name": "bigint",
+      "attnotnull": true
+    },
+    {
+      "attname": "reporter_user_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "attname": "target_type",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "attname": "target_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "attname": "reason",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "attname": "detail",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "attname": "status",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "attname": "reporter_id",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "attname": "target_room_id",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "attname": "target_post_id",
+      "type_name": "uuid",
+      "attnotnull": false
+    }
+  ],
+  "triggers": [
+    {
+      "tgname": "tr_reports_auto_hide",
+      "tgenabled": "O",
+      "tgtype": 5,
+      "tgnargs": 0,
+      "function_oid": 23728,
+      "function_schema": "public",
+      "proname": "apply_auto_hide",
+      "prosecdef": true,
+      "definition_fingerprint": "afb917c9a2b1732829cef166e92b0cd0"
+    }
+  ]
+}

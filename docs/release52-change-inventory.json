@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-22T09:19:19.960Z",
+  "files": 586,
+  "textScanned": 561,
+  "secretShapeFiles": [],
+  "existingMissing": [],
+  "changedSince52": [
+    "docs/AI_HANDOFF.md",
+    "docs/AI_TASK.md",
+    "docs/DELETION_STOP_RECOVERY.md",
+    "docs/PRODUCTION_GO_NO_GO.md",
+    "docs/PRODUCTION_PREFLIGHT.md",
+    "docs/PRODUCTION_ROLLOUT_PLAN.md",
+    "docs/RELEASE_FINAL_ACCEPTANCE.md"
+  ],
+  "applicationChangedSince52": [],
+  "frozenMigrationsMatch": true,
+  "reviewedSyntheticMatches": [
+    {
+      "file": "docs/staging-safety-check.cjs",
+      "reason": "Offline rejection fixtures only: fixed password synthetic and deliberately invalid token; no real credentials"
+    }
+  ],
+  "reviewPass": true
+}

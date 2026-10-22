@@ -12,10 +12,7 @@ export default async function PublicProfilePage(
   const rawUsername = resolvedParams?.username ?? ""
 
   // ✅ ここが今回の修正ポイント
-  const username = decodeURIComponent(rawUsername).trim()
-
-  console.log("======== PUBLIC PROFILE DEBUG START ========")
-  console.log("username param:", username)
+  const username = rawUsername.trim()
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -30,11 +27,9 @@ export default async function PublicProfilePage(
 
   const { data, error } = await supabase
     .from("public_profiles")
-    .select("*")
+    .select("username, bio")
     .eq("username", username)
     .maybeSingle()
-
-  console.log("Supabase data exists:", !!data)
 
   if (error || !data) {
     return notFound()

@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       .maybeSingle()
 
     if (memErr) {
-      return NextResponse.json({ ok: false, error: memErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     // 未参加・退出済みなら何もしない（仕様）
@@ -61,11 +61,11 @@ export async function POST(req: Request) {
       .is('left_at', null)
 
     if (updErr) {
-      return NextResponse.json({ ok: false, error: updErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

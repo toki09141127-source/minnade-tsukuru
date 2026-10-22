@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const userId = userRes.user.id
 
-    const body = await req.json().catch(() => ({} as any))
+    const body = await req.json().catch(() => ({}))
     const raw = typeof body?.bio === 'string' ? body.bio : null
 
     const trimmed = (raw ?? '').trim()
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
       .eq('id', userId)
 
     if (upErr) {
-      return NextResponse.json({ ok: false, error: upErr.message }, { status: 400 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 400 })
     }
 
     // ② public_profiles にも反映（存在しない場合は0件更新＝OK）
@@ -47,11 +47,11 @@ export async function POST(req: Request) {
       .eq('id', userId)
 
     if (pubErr) {
-      return NextResponse.json({ ok: false, error: pubErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'Server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

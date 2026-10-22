@@ -15,7 +15,7 @@ export async function GET(_req: NextRequest) {
     .select('id')
     .eq('created_by', user.id)
 
-  if (roomsErr) return NextResponse.json({ error: roomsErr.message }, { status: 400 })
+  if (roomsErr) return NextResponse.json({ error: '処理できませんでした。時間をおいてお試しください' }, { status: 400 })
 
   const roomIds = (rooms ?? []).map((r) => r.id)
   if (roomIds.length === 0) {
@@ -30,7 +30,7 @@ export async function GET(_req: NextRequest) {
     .eq('requested_role', 'core')
     .eq('status', 'pending')
 
-  if (countErr) return NextResponse.json({ error: countErr.message }, { status: 400 })
+  if (countErr) return NextResponse.json({ error: '処理できませんでした。時間をおいてお試しください' }, { status: 400 })
 
   return NextResponse.json({ count: count ?? 0 })
 }

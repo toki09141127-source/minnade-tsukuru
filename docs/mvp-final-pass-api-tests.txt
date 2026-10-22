@@ -1,0 +1,200 @@
+1. FIXED: retired expire has no DB access
+2. FIXED: retired debug has no Storage access
+3. FIXED: retired join cannot bypass consent/capacity or demote core: app/api/rooms/join/route.ts
+4. FIXED: retired join preserves is_core: app/api/rooms/join/route.ts
+5. Retired join denies unauthenticated caller: app/api/rooms/join/route.ts
+6. FIXED: retired join cannot bypass aged-core leave lock
+7. Control: aged core leave alone denied
+8. FIXED: current supporter join rejects hidden/deleted room
+9. Control: current supporter join requires consent
+10. FIXED: legacy expire/join has no DB access
+11. FIXED: retired creator approval cannot insert core
+12. Retired approval denies noncreator without DB access
+13. FIXED: former member cannot delete own post
+14. Control: cron denies missing secret
+15. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=true
+16. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=false
+17. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=true
+18. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=false
+19. Retired endpoint never reaches service: app/rooms/join/route.ts token=true
+20. Retired endpoint never reaches service: app/rooms/join/route.ts token=false
+21. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=true
+22. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=false
+23. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":true}
+24. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"deleted_at":"2026-01-01"}
+25. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":null}
+26. Visible open room still accepts valid join/request: app/api/rooms/join-supporter/route.ts
+27. Closed room denies join/request: app/api/rooms/join-supporter/route.ts
+28. No bearer denies join/request: app/api/rooms/join-supporter/route.ts
+29. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":true}
+30. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"deleted_at":"2026-01-01"}
+31. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":null}
+32. Visible open room still accepts valid join/request: app/api/rooms/request-core/route.ts
+33. Closed room denies join/request: app/api/rooms/request-core/route.ts
+34. No bearer denies join/request: app/api/rooms/request-core/route.ts
+35. Supporter capacity still enforced for sequential requests
+36. Current supporter route preserves existing active core
+37. Active owner can still delete own post
+38. Nonmember cannot delete own post
+39. Active member cannot delete another owner post
+40. FIXED: documented Vercel cron Authorization header is accepted
+41. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"creator"}}
+42. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"supporter"}}
+43. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"left_at":"left"}}
+44. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"anonymous":true}
+45. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":null}
+46. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"creator"}}
+47. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"supporter"}}
+48. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"left_at":"left"}}
+49. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"anonymous":true}
+50. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":null}
+51. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"creator"}}
+52. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"supporter"}}
+53. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"left_at":"left"}}
+54. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"anonymous":true}
+55. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":null}
+56. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"creator"}}
+57. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"supporter"}}
+58. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"left_at":"left"}}
+59. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"anonymous":true}
+60. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":null}
+61. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"creator"}}
+62. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"supporter"}}
+63. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"left_at":"left"}}
+64. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"anonymous":true}
+65. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":null}
+66. Current approve-core still denies missing bearer
+67. Current approve-core keeps verified actor and request payload
+68. Current approve-core preserves RPC authorization failure
+69. Current reject-core still denies missing bearer
+70. Current reject-core keeps verified actor and request payload
+71. Current reject-core preserves RPC authorization failure
+72. Current approval rejects cross-room request before RPC
+73. Cron filters room {"expires_at":"2000-01-01"}
+74. Cron repeat is idempotent
+75. Cron filters room {"expires_at":"2000-01-01","is_hidden":true}
+76. Cron repeat is idempotent
+77. Cron filters room {"expires_at":"2000-01-01","deleted_at":"2020-01-01"}
+78. Cron repeat is idempotent
+79. Cron filters room {"expires_at":"2999-01-01"}
+80. Cron repeat is idempotent
+81. Cron filters room {"expires_at":null}
+82. Cron repeat is idempotent
+83. Cron filters room {"expires_at":"2000-01-01","status":"forced_publish"}
+84. Cron repeat is idempotent
+85. Cron fails closed for missing header/secret/DB failure
+86. Cron error hides internal details
+87. Cron fails closed for missing header/secret/DB failure
+88. Cron error hides internal details
+89. Cron fails closed for missing header/secret/DB failure
+90. Cron error hides internal details
+91. Rate limit blocks mutations: join-supporter
+92. Rate limit blocks mutations: request-core
+93. Rate limit blocks mutations: join-core-first-come
+94. Rate limit blocks mutations: join-core-by-invite
+95. Rate limit blocks mutations: approve-core
+96. Rate limit blocks mutations: reject-core
+97. Rate limit blocks mutations: create
+98. Like authorization/rate/errors {"anonymous":true}
+99. Like authorization/rate/errors {"room":{"is_hidden":true}}
+100. Like authorization/rate/errors {"room":{"deleted_at":"2020-01-01"}}
+101. Like authorization/rate/errors {"guards":true,"rateDenied":true}
+102. Like authorization/rate/errors {"dbError":true}
+103. Like authorization/rate/errors {}
+104. Report spam limited
+105. Report length bounded
+106. Unread preserves never-seen room alongside seen room: true
+107. Unread ignores hidden post: true
+108. Unread ignores deleted post: true
+109. Unread omits hidden room: true
+110. Unread omits deleted room: true
+111. Unread omits former membership: true
+112. Unread preserves never-seen room alongside seen room: false
+113. Unread ignores hidden post: false
+114. Unread ignores deleted post: false
+115. Unread omits hidden room: false
+116. Unread omits deleted room: false
+117. Unread omits former membership: false
+118. Mark visibility and role: {"anonymous":true}
+119. Mark visibility and role: {"member":null}
+120. Mark visibility and role: {"member":{"role":"supporter"}}
+121. Mark visibility and role: {"member":{"left_at":"left"}}
+122. Mark visibility and role: {"room":{"is_hidden":true}}
+123. Mark visibility and role: {"room":{"is_hidden":null}}
+124. Mark visibility and role: {"room":{"deleted_at":"deleted"}}
+125. Mark visibility and role: {"room":{"status":"forced_publish"}}
+126. Mark visibility and role: {"room":{"expires_at":"2000-01-01"}}
+127. Mark visibility and role: {"post":{"is_hidden":true}}
+128. Mark visibility and role: {"post":{"is_hidden":null}}
+129. Mark visibility and role: {"post":{"deleted_at":"deleted"}}
+130. Mark visibility and role: {"post":{"room_id":"other"}}
+131. Mark visibility and role: {"dbError":true}
+132. Mark visibility and role: {}
+133. Mark visibility and role: {"member":{"role":"creator"}}
+134. Hidden/deleted/moved during mark rejects update and fallback read: {"is_hidden":true}
+135. Hidden/deleted/moved during mark rejects update and fallback read: {"deleted_at":"deleted"}
+136. Hidden/deleted/moved during mark rejects update and fallback read: {"room_id":"other"}
+137. Visible mark contention retains existing conflict response
+138. Withdrawal suspended without DB/Auth mutations, including retry: {"anonymous":true} 0
+139. Withdrawal suspended without DB/Auth mutations, including retry: {"anonymous":true} 1
+140. Withdrawal suspended without DB/Auth mutations, including retry: {} 0
+141. Withdrawal suspended without DB/Auth mutations, including retry: {} 1
+142. Withdrawal suspended without DB/Auth mutations, including retry: {"dbError":true} 0
+143. Withdrawal suspended without DB/Auth mutations, including retry: {"dbError":true} 1
+144. Withdrawal suspended without DB/Auth mutations, including retry: {"authDeleteError":true} 0
+145. Withdrawal suspended without DB/Auth mutations, including retry: {"authDeleteError":true} 1
+146. Withdrawal suspended without DB/Auth mutations, including retry: {"member":{"role":"creator"}} 0
+147. Withdrawal suspended without DB/Auth mutations, including retry: {"member":{"role":"creator"}} 1
+148. Invalid bearer cannot start withdrawal
+149. Withdrawal route has no service-role dependency or destructive fallback
+150. Withdrawal UI distinguishes accepted request from completion and does not log user out
+151. Retired redundant route app/api/update/route.ts
+152. Retired redundant route app/api/rooms/mark-read/route.ts
+153. Room deletion is authorized soft deletion {"anonymous":true}
+154. Room deletion is authorized soft deletion {"room":{"created_by":"other"}}
+155. Room deletion is authorized soft deletion {"room":{"status":"forced_publish"}}
+156. Room deletion is authorized soft deletion {"room":{"is_hidden":true}}
+157. Room deletion is authorized soft deletion {}
+158. Withdrawal intake requires confirmed current policy and verified actor 400
+159. Withdrawal intake requires confirmed current policy and verified actor 202
+160. Withdrawal intake requires confirmed current policy and verified actor 400
+161. Core management checks canonical Creator before privileged RPC approve-core
+162. Core management checks canonical Creator before privileged RPC reject-core
+163. Current UI retains endpoint join-supporter
+164. Current UI retains endpoint request-core
+165. Current UI retains endpoint join-core-first-come
+166. Current UI retains endpoint join-core-by-invite
+167. Current UI retains endpoint approve-core
+168. Current UI retains endpoint reject-core
+169. Current UI retains endpoint leave
+170. Page uses current participation/approval UI only
+171. Obsolete UI callers removed
+172. Deferred report returns durable receipt without legacy fallback
+173. Report actor comes from verified session
+174. Processed report accepted
+175. Receipt failure sanitized without unsafe fallback
+176. Missing retry id rejected
+177. Unauthenticated receipt refused
+178. Operator queue bounded and noncacheable
+179. Anonymous queue does not reach DB
+180. Queue permission failure exposes no rows or DB error
+181. Resolution uses verified identity
+182. Resolution requires explicit confirmation
+183. Resolution failure sanitized and noncacheable
+184. Queue disabled by default
+185. Atomic like uses verified actor and no fallback mutation
+186. Atomic like requires complete intent
+187. Atomic like failure never falls back to toggle
+188. Room creation delegates atomic operation with verified actor
+189. Failed atomic creation never falls back to partial inserts
+190. Rate limit prevents privileged operation mvp_pending_reports
+191. Rate limit prevents privileged operation mvp_resolve_report
+192. Rate limit prevents privileged operation mvp_moderate
+193. Rate limit prevents privileged operation mvp_request_deletion
+194. Legacy report rejects unavailable/private target {"member":null}
+195. Legacy report rejects unavailable/private target {"member":{"left_at":"2020-01-01"}}
+196. Legacy report rejects unavailable/private target {"post":{"is_hidden":true}}
+197. Legacy report rejects unavailable/private target {"post":{"deleted_at":"2020-01-01"}}
+198. Legacy report rejects unavailable/private target {"room":{"is_hidden":true}}
+199. Duplicate target gets safe actionable response
+Completed 199 offline audit cases; GAP means vulnerability reproduced, not fixed. DB triggers/RLS are not simulated.

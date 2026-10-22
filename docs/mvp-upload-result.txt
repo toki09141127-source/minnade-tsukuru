@@ -1,0 +1,36 @@
+1. Supported header and MIME image/png
+2. Wrong MIME image/png
+3. Executable extension image/png
+4. Supported header and MIME image/jpeg
+5. Wrong MIME image/jpeg
+6. Executable extension image/jpeg
+7. Supported header and MIME image/gif
+8. Wrong MIME image/gif
+9. Executable extension image/gif
+10. Supported header and MIME image/webp
+11. Wrong MIME image/webp
+12. Executable extension image/webp
+13. Supported header and MIME video/mp4
+14. Wrong MIME video/mp4
+15. Executable extension video/mp4
+16. Supported header and MIME video/webm
+17. Wrong MIME video/webm
+18. Executable extension video/webm
+19. Supported header and MIME application/pdf
+20. Wrong MIME application/pdf
+21. Executable extension application/pdf
+22. Supported header and MIME text/plain
+23. Wrong MIME text/plain
+24. Executable extension text/plain
+25. Reject invalid a.png (25 bytes)
+26. Reject invalid a.svg (6 bytes)
+27. Reject invalid a.html (6 bytes)
+28. Reject invalid a.zip (2 bytes)
+29. Reject invalid a.txt (6 bytes)
+30. Reject invalid a.txt (2 bytes)
+31. Reject invalid a.txt (2 bytes)
+32. Reject invalid a.txt (0 bytes)
+33. Reject invalid a.txt (4000001 bytes)
+34. Reject invalid a.jpg (2 bytes)
+35. Exact 4MB text accepted
+Completed 35 upload validation checks. Header checks do not prove file safety or remove EXIF.

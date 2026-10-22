@@ -1,0 +1,525 @@
+[
+  {
+    "path": "app/api/account/delete/route.ts",
+    "methods": [
+      "POST",
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_request_deletion"
+    ]
+  },
+  {
+    "path": "app/api/cron/publish/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": false,
+    "cron": true,
+    "rpc": [
+      "mvp_publish_due"
+    ]
+  },
+  {
+    "path": "app/api/debug/buckets/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/moderation/reports/route.ts",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_pending_reports",
+      "mvp_resolve_report"
+    ]
+  },
+  {
+    "path": "app/api/moderation/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_moderate"
+    ]
+  },
+  {
+    "path": "app/api/notifications/pending-core-count/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": false,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/posts/create/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "create_post_with_upload"
+    ]
+  },
+  {
+    "path": "app/api/posts/delete/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/posts/publication/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_review_log"
+    ]
+  },
+  {
+    "path": "app/api/posts/toggle-mark/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_highlight"
+    ]
+  },
+  {
+    "path": "app/api/reports/create/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_receive_report"
+    ]
+  },
+  {
+    "path": "app/api/rooms/[id]/invite-code/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/approve-core/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "approve_core_request"
+    ]
+  },
+  {
+    "path": "app/api/rooms/create/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_create_room"
+    ]
+  },
+  {
+    "path": "app/api/rooms/delete/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/expire/join/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/expire/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/join/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/join-core-by-invite/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "join_core_by_invite"
+    ]
+  },
+  {
+    "path": "app/api/rooms/join-core-first-come/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "join_core_first_come"
+    ]
+  },
+  {
+    "path": "app/api/rooms/join-supporter/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/leave/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/like/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_set_room_like"
+    ]
+  },
+  {
+    "path": "app/api/rooms/manage-member/route.ts",
+    "methods": [
+      "POST",
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_manage_member"
+    ]
+  },
+  {
+    "path": "app/api/rooms/mark-read/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/reject-core/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "reject_core_request"
+    ]
+  },
+  {
+    "path": "app/api/rooms/request-core/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/seen/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/rooms/unread-map/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/storage/sign/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": false,
+    "cron": false,
+    "rpc": [
+      "mvp_public_post_allowed"
+    ]
+  },
+  {
+    "path": "app/api/update/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/uploads/public/[postId]/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/uploads/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/uploads/sign/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/api/works/draft/route.ts",
+    "methods": [
+      "POST",
+      "GET"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": [
+      "mvp_save_draft"
+    ]
+  },
+  {
+    "path": "app/profile/set-bio/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/profile/set-sns-links/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/profile/set-username/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": false,
+    "privileged": true,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/[id]/core-approve/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/[id]/core-reject/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/[id]/core-request/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/[id]/core-requests/route.ts",
+    "methods": [
+      "GET"
+    ],
+    "retired": false,
+    "privileged": false,
+    "identity_check": true,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/[id]/core-revoke/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  },
+  {
+    "path": "app/rooms/join/route.ts",
+    "methods": [
+      "POST"
+    ],
+    "retired": true,
+    "privileged": false,
+    "identity_check": false,
+    "cron": false,
+    "rpc": []
+  }
+]

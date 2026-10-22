@@ -1,0 +1,40 @@
+{
+  "scope": "LOCAL HTTP ONLY; outbound networking disabled",
+  "base": "http://127.0.0.1:62936",
+  "checks": [
+    {
+      "name": "/terms contact/footer renders",
+      "pass": true
+    },
+    {
+      "name": "/privacy contact/footer renders",
+      "pass": true
+    },
+    {
+      "name": "/login contact/footer renders",
+      "pass": true
+    },
+    {
+      "name": "/profile contact/footer renders",
+      "pass": true
+    },
+    {
+      "name": "/api/uploads OFF is 503",
+      "pass": true
+    },
+    {
+      "name": "/api/storage/sign OFF is 503",
+      "pass": true
+    },
+    {
+      "name": "/api/uploads/public/synthetic OFF is 503",
+      "pass": true
+    },
+    {
+      "name": "cron OFF is 503 with valid secret",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "serverStopped": true
+}

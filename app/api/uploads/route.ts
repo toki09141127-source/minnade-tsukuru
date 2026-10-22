@@ -1,203 +1,66 @@
-// app/api/uploads/route.ts
+import { sanitizeImage } from '../../../lib/imagePrivacy'
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '../../../lib/supabase/admin'
+import { databaseGuardsEnabled, limitAction } from '../../../lib/apiGuards'
+import { MAX_UPLOAD_BYTES, validateUpload } from '../../../lib/uploadValidation'
 
 export const dynamic = 'force-dynamic'
-
 const BUCKET = 'room_uploads'
-
-// 容量制限
-const MAX_IMAGE = 10 * 1024 * 1024 // 10MB
-const MAX_VIDEO = 50 * 1024 * 1024 // 50MB
-const MAX_FILE = 25 * 1024 * 1024 // 25MB
-
-// 危険な実行系だけブロック
-const BLOCKED_EXT = new Set([
-  'exe',
-  'bat',
-  'cmd',
-  'com',
-  'msi',
-  'sh',
-  'js',
-  'jar',
-  'apk',
-])
-
-function safeExtFromName(name: string) {
-  const raw = name.split('.').pop()?.toLowerCase() || ''
-  if (!/^[a-z0-9]{1,12}$/.test(raw)) return ''
-  return raw
-}
-
-function extFromMime(mime: string, fallback: string) {
-  switch (mime) {
-    case 'image/jpeg':
-      return 'jpg'
-    case 'image/png':
-      return 'png'
-    case 'image/webp':
-      return 'webp'
-    case 'image/gif':
-      return 'gif'
-    case 'video/mp4':
-      return 'mp4'
-    case 'video/webm':
-      return 'webm'
-    case 'application/pdf':
-      return 'pdf'
-    case 'text/plain':
-      return 'txt'
-    case 'application/zip':
-      return 'zip'
-    case 'application/x-zip-compressed':
-      return 'zip'
-    default:
-      return fallback || 'bin'
-  }
-}
 
 export async function POST(req: Request) {
   try {
-    // -------------------------
-    // 1) Auth
-    // -------------------------
+    if (process.env.MVP_UPLOADS_ENABLED !== 'true') return NextResponse.json({error:'現在、添付のアップロードは停止中です'}, {status:503,headers:{'Cache-Control':'no-store'}})
     const auth = req.headers.get('authorization') ?? ''
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : null
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const token = auth.startsWith('Bearer ') ? auth.slice(7) : ''
+    if (!token) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const { data, error: authError } = await supabaseAdmin.auth.getUser(token)
+    if (authError || !data.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    const user = data.user
+    const limited = await limitAction(supabaseAdmin, user.id, 'uploads')
+    if (limited) return limited
+    if (Number(req.headers.get('content-length') ?? 0) > MAX_UPLOAD_BYTES + 100_000) {
+      return NextResponse.json({ error: 'ファイルは4MB以下にしてください' }, { status: 413 })
     }
-
-    const { data: userRes, error: userErr } = await supabaseAdmin.auth.getUser(token)
-    if (userErr || !userRes?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-    const user = userRes.user
-
-    // -------------------------
-    // 2) FormData
-    // -------------------------
     const form = await req.formData()
     const roomId = String(form.get('roomId') ?? '').trim()
-    const file = form.get('file') as File | null
-
-    if (!roomId || !file) {
-      return NextResponse.json({ error: 'roomId and file are required' }, { status: 400 })
+    const file = form.get('file')
+    if (!roomId || !file || typeof file === 'string') return NextResponse.json({ error: 'ルームとファイルを指定してください' }, { status: 400 })
+    if (file.size > MAX_UPLOAD_BYTES) return NextResponse.json({ error: 'ファイルは4MB以下にしてください' }, { status: 413 })
+    const { data: room, error: roomError } = await supabaseAdmin.from('rooms')
+      .select('id, status, deleted_at, is_hidden, expires_at').eq('id', roomId).maybeSingle()
+    if (roomError) return NextResponse.json({ error: 'ルームを確認できません' }, { status: 503 })
+    if (!room || room.deleted_at || room.is_hidden !== false) return NextResponse.json({ error: 'ルームが見つかりません' }, { status: 404 })
+    if (room.status !== 'open' || (room.expires_at && new Date(room.expires_at).getTime() <= Date.now())) return NextResponse.json({ error: '終了したルームにはアップロードできません' }, { status: 403 })
+    const { data: member, error: memberError } = await supabaseAdmin.from('room_members')
+      .select('id').eq('room_id', roomId).eq('user_id', user.id).is('left_at', null).maybeSingle()
+    if (memberError) return NextResponse.json({ error: '参加状態を確認できません' }, { status: 503 })
+    if (!member) return NextResponse.json({ error: 'ルームに参加してください' }, { status: 403 })
+    if (!databaseGuardsEnabled()) return NextResponse.json({ error: '添付機能は安全確認中です。本文のみ投稿できます。' }, { status: 503 })
+    let bytes: Uint8Array = new Uint8Array(await file.arrayBuffer())
+    const mime = file.type.toLowerCase().trim()
+    const rule = validateUpload(file.name, mime, bytes)
+    if (!rule || bytes.length !== file.size) return NextResponse.json({ error: '対応形式・拡張子・ファイル内容を確認してください' }, { status: 415 })
+    try { bytes = await sanitizeImage(bytes, mime) } catch {
+      return NextResponse.json({ error: '画像を安全に処理できません。別の画像をお試しください。' }, { status: 415 })
     }
-
-    // -------------------------
-    // 3) バリデーション（size / ext）
-    // -------------------------
-    const mime = String(file.type ?? '').toLowerCase().trim()
-    const nameExt = safeExtFromName(file.name)
-
-    if (nameExt && BLOCKED_EXT.has(nameExt)) {
-      return NextResponse.json(
-        { error: `This file type is not allowed: .${nameExt}` },
-        { status: 400 }
-      )
-    }
-
-    const isImage = mime.startsWith('image/')
-    const isVideo = mime.startsWith('video/')
-    const max = isImage ? MAX_IMAGE : isVideo ? MAX_VIDEO : MAX_FILE
-
-    if (file.size > max) {
-      return NextResponse.json(
-        {
-          error: isImage
-            ? 'File too large (max 10MB)'
-            : isVideo
-            ? 'File too large (max 50MB)'
-            : 'File too large (max 25MB)',
-        },
-        { status: 400 }
-      )
-    }
-
-    // -------------------------
-    // 4) ルーム存在 + 状態確認
-    // -------------------------
-    const { data: room, error: roomErr } = await supabaseAdmin
-      .from('rooms')
-      .select('id, status')
-      .eq('id', roomId)
-      .maybeSingle()
-
-    if (roomErr) {
-      return NextResponse.json({ error: roomErr.message }, { status: 500 })
-    }
-
-    if (!room) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 })
-    }
-
-    if (room.status !== 'open') {
-      return NextResponse.json(
-        { error: `This room is ${room.status} and cannot accept uploads` },
-        { status: 403 }
-      )
-    }
-
-    // -------------------------
-    // 5) 参加者チェック
-    // -------------------------
-    const { data: member, error: memberErr } = await supabaseAdmin
-      .from('room_members')
-      .select('id')
-      .eq('room_id', roomId)
-      .eq('user_id', user.id)
-      .is('left_at', null)
-      .maybeSingle()
-
-    if (memberErr) {
-      return NextResponse.json({ error: memberErr.message }, { status: 500 })
-    }
-
-    if (!member) {
-      return NextResponse.json(
-        { error: 'You must join the room before uploading' },
-        { status: 403 }
-      )
-    }
-
-    // -------------------------
-    // 6) Storage Path
-    // -------------------------
-    const folder = isImage ? 'images' : isVideo ? 'videos' : 'files'
-    const ext = extFromMime(mime, nameExt)
-    const storagePath = `rooms/${roomId}/${folder}/${crypto.randomUUID()}.${ext}`
-
-    const arrayBuffer = await file.arrayBuffer()
-    const buffer = Buffer.from(arrayBuffer)
-
-    // -------------------------
-    // 7) Upload
-    // -------------------------
-    const { error: upErr } = await supabaseAdmin.storage
-      .from(BUCKET)
-      .upload(storagePath, buffer, {
-        contentType: mime || 'application/octet-stream',
-        upsert: false,
-      })
-
-    if (upErr) {
-      console.error('Upload failed:', upErr)
-      return NextResponse.json({ error: 'Upload failed' }, { status: 400 })
-    }
-
-    // -------------------------
-    // 8) 成功
-    // -------------------------
-    return NextResponse.json({
-      ok: true,
-      storagePath,
-      mimeType: mime || 'application/octet-stream',
-      fileName: file.name,
-      fileSize: file.size,
+    const uploadId = crypto.randomUUID()
+    const storagePath = `rooms/${roomId}/${rule.folder}/${uploadId}.${rule.ext}`
+    const { error: reserveError } = await supabaseAdmin.from('attachment_uploads').insert({
+      id: uploadId, user_id: user.id, room_id: roomId, bucket: BUCKET, storage_path: storagePath,
+      status: 'reserved', mime_type: mime, size_bytes: bytes.length,
     })
-  } catch (e: any) {
-    console.error('Upload route error:', e)
-    return NextResponse.json({ error: e?.message ?? 'Server error' }, { status: 500 })
+    if (reserveError) return NextResponse.json({ error: '添付を準備できません。時間をおいてお試しください。' }, { status: 503 })
+    const { error: uploadError } = await supabaseAdmin.storage.from(BUCKET).upload(storagePath, Buffer.from(bytes), { contentType: mime, upsert: false })
+    if (uploadError) {
+      await supabaseAdmin.from('attachment_uploads').update({ status: 'failed' }).eq('id', uploadId).eq('status', 'reserved')
+      return NextResponse.json({ error: 'アップロードに失敗しました' }, { status: 503 })
+    }
+    const { data: completed, error: completeError } = await supabaseAdmin.from('attachment_uploads')
+      .update({ status: 'uploaded', uploaded_at: new Date().toISOString() })
+      .eq('id', uploadId).eq('user_id', user.id).eq('status', 'reserved').select('id').maybeSingle()
+    if (completeError || !completed) return NextResponse.json({ error: '添付の完了確認に失敗しました。再度お試しください。' }, { status: 503 })
+    return NextResponse.json({ ok: true, uploadId, storagePath, mimeType: mime, fileSize: bytes.length })
+  } catch {
+    return NextResponse.json({ error: 'アップロードを処理できませんでした' }, { status: 500 })
   }
 }

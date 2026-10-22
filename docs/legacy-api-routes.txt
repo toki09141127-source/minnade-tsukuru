@@ -1,0 +1,82 @@
+1. FIXED: retired expire has no DB access
+2. FIXED: retired debug has no Storage access
+3. FIXED: retired join cannot bypass consent/capacity or demote core: app/api/rooms/join/route.ts
+4. FIXED: retired join preserves is_core: app/api/rooms/join/route.ts
+5. Retired join denies unauthenticated caller: app/api/rooms/join/route.ts
+6. FIXED: retired join cannot bypass aged-core leave lock
+7. Control: aged core leave alone denied
+8. FIXED: current supporter join rejects hidden/deleted room
+9. Control: current supporter join requires consent
+10. FIXED: legacy expire/join has no DB access
+11. FIXED: retired creator approval cannot insert core
+12. Retired approval denies noncreator without DB access
+13. FIXED: former member cannot delete own post
+14. Control: cron denies missing secret
+15. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=true
+16. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=false
+17. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=true
+18. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=false
+19. Retired endpoint never reaches service: app/rooms/join/route.ts token=true
+20. Retired endpoint never reaches service: app/rooms/join/route.ts token=false
+21. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=true
+22. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=false
+23. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":true}
+24. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"deleted_at":"2026-01-01"}
+25. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":null}
+26. Visible open room still accepts valid join/request: app/api/rooms/join-supporter/route.ts
+27. Closed room denies join/request: app/api/rooms/join-supporter/route.ts
+28. No bearer denies join/request: app/api/rooms/join-supporter/route.ts
+29. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":true}
+30. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"deleted_at":"2026-01-01"}
+31. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":null}
+32. Visible open room still accepts valid join/request: app/api/rooms/request-core/route.ts
+33. Closed room denies join/request: app/api/rooms/request-core/route.ts
+34. No bearer denies join/request: app/api/rooms/request-core/route.ts
+35. Supporter capacity still enforced for sequential requests
+36. Current supporter route preserves existing active core
+37. Active owner can still delete own post
+38. Nonmember cannot delete own post
+39. Active member cannot delete another owner post
+40. GAP: documented Vercel cron Authorization header is rejected by query-only route
+41. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"creator"}}
+42. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"supporter"}}
+43. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"left_at":"left"}}
+44. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"anonymous":true}
+45. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":null}
+46. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"creator"}}
+47. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"supporter"}}
+48. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"left_at":"left"}}
+49. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"anonymous":true}
+50. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":null}
+51. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"creator"}}
+52. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"supporter"}}
+53. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"left_at":"left"}}
+54. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"anonymous":true}
+55. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":null}
+56. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"creator"}}
+57. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"supporter"}}
+58. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"left_at":"left"}}
+59. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"anonymous":true}
+60. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":null}
+61. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"creator"}}
+62. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"supporter"}}
+63. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"left_at":"left"}}
+64. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"anonymous":true}
+65. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":null}
+66. Current approve-core still denies missing bearer
+67. Current approve-core keeps verified actor and request payload
+68. Current approve-core preserves RPC authorization failure
+69. Current reject-core still denies missing bearer
+70. Current reject-core keeps verified actor and request payload
+71. Current reject-core preserves RPC authorization failure
+72. Current approval rejects cross-room request before RPC
+73. Current UI retains endpoint join-supporter
+74. Current UI retains endpoint request-core
+75. Current UI retains endpoint join-core-first-come
+76. Current UI retains endpoint join-core-by-invite
+77. Current UI retains endpoint approve-core
+78. Current UI retains endpoint reject-core
+79. Current UI retains endpoint leave
+80. Page uses current participation/approval UI only
+81. Obsolete UI callers removed
+Completed 81 offline audit cases; GAP means vulnerability reproduced, not fixed. DB triggers/RLS are not simulated.

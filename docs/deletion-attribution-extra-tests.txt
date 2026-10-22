@@ -1,0 +1,29 @@
+1. Public post name anonymized
+2. Shared work content retained
+3. Production history retained in place
+4. Duplicate request idempotent
+5. Cannot change agreed attribution after request
+6. Retiring account write rejected: UPDATE
+7. Retiring account write rejected: DELETE
+8. Retiring account write rejected: INSERT
+9. Retiring account write rejected: UPDATE
+10. Retiring account write rejected: UPDATE
+11. Retiring account write rejected: UPDATE
+12. Retiring account write rejected: DELETE
+13. Retiring account write rejected: INSERT
+14. Active user remains writable
+15. JWT actor fence rejects writes to another user row
+16. Chosen public name retained independently from Auth
+17. Keep-name original unchanged
+18. Unexpected trigger side effect rejects whole request
+19. Failed request rolls back prior profile update
+20. Failed request leaves no job or write fence
+21. Private job mapping inaccessible to anon
+22. Anon obtains only public label through RPC
+23. Public lookup bounded
+24. Unsupported snapshot isolation fails closed
+25. Public attribution lookup bounded in batches
+26. Lookup failure does not fall back to stale name
+27. Malformed attribution fails closed
+28. Empty posts require no lookup
+Completed 28 attribution/write-fence checks; synthetic only.

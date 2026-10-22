@@ -1,0 +1,127 @@
+{
+  "runId": "d23c5db2-0b0f-44ce-8ac1-6262c1363956",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Auth trigger creates profile 0",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth trigger creates profile 1",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth trigger creates profile 2",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth trigger creates profile 3",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth trigger creates profile 4",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth trigger creates profile 5",
+      "status": "PASS"
+    },
+    {
+      "name": "Atomic room creation",
+      "status": "PASS"
+    },
+    {
+      "name": "Member joins with atomic consent",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent duplicate join preserves one membership",
+      "status": "PASS"
+    },
+    {
+      "name": "Audited auto-hide Trigger acts on third report",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous withdrawal respects audited username CHECK",
+      "status": "PASS"
+    },
+    {
+      "name": "Withdrawal-blocked auto-hide retains pending intake",
+      "status": "PASS"
+    },
+    {
+      "name": "Pending intake retry is idempotent",
+      "status": "PASS"
+    },
+    {
+      "name": "Service client cannot bypass departing-author write fence",
+      "status": "PASS"
+    },
+    {
+      "name": "Non-operator queue denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Operator pending queue accessible",
+      "status": "PASS"
+    },
+    {
+      "name": "Audited pending resolution hides target and replay succeeds",
+      "status": "PASS"
+    },
+    {
+      "name": "Withdrawing operator queue access denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Anon old approval RPC denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated old approval RPC denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated direct role escalation denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Closed client baseline denies direct post SELECT",
+      "status": "PASS"
+    }
+  ],
+  "users": [
+    {
+      "alias": "schema-0",
+      "id": "a69bf49f-e5ba-45aa-84c3-90edf33f6e0a"
+    },
+    {
+      "alias": "schema-1",
+      "id": "bc222d05-83c5-4adf-ae12-a6b2270b933e"
+    },
+    {
+      "alias": "schema-2",
+      "id": "d7c7080b-b6de-4ef3-b6c6-a95acd01bf45"
+    },
+    {
+      "alias": "schema-3",
+      "id": "56237cc4-bd13-4b24-ae2d-28fc5dfab8c3"
+    },
+    {
+      "alias": "schema-4",
+      "id": "269b15cb-5028-4e22-81f0-20cfb0b3575e"
+    },
+    {
+      "alias": "schema-5",
+      "id": "a086f362-7afd-4bdf-9b3f-de2568c114c6"
+    }
+  ],
+  "scope": "staging service/RPC checks; not full browser or production acceptance",
+  "room": "4a58ec3b-40b1-4153-b3ed-3e3e18d583c7",
+  "posts": [
+    "640986df-f030-4ba2-9680-350a32f1830b",
+    "8a52c450-b216-4a65-83f7-13f2c26fc9c6"
+  ],
+  "complete": true
+}

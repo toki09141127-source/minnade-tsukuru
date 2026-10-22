@@ -3,6 +3,8 @@
 import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import LegalLinks from '@/components/LegalLinks'
+import { authCallbackUrl, signupOptions } from '@/lib/authFlow'
 import { supabase } from '../../lib/supabase/client'
 
 export default function LoginPage() {
@@ -14,16 +16,13 @@ export default function LoginPage() {
   const [signupSuccess, setSignupSuccess] = useState(false)
   const [resending, setResending] = useState(false)
 
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
 
   const [loading, setLoading] = useState(false)
 
   const eTrim = useMemo(() => email.trim(), [email])
-
-  const normalizePassword = (p: string) => {
-    return p.replace(/^\s+|\s+$/g, '')
-  }
 
   const setFriendlyError = (raw: string) => {
     if (raw.includes('Invalid login credentials')) {
@@ -56,7 +55,7 @@ export default function LoginPage() {
     setSignupSuccess(false)
 
     const e = eTrim
-    const p = normalizePassword(password)
+    const p = password
 
     if (!e) {
       setMessage('メールアドレスを入力してください')
@@ -66,8 +65,8 @@ export default function LoginPage() {
       setMessage('パスワードは6文字以上にしてください')
       return
     }
-    if (!agreeTerms || !agreePrivacy) {
-      setMessage('新規登録には、利用規約とプライバシーポリシーへの同意が必要です。')
+    if (!adultConfirmed || !agreeTerms || !agreePrivacy) {
+      setMessage('新規登録には、18歳以上の確認と利用規約・プライバシーポリシーへの同意が必要です。')
       return
     }
 
@@ -76,6 +75,7 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signUp({
         email: e,
         password: p,
+        options: signupOptions(window.location.origin),
       })
 
       if (error) {
@@ -94,7 +94,7 @@ export default function LoginPage() {
     setMessage('')
 
     const e = eTrim
-    const p = normalizePassword(password)
+    const p = password
 
     if (!e) {
       setMessage('メールアドレスを入力してください')
@@ -132,9 +132,7 @@ export default function LoginPage() {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(e, {
         redirectTo:
-          typeof window !== 'undefined'
-            ? `${window.location.origin}/auth/callback`
-            : undefined,
+          authCallbackUrl(window.location.origin, true),
       })
       if (error) {
         setFriendlyError(error.message)
@@ -157,10 +155,10 @@ export default function LoginPage() {
 
     setResending(true)
     try {
-      const authAny = supabase.auth as any
+      const authClient = supabase.auth
 
-      if (typeof authAny?.resend === 'function') {
-        const { error } = await authAny.resend({ type: 'signup', email: e })
+      if (typeof authClient?.resend === 'function') {
+        const { error } = await authClient.resend({ type: 'signup', email: e, options: { emailRedirectTo: authCallbackUrl(window.location.origin) } })
         if (error) {
           setFriendlyError(error.message)
           return
@@ -231,6 +229,8 @@ export default function LoginPage() {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
         <input
           type="email"
+          aria-label="メールアドレス"
+          autoComplete="email"
           placeholder="email@example.com"
           value={email}
           onChange={(e) => {
@@ -246,6 +246,8 @@ export default function LoginPage() {
         />
         <input
           type="password"
+          aria-label="パスワード"
+          autoComplete="current-password"
           placeholder="password"
           value={password}
           onChange={(e) => {
@@ -271,7 +273,9 @@ export default function LoginPage() {
           background: '#fafafa',
         }}
       >
-        <div style={{ fontWeight: 700, marginBottom: 8 }}>新規登録時の同意</div>
+        <div style={{ fontWeight: 700, marginBottom: 8 }}>新規登録時の同意（18歳以上）</div>
+        <LegalLinks />
+        <label style={{display:"flex",gap:8,margin:"12px 0"}}><input type="checkbox" checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} />私は18歳以上です</label>
 
         <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 10 }}>
           <input
@@ -304,7 +308,7 @@ export default function LoginPage() {
         </label>
 
         <div style={{ fontSize: 12, color: '#666', marginTop: 10, lineHeight: 1.6 }}>
-          ※ この同意は新規登録時に必要です。ログインだけならチェック不要です。
+          ※ 登録後の利用開始時にも確認し、同意の版と18歳以上の確認日時を保存します。メールのリンクは登録・再設定を始めたブラウザで開いてください。
         </div>
       </div>
 

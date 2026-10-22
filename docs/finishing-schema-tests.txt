@@ -1,0 +1,26 @@
+PASS Auth trigger creates profile 0
+PASS Auth trigger creates profile 1
+PASS Auth trigger creates profile 2
+PASS Auth trigger creates profile 3
+PASS Auth trigger creates profile 4
+PASS Auth trigger creates profile 5
+PASS Atomic room creation
+PASS Member joins with atomic consent
+PASS Concurrent duplicate join preserves one membership
+PASS Audited auto-hide Trigger acts on third report
+PASS Anonymous withdrawal respects audited username CHECK
+PASS Withdrawal-blocked auto-hide retains pending intake
+PASS Pending intake retry is idempotent
+PASS Service client cannot bypass departing-author write fence
+PASS Non-operator queue denied
+PASS Operator pending queue accessible
+PASS Audited pending resolution hides target and replay succeeds
+PASS Withdrawing operator queue access denied
+PASS Anon old approval RPC denied
+PASS Authenticated old approval RPC denied
+PASS Authenticated direct role escalation denied
+PASS Anonymous private post excluded by RLS
+PASS Concurrent staging publish RPCs complete
+PASS Exactly one completed draft and published room
+PASS Repeated publication preserves original publication
+PASS Anonymous cron RPC denied

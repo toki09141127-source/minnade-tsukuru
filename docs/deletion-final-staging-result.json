@@ -1,0 +1,105 @@
+{
+  "runId": "325de2d3-1cb3-4a24-a632-9a345670a88f",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Active Core withdrawal denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Unpublished Creator withdrawal denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent duplicate request uses one job",
+      "status": "PASS"
+    },
+    {
+      "name": "User cannot invoke worker prepare",
+      "status": "PASS"
+    },
+    {
+      "name": "Process interruption after prepare leaves resumable durable state",
+      "status": "PASS"
+    },
+    {
+      "name": "Storage failure retries before any Auth deletion",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth remains after Storage failure",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth deletion failure remains retryable",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth remains after injected Auth failure",
+      "status": "PASS"
+    },
+    {
+      "name": "Retry completes real Auth deletion",
+      "status": "PASS"
+    },
+    {
+      "name": "Completed deletion replay is idempotent",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth absence verified explicitly",
+      "status": "PASS"
+    },
+    {
+      "name": "Used attachment retained after Auth deletion",
+      "status": "PASS"
+    },
+    {
+      "name": "Unused attachment removed through Storage SDK",
+      "status": "PASS"
+    },
+    {
+      "name": "Late upload registration rejected after completed deletion",
+      "status": "PASS"
+    },
+    {
+      "name": "Post retained with anonymous non-Auth identity",
+      "status": "PASS"
+    },
+    {
+      "name": "Other user post unchanged",
+      "status": "PASS"
+    },
+    {
+      "name": "Deleted user login rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Deleted user refresh rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Old JWT cannot write consent/profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Core demoted to Member can complete withdrawal",
+      "status": "PASS"
+    },
+    {
+      "name": "Published Creator withdrawal completes",
+      "status": "PASS"
+    },
+    {
+      "name": "Shared published work survives Creator Auth deletion",
+      "status": "PASS"
+    },
+    {
+      "name": "Remaining member can like departed Creator work",
+      "status": "PASS"
+    }
+  ],
+  "complete": true,
+  "room": "93ffa2f0-3fdd-4563-8589-d69f8e599d35",
+  "memberJob": "7c7699cf-737f-479f-9087-e33e9516904c"
+}

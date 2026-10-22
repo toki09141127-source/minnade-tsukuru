@@ -43,8 +43,6 @@ type AiFilter = 'all' | AiLevel
 type StatusFilter = 'all' | 'open' | 'forced_publish'
 
 // ✅ 未読キャッシュ設定（最小）
-const UNREAD_CACHE_KEY = 'unread_map_v1'
-const UNREAD_CACHE_TTL_MS = 30_000 // 30秒だけ信用（短いほど安全）
 
 export default function RoomsListClient(props: { initialUnreadMap?: Record<string, number> }) {
   const supabase = useMemo(() => createClient(), [])
@@ -62,7 +60,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
   const [sort, setSort] = useState<SortKey>('new')
 
   const [aiFilter, setAiFilter] = useState<AiFilter>('all')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('open')
 
   const selectStyle: React.CSSProperties = {
     width: '100%',
@@ -73,28 +71,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
     fontWeight: 400,
   }
 
-  // ✅ キャッシュがあれば優先して復元。なければ SSR 値をキャッシュに保存。
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(UNREAD_CACHE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
-        if (parsed?.ts && parsed?.map && Date.now() - parsed.ts <= UNREAD_CACHE_TTL_MS) {
-          setUnreadMap(parsed.map)
-          return
-        }
-      }
-
-      sessionStorage.setItem(
-        UNREAD_CACHE_KEY,
-        JSON.stringify({ ts: Date.now(), map: props.initialUnreadMap ?? {} })
-      )
-    } catch {
-      // ignore
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+  // 未読は現在の本人APIから取得する。共有sessionStorageを使わない。
   useEffect(() => {
     const fetchRooms = async () => {
       setLoading(true)
@@ -109,9 +86,6 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
           const user = u.user
           if (!user) {
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
@@ -119,9 +93,6 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
           const token = sess.session?.access_token
           if (!token) {
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
@@ -132,24 +103,17 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
           const json = await res.json().catch(() => ({}))
 
           if (!res.ok) {
-            console.error('[unread-map]', json)
+            // Unread errors do not expose server diagnostics.
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
           const map = (json?.map ?? {}) as Record<string, number>
           setUnreadMap(map)
 
-          // ✅ キャッシュ更新（次回一覧を開いた瞬間に即表示）
-          try {
-            sessionStorage.setItem(UNREAD_CACHE_KEY, JSON.stringify({ ts: Date.now(), map }))
-          } catch {}
-        } catch (e) {
-          console.error('[unread-map] fetch failed', e)
-          // キャッシュ or SSR 表示を維持（最小）
+
+        } catch {
+          setUnreadMap({})
         }
       }
 
@@ -158,7 +122,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
       // -------------------------
       const fetchRoomsList = async () => {
         const base = supabase
-          .from('rooms_with_counts_v2')
+          .from('mvp_room_list')
           .select(
             'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
           )
@@ -173,7 +137,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
         const { data, error } = await query
 
         if (error) {
-          setError(error.message)
+          setError('ルームを読み込めませんでした。通信状況を確認して再読み込みしてください。')
           setRooms([])
           setLoading(false)
           return
@@ -188,7 +152,11 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
       await fetchRoomsList()
     }
 
-    fetchRooms()
+    fetchRooms().catch(() => {
+      setError('ルームを読み込めませんでした。通信状況を確認して再読み込みしてください。')
+      setRooms([])
+      setLoading(false)
+    })
   }, [supabase, sort])
 
   const roomsWithUnread = useMemo(() => {
@@ -241,6 +209,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
         }}
       >
         <input
+          aria-label="ルーム名で検索"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="ルーム名で検索…"
@@ -259,7 +228,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
             gap: 10,
           }}
         >
-          <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
+          <select aria-label="カテゴリー" value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -267,13 +236,13 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
             ))}
           </select>
 
-          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
+          <select aria-label="公開状態" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as StatusFilter)} style={selectStyle}>
             <option value="all">制作中＋公開済み</option>
             <option value="open">制作中</option>
             <option value="forced_publish">公開済み</option>
           </select>
 
-          <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
+          <select aria-label="AI利用方針" value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
             <option value="all">AI：全て</option>
             {AI_LEVEL_OPTIONS.map((x) => (
               <option key={x.value} value={x.value}>
@@ -282,7 +251,7 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
             ))}
           </select>
 
-          <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
+          <select aria-label="並び順" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
             <option value="new">新着順</option>
             <option value="like">いいね順</option>
           </select>
@@ -300,13 +269,13 @@ export default function RoomsListClient(props: { initialUnreadMap?: Record<strin
       </div>
 
       {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
-      {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
+      {error && <div role="alert" style={{ marginTop: 12, color: '#b00020' }}><p>{error}</p><button type="button" onClick={() => window.location.reload()}>再読み込み</button></div>}
 
       <div
         style={{
           marginTop: 12,
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))',
           gap: 12,
         }}
       >

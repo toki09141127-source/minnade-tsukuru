@@ -4,9 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:security": "node docs/run-security-checks.cjs",
+    "staging:check": "node scripts/staging/check.cjs",
+    "staging:smoke": "node scripts/staging/smoke.cjs",
+    "staging:db-check": "node scripts/staging/database-check.cjs",
+    "staging:plan": "node scripts/staging/plan.cjs",
+    "staging:integration": "node scripts/staging/integration.cjs",
+    "staging:core": "node scripts/staging/core-integration.cjs",
+    "staging:privacy": "node scripts/staging/deletion-privacy-integration.cjs",
+    "staging:web": "node scripts/staging/web-acceptance.cjs",
+    "staging:schema": "node scripts/staging/schema-integration.cjs"
   },
   "dependencies": {
     "@supabase/auth-helpers-nextjs": "^0.15.0",
@@ -14,17 +24,19 @@
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "dotenv": "^17.2.3",
-    "next": "16.1.6",
+    "next": "16.4.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.5.10",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.33",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.1.6",
+    "eslint-config-next": "16.4.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

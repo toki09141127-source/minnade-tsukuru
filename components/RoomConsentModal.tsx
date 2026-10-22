@@ -1,6 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useDialogFocus } from '@/lib/useDialogFocus'
+
+import { useState } from 'react'
+import LegalLinks from '@/components/LegalLinks'
 import { CURRENT_ROOM_TERMS_VERSION } from '@/lib/legalVersions'
 
 export type ConsentPayload = {
@@ -21,7 +24,11 @@ type Props = {
   onConfirm: (consent: ConsentPayload) => void
 }
 
-export default function RoomConsentModal({
+export default function RoomConsentModal(props: Props) {
+  return props.open ? <RoomConsentDialog {...props} /> : null
+}
+
+function RoomConsentDialog({
   open,
   title,
   description,
@@ -35,14 +42,7 @@ export default function RoomConsentModal({
   const [agreeForcedPublish, setAgreeForcedPublish] = useState(false)
   const [agreeCoreLock, setAgreeCoreLock] = useState(false)
 
-  useEffect(() => {
-    if (!open) {
-      setAgreeRoom(false)
-      setAgreeForcedPublish(false)
-      setAgreeCoreLock(false)
-    }
-  }, [open])
-
+  const dialogFocus = useDialogFocus(open, onClose, loading)
   if (!open) return null
 
   const canConfirm =
@@ -52,6 +52,8 @@ export default function RoomConsentModal({
     <div
       aria-modal="true"
       role="dialog"
+      aria-label={title}
+      {...dialogFocus}
       onClick={() => !loading && onClose()}
       style={{
         position: 'fixed',
@@ -110,7 +112,7 @@ export default function RoomConsentModal({
             </div>
             <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
               <li>あなたの投稿は他の参加者に閲覧・引用・編集・組込みされる場合があります</li>
-              <li>投稿内容は完成作品として公開される場合があります</li>
+              <li>投稿、画像、添付、制作ログは、完成作品の公開後に一般の方が閲覧できる場合があります</li>
               <li>作品制作上、投稿が要約・トリミング・形式変更される場合があります</li>
               <li>成果物の外部利用は原則禁止です</li>
             </ul>
@@ -131,6 +133,7 @@ export default function RoomConsentModal({
             </div>
           </div>
 
+          <LegalLinks />
           <div style={{ marginTop: 16, display: 'grid', gap: 10 }}>
             <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
               <input
@@ -140,7 +143,7 @@ export default function RoomConsentModal({
                 style={{ marginTop: 4, flexShrink: 0 }}
               />
               <span style={{ lineHeight: 1.7 }}>
-                共同制作に伴う投稿の編集・組込み・公開範囲について理解し、利用規約に同意します。
+                投稿・画像・添付・制作ログの編集・組込みと、作品公開後に一般の方が閲覧できる範囲を理解し、利用規約に同意します。
               </span>
             </label>
 

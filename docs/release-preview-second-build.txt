@@ -1,0 +1,162 @@
+Vercel CLI 65.0.0 (Node.js 22.17.0)
+2026-10-22T05:06:06.979Z  Running build in Washington, D.C., USA (East) – iad1
+2026-10-22T05:06:06.980Z  Build machine configuration: 2 cores, 8 GB
+2026-10-22T05:06:07.001Z  Retrieving list of deployment files...
+2026-10-22T05:06:07.127Z  Previous build caches not available.
+2026-10-22T05:06:07.374Z  Downloading 151 deployment files...
+2026-10-22T05:06:08.623Z  Running "vercel build"
+2026-10-22T05:06:08.642Z  Vercel CLI 64.7.0
+2026-10-22T05:06:09.105Z  Installing dependencies...
+2026-10-22T05:06:09.869Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-22T05:06:14.322Z  npm warn deprecated @supabase/auth-helpers-shared@0.7.0: This package is now deprecated - please use the @supabase/ssr package instead.
+2026-10-22T05:06:15.912Z  npm warn deprecated @supabase/auth-helpers-nextjs@0.15.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+2026-10-22T05:06:24.332Z  
+2026-10-22T05:06:24.333Z  added 377 packages in 15s
+2026-10-22T05:06:24.333Z  
+2026-10-22T05:06:24.333Z  149 packages are looking for funding
+2026-10-22T05:06:24.333Z  run `npm fund` for details
+2026-10-22T05:06:24.335Z  npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+2026-10-22T05:06:24.336Z  npm warn install-scripts   unrs-resolver@1.11.1 (postinstall: napi-postinstall unrs-resolver 1.11.1 check)
+2026-10-22T05:06:24.336Z  npm warn install-scripts
+2026-10-22T05:06:24.337Z  npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-10-22T05:06:24.409Z  Detected Next.js version: 16.4.2
+2026-10-22T05:06:24.423Z  Running "npm run build"
+2026-10-22T05:06:24.592Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-22T05:06:24.621Z  
+2026-10-22T05:06:24.622Z  > minnade-tsukuru@0.1.0 build
+2026-10-22T05:06:24.622Z  > next build --webpack
+2026-10-22T05:06:24.622Z  
+2026-10-22T05:06:25.307Z  ▲ Next.js 16.4.2 (webpack)
+2026-10-22T05:06:25.428Z  Applying modifyConfig from Vercel
+2026-10-22T05:06:25.433Z  ✓ Running next.config.ts took 126ms
+2026-10-22T05:06:25.483Z  Attention: Next.js now collects completely anonymous telemetry regarding usage.
+2026-10-22T05:06:25.483Z  This information is used to shape Next.js' roadmap and prioritize features.
+2026-10-22T05:06:25.483Z  You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+2026-10-22T05:06:25.484Z  https://nextjs.org/telemetry
+2026-10-22T05:06:25.484Z  
+2026-10-22T05:06:25.517Z  
+2026-10-22T05:06:25.522Z  ⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+2026-10-22T05:06:25.523Z  
+2026-10-22T05:06:25.523Z  To migrate automatically, run:
+2026-10-22T05:06:25.523Z  npx @next/codemod@canary middleware-to-proxy .
+2026-10-22T05:06:25.523Z  
+2026-10-22T05:06:25.524Z  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+2026-10-22T05:06:25.633Z  Creating an optimized production build ...
+2026-10-22T05:06:43.035Z  <w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (133kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+2026-10-22T05:06:43.296Z  ⚠ Compiled with warnings in 3.4s
+2026-10-22T05:06:43.296Z  
+2026-10-22T05:06:43.298Z  ./node_modules/next/dist/esm/server/app-render/dynamic-rendering.js
+2026-10-22T05:06:43.306Z  A Node.js API is used (process.cwd at line: 986) which is not supported in the Edge Runtime.
+2026-10-22T05:06:43.306Z  Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+2026-10-22T05:06:43.306Z  
+2026-10-22T05:06:43.306Z  Import trace for requested module:
+2026-10-22T05:06:43.306Z  ./node_modules/next/dist/esm/server/app-render/dynamic-rendering.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/request/connection.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/web/exports/index.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/api/server.js
+2026-10-22T05:06:43.307Z  
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/app-render/dynamic-rendering.js
+2026-10-22T05:06:43.307Z  A Node.js API is used (process.cwd at line: 986) which is not supported in the Edge Runtime.
+2026-10-22T05:06:43.307Z  Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+2026-10-22T05:06:43.307Z  
+2026-10-22T05:06:43.307Z  Import trace for requested module:
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/app-render/dynamic-rendering.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/request/connection.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/server/web/exports/index.js
+2026-10-22T05:06:43.307Z  ./node_modules/next/dist/esm/api/server.js
+2026-10-22T05:06:43.307Z  
+2026-10-22T05:06:50.120Z  ✓ Compiled successfully in 20.1s
+2026-10-22T05:06:50.124Z  Running TypeScript ...
+2026-10-22T05:07:01.190Z  Finished TypeScript in 11.1s ...
+2026-10-22T05:07:01.195Z  Collecting page data using 1 worker ...
+2026-10-22T05:07:03.810Z  Generating static pages using 1 worker (0/30) ...
+2026-10-22T05:07:04.337Z  Generating static pages using 1 worker (7/30)
+2026-10-22T05:07:04.338Z  Generating static pages using 1 worker (14/30)
+2026-10-22T05:07:04.826Z  Generating static pages using 1 worker (22/30)
+2026-10-22T05:07:04.828Z  ✓ Generating static pages using 1 worker (30/30) in 1020ms
+2026-10-22T05:07:06.102Z  Finalizing page optimization ...
+2026-10-22T05:07:06.103Z  Collecting build traces ...
+2026-10-22T05:07:21.870Z  Running onBuildComplete from Vercel
+2026-10-22T05:07:22.264Z  
+2026-10-22T05:07:22.269Z  Route (app)
+2026-10-22T05:07:22.270Z  ┌ ○ /
+2026-10-22T05:07:22.271Z  ├ ○ /_not-found
+2026-10-22T05:07:22.271Z  ├ ƒ /api/account/delete
+2026-10-22T05:07:22.271Z  ├ ƒ /api/cron/account-deletion
+2026-10-22T05:07:22.271Z  ├ ƒ /api/cron/publish
+2026-10-22T05:07:22.272Z  ├ ƒ /api/debug/buckets
+2026-10-22T05:07:22.272Z  ├ ƒ /api/moderation
+2026-10-22T05:07:22.272Z  ├ ƒ /api/moderation/reports
+2026-10-22T05:07:22.273Z  ├ ƒ /api/notifications/pending-core-count
+2026-10-22T05:07:22.273Z  ├ ƒ /api/posts/create
+2026-10-22T05:07:22.273Z  ├ ƒ /api/posts/delete
+2026-10-22T05:07:22.274Z  ├ ƒ /api/posts/publication
+2026-10-22T05:07:22.274Z  ├ ƒ /api/posts/toggle-mark
+2026-10-22T05:07:22.274Z  ├ ƒ /api/reports/create
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/[id]/invite-code
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/approve-core
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/create
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/delete
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/expire
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/expire/join
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/join
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/join-core-by-invite
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/join-core-first-come
+2026-10-22T05:07:22.274Z  ├ ƒ /api/rooms/join-supporter
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/leave
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/like
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/manage-member
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/mark-read
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/reject-core
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/request-core
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/seen
+2026-10-22T05:07:22.275Z  ├ ƒ /api/rooms/unread-map
+2026-10-22T05:07:22.275Z  ├ ƒ /api/storage/sign
+2026-10-22T05:07:22.275Z  ├ ƒ /api/update
+2026-10-22T05:07:22.275Z  ├ ƒ /api/uploads
+2026-10-22T05:07:22.275Z  ├ ƒ /api/uploads/public/[postId]
+2026-10-22T05:07:22.275Z  ├ ƒ /api/uploads/sign
+2026-10-22T05:07:22.275Z  ├ ƒ /api/works/draft
+2026-10-22T05:07:22.275Z  ├ ○ /apple-icon.png
+2026-10-22T05:07:22.275Z  ├ ○ /auth/callback
+2026-10-22T05:07:22.275Z  ├ ○ /auth/reset-password
+2026-10-22T05:07:22.276Z  ├ ○ /guidelines
+2026-10-22T05:07:22.276Z  ├ ○ /icon.png
+2026-10-22T05:07:22.276Z  ├ ○ /login
+2026-10-22T05:07:22.276Z  ├ ○ /moderation
+2026-10-22T05:07:22.276Z  ├ ○ /privacy
+2026-10-22T05:07:22.276Z  ├ ○ /profile
+2026-10-22T05:07:22.276Z  ├ ƒ /profile/set-bio
+2026-10-22T05:07:22.276Z  ├ ƒ /profile/set-sns-links
+2026-10-22T05:07:22.276Z  ├ ƒ /profile/set-username
+2026-10-22T05:07:22.276Z  ├ ○ /rankings
+2026-10-22T05:07:22.276Z  ├ ƒ /rooms
+2026-10-22T05:07:22.276Z  ├ ƒ /rooms/[id]
+2026-10-22T05:07:22.276Z  ├ ƒ /rooms/[id]/core-approve
+2026-10-22T05:07:22.276Z  ├ ƒ /rooms/[id]/core-reject
+2026-10-22T05:07:22.279Z  ├ ƒ /rooms/[id]/core-request
+2026-10-22T05:07:22.279Z  ├ ƒ /rooms/[id]/core-requests
+2026-10-22T05:07:22.279Z  ├ ƒ /rooms/[id]/core-revoke
+2026-10-22T05:07:22.279Z  ├ ○ /rooms/create
+2026-10-22T05:07:22.279Z  ├ ƒ /rooms/join
+2026-10-22T05:07:22.280Z  ├ ○ /rooms/new
+2026-10-22T05:07:22.280Z  ├ ƒ /terms
+2026-10-22T05:07:22.280Z  ├ ƒ /u/[username]
+2026-10-22T05:07:22.280Z  ├ ƒ /works
+2026-10-22T05:07:22.280Z  └ ƒ /works/[id]
+2026-10-22T05:07:22.280Z  
+2026-10-22T05:07:22.280Z  
+2026-10-22T05:07:22.280Z  ƒ Proxy (Middleware)
+2026-10-22T05:07:22.280Z  
+2026-10-22T05:07:22.281Z  ○  (Static)   prerendered as static content
+2026-10-22T05:07:22.281Z  ƒ  (Dynamic)  server-rendered on demand
+2026-10-22T05:07:22.281Z  
+2026-10-22T05:07:22.402Z  Error: [NEXT_OUTPUT_DIR_MISSING] The Next.js output directory ".next" was not found at "/vercel/path0/.next". This is usually caused by one of the following:
+2026-10-22T05:07:22.402Z  
+2026-10-22T05:07:22.402Z  1. The "Output Directory" setting in your project is misconfigured. Check your project settings and ensure the output directory matches your Next.js configuration.
+2026-10-22T05:07:22.402Z  
+2026-10-22T05:07:22.402Z  2. If using Turborepo, ensure your task outputs include the Next.js build directory. Add ".next/**" to the "outputs" array in your turbo.json for the build task.
+2026-10-22T05:07:22.402Z  
+2026-10-22T05:07:22.402Z  3. The build command did not complete successfully. Check the build logs above for errors.
+2026-10-22T05:07:22.403Z  Learn More: https://err.sh/vercel/vercel/now-next-routes-manifest
+status	● Error

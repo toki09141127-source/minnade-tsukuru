@@ -1,0 +1,22 @@
+{
+  "environment": "staging",
+  "projectName": "minnade-tsukuru-staging",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "createdFresh": true,
+  "syntheticOnly": true,
+  "productionDataCopied": false,
+  "verifiedByUser": true,
+  "plan": "Free",
+  "region": "ap-southeast-2",
+  "baselineVerified": true,
+  "emptyVerified": true,
+  "emptyAudit": {
+    "publicTables": 0,
+    "authUsers": 0,
+    "storageObjects": 0,
+    "storageBuckets": 0,
+    "method": "Dashboard BEGIN READ ONLY / ROLLBACK"
+  },
+  "baselineScope": "audited public schema; client ACL closed; managed Storage unchanged",
+  "migrationsApplied": 28
+}

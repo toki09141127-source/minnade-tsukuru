@@ -1,0 +1,2238 @@
+[
+  {
+    "section": "definitions_redacted",
+    "metadata": [
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "19007",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "21479",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "22593",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "24856",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "32955",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "32959",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "38544",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(auth.uid() = user_id)"
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "41961",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 3,
+        "definition_redacted": "((auth.uid() = user_id) AND (post_type = 'final'::text) AND (EXISTS ( SELECT [REDACTED]\n   FROM public.room_members rm\n  WHERE ((rm.room_id = posts.room_id) AND (rm.user_id = auth.uid()) AND (rm.left_at IS NULL) AND (rm.role = ANY (ARRAY[REDACTED]'creator'::text, 'core'::text[REDACTED]))))))"
+      },
+      {
+        "kind": "policy_check",
+        "target": "posts",
+        "object_oid": "41962",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 1,
+        "definition_redacted": "((auth.uid() = user_id) AND (post_type <> 'final'::text) AND (EXISTS ( SELECT [REDACTED]\n   FROM public.room_members rm\n  WHERE ((rm.room_id = posts.room_id) AND (rm.user_id = auth.uid()) AND (rm.left_at IS NULL)))))"
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "18937",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "21476",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "24857",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "32914",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "((user_id = auth.uid()) AND (role = 'supporter'::text) AND (is_core = false))"
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "32915",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "32952",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "((user_id = auth.uid()) AND (role = 'supporter'::text))"
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "32953",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "32954",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "38548",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "room_members",
+        "object_oid": "45346",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "((user_id = auth.uid()) AND (left_at IS NULL))"
+      },
+      {
+        "kind": "policy_check",
+        "target": "rooms",
+        "object_oid": "17809",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "rooms",
+        "object_oid": "17810",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(created_by = auth.uid())"
+      },
+      {
+        "kind": "policy_check",
+        "target": "rooms",
+        "object_oid": "19009",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(created_by = auth.uid())"
+      },
+      {
+        "kind": "policy_check",
+        "target": "rooms",
+        "object_oid": "21474",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_check",
+        "target": "rooms",
+        "object_oid": "21475",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(auth.uid() IS NOT NULL)"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "19007",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "21479",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "22593",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 2,
+        "definition_redacted": "(EXISTS ( SELECT [REDACTED]\n   FROM public.rooms r\n  WHERE ((r.id = posts.room_id) AND ((r.status = 'forced_publish'::text) OR (EXISTS ( SELECT [REDACTED]\n           FROM public.room_members m\n          WHERE ((m.room_id = r.id) AND (m.user_id = auth.uid()))))))))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "24856",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "((COALESCE(is_hidden, false) = false) AND (deleted_at IS NULL))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "32955",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 1,
+        "definition_redacted": "(EXISTS ( SELECT [REDACTED]\n   FROM public.room_members m\n  WHERE ((m.room_id = posts.room_id) AND (m.user_id = auth.uid()))))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "32959",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 1,
+        "definition_redacted": "((user_id = auth.uid()) AND (EXISTS ( SELECT [REDACTED]\n   FROM public.room_members m\n  WHERE ((m.room_id = posts.room_id) AND (m.user_id = auth.uid()) AND (m.role = 'core'::text)))))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "38544",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(auth.uid() = user_id)"
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "41961",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_using",
+        "target": "posts",
+        "object_oid": "41962",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "18937",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "21476",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "24857",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(user_id = auth.uid())"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "32914",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "32915",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(user_id = auth.uid())"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "32952",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "32953",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(user_id = auth.uid())"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "32954",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 1,
+        "definition_redacted": "(EXISTS ( SELECT [REDACTED]\n   FROM public.rooms r\n  WHERE ((r.id = room_members.room_id) AND (r.created_by = auth.uid()))))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "38548",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(user_id = auth.uid())"
+      },
+      {
+        "kind": "policy_using",
+        "target": "room_members",
+        "object_oid": "45346",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "((user_id = auth.uid()) AND (left_at IS NULL))"
+      },
+      {
+        "kind": "policy_using",
+        "target": "rooms",
+        "object_oid": "17809",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "rooms",
+        "object_oid": "17810",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "policy_using",
+        "target": "rooms",
+        "object_oid": "19009",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "(created_by = auth.uid())"
+      },
+      {
+        "kind": "policy_using",
+        "target": "rooms",
+        "object_oid": "21474",
+        "review_state": "allowlisted_tokens_only",
+        "masked_token_count": 0,
+        "definition_redacted": "true"
+      },
+      {
+        "kind": "policy_using",
+        "target": "rooms",
+        "object_oid": "21475",
+        "review_state": "absent",
+        "masked_token_count": null,
+        "definition_redacted": null
+      },
+      {
+        "kind": "view",
+        "target": "profiles_public",
+        "object_oid": "37400",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 6,
+        "definition_redacted": " SELECT id,\n    username,\n    [REDACTED],\n    [REDACTED],\n    [REDACTED],\n    [REDACTED],\n    [REDACTED],\n    [REDACTED]\n   FROM public.profiles p;"
+      },
+      {
+        "kind": "view",
+        "target": "report_counts",
+        "object_oid": "23722",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 6,
+        "definition_redacted": " SELECT [REDACTED],\n    [REDACTED],\n    count(*) AS [REDACTED]\n   FROM public.[REDACTED] r\n  GROUP BY [REDACTED], [REDACTED];"
+      },
+      {
+        "kind": "view",
+        "target": "rooms_with_counts_v2",
+        "object_oid": "32868",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 7,
+        "definition_redacted": " SELECT id,\n    title,\n    work_type,\n    [REDACTED],\n    time_limit_hours,\n    status,\n    [REDACTED],\n    created_by,\n    created_at,\n    [REDACTED],\n    ended_at,\n    like_count,\n    expires_at,\n    deleted_at,\n    is_adult,\n    is_hidden,\n    [REDACTED],\n    category,\n    type,\n    concept,\n    ( SELECT count(DISTINCT rm.user_id) AS count\n           FROM public.room_members rm\n          WHERE ((rm.room_id = r.id) AND (rm.left_at IS NULL))) AS member_count,\n    ( SELECT count(DISTINCT rm.user_id) AS count\n           FROM public.room_members rm\n          WHERE ((rm.room_id = r.id) AND (rm.left_at IS NULL) AND (rm.role = ANY (ARRAY[REDACTED]'creator'::text, 'core'::text[REDACTED])))) AS [REDACTED],\n    ai_level\n   FROM public.rooms r;"
+      },
+      {
+        "kind": "view",
+        "target": "rooms_with_counts",
+        "object_oid": "26038",
+        "review_state": "masked_requires_review",
+        "masked_token_count": 3,
+        "definition_redacted": " SELECT r.id,\n    r.title,\n    r.status,\n    r.category AS type,\n    r.category,\n    r.is_adult,\n    r.created_by,\n    r.created_at,\n    r.[REDACTED],\n    r.expires_at,\n    r.like_count,\n    r.is_hidden,\n    r.deleted_at,\n    (COALESCE(count(rm.user_id), ([REDACTED])::bigint))::integer AS member_count\n   FROM (public.rooms r\n     LEFT JOIN public.room_members rm ON ((rm.room_id = r.id)))\n  WHERE (r.deleted_at IS NULL)\n  GROUP BY r.id, r.title, r.status, r.category, r.is_adult, r.created_by, r.created_at, r.[REDACTED], r.expires_at, r.like_count, r.is_hidden, r.deleted_at;"
+      }
+    ]
+  },
+  {
+    "section": "direct_dependencies",
+    "metadata": [
+      {
+        "source_oid": "17809",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "17810",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "17810",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "17810",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "18937",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "19007",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "19009",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "19009",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "19009",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "19009",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "19009",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "21474",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "21475",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "21475",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "21476",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "21479",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 1
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 6
+      },
+      {
+        "source_oid": "22593",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "23722",
+        "source_kind": "view",
+        "known_target": "report_counts",
+        "referenced_oid": "23722",
+        "dependency_type": "i",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "23722",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "23701",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "23722",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "23701",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 4
+      },
+      {
+        "source_oid": "24856",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "24856",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 10
+      },
+      {
+        "source_oid": "24856",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 11
+      },
+      {
+        "source_oid": "24857",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "24857",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "24857",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms_with_counts",
+        "referenced_oid": "26038",
+        "dependency_type": "i",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 1
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 10
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 12
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 13
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 14
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 15
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 16
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 18
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 6
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "26038",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 9
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms_with_counts_v2",
+        "referenced_oid": "32868",
+        "dependency_type": "i",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 1
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 10
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 11
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 12
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 13
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 14
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 15
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 16
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 17
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 18
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 19
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 20
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 24
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 4
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 5
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 6
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "32868",
+        "source_kind": "view",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 9
+      },
+      {
+        "source_oid": "32914",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32914",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32914",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 6
+      },
+      {
+        "source_oid": "32914",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "32914",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32915",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32915",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32915",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32952",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32952",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32952",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "32952",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32953",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32953",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32953",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32954",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32954",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32954",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 1
+      },
+      {
+        "source_oid": "32954",
+        "source_kind": "policy",
+        "known_target": "rooms",
+        "referenced_oid": "17794",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "32954",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32955",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32955",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32955",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32955",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32955",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "32959",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": "profiles_public",
+        "referenced_oid": "37400",
+        "dependency_type": "i",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 1
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 10
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 11
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 6
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "37400",
+        "source_kind": "view",
+        "known_target": null,
+        "referenced_oid": "18956",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 9
+      },
+      {
+        "source_oid": "38544",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "38544",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "38544",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "38544",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "38544",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "38548",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "38548",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "38548",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 14
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 7
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "41961",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 14
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "posts",
+        "referenced_oid": "18992",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 2
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "41962",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "a",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 3
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": "room_members",
+        "referenced_oid": "18918",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1259",
+        "referenced_column_number": 8
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      },
+      {
+        "source_oid": "45346",
+        "source_kind": "policy",
+        "known_target": null,
+        "referenced_oid": "16538",
+        "dependency_type": "n",
+        "referenced_catalog_oid": "1255",
+        "referenced_column_number": 0
+      }
+    ]
+  },
+  {
+    "section": "effective_select",
+    "metadata": [
+      {
+        "role": "anon",
+        "object": "posts",
+        "object_oid": "18992",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "profiles_public",
+        "object_oid": "37400",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "report_counts",
+        "object_oid": "23722",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "room_members",
+        "object_oid": "18918",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "rooms_with_counts_v2",
+        "object_oid": "32868",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "rooms_with_counts",
+        "object_oid": "26038",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "anon",
+        "object": "rooms",
+        "object_oid": "17794",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "posts",
+        "object_oid": "18992",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "profiles_public",
+        "object_oid": "37400",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "report_counts",
+        "object_oid": "23722",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "room_members",
+        "object_oid": "18918",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "rooms_with_counts_v2",
+        "object_oid": "32868",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "rooms_with_counts",
+        "object_oid": "26038",
+        "table_select": true,
+        "any_column_select": true
+      },
+      {
+        "role": "authenticated",
+        "object": "rooms",
+        "object_oid": "17794",
+        "table_select": true,
+        "any_column_select": true
+      }
+    ]
+  },
+  {
+    "section": "environment",
+    "metadata": [
+      {
+        "found_target_count": 7,
+        "server_version_num": "170006",
+        "expected_target_count": 7,
+        "transaction_read_only": "on"
+      }
+    ]
+  },
+  {
+    "section": "objects",
+    "metadata": [
+      {
+        "oid": "17794",
+        "rls": true,
+        "kind": "r",
+        "name": "rooms",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": false
+      },
+      {
+        "oid": "18918",
+        "rls": true,
+        "kind": "r",
+        "name": "room_members",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": false
+      },
+      {
+        "oid": "18992",
+        "rls": true,
+        "kind": "r",
+        "name": "posts",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": false
+      },
+      {
+        "oid": "23722",
+        "rls": false,
+        "kind": "v",
+        "name": "report_counts",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": true
+      },
+      {
+        "oid": "26038",
+        "rls": false,
+        "kind": "v",
+        "name": "rooms_with_counts",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": true
+      },
+      {
+        "oid": "32868",
+        "rls": false,
+        "kind": "v",
+        "name": "rooms_with_counts_v2",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": true
+      },
+      {
+        "oid": "37400",
+        "rls": false,
+        "kind": "v",
+        "name": "profiles_public",
+        "force_rls": false,
+        "owner_oid": "16384",
+        "owner_bypassrls": true,
+        "owner_superuser": false,
+        "security_barrier": false,
+        "security_invoker": true
+      }
+    ]
+  },
+  {
+    "section": "policies",
+    "metadata": [
+      {
+        "oid": "17809",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "rooms",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "17810",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "rooms",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "18937",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "19007",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "19009",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "rooms",
+        "command": "w",
+        "permissive": true
+      },
+      {
+        "oid": "21474",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "rooms",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "21475",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "rooms",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "21476",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "21479",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "posts",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "22593",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "posts",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "24856",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "24857",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "32914",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "32915",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "32952",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "32953",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "32954",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "32955",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "32959",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "d",
+        "permissive": true
+      },
+      {
+        "oid": "38544",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "w",
+        "permissive": true
+      },
+      {
+        "oid": "38548",
+        "roles": [
+          {
+            "oid": "0",
+            "known_name": "PUBLIC"
+          }
+        ],
+        "table": "room_members",
+        "command": "r",
+        "permissive": true
+      },
+      {
+        "oid": "41961",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "41962",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "posts",
+        "command": "a",
+        "permissive": true
+      },
+      {
+        "oid": "45346",
+        "roles": [
+          {
+            "oid": "16481",
+            "known_name": "authenticated"
+          }
+        ],
+        "table": "room_members",
+        "command": "w",
+        "permissive": true
+      }
+    ]
+  }
+]

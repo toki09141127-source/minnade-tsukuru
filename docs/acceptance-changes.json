@@ -1,0 +1,37 @@
+{
+  "modified": [
+    "app/api/rooms/join-supporter/route.ts",
+    "docs/AI_HANDOFF.md",
+    "docs/AI_TASK.md",
+    "docs/PRODUCTION_ROLLOUT_PLAN.md",
+    "docs/real-concurrency-check.cjs",
+    "docs/run-security-checks.cjs",
+    "docs/security-audit-check.cjs",
+    "docs/WEB_MVP_100_PERCENT_CHECKLIST.md",
+    "docs/WEB_MVP_FUTURE_SPEC.md"
+  ],
+  "new": [
+    "lib/accountDeletionPreflight.ts",
+    "supabase/migrations/202610210018_member_admission.sql",
+    "docs/acceptance-browser-server.txt",
+    "docs/acceptance-build.txt",
+    "docs/acceptance-concurrency.txt",
+    "docs/acceptance-environment.json",
+    "docs/acceptance-lint.txt",
+    "docs/acceptance-responsive.txt",
+    "docs/acceptance-room-create-320.png",
+    "docs/acceptance-tests.txt",
+    "docs/acceptance-types.txt",
+    "docs/ACCOUNT_DELETION_FINAL_DESIGN.md",
+    "docs/deletion-preflight-check.cjs",
+    "docs/LEGAL_REVIEW_CHECKLIST.md",
+    "docs/MIGRATION_ACCEPTANCE_MATRIX.md",
+    "docs/PRODUCTION_GO_NO_GO.md",
+    "docs/responsive-smoke-results.json",
+    "docs/responsive-smoke.cjs",
+    "docs/RETENTION_AND_PII_ACCEPTANCE.md",
+    "docs/STAGING_ACCEPTANCE_PLAN.md",
+    "docs/WEB_MVP_ACCEPTANCE_REPORT.md"
+  ],
+  "removed_since_start": []
+}

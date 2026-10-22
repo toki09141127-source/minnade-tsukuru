@@ -1,0 +1,65 @@
+{
+  "runId": "13ddc43e-dcd6-4c04-80cf-1ab8fe8196a7",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "scope": "Synthetic staging accounts only; NOT real email/physical device",
+  "checks": [
+    {
+      "name": "Synthetic Auth login succeeds",
+      "pass": true
+    },
+    {
+      "name": "False age denied",
+      "pass": true
+    },
+    {
+      "name": "Old terms denied",
+      "pass": true
+    },
+    {
+      "name": "Old consent signature denied",
+      "pass": true
+    },
+    {
+      "name": "Current age and terms stored through own authenticated RPC",
+      "pass": true
+    },
+    {
+      "name": "Attestation visible only to self",
+      "pass": true
+    },
+    {
+      "name": "Service Role cannot forge age attestation",
+      "pass": true
+    },
+    {
+      "name": "Creator with age consent creates room",
+      "pass": true
+    },
+    {
+      "name": "Old publication consent cannot join",
+      "pass": true
+    },
+    {
+      "name": "New publication consent joins",
+      "pass": true
+    },
+    {
+      "name": "New Core consent approves",
+      "pass": true
+    },
+    {
+      "name": "Browser cannot execute service-only join",
+      "pass": true
+    },
+    {
+      "name": "Deletion remains paused",
+      "pass": true
+    },
+    {
+      "name": "Synthetic clients signed out",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "roomId": "765f41af-0f3f-4a1f-9594-b458e435d66e"
+}

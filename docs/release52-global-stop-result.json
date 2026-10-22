@@ -1,0 +1,39 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "scope": "Real staging service-role and Auth/Storage stop probe; synthetic only",
+  "checks": [
+    {
+      "name": "DIRECT_SERVICE_WRITE_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "SECURITY_DEFINER_RPC_WRITE_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "AUTH_LOGIN_STATE_WRITE_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "AUTH_USER_CREATION_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_DELETE_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "BLOCKED_DELETE_PRESERVES_OBJECT_BYTES",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_UPLOAD_BLOCKED",
+      "pass": true
+    },
+    {
+      "name": "DELETION_PAUSE_REMAINS_TRUE",
+      "pass": true
+    }
+  ],
+  "complete": true
+}

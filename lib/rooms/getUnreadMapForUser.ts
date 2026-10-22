@@ -29,7 +29,12 @@ export async function getUnreadMapForUser(opts?: { excludeSelf?: boolean }) {
     return {} as Record<string, number>
   }
 
-  const roomIds = mems.map((m) => m.room_id)
+  const requestedRoomIds = mems.map(m => m.room_id)
+    const { data: visibleRooms, error: roomError } = await admin.from('rooms')
+      .select('id').in('id', requestedRoomIds).eq('is_hidden', false).is('deleted_at', null)
+    if (roomError) return {} as Record<string, number>
+    const roomIds = (visibleRooms ?? []).map(room => room.id)
+    if (roomIds.length === 0) return {} as Record<string, number>
   const lastSeenMap = new Map<string, string | null>()
   for (const m of mems) lastSeenMap.set(m.room_id, m.last_seen_at ?? null)
 
@@ -38,7 +43,7 @@ export async function getUnreadMapForUser(opts?: { excludeSelf?: boolean }) {
     .map((m) => m.last_seen_at)
     .filter(Boolean) as string[]
 
-  const minLastSeen = lastSeenValues.length
+  const minLastSeen = lastSeenValues.length === mems.length && lastSeenValues.length > 0
     ? new Date(Math.min(...lastSeenValues.map((v) => new Date(v).getTime()))).toISOString()
     : null
 

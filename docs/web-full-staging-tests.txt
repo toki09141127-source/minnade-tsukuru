@@ -1,0 +1,185 @@
+PASS Anonymous published work detail
+PASS Published attachment signed URL serves exact synthetic bytes
+{
+  "runId": "173ab563-ca64-4ff0-80fe-af9df34e2e33",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Owner Web login and self consent RPC",
+      "status": "PASS"
+    },
+    {
+      "name": "Profile edit through authenticated service APIs",
+      "status": "PASS"
+    },
+    {
+      "name": "Room creation and Creator membership visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Room listing works through safe view",
+      "status": "PASS"
+    },
+    {
+      "name": "Member Web login and consent",
+      "status": "PASS"
+    },
+    {
+      "name": "Member join and room consent",
+      "status": "PASS"
+    },
+    {
+      "name": "Web upload and post binding",
+      "status": "PASS"
+    },
+    {
+      "name": "Owner reads member post and last_seen is persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "Core request from active Member",
+      "status": "PASS"
+    },
+    {
+      "name": "Creator rejects Core through UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Creator approves Core through UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Work draft saved",
+      "status": "PASS"
+    },
+    {
+      "name": "Synthetic log reviewed for publication",
+      "status": "PASS"
+    },
+    {
+      "name": "HTTP cron and retry publish once",
+      "status": "PASS"
+    },
+    {
+      "name": "Published work list and detail",
+      "status": "PASS"
+    },
+    {
+      "name": "Published work like",
+      "status": "PASS"
+    },
+    {
+      "name": "Report accepted through Web UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Public profile projection",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 320",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 375",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 390",
+      "status": "PASS"
+    },
+    {
+      "name": "Web logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous published work detail",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous published work detail",
+      "status": "PASS"
+    },
+    {
+      "name": "Published attachment signed URL serves exact synthetic bytes",
+      "status": "PASS"
+    }
+  ],
+  "failures": [],
+  "complete": true,
+  "serverStopped": true,
+  "room": "9951f65a-fb03-421c-829b-943fd2d90c97",
+  "previousFailures": []
+}

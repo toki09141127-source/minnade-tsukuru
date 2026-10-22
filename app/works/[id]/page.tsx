@@ -1,3 +1,5 @@
+import { departedAuthorLabels } from '@/lib/departedAuthorLabels'
+import type { WorkBlock } from '@/lib/publicationSafety'
 // app/works/[id]/page.tsx
 import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
@@ -36,8 +38,9 @@ type PostRow = {
 export const dynamic = 'force-dynamic'
 
 // 公開プロフィールリンク用
-function UserLink({ username }: { username: string | null }) {
+function UserLink({ username, departed = false }: { username: string | null; departed?: boolean }) {
   const name = (username ?? '').trim()
+  if (departed) return <strong>{name || '退会したメンバー'}</strong>
   if (!name) return <strong style={{ opacity: 0.6 }}>名無し</strong>
 
   return (
@@ -51,7 +54,9 @@ function UserLink({ username }: { username: string | null }) {
   )
 }
 
-export default async function WorkDetailPage({ params }: { params: Promise<{ id: string }> | { id: string } }) {
+export default async function WorkDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  if (process.env.MVP_DRAFTS_ENABLED !== 'true' || process.env.MVP_ACCOUNT_ATTRIBUTION_ENABLED !== 'true')
+    return <div style={{padding:24}} role="status">現在、作品の表示を一時停止しています。時間をおいてお試しください。</div>
   const p = await Promise.resolve(params)
   const roomId = p?.id
 
@@ -111,6 +116,21 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
     .order('created_at', { ascending: true })
     .returns<PostRow[]>()
 
+
+  let departed = new Map<string,string>()
+  if (process.env.MVP_ACCOUNT_ATTRIBUTION_ENABLED === 'true') {
+    try {
+      departed = await departedAuthorLabels(supabase,[...(finalPosts ?? []),...(logPosts ?? [])].map(post=>post.user_id))
+    } catch {
+      return <div style={{padding:24}} role="alert">作品の名義情報を確認できませんでした。時間をおいて再度お試しください。</div>
+    }
+  }
+
+  const snapshot = process.env.MVP_DRAFTS_ENABLED === 'true'
+    ? await supabase.from('work_drafts').select('blocks,published_at').eq('room_id',roomId).maybeSingle()
+    : null
+  const publishedBlocks: WorkBlock[] | null = snapshot?.data?.published_at ? snapshot.data.blocks : null
+
   const cat = (room.category ?? room.work_type ?? 'その他').trim() || 'その他'
 
   return (
@@ -123,7 +143,8 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
         <Link href={`/rooms/${room.id}`}>制作ルームを見る</Link>
       </div>
 
-      <h1 style={{ marginTop: 10 }}>{room.title}</h1>
+      <h1 style={{ marginTop: 10, overflowWrap: 'anywhere' }}>{room.title}</h1>
+      <Link href="#production-log">この作品ができるまで → 制作ログ</Link>
 
       {/* ✅ 表記統一：バッジで揃える */}
       <div style={{ marginTop: 8, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -152,10 +173,12 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
 
       {/* ===== 完成作品 ===== */}
       <section style={{ marginTop: 18 }}>
-        <h2 style={{ fontSize: 16 }}>完成作品（最終提出）</h2>
+        <h2 style={{ fontSize: 16 }}>完成作品</h2>
 
-        {!finalPosts || finalPosts.length === 0 ? (
-          <p style={{ color: '#666' }}>最終提出がありません。</p>
+        {publishedBlocks ? <div>{publishedBlocks.map(block=><section key={block.id} style={{whiteSpace:'pre-wrap',overflowWrap:'anywhere',marginBottom:16}}>
+          {block.kind==='title'?<h2>{block.text}</h2>:<p>{block.text}</p>}
+        </section>)}</div> : !finalPosts || finalPosts.length === 0 ? (
+          <p style={{ color: '#666' }}>完成作品ドラフトがありません。</p>
         ) : (
           <div style={{ display: 'grid', gap: 10, marginTop: 10 }}>
             {finalPosts.map((p) => (
@@ -169,13 +192,13 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                  <UserLink username={p.username} />
+                  <UserLink username={departed.get(p.user_id) ?? p.username} departed={departed.has(p.user_id)} />
                   <span style={{ fontSize: 12, color: '#666' }}>{new Date(p.created_at).toLocaleString('ja-JP')}</span>
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
 
-                <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
+                <AttachmentView postId={p.id} path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
           </div>
@@ -183,8 +206,8 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
       </section>
 
       {/* ===== 制作ログ ===== */}
-      <section style={{ marginTop: 18 }}>
-        <h2 style={{ fontSize: 16 }}>制作ログ（掲示板）</h2>
+      <section id="production-log" style={{ marginTop: 18 }}>
+        <h2 style={{ fontSize: 16 }}>この作品ができるまで</h2>
 
         {!logPosts || logPosts.length === 0 ? (
           <p style={{ color: '#666' }}>投稿がありません。</p>
@@ -201,13 +224,13 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
-                  <UserLink username={p.username} />
+                  <UserLink username={departed.get(p.user_id) ?? p.username} departed={departed.has(p.user_id)} />
                   <span style={{ fontSize: 12, color: '#666' }}>{new Date(p.created_at).toLocaleString('ja-JP')}</span>
                 </div>
 
                 <div style={{ marginTop: 8, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
 
-                <AttachmentView path={p.attachment_url} mime={p.attachment_type} />
+                <AttachmentView postId={p.id} path={p.attachment_url} mime={p.attachment_type} />
               </div>
             ))}
           </div>

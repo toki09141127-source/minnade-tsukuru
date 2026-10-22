@@ -1,16 +1,10 @@
+import { SUPPORT_EMAIL } from '@/lib/supportContact'
 import React from 'react'
 import { CURRENT_TERMS_VERSION } from '@/lib/legalVersions'
 
 const LAST_UPDATED = CURRENT_TERMS_VERSION
 
-function getContactEmail() {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_SUPPORT_EMAIL ||
-    process.env.SUPPORT_EMAIL ||
-    process.env.CONTACT_EMAIL ||
-    ''
-  return fromEnv.trim()
-}
+function getContactEmail() { return SUPPORT_EMAIL }
 
 type Section = {
   id: string
@@ -84,11 +78,11 @@ export default function TermsContent() {
     },
     {
       id: 'minor',
-      title: '第4条（未成年の利用）',
+      title: '第4条（利用対象年齢）',
       body: (
         <ul>
-          <li>未成年のユーザーは、親権者その他法定代理人の同意を得たうえで本サービスを利用するものとします。</li>
-          <li>R18コンテンツに関する年齢制限措置を行う場合があります。</li>
+          <li>本サービスの初期MVPは18歳以上の方を対象とします。登録時または利用開始時に18歳以上であることを確認してください。</li>
+          <li>18歳未満の方は、保護者の同意がある場合も初期MVPを利用できません。</li>
         </ul>
       ),
     },
@@ -189,6 +183,7 @@ export default function TermsContent() {
       body: (
         <ul>
           <li>本サービスは、最大50人が同一ルームで制限時間内に共同制作を行うサービスです。</li>
+          <li>ルームへの投稿、画像、添付、制作ログは、完成作品の公開後に一般の方が閲覧できる場合があります。参加前に公開範囲を確認し、明示的に同意してください。</li>
           <li>共同制作では、成果物の権利関係や利用範囲について、参加者間で認識違いが生じやすい点にご注意ください。</li>
           <li>成果物の外部利用は原則禁止です。</li>
         </ul>

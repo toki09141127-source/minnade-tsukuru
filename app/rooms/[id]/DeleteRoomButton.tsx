@@ -43,8 +43,8 @@ export default function DeleteRoomButton(props: { roomId: string }) {
       // 削除成功→一覧へ
       router.push('/rooms')
       router.refresh()
-    } catch (e: any) {
-      setMsg(e?.message ?? 'error')
+    } catch (e: unknown) {
+      setMsg(e instanceof Error ? e.message : '操作に失敗しました')
     } finally {
       setLoading(false)
       setOpen(false)
@@ -77,7 +77,7 @@ export default function DeleteRoomButton(props: { roomId: string }) {
       <ConfirmModal
         open={open}
         title="このルームを削除しますか？"
-        description="削除（論理削除）すると元に戻せません。※ホストのみ実行できます。"
+        description="公開前のルームを閉じます。投稿や添付を物理削除する操作ではありません。Creatorのみ実行できます。"
         confirmText="削除する"
         cancelText="キャンセル"
         danger

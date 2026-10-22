@@ -1,36 +1,23 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function MarkRoomSeenOnView({ roomId }: { roomId: string }) {
-  const ranRef = useRef(false)
-
   useEffect(() => {
-    if (!roomId) return
-    if (ranRef.current) return
-    ranRef.current = true
-
-    const run = async () => {
-      const supabase = createClient()
-
-      const { data: u } = await supabase.auth.getUser()
-      const userId = u.user?.id
-      if (!userId) return
-
-      // ✅ unread_counts_for_me() が参照する room_members.last_seen_at を更新する
-      await supabase
-        .from('room_members')
-        .update({ last_seen_at: new Date().toISOString() })
-        .eq('room_id', roomId)
-        .eq('user_id', userId)
-        .is('left_at', null)
+    const controller = new AbortController()
+    async function markSeen() {
+      const { data } = await createClient().auth.getSession()
+      const token = data.session?.access_token
+      if (!roomId || !token || controller.signal.aborted) return
+      await fetch('/api/rooms/seen', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ roomId }), signal: controller.signal,
+      })
     }
-
-    run().catch(() => {
-      // 失敗してもUIは壊さない（ネットワーク/RLSなど）
-    })
+    // Best effort: a failed seen update must not block reading the room.
+    void markSeen().catch(() => {})
+    return () => controller.abort()
   }, [roomId])
-
   return null
 }

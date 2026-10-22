@@ -42,8 +42,6 @@ type SortKey = 'like' | 'new'
 type AiFilter = 'all' | AiLevel
 
 // ✅ 未読キャッシュ（RoomsListClientと同じキー）
-const UNREAD_CACHE_KEY = 'unread_map_v1'
-const UNREAD_CACHE_TTL_MS = 30_000
 
 export default function WorksListClient(props: { initialUnreadMap?: Record<string, number> }) {
   const supabase = useMemo(() => createClient(), [])
@@ -70,28 +68,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
     fontWeight: 400,
   }
 
-  // ✅ キャッシュ復元（あれば優先）→なければSSR値をキャッシュ化
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(UNREAD_CACHE_KEY)
-      if (raw) {
-        const parsed = JSON.parse(raw) as { ts: number; map: Record<string, number> }
-        if (parsed?.ts && parsed?.map && Date.now() - parsed.ts <= UNREAD_CACHE_TTL_MS) {
-          setUnreadMap(parsed.map)
-          return
-        }
-      }
-
-      sessionStorage.setItem(
-        UNREAD_CACHE_KEY,
-        JSON.stringify({ ts: Date.now(), map: props.initialUnreadMap ?? {} })
-      )
-    } catch {
-      // ignore
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
+  // 未読は現在の本人APIから取得する。共有sessionStorageを使わない。
   useEffect(() => {
     const fetchWorks = async () => {
       setLoading(true)
@@ -106,9 +83,6 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
           const user = u.user
           if (!user) {
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
@@ -116,9 +90,6 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
           const token = sess.session?.access_token
           if (!token) {
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
@@ -129,23 +100,15 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
           const json = await res.json().catch(() => ({}))
 
           if (!res.ok) {
-            console.error('[unread-map]', json)
+            // Unread errors do not expose server diagnostics.
             setUnreadMap({})
-            try {
-              sessionStorage.removeItem(UNREAD_CACHE_KEY)
-            } catch {}
             return
           }
 
           const map = (json?.map ?? {}) as Record<string, number>
           setUnreadMap(map)
-
-          try {
-            sessionStorage.setItem(UNREAD_CACHE_KEY, JSON.stringify({ ts: Date.now(), map }))
-          } catch {}
-        } catch (e) {
-          console.error('[unread-map] fetch failed', e)
-          // SSR/キャッシュ表示を維持
+        } catch {
+          setUnreadMap({})
         }
       }
 
@@ -154,7 +117,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
       // -------------------------
       const fetchWorksList = async () => {
         const base = supabase
-          .from('rooms_with_counts_v2')
+          .from('mvp_room_list')
           .select(
             'id, title, status, type, category, is_adult, created_at, expires_at, like_count, member_count, is_hidden, deleted_at, ai_level'
           )
@@ -170,7 +133,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
         const { data, error } = await query
 
         if (error) {
-          setError(error.message)
+          setError('作品を読み込めませんでした。通信状況を確認して再読み込みしてください。')
           setRooms([])
         } else {
           setRooms((data ?? []) as RoomRow[])
@@ -184,7 +147,11 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
       await fetchWorksList()
     }
 
-    fetchWorks()
+    fetchWorks().catch(() => {
+      setError('作品を読み込めませんでした。通信状況を確認して再読み込みしてください。')
+      setRooms([])
+      setLoading(false)
+    })
   }, [supabase, sort])
 
   const roomsWithUnread = useMemo(() => {
@@ -233,6 +200,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
         }}
       >
         <input
+          aria-label="作品名で検索"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="作品（ルーム）名で検索…"
@@ -251,7 +219,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
             gap: 10,
           }}
         >
-          <select value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
+          <select aria-label="カテゴリー" value={category} onChange={(e) => setCategory(e.target.value as CategoryOption)} style={selectStyle}>
             {CATEGORY_OPTIONS.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -259,7 +227,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
             ))}
           </select>
 
-          <select value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
+          <select aria-label="AI利用方針" value={aiFilter} onChange={(e) => setAiFilter(e.target.value as AiFilter)} style={selectStyle}>
             <option value="all">AI：全て</option>
             {AI_LEVEL_OPTIONS.map((x) => (
               <option key={x.value} value={x.value}>
@@ -268,7 +236,7 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
             ))}
           </select>
 
-          <select value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
+          <select aria-label="並び順" value={sort} onChange={(e) => setSort(e.target.value as SortKey)} style={selectStyle}>
             <option value="like">いいね順</option>
             <option value="new">新着順</option>
           </select>
@@ -286,13 +254,13 @@ export default function WorksListClient(props: { initialUnreadMap?: Record<strin
       </div>
 
       {loading && <p style={{ marginTop: 12, opacity: 0.7 }}>読み込み中…</p>}
-      {error && <p style={{ marginTop: 12, color: '#b00020' }}>{error}</p>}
+      {error && <div role="alert" style={{ marginTop: 12, color: '#b00020' }}><p>{error}</p><button type="button" onClick={() => window.location.reload()}>再読み込み</button></div>}
 
       <div
         style={{
           marginTop: 12,
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))',
           gap: 12,
         }}
       >

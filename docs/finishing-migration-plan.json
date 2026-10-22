@@ -1,0 +1,95 @@
+{
+  "apply": false,
+  "requiresBaseline": true,
+  "warning": "001 requires existing app schema. Empty Supabase is NOT ready for 001.",
+  "migrations": [
+    {
+      "name": "202610210001_attachment_ledger.sql",
+      "sha256": "df8c1f1284394a82d851c1d94b280e5b7056d4f1a72a8164928ce5583b7faa9e"
+    },
+    {
+      "name": "202610210002_membership_guards.sql",
+      "sha256": "3928eec22ad14f27c5e2610e5bccf881186da15c28f9ca6c6099498b44d8a7b9"
+    },
+    {
+      "name": "202610210003_account_jobs.sql",
+      "sha256": "426c0823f4157e71669af7d598a8d62e05dfd62f53898401e39c147ada5eaa1f"
+    },
+    {
+      "name": "202610210004_moderation.sql",
+      "sha256": "c57d3e1b524e38e4bc12b31b5c8b3c2a7bbb116baf2fe4ecacd3349e42bb7df1"
+    },
+    {
+      "name": "202610210005_read_boundaries.sql",
+      "sha256": "b4b300ad764851e440dc82accb36b750502a189147ba1f64601b39cdee7e0a57"
+    },
+    {
+      "name": "202610210006_work_drafts.sql",
+      "sha256": "cd90edbb90a3e67a08404f99e41e3cbbfd395144bd9a62ac8d8de4130fb3acfe"
+    },
+    {
+      "name": "202610210007_deletion_lease.sql",
+      "sha256": "0b2a878dbca1dbac88d3ac0390e6fbea3334d3c44f7ea1ce0105a9b36a5fa401"
+    },
+    {
+      "name": "202610210008_deletion_retention.sql",
+      "sha256": "a65e75a10e93974fb1e2d5dc079001020c2baa580eb616ddb0d8b1c131967954"
+    },
+    {
+      "name": "202610210009_deletion_attribution_fence.sql",
+      "sha256": "c1bf83184e67771d26be4de1eceb5d31ca2e0ece04a4bdd05083d94ea9871ace"
+    },
+    {
+      "name": "202610210010_scoped_moderation.sql",
+      "sha256": "d8579c87d301f43d33b265e985bd023ede440caf21e431d8b66087a7fff6ae57"
+    },
+    {
+      "name": "202610210011_report_intake.sql",
+      "sha256": "4ffef9830595b51fdb48fb2399d3369609ae7d0455b8395149f097c840c4115b"
+    },
+    {
+      "name": "202610210012_report_queue.sql",
+      "sha256": "7e23a30c8ce0e6c308a5530ae09f77a5774e631fa7b07faac2bee70b9e7c8b3a"
+    },
+    {
+      "name": "202610210013_upload_cleanup.sql",
+      "sha256": "8e58d926611ba4b0ae4710158f2709bf2813503c610119955612ca1c5f54478a"
+    },
+    {
+      "name": "202610210014_like_requests.sql",
+      "sha256": "43d88408f4e5bacd9e593474b2747fe4a4749a0810b8be6ecfd7b1a3a47d3346"
+    },
+    {
+      "name": "202610210015_room_creation.sql",
+      "sha256": "f3a2b5ce594a5b31c67cc7987cbd2d31c24fb978038a78afe58ce71d81323343"
+    },
+    {
+      "name": "202610210016_operator_rate_limits.sql",
+      "sha256": "16b2a90e417cce270a0cbb310eb833aeebd9a7d6b0330f78ac27223129c6c03c"
+    },
+    {
+      "name": "202610210017_report_admission.sql",
+      "sha256": "81ca8b6f81a71af6113dc2ccb5cda20d78d8d6e6d0cc1e2c81d37b182d434bec"
+    },
+    {
+      "name": "202610210018_member_admission.sql",
+      "sha256": "a6d48e10bd219abf591a4125485054bf384dbc74a0594cd4c077dc892becd2ba"
+    },
+    {
+      "name": "202610210019_core_admission.sql",
+      "sha256": "9376a676a4bd8769f826f7cde5873c650386e1b6c3a6c75762425f99facbb112"
+    },
+    {
+      "name": "202610210020_deletion_privacy_preconditions.sql",
+      "sha256": "7f11c8cf48a97ebbd9a4b2119564d17ad50ab1d76a9a95047466c7bca3bda39a"
+    },
+    {
+      "name": "202610210021_client_read_contract.sql",
+      "sha256": "4a10cde20c3164445914aeccfae086761afe43a45b489dfcdfa8d199b69fb86b"
+    },
+    {
+      "name": "202610210022_work_snapshot_read.sql",
+      "sha256": "6d7a718c833b298757edc1fce696b0683896b99f352660e18373b11a9347a7af"
+    }
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "columns": [
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "event_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "post_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "decided_by",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "note",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "attname": "event_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "attname": "user_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "attname": "role",
+      "type_name": "member_role",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "attname": "joined_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "title",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "description",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "genre",
+      "type_name": "genre",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "manga_format",
+      "type_name": "manga_format",
+      "attnotnull": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "anime_format",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "status",
+      "type_name": "event_status",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "start_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "end_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "core_invite_code",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "created_by",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "attname": "event_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "attname": "content",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "attname": "updated_by",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "room_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "author_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "author_name",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "note",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    }
+  ],
+  "foreignKeys": [
+    {
+      "conname": "decisions_event_id_fkey",
+      "source_table": "decisions",
+      "target_table": "events",
+      "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "event_members_event_id_fkey",
+      "source_table": "event_members",
+      "target_table": "events",
+      "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "novel_drafts_event_id_fkey",
+      "source_table": "novel_drafts",
+      "target_table": "events",
+      "definition": "FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+1. Nonoperator denied
+2. Service role cannot read capability storage
+3. Service role cannot forge capability
+4. Direct privileged visibility write remains fenced
+5. Client session flag cannot bypass fence
+6. Operator hides withdrawing user post through RPC
+7. Identical request safely retried
+8. Conflicting reuse rejected
+9. Operator restores same post through scoped RPC
+10. Operator hides withdrawing creator room
+11. Exactly one audit per successful unique action
+12. Post body preserved
+13. Capabilities consumed before commit
+14. No bypass survives successful RPC
+15. Authenticated cannot call service-only RPC with spoofed operator
+16. JWT identity must match operator argument
+17. Unexpected AFTER trigger mutation aborts action
+18. Side effect rolled back
+19. Failed action leaves no audit success record
+20. Failure leaves no capability
+21. Audit failure aborts moderation
+22. Audit failure rolls back visibility
+23. Withdrawing operator denied even when still assigned
+Completed 23 scoped moderation checks; synthetic only.

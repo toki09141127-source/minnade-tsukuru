@@ -1,0 +1,42 @@
+
+Vercel CLI 65.0.0 (Node.js 22.17.0)
+> Fetched deployment "minnade-tsukuru-staging-90rzxyegp-sonetokiyas-projects.vercel.app" in sonetokiyas-projects [858ms]
+
+  General
+
+    id		dpl_DsDczF9LzAakarptA5Yv7jUsVRHE
+    name	minnade-tsukuru-staging
+    target	preview
+    status	● Ready
+    url		https://minnade-tsukuru-staging-90rzxyegp-sonetokiyas-projects.vercel.app
+    created	Thu Oct 22 2026 15:12:39 GMT+0900 (日本標準時) [2m ago]
+
+
+  Build Machine
+
+    requested build machine basic
+    actual assigned cores   2 vCPU (actual assignment)
+    memory                  8192 MiB
+    selection type          fixed
+    selection source        plan-default
+
+
+  Duration
+
+    build duration	49s
+    post-build duration	24s
+    billable duration	2m
+    CPU Minutes Usage	4 minutes (2m x 2vCPU)
+
+
+  Builds
+
+    ┌ .        [0ms]
+    ├── λ _middleware (216.45KB) [iad1]
+    ├── λ index (897.28KB) [iad1]
+    ├── λ _global-error (897.28KB) [iad1]
+    ├── λ _global-error.rsc (897.28KB) [iad1]
+    ├── λ _global-error.segments/_full.segment.rsc (897.28KB) [iad1]
+    └── 160 output items hidden
+    
+

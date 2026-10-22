@@ -1,7 +1,8 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import LegalLinks from '@/components/LegalLinks'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import {
@@ -16,21 +17,15 @@ type ProfileConsentRow = {
   terms_agreed_at: string | null
   privacy_version: string | null
   privacy_agreed_at: string | null
+  adult_confirmed_at: string | null
 }
 
-function buildFallbackUsername(user: {
-  id: string
-  email?: string | null
-}) {
-  const emailPrefix = (user.email ?? '').split('@')[0]?.trim()
-  if (emailPrefix) {
-    return `${emailPrefix}_${user.id.slice(0, 8)}`
-  }
-  return `user_${user.id.slice(0, 8)}`
+function errorField(err: unknown, key: 'message' | 'name') {
+  return typeof err === 'object' && err !== null && key in err ? String((err as Record<string, unknown>)[key]) : ''
 }
 
 function isAuthSessionMissingError(err: unknown) {
-  const msg = String((err as any)?.message ?? '')
+  const msg = errorField(err, 'message')
   return (
     msg.includes('Auth session missing') ||
     msg.includes('session missing') ||
@@ -41,8 +36,8 @@ function isAuthSessionMissingError(err: unknown) {
 }
 
 function isAbortLikeError(err: unknown) {
-  const name = String((err as any)?.name ?? '')
-  const msg = String((err as any)?.message ?? '')
+  const name = errorField(err, 'name')
+  const msg = errorField(err, 'message')
   return (
     name === 'AbortError' ||
     msg.includes('signal is aborted') ||
@@ -54,20 +49,19 @@ function isAbortLikeError(err: unknown) {
 export default function TermsConsentGate() {
   const pathname = usePathname()
 
-  const bypassPaths = ['/login', '/terms', '/privacy', '/auth/callback']
-  const shouldBypass = useMemo(() => {
-    return bypassPaths.includes(pathname)
-  }, [pathname])
+  const bypassPaths = ['/login', '/terms', '/privacy', '/auth/callback', '/auth/reset-password', '/guidelines']
+  const shouldBypass = bypassPaths.includes(pathname)
 
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [needsConsent, setNeedsConsent] = useState(false)
   const [error, setError] = useState('')
 
+  const [adultConfirmed, setAdultConfirmed] = useState(false)
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [agreePrivacy, setAgreePrivacy] = useState(false)
 
-  const canSubmit = agreeTerms && agreePrivacy && !submitting
+  const canSubmit = adultConfirmed && agreeTerms && agreePrivacy && !submitting
 
   useEffect(() => {
     let mounted = true
@@ -102,7 +96,7 @@ export default function TermsConsentGate() {
 
         const { data, error: profileError } = await supabase
           .from('profiles')
-          .select('id, username, terms_version, terms_agreed_at, privacy_version, privacy_agreed_at')
+          .select('id, username, terms_version, terms_agreed_at, privacy_version, privacy_agreed_at, adult_confirmed_at')
           .eq('id', user.id)
           .maybeSingle<ProfileConsentRow>()
 
@@ -112,10 +106,10 @@ export default function TermsConsentGate() {
         const privacyOk = data?.privacy_version === CURRENT_PRIVACY_VERSION
 
         if (mounted) {
-          setNeedsConsent(!(termsOk && privacyOk))
+          setNeedsConsent(!(termsOk && privacyOk && data?.adult_confirmed_at))
           setLoading(false)
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (!mounted) return
 
         if (isAbortLikeError(err)) {
@@ -148,8 +142,8 @@ export default function TermsConsentGate() {
   const handleAgree = async () => {
     setError('')
 
-    if (!agreeTerms || !agreePrivacy) {
-      setError('利用規約とプライバシーポリシーの両方に同意してください。')
+    if (!adultConfirmed || !agreeTerms || !agreePrivacy) {
+      setError('18歳以上の確認と、利用規約・プライバシーポリシーへの同意が必要です。')
       return
     }
 
@@ -173,65 +167,30 @@ export default function TermsConsentGate() {
         return
       }
 
-      const now = new Date().toISOString()
-
-      const { data: existingProfile, error: selectError } = await supabase
-        .from('profiles')
-        .select('id, username')
-        .eq('id', user.id)
-        .maybeSingle<{ id: string; username: string | null }>()
-
-      if (selectError) throw selectError
-
-      if (existingProfile) {
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({
-            terms_version: CURRENT_TERMS_VERSION,
-            terms_agreed_at: now,
-            privacy_version: CURRENT_PRIVACY_VERSION,
-            privacy_agreed_at: now,
-            updated_at: now,
-          })
-          .eq('id', user.id)
-
-        if (updateError) throw updateError
-      } else {
-        const username = buildFallbackUsername({
-          id: user.id,
-          email: user.email,
-        })
-
-        const { error: insertError } = await supabase
-          .from('profiles')
-          .insert({
-            id: user.id,
-            username,
-            terms_version: CURRENT_TERMS_VERSION,
-            terms_agreed_at: now,
-            privacy_version: CURRENT_PRIVACY_VERSION,
-            privacy_agreed_at: now,
-            updated_at: now,
-          })
-
-        if (insertError) throw insertError
-      }
+      const { error: consentError } = await supabase.rpc('mvp_accept_current_terms', {
+        p_terms: CURRENT_TERMS_VERSION,
+        p_privacy: CURRENT_PRIVACY_VERSION,
+        p_adult: adultConfirmed,
+      })
+      if (consentError) throw consentError
 
       setNeedsConsent(false)
+      setAdultConfirmed(false)
       setAgreeTerms(false)
       setAgreePrivacy(false)
-    } catch (err: any) {
+    } catch (err: unknown) {
       if (isAuthSessionMissingError(err)) {
         setError('ログイン後に再度お試しください。')
         return
       }
-      setError(err?.message ?? '再同意の保存に失敗しました。')
+      setError('再同意の保存に失敗しました。時間をおいてお試しください。')
     } finally {
       setSubmitting(false)
     }
   }
 
   if (loading) return null
+  if (!needsConsent && error) return <div role="alert" style={{ padding: 16, background: '#fff3cd', color: '#543b00' }}>{error}</div>
   if (!needsConsent) return null
 
   return (
@@ -301,6 +260,7 @@ export default function TermsConsentGate() {
           >
             <div style={{ fontWeight: 700, marginBottom: 6 }}>今回の重要な内容</div>
             <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
+              <li>初期MVPは18歳以上の方が対象です</li>
               <li>共同制作物の権利と外部利用制限</li>
               <li>AI利用作品の取扱い</li>
               <li>二次創作・既存IP利用に関するルール</li>
@@ -309,6 +269,8 @@ export default function TermsConsentGate() {
             </ul>
           </div>
 
+          <LegalLinks />
+          <label style={{display:"flex",gap:8,marginTop:14}}><input type="checkbox" checked={adultConfirmed} onChange={e=>setAdultConfirmed(e.target.checked)} />私は18歳以上です</label>
           <div style={{ marginTop: 14, display: 'grid', gap: 10 }}>
             <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
               <input

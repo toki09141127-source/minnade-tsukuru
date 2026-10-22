@@ -1,0 +1,87 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
+module.exports=async(c,r)=>{
+ const ok=name=>r.checks.push({name,pass:true});
+ await c.query("CREATE SCHEMA IF NOT EXISTS storage; CREATE TABLE IF NOT EXISTS storage.objects(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),bucket_id text,name text,owner uuid,owner_id text); CREATE TABLE IF NOT EXISTS storage.buckets(id text PRIMARY KEY,owner uuid,owner_id text)");
+ await c.query(require('node:fs').readFileSync('supabase/migrations/202610210025_deletion_upload_fence.sql','utf8'));
+ await c.query(require('node:fs').readFileSync('supabase/migrations/202610220026_deletion_request_timestamp.sql','utf8'));
+ const [owner,member,other,core]=[randomUUID(),randomUUID(),randomUUID(),randomUUID()];
+ for(const id of [owner,member,other,core])await c.query('INSERT INTO auth.users(id) VALUES($1)',[id]);
+ const room=(await c.query('SELECT mvp_create_room($1,$2,$3) id',[owner,randomUUID(),{title:'SYNTHETIC DELETE',category:'その他',work_type:'novel',is_adult:false,time_limit_hours:24,enable_core_approval:true,enable_core_invite:false,ai_level:'assist'}])).rows[0].id;
+ for(const id of [member,other,core])await c.query("SELECT mvp_join_member($1,$2,'2026-03-24')",[id,room]);
+ const cr=(await c.query("SELECT mvp_request_core($1,$2,'2026-03-24') id",[core,room])).rows[0].id;
+ await c.query('SELECT mvp_decide_core($1,$2,$3,true)',[owner,room,cr]);
+ const request=id=>c.query("SELECT mvp_request_deletion($1,'anonymous','withdrawal-draft-2026-10-21') id",[id]);
+ await assert.rejects(request(owner),/UNPUBLISHED_CREATOR_ROOMS/);ok('Unpublished Creator cannot delete');
+ await assert.rejects(request(core),/ACTIVE_CORE_ROOMS/);ok('Active Core cannot bypass locked membership via deletion');
+ await c.query("SELECT mvp_manage_member($1,$2,$3,'demote')",[owner,room,core]);
+ const cj=(await request(core)).rows[0].id,cl=(await c.query('SELECT * FROM mvp_claim_deletion($1)',[cj])).rows[0];
+ await c.query('SELECT mvp_prepare_deletion($1,$2)',[cj,cl.lease_token]);ok('Demoted Core with real approval history can prepare');
+ await c.query("INSERT INTO posts(room_id,user_id,content) VALUES($1,$2,'SYNTHETIC RETAIN')",[room,member]);
+ await c.query("INSERT INTO posts(room_id,user_id,content) VALUES($1,$2,'SYNTHETIC OTHER')",[room,other]);
+ const before=(await c.query('SELECT to_jsonb(p) body FROM posts p WHERE user_id=$1',[other])).rows;
+ const unused=randomUUID(),used=randomUUID(),unusedPath='rooms/'+room+'/files/'+unused+'.txt',usedPath='rooms/'+room+'/files/'+used+'.txt';
+ for(const [id,path] of [[unused,unusedPath],[used,usedPath]]){
+  await c.query("INSERT INTO attachment_uploads(id,user_id,room_id,storage_path,mime_type,size_bytes) VALUES($1,$2,$3,$4,'text/plain',10)",[id,member,room,path]);
+  await c.query("INSERT INTO storage.objects(bucket_id,name) VALUES('room_uploads',$1)",[path]);
+  await c.query("UPDATE attachment_uploads SET status='uploaded',uploaded_at=now() WHERE id=$1",[id]);
+ }
+ const post=(await c.query("SELECT id FROM posts WHERE user_id=$1",[member])).rows[0].id;
+ await c.query("UPDATE posts SET attachment_url=$1,attachment_type='text/plain' WHERE id=$2",[usedPath,post]);
+ await c.query("UPDATE attachment_uploads SET status='bound',post_id=$1,used_at=now() WHERE id=$2",[post,used]);
+ const foreignPost=(await c.query('SELECT id FROM posts WHERE user_id=$1',[other])).rows[0].id;
+ await c.query("SELECT mvp_receive_report($1,$2,'post',$3,'SYNTHETIC REPORT')",[member,randomUUID(),foreignPost]);
+ const event=(await c.query("INSERT INTO events(title,genre,core_invite_code,created_by) VALUES('SYNTHETIC EVENT','novel','SYNTHETIC',$1) RETURNING id",[member])).rows[0].id;
+ await c.query("INSERT INTO event_members(event_id,user_id,role) VALUES($1,$2,'supporter'),($1,$3,'core')",[event,member,other]);
+ await c.query("INSERT INTO decisions(event_id,post_id,decided_by,note) VALUES($1,$2,$3,'SYNTHETIC DECISION')",[event,post,member]);
+ await c.query("INSERT INTO novel_drafts(event_id,content,updated_by) VALUES($1,'SYNTHETIC DRAFT',$2)",[event,member]);
+ await c.query("INSERT INTO room_pre_archive_notes(room_id,author_id,author_name,note) VALUES($1,$2,'SYNTHETIC OLD NAME','SYNTHETIC NOTE')",[room,member]);
+ const job=(await request(member)).rows[0].id;
+ assert.equal((await request(member)).rows[0].id,job);ok('Duplicate request returns same job');
+ const j=(await c.query('SELECT * FROM mvp_claim_deletion($1)',[job])).rows[0];
+ await assert.rejects(c.query('SELECT mvp_prepare_deletion($1,$2)',[job,randomUUID()]),/LEASE_LOST/);ok('Forged lease rejected');
+ await c.query("CREATE FUNCTION public.synthetic_prepare_failure() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'SYNTHETIC_PREPARE_FAILURE'; END $$; CREATE TRIGGER synthetic_failure AFTER UPDATE ON room_members FOR EACH ROW EXECUTE FUNCTION synthetic_prepare_failure()");
+ await assert.rejects(c.query('SELECT mvp_prepare_deletion($1,$2)',[job,j.lease_token]),/SYNTHETIC_PREPARE_FAILURE/);
+ assert.equal((await c.query('SELECT id FROM posts WHERE user_id=$1',[member])).rowCount,1);
+ assert.equal((await c.query('SELECT * FROM mvp_private.deletion_capabilities')).rowCount,0);ok('Mid-prepare failure rolls back references and scoped capabilities');
+ await c.query('DROP TRIGGER synthetic_failure ON room_members; DROP FUNCTION public.synthetic_prepare_failure()');
+ await c.query('SELECT mvp_prepare_deletion($1,$2)',[job,j.lease_token]);
+ await c.query('SELECT mvp_prepare_deletion($1,$2)',[job,j.lease_token]);ok('Prepare and replay complete');
+ const receipt=(await c.query('SELECT mvp_verify_deletion($1,$2) receipt',[job,j.lease_token])).rows[0].receipt;
+ assert.equal(receipt.storageReadyForAuthDeletion,false);
+ await assert.rejects(c.query('DELETE FROM auth.users WHERE id=$1',[member]),/AUTH_DELETION_NOT_PREPARED/);ok('Incomplete Storage prevents direct Auth deletion');
+ await assert.rejects(c.query('SELECT mvp_finish_deletion_upload($1,$2,$3)',[job,j.lease_token,unused]),/STORAGE_NOT_REMOVED/);ok('Storage failure cannot be marked complete');
+ await assert.rejects(c.query("INSERT INTO storage.objects(bucket_id,name) VALUES('room_uploads',$1)",[unusedPath]),/UPLOAD_OWNER_UNAVAILABLE/);ok('Delayed upload cannot register after quarantine');
+ await c.query("DELETE FROM storage.objects WHERE bucket_id='room_uploads' AND name=$1",[unusedPath]); // LOCAL STUB only, SDK is tested separately on staging.
+ await c.query('SELECT mvp_finish_deletion_upload($1,$2,$3)',[job,j.lease_token,unused]);
+ await c.query('SELECT mvp_finish_deletion_upload($1,$2,$3)',[job,j.lease_token,unused]);ok('Cleanup completion is idempotent');
+ assert.equal((await c.query("SELECT name FROM storage.objects WHERE name=$1",[usedPath])).rowCount,1);ok('Used attachment remains while unused is cleaned');
+ assert.equal((await c.query('SELECT mvp_verify_deletion($1,$2) r',[job,j.lease_token])).rows[0].r.storageReadyForAuthDeletion,true);assert.equal(receipt.foreignKeysVerified,true);ok('Preparation evidence verifies before Auth');
+ assert.equal((await c.query('SELECT id FROM profiles WHERE id=$1',[member])).rowCount,0);ok('Private profile removed before Auth');
+ assert.deepEqual((await c.query('SELECT to_jsonb(p) body FROM posts p WHERE user_id=$1',[other])).rows,before);ok('Other person post byte-for-byte unchanged');
+ const own=(await c.query("SELECT * FROM posts WHERE room_id=$1 AND content='SYNTHETIC RETAIN'",[room])).rows[0];
+ assert.notEqual(own.user_id,member);assert.equal(own.username,'退会したメンバー');ok('Post preserved with distinct non-Auth anonymous identity');
+ assert.equal((await c.query('SELECT id FROM auth.users WHERE id=$1',[own.user_id])).rowCount,0);ok('Anonymous identity is not a shared Auth user');
+ assert.ok((await c.query('SELECT left_at FROM room_members WHERE user_id=$1',[own.user_id])).rows[0].left_at);ok('Membership stopped while history retained');
+ await assert.rejects(c.query("UPDATE posts SET content='forged' WHERE user_id=$1",[own.user_id]),/ACCOUNT_WITHDRAWAL_PENDING/);ok('Anonymous retained history remains frozen');
+ await c.query("SELECT mvp_advance_deletion($1,$2,'requested','prepared')",[job,j.lease_token]);
+ await c.query("SELECT mvp_advance_deletion($1,$2,'prepared','auth_unknown')",[job,j.lease_token]);
+ await c.query('DELETE FROM auth.users WHERE id=$1',[member]);ok('Auth deletion no longer collides with public FK/write fence');
+ assert.equal((await c.query('SELECT * FROM posts WHERE user_id=$1',[own.user_id])).rowCount,1);ok('Auth deletion does not cascade posts');
+ assert.equal((await c.query('SELECT created_by FROM events WHERE id=$1',[event])).rows[0].created_by,own.user_id);ok('Event ownership retained under unique anonymous actor');
+ assert.equal((await c.query('SELECT * FROM event_members WHERE event_id=$1',[event])).rowCount,2);ok('Event collaborators survive owner withdrawal');
+ assert.equal((await c.query('SELECT decided_by FROM decisions WHERE event_id=$1',[event])).rows[0].decided_by,own.user_id);ok('Decision history retained');
+ assert.equal((await c.query('SELECT content FROM novel_drafts WHERE event_id=$1',[event])).rows[0].content,'SYNTHETIC DRAFT');ok('Legacy novel content retained');
+ assert.equal((await c.query('SELECT author_name FROM room_pre_archive_notes WHERE room_id=$1',[room])).rows[0].author_name,'退会したメンバー');ok('Prearchive note name anonymized');
+
+ assert.equal((await c.query('SELECT * FROM reports WHERE reporter_user_id=$1',[own.user_id])).rowCount,1);ok('Report history retained under anonymous identity');
+ await c.query("UPDATE rooms SET expires_at=now()-interval '1s' WHERE id=$1",[room]);await c.query('SELECT mvp_publish_due()');
+ const oj=(await request(owner)).rows[0].id,ol=(await c.query('SELECT * FROM mvp_claim_deletion($1)',[oj])).rows[0];
+ await c.query('SELECT mvp_prepare_deletion($1,$2)',[oj,ol.lease_token]);await c.query("SELECT mvp_advance_deletion($1,$2,'requested','prepared')",[oj,ol.lease_token]);
+ await c.query("SELECT mvp_advance_deletion($1,$2,'prepared','auth_unknown')",[oj,ol.lease_token]);
+ await c.query('DELETE FROM auth.users WHERE id=$1',[owner]);
+ assert.equal((await c.query('SELECT * FROM rooms WHERE id=$1',[room])).rowCount,1);assert.equal((await c.query('SELECT * FROM work_drafts WHERE room_id=$1',[room])).rowCount,1);ok('Published Creator Auth deletion retains room and work');
+ await c.query('SELECT mvp_set_room_like($1,$2,false,true,$3)',[other,room,randomUUID()]);ok('Remaining user can like departed Creator work');
+ await c.query('BEGIN');try{await c.query('SET LOCAL ROLE authenticated');await assert.rejects(c.query('SELECT mvp_prepare_deletion($1,$2)',[oj,ol.lease_token]),e=>e.code==='42501')}finally{await c.query('ROLLBACK')}ok('Client cannot finalize another account');
+};
+

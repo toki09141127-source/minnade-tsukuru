@@ -1,0 +1,19 @@
+{
+  "env_files": {
+    ".env.example": [
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "NEXT_PUBLIC_SITE_URL"
+    ],
+    ".env.local": [
+      "CRON_SECRET",
+      "NEXT_PUBLIC_SUPABASE_URL",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "SUPABASE_SERVICE_ROLE_KEY"
+    ]
+  },
+  "supabase_config_exists": false,
+  "link_file_exists": false,
+  "staging_verified": false
+}

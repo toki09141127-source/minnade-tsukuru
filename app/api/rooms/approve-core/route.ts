@@ -1,3 +1,4 @@
+import { limitAction } from '../../../../lib/apiGuards'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -36,6 +37,17 @@ export async function POST(req: Request) {
 
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+    const limited = await limitAction(admin, userId, 'core')
+    if (limited) return limited
+    if (process.env.MVP_ATOMIC_CORE_ENABLED !== 'true')
+      return NextResponse.json({ok:false,error:'Core管理は準備中です'}, {status:503,headers:{'Cache-Control':'no-store'}})
+    const {data: managedRoom,error:managedRoomError}=await admin.from('rooms')
+      .select('id,created_by,status,is_hidden,deleted_at').eq('id',roomId).maybeSingle()
+    if(managedRoomError) return NextResponse.json({ok:false,error:'ルームを確認できません'}, {status:503})
+    if(!managedRoom || managedRoom.created_by!==userId || managedRoom.status!=='open' ||
+       managedRoom.is_hidden!==false || managedRoom.deleted_at!=null)
+      return NextResponse.json({ok:false,error:'Creatorのみ制作中のルームを管理できます'}, {status:403})
+
 
     const { data: reqRow, error: reqRowErr } = await admin
       .from('room_join_requests')
@@ -47,16 +59,17 @@ export async function POST(req: Request) {
       .maybeSingle()
 
     if (reqRowErr) {
-      return NextResponse.json({ ok: false, error: reqRowErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
     }
     if (!reqRow) {
       return NextResponse.json({ ok: false, error: '申請が見つかりません' }, { status: 404 })
     }
 
-    const { data, error: rpcErr } = await admin.rpc('approve_core_request', {
-      p_room_id: roomId,
-      p_creator_user_id: userId,
-      p_request_id: requestId,
+    const { data, error: rpcErr } = await admin.rpc('mvp_decide_core', {
+      p_room: roomId,
+      p_actor: userId,
+      p_approve: true,
+      p_request: requestId,
     })
 
     if (rpcErr) {
@@ -65,29 +78,13 @@ export async function POST(req: Request) {
       if (msg.includes('NOT_CREATOR')) return NextResponse.json({ ok: false, error: 'creatorのみ承認できます' }, { status: 403 })
       if (msg.includes('REQUEST_NOT_FOUND')) return NextResponse.json({ ok: false, error: '申請が見つかりません' }, { status: 404 })
       if (msg.includes('NOT_PENDING')) return NextResponse.json({ ok: false, error: 'pendingのみ承認できます' }, { status: 400 })
-      if (msg.includes('CORE_FULL')) return NextResponse.json({ ok: false, error: 'core枠が満員です（最大5）' }, { status: 409 })
+      if (msg.includes('CORE_FULL')) return NextResponse.json({ ok: false, error: 'core枠が満員です（最大4）' }, { status: 409 })
 
-      return NextResponse.json({ ok: false, error: msg }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
     }
 
-    const { error: updateErr } = await admin
-      .from('room_members')
-      .update({
-        room_terms_version: reqRow.room_terms_version,
-        room_agreed_at: reqRow.room_agreed_at,
-        forced_publish_ack_at: reqRow.forced_publish_ack_at,
-        core_lock_agreed_at: reqRow.core_lock_agreed_at,
-      })
-      .eq('room_id', roomId)
-      .eq('user_id', reqRow.user_id)
-      .is('left_at', null)
-
-    if (updateErr) {
-      return NextResponse.json({ ok: false, error: updateErr.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ ok: true, data })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+    return NextResponse.json({ ok: true, data }, {headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
   }
 }

@@ -1,9 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import LogPublicationControls from './LogPublicationControls'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { supabase } from '../../../lib/supabase/client'
-import JoinButton from './JoinButton'
 
 type Role = 'creator' | 'core' | 'supporter' | null
 
@@ -27,10 +27,12 @@ export default function BoardClient({
   roomId,
   roomStatus,
   myRole,
+  draftsEnabled = false,
 }: {
   roomId: string
   roomStatus: string
   myRole: Role
+  draftsEnabled?: boolean
 }) {
   const [posts, setPosts] = useState<PostRow[]>([])
   const [error, setError] = useState('')
@@ -46,6 +48,8 @@ export default function BoardClient({
   // ✅ 権限
   const canFinal = myRole === 'core' || myRole === 'creator'
   const isSupporter = myRole === 'supporter'
+
+  const pendingPost = useRef<{ text: string; type: string; file: File | null; requestId: string; uploadId: string | null } | null>(null)
 
   // 添付（log / final）
   const [logFile, setLogFile] = useState<File | null>(null)
@@ -124,21 +128,22 @@ export default function BoardClient({
   }, [roomId, userId, isMember])
 
   const fetchPosts = useCallback(async () => {
-    setError('')
     const { data, error } = await supabase
       .from('posts')
       .select(
         'id, user_id, username, content, created_at, post_type, deleted_at, attachment_url, attachment_type, is_marked, marked_by, marked_at'
       )
       .eq('room_id', roomId)
+      .eq('is_hidden', false)
       .is('deleted_at', null)
       .order('created_at', { ascending: true })
 
     if (error) {
-      setError(error.message)
+      setError('投稿を読み込めませんでした。時間をおいてお試しください。')
       return
     }
 
+    setError('')
     const rows = (data ?? []) as PostRow[]
     setPosts(rows)
 
@@ -171,12 +176,13 @@ export default function BoardClient({
   }, [roomId, signedMap])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Starts async I/O; state updates occur after the awaited Supabase query.
     fetchPosts()
     const interval = setInterval(fetchPosts, 5000)
     return () => clearInterval(interval)
   }, [fetchPosts])
 
-  const uploadFile = async (file: File): Promise<{ storagePath: string; mimeType: string } | null> => {
+  const uploadFile = async (file: File): Promise<{ uploadId: string } | null> => {
     const token = await getToken()
     if (!token) {
       alert('ログインが必要です')
@@ -199,7 +205,8 @@ export default function BoardClient({
       return null
     }
 
-    return { storagePath: String(json.storagePath), mimeType: String(json.mimeType ?? file.type ?? '') }
+    if (typeof json.uploadId !== 'string') throw new Error('添付を確認できませんでした')
+    return { uploadId: json.uploadId }
   }
 
   const submitPost = async (type: 'log' | 'final') => {
@@ -209,13 +216,21 @@ export default function BoardClient({
     }
 
     if (type === 'final' && !canFinal) {
-      alert('最終提出はcore/creatorのみ投稿できます')
+      alert('完成作品ドラフトはcore/creatorのみ投稿できます')
       return
     }
 
     const text = type === 'log' ? content.trim() : finalContent.trim()
     const file = type === 'log' ? logFile : finalFile
 
+    if (file && file.size > 4_000_000) {
+      alert('添付は4MB以下のファイルを選んでください')
+      return
+    }
+    if (text.length > 20000) {
+      alert('本文は20000文字以内で入力してください')
+      return
+    }
     if (!text && !file) {
       alert('本文か添付ファイルのどちらかを入力してください')
       return
@@ -227,7 +242,7 @@ export default function BoardClient({
     }
 
     setLoading(true)
-
+    try {
     const token = await getToken()
     if (!token) {
       alert('ログインが必要です')
@@ -235,19 +250,15 @@ export default function BoardClient({
       return
     }
 
-    let attachment_url: string | null = null
-    let attachment_type: string | null = null
-
-    if (file) {
-      const uploaded = await uploadFile(file)
-      if (!uploaded) {
-        setLoading(false)
-        return
-      }
-      attachment_url = uploaded.storagePath
-      attachment_type = uploaded.mimeType
+    if (!pendingPost.current || pendingPost.current.text !== text || pendingPost.current.type !== type || pendingPost.current.file !== file) {
+      pendingPost.current = { text, type, file, requestId: crypto.randomUUID(), uploadId: null }
     }
-
+    const pending = pendingPost.current
+    if (file && !pending.uploadId) {
+      const uploaded = await uploadFile(file)
+      if (!uploaded) return
+      pending.uploadId = uploaded.uploadId
+    }
     const res = await fetch('/api/posts/create', {
       method: 'POST',
       headers: {
@@ -258,8 +269,8 @@ export default function BoardClient({
         roomId,
         content: text || '(添付のみ)',
         post_type: type,
-        attachment_url,
-        attachment_type,
+        uploadId: pending.uploadId,
+        requestId: pending.requestId,
       }),
     })
 
@@ -278,8 +289,13 @@ export default function BoardClient({
       setFinalFile(null)
     }
 
+    pendingPost.current = null
     await fetchPosts()
-    setLoading(false)
+    } catch {
+      alert('通信に失敗しました。入力を保持しています。再度お試しください。')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const deletePost = async (postId: string) => {
@@ -550,10 +566,10 @@ export default function BoardClient({
         >
           <div style={{ fontWeight: 900 }}>参加すると投稿できます</div>
           <div style={{ fontSize: 13, color: '#6b4a00', fontWeight: 700, marginTop: 4 }}>
-            ルームに参加していないユーザーは、投稿（log/final）と取り消しができません。
+            ルームに参加していないユーザーは、制作ログ・完成作品ドラフトの投稿と取り消しができません。
           </div>
           <div style={{ marginTop: 10 }}>
-            <JoinButton roomId={roomId} roomStatus={roomStatus} />
+            上の参加メニューで同意内容を確認して参加してください。
           </div>
         </div>
       )}
@@ -589,10 +605,10 @@ export default function BoardClient({
         )}
       </div>
 
-      <h2>完成作品（最終提出）</h2>
+      <h2>完成作品（完成作品ドラフト）</h2>
 
       {finalPosts.length === 0 ? (
-        <p style={{ color: '#666' }}>まだ最終提出がありません。</p>
+        <p style={{ color: '#666' }}>まだ完成作品ドラフトがありません。</p>
       ) : (
         <div style={{ display: 'grid', gap: 10 }}>
           {finalPosts.map((p) => (
@@ -625,6 +641,7 @@ export default function BoardClient({
 
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
+              {draftsEnabled && canFinal && roomStatus === 'open' && <LogPublicationControls roomId={roomId} postId={p.id} />}
 
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
@@ -649,21 +666,22 @@ export default function BoardClient({
           }}
         >
           <div style={{ fontWeight: 900, marginBottom: 8 }}>
-            最終提出を投稿（コア限定）
+            完成作品ドラフトを投稿（コア限定）
           </div>
 
           {isSupporter && (
             <div style={{ fontSize: 13, lineHeight: 1.7, color: '#6b4a00', fontWeight: 800, marginBottom: 10 }}>
-              あなたは supporter です。最終提出は core/creator のみ投稿できます（supporter は制作ログのみ投稿可能です）。
+              あなたはメンバーです。完成作品ドラフトは core/creator のみ投稿できます（メンバーは制作ログのみ投稿可能です）。
             </div>
           )}
 
           {showFinalForm ? (
             <>
               <textarea
+            maxLength={20000}
                 value={finalContent}
                 onChange={(e) => setFinalContent(e.target.value)}
-                placeholder="最終提出を書く…（添付ファイルのみでもOK）"
+                placeholder="完成作品ドラフトを書く…（添付ファイルのみでもOK）"
                 style={{
                   width: '100%',
                   minHeight: 90,
@@ -674,7 +692,8 @@ export default function BoardClient({
               />
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-                <input type="file" onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
+                <span style={{ fontSize: 12 }}>添付：4MB以下。画像・MP4/WebM・PDF・テキスト</span>
+            <input aria-label="添付ファイル（4MB以下）" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.pdf,.txt" type="file" onChange={(e) => setFinalFile(e.target.files?.[0] ?? null)} />
                 {finalFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{finalFile.name}</span>}
                 <button
                   disabled={loading}
@@ -684,13 +703,13 @@ export default function BoardClient({
                     cursor: loading ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {loading ? '送信中…' : '最終提出する'}
+                  {loading ? '送信中…' : '完成作品ドラフトする'}
                 </button>
               </div>
             </>
           ) : (
             <div style={{ fontSize: 13, opacity: 0.75 }}>
-              最終提出フォームは core/creator のみ表示されます。
+              完成作品ドラフトフォームは core/creator のみ表示されます。
             </div>
           )}
         </div>
@@ -734,6 +753,7 @@ export default function BoardClient({
 
               <div style={{ marginTop: 6, whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{p.content}</div>
               {renderAttachment(p)}
+              {draftsEnabled && canFinal && roomStatus === 'open' && <LogPublicationControls roomId={roomId} postId={p.id} />}
 
               {p.user_id === userId && roomStatus === 'open' && isMember && (
                 <div style={{ marginTop: 10 }}>
@@ -760,6 +780,8 @@ export default function BoardClient({
           <div style={{ fontWeight: 900, marginBottom: 8 }}>制作ログを投稿</div>
 
           <textarea
+            maxLength={20000}
+            aria-label="制作ログの本文"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="制作ログを書く…（添付ファイルのみでもOK）"
@@ -773,7 +795,8 @@ export default function BoardClient({
           />
 
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginTop: 8 }}>
-            <input type="file" onChange={(e) => setLogFile(e.target.files?.[0] ?? null)} />
+            <span style={{ fontSize: 12 }}>添付：4MB以下。画像・MP4/WebM・PDF・テキスト</span>
+            <input aria-label="添付ファイル（4MB以下）" accept=".png,.jpg,.jpeg,.gif,.webp,.mp4,.webm,.pdf,.txt" type="file" onChange={(e) => setLogFile(e.target.files?.[0] ?? null)} />
             {logFile && <span style={{ fontSize: 12, opacity: 0.75 }}>{logFile.name}</span>}
             <button
               disabled={loading}

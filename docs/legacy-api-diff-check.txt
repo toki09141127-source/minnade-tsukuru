@@ -1,0 +1,16 @@
+warning: in the working copy of 'app/api/debug/buckets/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/posts/create/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/rooms/expire/join/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/rooms/expire/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/rooms/join/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/storage/sign/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/uploads/public/[postId]/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/api/uploads/sign/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/rooms/[id]/core-approve/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/rooms/[id]/core-reject/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/rooms/[id]/core-request/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/rooms/[id]/core-revoke/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/rooms/join/route.ts', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/works/PostAttachment.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/works/[id]/AttachmentView.tsx', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'app/works/[id]/page.tsx', LF will be replaced by CRLF the next time Git touches it

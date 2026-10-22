@@ -1,0 +1,247 @@
+[
+  {
+    "width": 320,
+    "route": "/",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/login",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/rooms",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/rooms/create",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/works",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/profile",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 320,
+    "route": "/moderation",
+    "scroll": 320,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/login",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/rooms",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/rooms/create",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/works",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/profile",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 375,
+    "route": "/moderation",
+    "scroll": 375,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/login",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/rooms",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/rooms/create",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/works",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/profile",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 390,
+    "route": "/moderation",
+    "scroll": 390,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/login",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/rooms",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/rooms/create",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/works",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/profile",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 768,
+    "route": "/moderation",
+    "scroll": 768,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/login",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/rooms",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/rooms/create",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/works",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/profile",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  },
+  {
+    "width": 1280,
+    "route": "/moderation",
+    "scroll": 1280,
+    "clipped": [],
+    "pass": true
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "runId": "3eba0e31-680e-438e-8b96-84078a9a7bee",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Unpublished Creator request rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Rejected request creates no deletion job",
+      "status": "PASS"
+    },
+    {
+      "name": "Withdrawal retry returns same job",
+      "status": "PASS"
+    },
+    {
+      "name": "Profile PII cleared in real staging",
+      "status": "PASS"
+    },
+    {
+      "name": "Joint post retained",
+      "status": "PASS"
+    },
+    {
+      "name": "Profile write fence maintained",
+      "status": "PASS"
+    },
+    {
+      "name": "Auth retained until full preparation verified",
+      "status": "PASS"
+    }
+  ],
+  "blockers": [],
+  "scope": "Synthetic privacy preconditions, NOT completed Auth deletion",
+  "room": "dab702c1-dbe8-4a47-bba9-3c8c945b309d",
+  "post": "a9359987-5efa-4b39-be8f-0dde9327f8e2",
+  "complete": true,
+  "accountDeletionComplete": false
+}

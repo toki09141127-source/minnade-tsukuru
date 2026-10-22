@@ -1,0 +1,7 @@
+PASS Unpublished Creator request rejected
+PASS Rejected request creates no deletion job
+PASS Withdrawal retry returns same job
+PASS Profile PII cleared in real staging
+PASS Joint post retained
+PASS Profile write fence maintained
+PASS Auth retained until full preparation verified

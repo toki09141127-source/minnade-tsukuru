@@ -1,3 +1,4 @@
+import { limitAction } from '../../../../lib/apiGuards'
 // app/api/rooms/create/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -58,6 +59,8 @@ export async function POST(req: Request) {
     const enableCoreInvite = Boolean(body?.enable_core_invite ?? false)
     const coreInviteCode = enableCoreInvite ? normalizeInviteCode(body?.core_invite_code) : null
 
+    if (!Number.isFinite(hoursNum)) return NextResponse.json({ ok: false, error: '期限が不正です' }, { status: 400 })
+    if (title.length > 120) return NextResponse.json({ ok: false, error: 'タイトルは120文字以内で入力してください' }, { status: 400 })
     if (!title) {
       return NextResponse.json({ ok: false, error: 'title is required' }, { status: 400 })
     }
@@ -97,60 +100,22 @@ export async function POST(req: Request) {
 
     const user = userData.user
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+    const limited = await limitAction(admin, user.id, 'rooms')
+    if (limited) return limited
 
-    const now = new Date()
-    const expiresAt = new Date(now.getTime() + hours * 60 * 60 * 1000)
-
-    const insertPayload = {
-      title,
-      category,
-      is_adult: isAdult,
-      status: 'open',
-      started_at: now.toISOString(),
-      expires_at: expiresAt.toISOString(),
-      created_by: user.id,
-      host_ids: [user.id],
-      is_hidden: false,
-      deleted_at: null,
-      time_limit_hours: hours,
-      work_type: String(body?.workType ?? body?.work_type ?? WORK_TYPE_DEFAULT),
-      concept: conceptRaw || null,
-
-      // ✅ DB許容値に一致（forbidden/assist/free）
-      ai_level: aiLevel,
-
-      enable_core_approval: enableCoreApproval,
-      enable_core_invite: enableCoreInvite,
-      core_invite_code: enableCoreInvite ? coreInviteCode : null,
-    } as const
-
-    const { data: room, error: insErr } = await admin
-      .from('rooms')
-      .insert(insertPayload)
-      .select('*')
-      .single()
-
-    if (insErr) {
-      return NextResponse.json({ ok: false, error: insErr.message }, { status: 500 })
+    if(process.env.MVP_ROOM_CREATION_ENABLED==='true'){
+      if(typeof body.requestId!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(body.requestId))
+        return NextResponse.json({ok:false,error:'作成画面を再読み込みしてください'},{status:400})
+      const {data:id,error}=await admin.rpc('mvp_create_room',{p_actor:user.id,p_request:body.requestId,p_settings:{
+        title,category,is_adult:isAdult,time_limit_hours:hours,work_type:String(body?.workType ?? body?.work_type ?? WORK_TYPE_DEFAULT),
+        concept:conceptRaw||null,ai_level:aiLevel,enable_core_approval:enableCoreApproval,
+        enable_core_invite:enableCoreInvite,core_invite_code:coreInviteCode,
+      }})
+      if(error||typeof id!=='string')return NextResponse.json({ok:false,error:'作成結果を確認できません。同じ内容で再試行してください'},{status:409,headers:{'Cache-Control':'no-store'}})
+      return NextResponse.json({ok:true,room:{id}},{headers:{'Cache-Control':'no-store'}})
     }
-
-    const { error: memberErr } = await admin.from('room_members').upsert(
-      {
-        room_id: room.id,
-        user_id: user.id,
-        role: 'creator',
-        joined_at: now.toISOString(),
-        left_at: null,
-      },
-      { onConflict: 'room_id,user_id' }
-    )
-
-    if (memberErr) {
-      return NextResponse.json({ ok: false, error: memberErr.message }, { status: 500 })
-    }
-
-    return NextResponse.json({ ok: true, room })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'Server error' }, { status: 500 })
+    return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
   }
 }

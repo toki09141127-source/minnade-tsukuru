@@ -37,6 +37,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'postId と roomId は必須です' }, { status: 400 })
     }
 
+    const { data: room, error: roomError } = await supabaseAdmin.from('rooms')
+      .select('id, status, is_hidden, deleted_at, expires_at').eq('id', roomId).maybeSingle()
+    if (roomError) return NextResponse.json({ error: 'ルームを確認できません' }, { status: 503 })
+    if (!room || room.is_hidden !== false || room.deleted_at != null) {
+      return NextResponse.json({ error: 'ルームが見つかりません' }, { status: 404 })
+    }
+
+    if (room.status !== 'open' || (room.expires_at && new Date(room.expires_at).getTime() <= Date.now())) return NextResponse.json({ error: '公開後は変更できません' }, { status: 403 })
+
     // -------------------------
     // 3) 権限チェック：room_members（core/creatorのみ）
     // -------------------------
@@ -62,63 +71,30 @@ export async function POST(req: Request) {
     // -------------------------
     const { data: post, error: postErr } = await supabaseAdmin
       .from('posts')
-      .select('id, room_id, is_marked, marked_by, marked_at, deleted_at')
+      .select('id, room_id, is_marked, marked_by, marked_at, deleted_at, is_hidden')
       .eq('id', postId)
       .maybeSingle()
 
     if (postErr) {
       return NextResponse.json({ error: '投稿の取得に失敗しました' }, { status: 500 })
     }
-    if (!post || post.deleted_at) {
+    if (!post || post.deleted_at != null || post.is_hidden !== false) {
       return NextResponse.json({ error: '投稿が存在しません' }, { status: 404 })
     }
     if (post.room_id !== roomId) {
       return NextResponse.json({ error: '投稿がルームに属していません' }, { status: 400 })
     }
 
-    const current = !!post.is_marked
-    const next = !current
-    const nowIso = new Date().toISOString()
 
-    // -------------------------
-    // 5) 同時更新対策：現在値一致を条件にUPDATE（楽観ロック）
-    // -------------------------
-    const updatePayload = next
-      ? { is_marked: true, marked_by: userId, marked_at: nowIso }
-      : { is_marked: false, marked_by: null, marked_at: null }
-
-    const { data: updated, error: upErr } = await supabaseAdmin
-      .from('posts')
-      .update(updatePayload)
-      .eq('id', postId)
-      .eq('room_id', roomId)
-      .eq('is_marked', current) // ← 競合を減らす
-      .select('id, is_marked, marked_by, marked_at')
-      .maybeSingle()
-
-    if (upErr) {
-      return NextResponse.json({ error: '更新に失敗しました' }, { status: 500 })
+    if (process.env.MVP_MEMBERSHIP_GUARDS_ENABLED === 'true') {
+      const { data: marked, error: markError } = await supabaseAdmin.rpc('mvp_highlight', {
+        p_actor: userId, p_room: roomId, p_post: postId, p_expected: !!post.is_marked,
+      })
+      if (markError) return NextResponse.json({ error: '状態が変わりました。再読み込みしてください' }, { status: 409 })
+      return NextResponse.json({ post: marked })
     }
-
-    // 競合などで0件更新になった場合：最新を返す
-    if (!updated) {
-      const { data: latest } = await supabaseAdmin
-        .from('posts')
-        .select('id, is_marked, marked_by, marked_at')
-        .eq('id', postId)
-        .maybeSingle()
-
-      return NextResponse.json(
-        {
-          post: latest ?? null,
-          conflict: true,
-        },
-        { status: 200 }
-      )
-    }
-
-    return NextResponse.json({ post: updated }, { status: 200 })
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? 'Unexpected error' }, { status: 500 })
+    return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ error: '更新を処理できませんでした' }, { status: 500 })
   }
 }

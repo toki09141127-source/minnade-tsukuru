@@ -1,0 +1,250 @@
+PASS Owner Web login and self consent RPC
+PASS Profile edit through authenticated service APIs
+PASS Room creation and Creator membership visible
+PASS Room listing works through safe view
+PASS Member Web login and consent
+PASS Member join and room consent
+PASS Web upload and post binding
+PASS Owner reads member post and last_seen is persisted
+PASS Core request from active Member
+PASS Creator rejects Core through UI
+PASS Creator approves Core through UI
+PASS Web withdrawal refusal UNPUBLISHED_CREATOR_ROOMS
+PASS Web withdrawal refusal ACTIVE_CORE_ROOMS
+PASS Work draft saved
+PASS Synthetic log reviewed for publication
+PASS HTTP cron and retry publish once
+PASS Published work list and detail
+PASS Published work like
+PASS Report accepted through Web UI
+PASS Public profile projection
+PASS Authenticated layout 320 /profile
+PASS Authenticated layout 320 /rooms
+PASS Authenticated layout 320 /rooms/create
+PASS Authenticated layout 320 /rooms/:room
+PASS Authenticated layout 320 /works
+PASS Authenticated layout 320 /works/:room
+PASS Authenticated layout 375 /profile
+PASS Authenticated layout 375 /rooms
+PASS Authenticated layout 375 /rooms/create
+PASS Authenticated layout 375 /rooms/:room
+PASS Authenticated layout 375 /works
+PASS Authenticated layout 375 /works/:room
+PASS Authenticated layout 390 /profile
+PASS Authenticated layout 390 /rooms
+PASS Authenticated layout 390 /rooms/create
+PASS Authenticated layout 390 /rooms/:room
+PASS Authenticated layout 390 /works
+PASS Authenticated layout 390 /works/:room
+PASS Report form layout 320
+PASS Report form layout 375
+PASS Report form layout 390
+PASS Web logout
+PASS Anonymous published work detail
+PASS Published attachment signed URL serves exact synthetic bytes
+PASS Web confirmed Auth deletion published Core
+PASS Web confirmed Auth deletion Creator
+PASS Anonymous work survives both Web withdrawals
+PASS Public attachment survives both Web withdrawals
+{
+  "runId": "225c96a0-398b-41aa-8de7-67b8ad9b10da",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Owner Web login and self consent RPC",
+      "status": "PASS"
+    },
+    {
+      "name": "Profile edit through authenticated service APIs",
+      "status": "PASS"
+    },
+    {
+      "name": "Room creation and Creator membership visible",
+      "status": "PASS"
+    },
+    {
+      "name": "Room listing works through safe view",
+      "status": "PASS"
+    },
+    {
+      "name": "Member Web login and consent",
+      "status": "PASS"
+    },
+    {
+      "name": "Member join and room consent",
+      "status": "PASS"
+    },
+    {
+      "name": "Web upload and post binding",
+      "status": "PASS"
+    },
+    {
+      "name": "Owner reads member post and last_seen is persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "Core request from active Member",
+      "status": "PASS"
+    },
+    {
+      "name": "Creator rejects Core through UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Creator approves Core through UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Web withdrawal refusal UNPUBLISHED_CREATOR_ROOMS",
+      "status": "PASS"
+    },
+    {
+      "name": "Web withdrawal refusal ACTIVE_CORE_ROOMS",
+      "status": "PASS"
+    },
+    {
+      "name": "Work draft saved",
+      "status": "PASS"
+    },
+    {
+      "name": "Synthetic log reviewed for publication",
+      "status": "PASS"
+    },
+    {
+      "name": "HTTP cron and retry publish once",
+      "status": "PASS"
+    },
+    {
+      "name": "Published work list and detail",
+      "status": "PASS"
+    },
+    {
+      "name": "Published work like",
+      "status": "PASS"
+    },
+    {
+      "name": "Report accepted through Web UI",
+      "status": "PASS"
+    },
+    {
+      "name": "Public profile projection",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 320 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 375 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /profile",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms/create",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /rooms/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /works",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated layout 390 /works/:room",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 320",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 375",
+      "status": "PASS"
+    },
+    {
+      "name": "Report form layout 390",
+      "status": "PASS"
+    },
+    {
+      "name": "Web logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous published work detail",
+      "status": "PASS"
+    },
+    {
+      "name": "Published attachment signed URL serves exact synthetic bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "Web confirmed Auth deletion published Core",
+      "status": "PASS"
+    },
+    {
+      "name": "Web confirmed Auth deletion Creator",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous work survives both Web withdrawals",
+      "status": "PASS"
+    },
+    {
+      "name": "Public attachment survives both Web withdrawals",
+      "status": "PASS"
+    }
+  ],
+  "failures": [],
+  "complete": true,
+  "serverStopped": true,
+  "room": "f51e98bb-afaa-4aab-856a-9f2662cd9e29"
+}

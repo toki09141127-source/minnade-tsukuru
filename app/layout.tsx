@@ -1,3 +1,5 @@
+import SupportContact from '@/components/SupportContact'
+import LegalLinks from '@/components/LegalLinks'
 // app/layout.tsx
 import './globals.css'
 import Header from '@/components/Header'
@@ -75,8 +77,10 @@ export default function RootLayout({
     <html lang="ja">
       <body>
         <Header />
+        {process.env.STAGING_TEST === 'true' && <aside style={{padding:12,background:"#fff3cd",color:"#543b00",textAlign:"center"}}>検収用stagingです。テスト用の投稿だけを使用してください。</aside>}
         <TermsConsentGate />
         <main className="main">{children}</main>
+        <footer style={{padding:24,fontSize:13,lineHeight:1.8}}><LegalLinks /><p><SupportContact /></p></footer>
         <ScrollButtons />
       </body>
     </html>

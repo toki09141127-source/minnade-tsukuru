@@ -1,7 +1,8 @@
 // app/rooms/[id]/ReportButton.tsx
 'use client'
+import SupportContact from '@/components/SupportContact'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { supabase } from '../../../lib/supabase/client'
 
 export default function ReportButton({
@@ -11,8 +12,10 @@ export default function ReportButton({
   targetType: 'room' | 'post'
   targetId: string
 }) {
+  const pendingRequest = useRef<{key:string;id:string}|null>(null)
   const [open, setOpen] = useState(false)
   const [reason, setReason] = useState('')
+  const [category,setCategory] = useState('個人情報')
   const [msg, setMsg] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [loading, setLoading] = useState(false)
@@ -53,6 +56,8 @@ export default function ReportButton({
         return
       }
 
+      const key=JSON.stringify([s.session?.user.id,targetType,targetId,category,r])
+      if(pendingRequest.current?.key!==key) pendingRequest.current={key,id:crypto.randomUUID()}
       const res = await fetch('/api/reports/create', {
         method: 'POST',
         headers: {
@@ -60,9 +65,10 @@ export default function ReportButton({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          requestId: pendingRequest.current.id,
           targetType,
           targetId,
-          reason: r, // ✅ 必ずtrim済み文字列を送る
+          reason: '[' + category + '] ' + r, // ✅ 必ずtrim済み文字列を送る
         }),
       })
 
@@ -73,18 +79,19 @@ export default function ReportButton({
         return
       }
 
-      setMsg('通報しました（運営が確認します）')
+      pendingRequest.current=null
+      setMsg('通報を受け付けました（運営が確認します）')
       // 送信成功したら閉じる（メッセージだけ残したいなら close しない運用もOK）
       setOpen(false)
-    } catch (e: any) {
-      setError(e?.message ?? '通報に失敗しました')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : '通報に失敗しました')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}>
+    <span style={{ display: 'inline-flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', maxWidth: '100%' }}>
       <button
         onClick={onOpen}
         style={{
@@ -113,14 +120,17 @@ export default function ReportButton({
             borderRadius: 12,
             border: '1px solid rgba(0,0,0,0.15)',
             background: '#fff',
-            minWidth: 280,
+            width: 'min(360px, 100%)', minWidth: 0,
           }}
         >
           <div style={{ fontSize: 12, fontWeight: 800, marginBottom: 8 }}>
             通報理由（必須）
           </div>
 
+          <label>分類<select value={category} onChange={e=>setCategory(e.target.value)}>{['個人情報','無断転載・著作権','誹謗中傷','不適切内容','その他'].map(value=><option key={value}>{value}</option>)}</select></label>
           <textarea
+            aria-label="通報の詳細"
+            maxLength={1900}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={4}
@@ -173,6 +183,7 @@ export default function ReportButton({
             </button>
           </div>
 
+          <p style={{fontSize:12}}><SupportContact /></p>
           {error && <div style={{ marginTop: 8, color: '#b00020', fontSize: 12 }}>{error}</div>}
         </div>
       )}

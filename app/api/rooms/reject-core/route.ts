@@ -1,3 +1,4 @@
+import { limitAction } from '../../../../lib/apiGuards'
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
@@ -36,11 +37,23 @@ export async function POST(req: Request) {
 
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+    const limited = await limitAction(admin, userId, 'core')
+    if (limited) return limited
+    if (process.env.MVP_ATOMIC_CORE_ENABLED !== 'true')
+      return NextResponse.json({ok:false,error:'Core管理は準備中です'}, {status:503,headers:{'Cache-Control':'no-store'}})
+    const {data: managedRoom,error:managedRoomError}=await admin.from('rooms')
+      .select('id,created_by,status,is_hidden,deleted_at').eq('id',roomId).maybeSingle()
+    if(managedRoomError) return NextResponse.json({ok:false,error:'ルームを確認できません'}, {status:503})
+    if(!managedRoom || managedRoom.created_by!==userId || managedRoom.status!=='open' ||
+       managedRoom.is_hidden!==false || managedRoom.deleted_at!=null)
+      return NextResponse.json({ok:false,error:'Creatorのみ制作中のルームを管理できます'}, {status:403})
 
-    const { data, error: rpcErr } = await admin.rpc('reject_core_request', {
-      p_room_id: roomId,
-      p_creator_user_id: userId,
-      p_request_id: requestId,
+
+    const { data, error: rpcErr } = await admin.rpc('mvp_decide_core', {
+      p_room: roomId,
+      p_actor: userId,
+      p_approve: false,
+      p_request: requestId,
     })
 
     if (rpcErr) {
@@ -50,11 +63,11 @@ export async function POST(req: Request) {
       if (msg.includes('REQUEST_NOT_FOUND')) return NextResponse.json({ ok: false, error: '申請が見つかりません' }, { status: 404 })
       if (msg.includes('NOT_PENDING')) return NextResponse.json({ ok: false, error: 'pendingのみ却下できます' }, { status: 400 })
 
-      return NextResponse.json({ ok: false, error: msg }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
     }
 
-    return NextResponse.json({ ok: true, data })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+    return NextResponse.json({ ok: true, data }, {headers:{'Cache-Control':'no-store'}})
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理に失敗しました。時間をおいてお試しください' }, { status: 500 })
   }
 }

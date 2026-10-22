@@ -1,74 +1,11 @@
-// app/rooms/[id]/core-revoke/route.ts
-import { NextResponse, NextRequest } from 'next/server'
-import { createUserClient, createAdminClient } from '@/lib/supabase/server'
+import { NextResponse } from 'next/server'
 
-type Params = { id: string }
+export const dynamic = 'force-dynamic'
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: Promise<Params> }
-) {
-  const { id: roomId } = await params
-  const supabase = await createUserClient()
-  const admin = createAdminClient()
-
-  const { data: userData } = await supabase.auth.getUser()
-  const user = userData.user
-  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-
-  const body = await req.json().catch(() => ({} as any))
-  const requestId = body?.requestId as string | undefined
-  if (!requestId) return NextResponse.json({ error: 'requestId required' }, { status: 400 })
-
-  // オーナー確認
-  const { data: room, error: roomErr } = await supabase
-    .from('rooms')
-    .select('created_by')
-    .eq('id', roomId)
-    .single()
-
-  if (roomErr) return NextResponse.json({ error: roomErr.message }, { status: 400 })
-  if (room?.created_by !== user.id) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  }
-
-  // 申請確認（approved かどうか）
-  const { data: reqRow, error: reqErr } = await admin
-    .from('room_join_requests')
-    .select('*')
-    .eq('id', requestId)
-    .single()
-
-  if (reqErr) return NextResponse.json({ error: reqErr.message }, { status: 400 })
-  if (reqRow.room_id !== roomId) {
-    return NextResponse.json({ error: 'Request does not belong to this room' }, { status: 400 })
-  }
-  if (reqRow.status !== 'approved') {
-    return NextResponse.json({ success: true, alreadyProcessed: true })
-  }
-
-  // status を revoked に
-  const { error: updErr } = await admin
-    .from('room_join_requests')
-    .update({
-      status: 'revoked',
-      decided_by: user.id,
-      decided_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', requestId)
-
-  if (updErr) return NextResponse.json({ error: updErr.message }, { status: 400 })
-
-  // core 権限を剥奪（room_members の core を削除）
-  const { error: delErr } = await admin
-    .from('room_members')
-    .delete()
-    .eq('room_id', roomId)
-    .eq('user_id', reqRow.user_id)
-    .eq('role', 'core')
-
-  if (delErr) return NextResponse.json({ error: delErr.message }, { status: 400 })
-
-  return NextResponse.json({ success: true })
+// Retired unsafe endpoint. Keep an explicit response without constructing an admin client.
+export async function POST() {
+  return NextResponse.json(
+    { ok: false, error: 'This endpoint has been retired' },
+    { status: 410, headers: { 'Cache-Control': 'no-store' } }
+  )
 }

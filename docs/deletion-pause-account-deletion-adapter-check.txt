@@ -1,0 +1,27 @@
+1. Explicit not-found confirms Auth deletion
+2. Unknown DB/Storage preparation never deletes Auth
+3. Unresolved Storage blocks Auth
+4. Unverified retained work blocks Auth
+5. Receipt for another user rejected
+6. Missing write fence blocks Auth
+7. Receipt rechecked immediately before Auth
+8. Lost lease stops side effects
+9. 5xx not absence
+10. Generic404 not absence
+11. Forbidden not absence
+12. Mismatching Auth identity rejected
+13. Delete response loss stays auth_unknown
+14. Incomplete cleanup cannot complete job
+15. Claim outage returns retry without side effects
+16. Response loss resumes by existence check, no duplicate delete
+17. Live lease renews
+18. Wrong stage cannot renew
+19. Stale worker cannot release another lease
+20. Expired lease cannot revive
+21. Reclaimed lease survives old worker release
+22. Audited events FK prevents Auth deletion
+23. Audited novel draft FK prevents Auth deletion
+24. Auth CASCADE removes decisions in synthetic DB
+25. Auth CASCADE removes pre-archive notes in synthetic DB
+26. Browser cannot renew deletion lease
+Completed 26 deletion adapter checks; no external effects.

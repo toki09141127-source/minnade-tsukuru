@@ -1,0 +1,295 @@
+{
+  "date": "2026-10-22",
+  "branch": "security/fix-storage-sign",
+  "startFiles": 529,
+  "changedSinceStart": [
+    "app/auth/callback/page.tsx",
+    "app/layout.tsx",
+    "app/login/page.tsx",
+    "components/RoomConsentModal.tsx",
+    "components/SupportContact.tsx",
+    "components/TermsConsentGate.tsx",
+    "components/legal/PrivacyContent.tsx",
+    "components/legal/TermsContent.tsx",
+    "docs/AI_HANDOFF.md",
+    "docs/AI_TASK.md",
+    "docs/run-security-checks.cjs",
+    "docs/staging-applied.json",
+    "docs/staging-project.json",
+    "docs/staging-schema-plan.json",
+    "lib/legalVersions.ts",
+    "next.config.ts",
+    "scripts/staging/baseline-local.cjs",
+    "scripts/staging/plan.cjs"
+  ],
+  "newSinceStart": [
+    "app/auth/reset-password/page.tsx",
+    "app/guidelines/page.tsx",
+    "components/LegalLinks.tsx",
+    "docs/release-build.txt",
+    "docs/release-consent-local-result.json",
+    "docs/release-lint.txt",
+    "docs/release-local-db.txt",
+    "docs/release-preview-deploy-second.txt",
+    "docs/release-preview-deploy-third.txt",
+    "docs/release-preview-deploy.txt",
+    "docs/release-preview-first-build.txt",
+    "docs/release-preview-second-build.txt",
+    "docs/release-security-checks.txt",
+    "docs/release-staging-result.json",
+    "docs/release-ui-check.cjs",
+    "docs/supabase-release-preflight.sql",
+    "lib/authFlow.ts",
+    "scripts/staging/release-consent-local.cjs",
+    "scripts/staging/release-staging.cjs",
+    "supabase/migrations/202610220028_release_consent.sql"
+  ],
+  "missingSinceStart": [],
+  "migrationChecks": [
+    {
+      "name": "202610210001_attachment_ledger.sql",
+      "sha256LF": "b9fb7c0b82e3dd99192b0108e0fce844ba29dae19f9309685fc378cc21e820bf",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210002_membership_guards.sql",
+      "sha256LF": "edd7d47ca093143bebe5af828dad00add17de02c14601308a90a9816273662b4",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210003_account_jobs.sql",
+      "sha256LF": "0ee11b02fa5abe7411682bf0567e040c00aec0e8c621fcb07a628ade5febdeb0",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210004_moderation.sql",
+      "sha256LF": "ef6570f96d16026e7338d9ab4c62dfa69a007bfd76cb116b793f7c05ed3ba547",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210005_read_boundaries.sql",
+      "sha256LF": "0b1612318ac74b918e94d69c68b809380f7febd07a61c4105d09006ab312357f",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210006_work_drafts.sql",
+      "sha256LF": "06b48f9a82bb5aad67a8d20c48c9ea8ed10ad8556780f3962b5f14cd30f2e963",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210007_deletion_lease.sql",
+      "sha256LF": "2e086de0d4f87e6580bfceae14e409ef09bd156ba446f3f192ffa66d0bbf24c5",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210008_deletion_retention.sql",
+      "sha256LF": "d446090c312a1a042865022ee9b124b19e9da88f3adf2a60958af0802cbce4c9",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210009_deletion_attribution_fence.sql",
+      "sha256LF": "404cc39955e8839af0aabac0b1b2817666895158cf4493928dc5ebab2a3b4faf",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210010_scoped_moderation.sql",
+      "sha256LF": "4b394d6a4d60598ea005a6b836f041a0849cb6817f28e743885ec752c8832891",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210011_report_intake.sql",
+      "sha256LF": "4420a46773a15dba18423e3a2d0a9f1327717f60f34eb6901b1ada6054409d1d",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210012_report_queue.sql",
+      "sha256LF": "cde257b33423a07d005742416d49a8155e41a43ff2242b2fa5b3c25a229cb984",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210013_upload_cleanup.sql",
+      "sha256LF": "b19617000dac9351e569fcf925288940f59ba1ca6e1e18fa1c39adedfea4b0f0",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210014_like_requests.sql",
+      "sha256LF": "b8b77c9a670a4b6528ddd6af808969f940fd66298d04aded002e0528a60a49d9",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210015_room_creation.sql",
+      "sha256LF": "2aa76bd6d7faa154701013d3640d2554ec2d77cb5cb08e7362977ff93466fddd",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210016_operator_rate_limits.sql",
+      "sha256LF": "1a70c3524d3c77d22c8f97cc807fba8ed24a6d677047d04e4de6241c238f6db8",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210017_report_admission.sql",
+      "sha256LF": "3a1fd2cc49d5457e5be31bc2fc6ba8a201d66a3143c267ba44c9f1647bdb9499",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210018_member_admission.sql",
+      "sha256LF": "571b8d7a96137cbed5289f172d1d1f01fb632c7212489f849c867d2c83b5eb6a",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210019_core_admission.sql",
+      "sha256LF": "d1fb90d20a2a45aa7faa34ff81a327e5085b73c0c52a5fce57a5fae2bae9abea",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210020_deletion_privacy_preconditions.sql",
+      "sha256LF": "d53bd1b5c018eec0fbec661540489ee9e58f8ee372f0a62be946b65f659589bb",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210021_client_read_contract.sql",
+      "sha256LF": "195b89a976f1d4a4a6f1835d3e940f93533458dae4ef80b76da9751a89d27ba9",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210022_work_snapshot_read.sql",
+      "sha256LF": "fa4166feecba92b3200173011e01815454539ba9b969045bf0782e12d2658789",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210023_retained_actors.sql",
+      "sha256LF": "f678ca5e545dc35ed865bead4dbff1fb95759831844bd1a03779921194b48b47",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210024_deletion_prepare.sql",
+      "sha256LF": "583c192900a844139ed5d64c440f1f6582a382ae8e07b8b5fc2edcfe682ab130",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610210025_deletion_upload_fence.sql",
+      "sha256LF": "5a10b0f52999a9b882194e297daf06894a0b645ff54c9a767cae55c553849b12",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610220026_deletion_request_timestamp.sql",
+      "sha256LF": "09524d7cda55a9b55bddc1298dd3f89deb8ae0eeb017383a198fd12af63e768e",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610220027_deletion_pause.sql",
+      "sha256LF": "a64d6fe18c594047dc92bf4817e7cb12ba23f514311157555cfcd5585acf0131",
+      "ledgerMatches": true,
+      "unchangedFromStart": true
+    },
+    {
+      "name": "202610220028_release_consent.sql",
+      "sha256LF": "be12b1e651531a5323fcee50ee53ccc7275bf8409fef80866cd04fe998619bb1",
+      "ledgerMatches": true,
+      "unchangedFromStart": null
+    }
+  ],
+  "previewSourceParity": true,
+  "previewSourceMismatches": [],
+  "testResults": {
+    "offlineRegression": 703,
+    "offlineAuthUI": 14,
+    "auditSchemaPostgres": 137,
+    "realStagingSyntheticSDK": 14,
+    "total": 868,
+    "typecheck": "PASS",
+    "relevantLint": "PASS",
+    "localBuild": "PASS before last banner/config; final Vercel build PASS",
+    "gitDiffCheck": "PASS",
+    "runnerLint": "PASS",
+    "finalDocsDiffCheck": "PASS"
+  },
+  "productionReadOnly": {
+    "projectRef": "joedeuyrzimqyjapqpyh",
+    "readOnly": "on",
+    "publicTables": 14,
+    "mvpFunctions": 0,
+    "attachmentLedgerExists": false,
+    "deletionJobsExists": false,
+    "pauseExists": false,
+    "migrationHistoryExists": false,
+    "otherConnections": 5,
+    "activeConnections": null,
+    "unconditionalSelectPolicies": null,
+    "backup": "Dashboard: Free Plan does not include project backups; no backups listed",
+    "userRowsRead": false,
+    "changed": false
+  },
+  "preview": {
+    "project": "minnade-tsukuru-staging",
+    "deployment": "dpl_FsNFXjHmr4qxktDikNVyu2qLfXz4",
+    "url": "https://minnade-tsukuru-staging-g2wbmgcm9-sonetokiyas-projects.vercel.app",
+    "target": "preview",
+    "status": "Ready",
+    "supabaseRef": "fwqucffxdmbdczspkcyr",
+    "gitConnected": false,
+    "cronEnabled": false,
+    "deletionRequests": false,
+    "deletionFinalize": false,
+    "deletionPaused": true,
+    "vercelAuthentication": "enabled"
+  },
+  "realEmail": {
+    "confirmationReceivedAt": [
+      "2026-10-22T14:15:12+09:00",
+      "2026-10-22T14:20:43+09:00"
+    ],
+    "confirmationLink": "Executed once by assistant on user request; server email_confirmed_at verified",
+    "confirmedAt": "2026-10-22T14:27:06.790517+09:00",
+    "browserSession": "Callback displayed a session/expired-link error; exact cause not proven. Subsequent password login confirmed by user and later last_sign_in_at.",
+    "login": "USER_REPORTED_PASS after confirmation",
+    "passwordReset": "BLOCKED email quota; no recovery_sent_at",
+    "earlierAllPassAnswers": "Retracted by user: not logged in, resend quota reached. Not accepted as evidence."
+  },
+  "android": "App flow PASS by user report, corroborated own staging metadata; Android email-return flow still incomplete",
+  "iphone": "UNAVAILABLE / NOT_VERIFIED",
+  "productionRelease": "BLOCKED",
+  "productionGo": "NO-GO",
+  "commit": false,
+  "push": false,
+  "merge": false,
+  "productionMigrations": false,
+  "productionDeploy": false,
+  "androidMetadata": {
+    "currentAdultConsent": true,
+    "activeMember": true,
+    "roomPublicationConsent": true,
+    "posts": 1,
+    "attachments": 1,
+    "coreRequests": 1,
+    "roomReports": 1,
+    "contentsRead": false
+  },
+  "releaseArtifactSecretScanMatches": []
+}

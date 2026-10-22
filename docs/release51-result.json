@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-22",
+  "release": "BLOCKED",
+  "productionGo": "NO-GO",
+  "passwordReset": {
+    "status": "PASS",
+    "evidence": "User completed all seven steps using Android Chrome only on latest Preview",
+    "previousFailure": "Started on Android, opened link on Windows; user confirmed mismatch"
+  },
+  "smtp": {
+    "staging": "custom Gmail 587, 30/hour; user replaced app password and reported successful reset delivery",
+    "production": "custom Gmail 587, 30/hour observed; production send not tested",
+    "credentialValuesStored": false
+  },
+  "iphone": "KNOWN UNVERIFIED PLATFORM: iPhone Safari / POST-LAUNCH REQUIRED CHECK; temporarily excluded from blocker",
+  "tests": {
+    "offline": 720,
+    "auditSchemaPG": 137,
+    "stagingSynthetic": 14,
+    "total": 871,
+    "typecheck": "PASS",
+    "relevantLint": "PASS",
+    "previewBuild": "PASS",
+    "broadLint": "8 pre-existing errors / 5 warnings in 7 unchanged files"
+  },
+  "preview": {
+    "url": "https://minnade-tsukuru-staging-90rzxyegp-sonetokiyas-projects.vercel.app",
+    "deployment": "dpl_DsDczF9LzAakarptA5Yv7jUsVRHE",
+    "target": "preview",
+    "status": "READY",
+    "sourceParity": true,
+    "stagingRedirectsAdded": 2,
+    "accountDeletionEnabled": false
+  },
+  "blockers": [
+    "Production DB/Auth/Storage backup and isolated restore unverified",
+    "Full maintenance boundary and drain unverified",
+    "Operations owner/window/routine report-audit procedure unconfirmed"
+  ],
+  "productionChanged": false,
+  "commit": false,
+  "push": false,
+  "merge": false,
+  "productionMigrations": [],
+  "productionDeploy": false,
+  "productionSmoke": "NOT RUN",
+  "monitoring": "NOT STARTED"
+}

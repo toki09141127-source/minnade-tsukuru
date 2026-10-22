@@ -1,0 +1,95 @@
+{
+  "runId": "49560cd4-a395-484c-a5f0-785c24400513",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Last Core slot: exactly one winner and four active Cores",
+      "status": "PASS"
+    },
+    {
+      "name": "Losing approval leaves request pending, no partial decision",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent repeated approval safely replays",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent leave leaves no active Core and never revives departed membership",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent kick leaves target inactive and rejoin forbidden",
+      "status": "PASS"
+    },
+    {
+      "name": "Concurrent Core requests converge on one pending row",
+      "status": "PASS"
+    },
+    {
+      "name": "Non-Creator direct privileged call is rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Cross-room approval rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Wrong consent version rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Old Core approval RPC is revoked even for service client",
+      "status": "PASS"
+    },
+    {
+      "name": "Anon new Core approval RPC denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Authenticated direct Core approval RPC denied",
+      "status": "PASS"
+    }
+  ],
+  "users": [
+    {
+      "id": "9b23a2a9-5841-4eda-9d3e-85f9522a881d",
+      "alias": "core-0"
+    },
+    {
+      "id": "3fab3b74-3102-4c33-9b1a-76ab7153e905",
+      "alias": "core-1"
+    },
+    {
+      "id": "009a8942-7798-4529-a600-095a9b358518",
+      "alias": "core-2"
+    },
+    {
+      "id": "5a429a5e-43fc-4525-b265-3e500dd6a7ed",
+      "alias": "core-3"
+    },
+    {
+      "id": "9b45e9cb-eca4-477c-983f-44d3049b8376",
+      "alias": "core-4"
+    },
+    {
+      "id": "035e6370-0582-4b11-a902-b337f57cf1e5",
+      "alias": "core-5"
+    },
+    {
+      "id": "99cde244-4a8a-4cf3-881c-6d53776d910a",
+      "alias": "core-6"
+    },
+    {
+      "id": "3271c222-d81a-449a-a9b8-651fd7768b1d",
+      "alias": "core-7"
+    }
+  ],
+  "rooms": [
+    "731fd6db-20d8-413a-bb33-f239442ca6ac",
+    "e1f7168e-5156-47c4-a71f-10da30882323"
+  ],
+  "scope": "Core RPC staging; synthetic only",
+  "raceSemantics": "Operations serialize at DB locks. A promotion already committed before leave may remain in audit; final membership is inactive. Deadlock victims must retry.",
+  "complete": true
+}

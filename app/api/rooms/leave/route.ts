@@ -43,7 +43,7 @@ export async function POST(req: Request) {
       .eq('user_id', userId)
       .maybeSingle()
 
-    if (memErr) return NextResponse.json({ ok: false, error: memErr.message }, { status: 500 })
+    if (memErr) return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     if (!mem || mem.left_at != null) {
       return NextResponse.json({ ok: false, error: '参加していません' }, { status: 400 })
     }
@@ -72,10 +72,10 @@ export async function POST(req: Request) {
       .eq('user_id', userId)
       .is('left_at', null)
 
-    if (updErr) return NextResponse.json({ ok: false, error: updErr.message }, { status: 500 })
+    if (updErr) return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

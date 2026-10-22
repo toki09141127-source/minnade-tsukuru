@@ -1,0 +1,54 @@
+1. Post and ledger bind together
+2. Same key and payload replays same post
+3. Request stores SHA256 only, not duplicate content
+4. Different key cannot reuse upload
+5. Same key cannot change payload
+6. Other owner
+7. Other owner has no post side effect
+8. Other room
+9. Other room has no post side effect
+10. Expired
+11. Expired has no post side effect
+12. Not uploaded
+13. Not uploaded has no post side effect
+14. Failed upload
+15. Failed upload has no post side effect
+16. Cleanup claimed
+17. Cleanup claimed has no post side effect
+18. Hidden room
+19. Hidden room has no post side effect
+20. Unknown role
+21. Unknown role has no post side effect
+22. Unknown status
+23. Unknown status has no post side effect
+24. Unknown visibility
+25. Unknown visibility has no post side effect
+26. Deleted room
+27. Deleted room has no post side effect
+28. Published room
+29. Published room has no post side effect
+30. Former member
+31. Former member has no post side effect
+32. Nonmember
+33. Nonmember has no post side effect
+34. Supporter final denied
+35. Text-only post works
+36. Oversized text denied
+37. Missing upload denied
+38. Deleting post preserves used tombstone
+39. Deleted post upload cannot be reused
+40. Deleted post retry cannot recreate
+41. Owner FK preserves ledger on deletion
+42. Deleted owner cannot bind
+43. Room FK preserves cleanup path
+44. Post request failure rolls whole transaction back
+45. Rollback leaves no post and upload unused
+46. Untrusted role cannot execute actor RPC: anon
+47. Untrusted role cannot read ledger: anon
+48. Direct path mutation denied: anon
+49. Untrusted role cannot execute actor RPC: authenticated
+50. Untrusted role cannot read ledger: authenticated
+51. Direct path mutation denied: authenticated
+52. 21st post in fixed window denied
+53. Rate limit isolated by actor
+Completed 53 local PostgreSQL checks. Synthetic schema only; not Supabase or multi-connection validation.

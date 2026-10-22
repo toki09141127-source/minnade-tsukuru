@@ -1,0 +1,78 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Synthetic authenticated session",
+      "status": "PASS"
+    },
+    {
+      "name": "Own profile only over real REST",
+      "status": "PASS"
+    },
+    {
+      "name": "Wrong-user profile yields no rows",
+      "status": "PASS"
+    },
+    {
+      "name": "Anon private profile denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Internal profile column denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Direct profile mutation denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Own memberships only",
+      "status": "PASS"
+    },
+    {
+      "name": "Anon membership enumeration denied",
+      "status": "PASS"
+    },
+    {
+      "name": "REST role escalation denied",
+      "status": "PASS"
+    },
+    {
+      "name": "No general UPDATE for last_seen",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous safe listing and counts work",
+      "status": "PASS"
+    },
+    {
+      "name": "Internal list column absent",
+      "status": "PASS"
+    },
+    {
+      "name": "Old broad view denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Invite secret denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Public profile projection works",
+      "status": "PASS"
+    },
+    {
+      "name": "Public profile internal id denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Wrong consent version denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Current consent saved through self RPC",
+      "status": "PASS"
+    }
+  ],
+  "complete": true
+}

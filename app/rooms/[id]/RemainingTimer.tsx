@@ -8,7 +8,7 @@ export default function RemainingTimer(props: {
   status: string
 }) {
   const { expiresAt, status } = props
-  const [now, setNow] = useState(() => Date.now())
+  const [now, setNow] = useState<number | null>(null)
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000)
@@ -18,6 +18,7 @@ export default function RemainingTimer(props: {
   const label = useMemo(() => {
     if (status !== 'open') return '⏱ 終了'
     if (!expiresAt) return '⏱ 期限なし'
+    if (now === null) return '⏱ 確認中…'
 
     const end = new Date(expiresAt).getTime()
     const diff = end - now

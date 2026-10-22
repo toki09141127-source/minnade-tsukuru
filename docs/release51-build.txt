@@ -1,0 +1,96 @@
+▲ Next.js 16.4.2 (webpack)
+- Environments: .env.local
+✓ Running next.config.ts took 205ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 8.5s
+  Running TypeScript ...
+  Finished TypeScript in 4.7s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/30) ...
+  Generating static pages using 7 workers (7/30) 
+  Generating static pages using 7 workers (14/30) 
+  Generating static pages using 7 workers (22/30) 
+✓ Generating static pages using 7 workers (30/30) in 1319ms
+  Finalizing page optimization ...
+  Collecting build traces ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/account/delete
+├ ƒ /api/cron/account-deletion
+├ ƒ /api/cron/publish
+├ ƒ /api/debug/buckets
+├ ƒ /api/moderation
+├ ƒ /api/moderation/reports
+├ ƒ /api/notifications/pending-core-count
+├ ƒ /api/posts/create
+├ ƒ /api/posts/delete
+├ ƒ /api/posts/publication
+├ ƒ /api/posts/toggle-mark
+├ ƒ /api/reports/create
+├ ƒ /api/rooms/[id]/invite-code
+├ ƒ /api/rooms/approve-core
+├ ƒ /api/rooms/create
+├ ƒ /api/rooms/delete
+├ ƒ /api/rooms/expire
+├ ƒ /api/rooms/expire/join
+├ ƒ /api/rooms/join
+├ ƒ /api/rooms/join-core-by-invite
+├ ƒ /api/rooms/join-core-first-come
+├ ƒ /api/rooms/join-supporter
+├ ƒ /api/rooms/leave
+├ ƒ /api/rooms/like
+├ ƒ /api/rooms/manage-member
+├ ƒ /api/rooms/mark-read
+├ ƒ /api/rooms/reject-core
+├ ƒ /api/rooms/request-core
+├ ƒ /api/rooms/seen
+├ ƒ /api/rooms/unread-map
+├ ƒ /api/storage/sign
+├ ƒ /api/update
+├ ƒ /api/uploads
+├ ƒ /api/uploads/public/[postId]
+├ ƒ /api/uploads/sign
+├ ƒ /api/works/draft
+├ ○ /apple-icon.png
+├ ○ /auth/callback
+├ ○ /auth/reset-password
+├ ○ /guidelines
+├ ○ /icon.png
+├ ○ /login
+├ ○ /moderation
+├ ○ /privacy
+├ ○ /profile
+├ ƒ /profile/set-bio
+├ ƒ /profile/set-sns-links
+├ ƒ /profile/set-username
+├ ○ /rankings
+├ ƒ /rooms
+├ ƒ /rooms/[id]
+├ ƒ /rooms/[id]/core-approve
+├ ƒ /rooms/[id]/core-reject
+├ ƒ /rooms/[id]/core-request
+├ ƒ /rooms/[id]/core-requests
+├ ƒ /rooms/[id]/core-revoke
+├ ○ /rooms/create
+├ ƒ /rooms/join
+├ ○ /rooms/new
+├ ƒ /terms
+├ ƒ /u/[username]
+├ ƒ /works
+└ ƒ /works/[id]
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
+
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy

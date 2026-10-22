@@ -82,7 +82,7 @@ export async function POST(req: Request) {
       .eq('id', userId)
 
     if (upErr) {
-      return NextResponse.json({ ok: false, error: upErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     // ③ public_profiles にも同期（links jsonb）
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       .maybeSingle()
 
     if (profErr) {
-      return NextResponse.json({ ok: false, error: profErr.message }, { status: 500 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     }
 
     const username = (prof?.username ?? '').trim()
@@ -113,12 +113,12 @@ export async function POST(req: Request) {
       )
 
       if (pubErr) {
-        return NextResponse.json({ ok: false, error: pubErr.message }, { status: 500 })
+        return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
       }
     }
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'Server error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
   }
 }

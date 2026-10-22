@@ -1,0 +1,37 @@
+{
+  "status": "ok",
+  "deployment": {
+    "id": "dpl_AWi4i7pKPnC3hNPbtfV5XnAFtnNK",
+    "url": "https://minnade-tsukuru-staging-h1aaacyj9-sonetokiyas-projects.vercel.app",
+    "productionUrl": null,
+    "inspectorUrl": "https://vercel.com/sonetokiyas-projects/minnade-tsukuru-staging/AWi4i7pKPnC3hNPbtfV5XnAFtnNK",
+    "readyState": "INITIALIZING",
+    "target": "production",
+    "deploymentApiUrl": "https://api.vercel.com/v13/deployments/dpl_AWi4i7pKPnC3hNPbtfV5XnAFtnNK",
+    "buildMachine": {
+      "machine": "basic",
+      "selectionType": "fixed",
+      "selectionSource": "plan-default"
+    },
+    "deploymentProtection": [
+      "vercel_authentication"
+    ]
+  },
+  "message": "Deployment minnade-tsukuru-staging-h1aaacyj9-sonetokiyas-projects.vercel.app ready.",
+  "next": [
+    {
+      "command": "vercel curl https://minnade-tsukuru-staging-h1aaacyj9-sonetokiyas-projects.vercel.app",
+      "when": "Verify deployment, including when Deployment Protection is enabled"
+    },
+    {
+      "command": "vercel inspect minnade-tsukuru-staging-h1aaacyj9-sonetokiyas-projects.vercel.app --cwd C:\\Users\\Sonet\\AppData\\Local\\Temp\\minnade-release50-preview --scope sonetokiyas-projects",
+      "when": "Inspect deployment"
+    },
+    {
+      "command": "vercel deploy --prod --cwd C:\\Users\\Sonet\\AppData\\Local\\Temp\\minnade-release50-preview --scope sonetokiyas-projects",
+      "when": "Promote to production"
+    }
+  ]
+}
+  Inspect         https://vercel.com/sonetokiyas-projects/minnade-tsukuru-staging/AWi4i7pKPnC3hNPbtfV5XnAFtnNK
+▲ Production      https://minnade-tsukuru-staging-h1aaacyj9-sonetokiyas-projects.vercel.app

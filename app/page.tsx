@@ -10,7 +10,7 @@ export default function HomePage() {
       <div className="heroWrap">
         <div className="heroTopRow">
           <div className="heroTitle">
-            <span className="heroBadge">⏳ 時間制限つき / forced_publish</span>
+            <span className="heroBadge">⏳ 時間制限つき・期限に自動公開</span>
             <span className="heroBadge">🧑‍🤝‍🧑 共同制作</span>
             <span className="heroBadge">📝 掲示板</span>
           </div>
@@ -40,7 +40,7 @@ export default function HomePage() {
           </p>
 
           <p>
-            ルームに集まって掲示板でアイデア出し・制作ログ・素材共有をし、期限が来たら自動で公開（forced_publish）されます。
+            ルームに集まって掲示板でアイデア出し・制作ログ・素材共有をし、期限が来たら自動で公開されます。
             <br />
             「1人だと止まる」を、「みんなの勢い」で突破して、ちゃんと作品を完成させよう。
           </p>
@@ -151,7 +151,7 @@ export default function HomePage() {
           <p>
             <b>Q. 公開タイミングは？</b>
             <br />
-            A. 期限が来たら自動で公開（forced_publish）され、作品ページへ移動できます。
+            A. 期限が来たら自動で公開され、作品ページへ移動できます。
           </p>
 
           <p>

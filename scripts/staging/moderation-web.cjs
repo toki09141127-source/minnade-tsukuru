@@ -1,0 +1,37 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),assert=require('assert/strict'),net=require('net'),{spawn}=require('child_process');
+const {createClient}=require('@supabase/supabase-js'),{load}=require('./safety.cjs');
+(async()=>{
+ const c=load(),runtime=process.env.MVP_TEST_RUNTIME,{chromium}=require(path.join(runtime,'node_modules/playwright-core'));
+ const admin=createClient(c.url,c.env.SUPABASE_SERVICE_ROLE_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+ const fixture=JSON.parse(fs.readFileSync('docs/web-full-staging-result.json','utf8'));assert.equal(fixture.projectRef,c.ref);assert.equal(fixture.complete,true);
+ const prior=process.env.MVP_MOD_RESUME==='true'?JSON.parse(fs.readFileSync('docs/moderation-web-result.json','utf8')):null;
+ const run=prior?.runId||crypto.randomUUID(),r={runId:run,projectRef:c.ref,checks:[],complete:false},creds=prior?JSON.parse(fs.readFileSync(path.join(c.root,'.staging-private',run+'.json'))).credentials:[];
+ const save=()=>{fs.writeFileSync(path.join(c.root,'.staging-private',run+'.json'),JSON.stringify({projectRef:c.ref,credentials:creds}));fs.writeFileSync('docs/moderation-web-result.json',JSON.stringify(r,null,2))};
+ const ok=n=>{r.checks.push({name:n,status:'PASS'});save();console.log('PASS '+n)};
+ let server,browser,log,phase='seed';
+ try{
+  for(const alias of (prior?[]:['operator','outsider'])){const email='mod-'+alias+'-'+run+'@example.invalid',password=crypto.randomBytes(32).toString('base64url');const x=await admin.auth.admin.createUser({email,password,email_confirm:true,user_metadata:{synthetic:true,test_run:run}});assert.ok(!x.error);creds.push({alias,id:x.data.user.id,email,password});save()}
+  assert.ok(!(await admin.from('moderation_operators').upsert({user_id:creds[0].id})).error);
+  const receipt=crypto.randomUUID(),reason='SYNTHETIC MODERATION '+run+' '+crypto.randomUUID();
+  assert.ok(!(await admin.from('report_intake').insert({id:receipt,reporter_user_id:creds[1].id,request_id:crypto.randomUUID(),target_type:'room',target_id:fixture.room,reason,state:'pending',created_at:new Date(Date.now()-90000000).toISOString()})).error);
+  const listener=net.createServer();await new Promise(a=>listener.listen(0,'127.0.0.1',a));const port=listener.address().port;await new Promise(a=>listener.close(a));const base='http://127.0.0.1:'+port;
+  log=fs.openSync(path.join(c.root,'.staging-private','moderation-web-server.log'),'w');
+  server=spawn(process.execPath,['--require',path.join(__dirname,'web-network.cjs'),'node_modules/next/dist/bin/next','dev','--webpack','-H','127.0.0.1','-p',String(port)],{cwd:c.root,windowsHide:true,stdio:['ignore',log,log],env:{...process.env,...c.env,NODE_OPTIONS:'',SUPABASE_URL:c.url,NEXT_TELEMETRY_DISABLED:'1',MVP_ACCOUNT_REQUESTS_ENABLED:'false',MVP_ACCOUNT_FINALIZE_ENABLED:'false',MVP_DB_GUARDS_ENABLED:'true',MVP_REPORT_QUEUE_ENABLED:'true',MVP_MODERATION_ENABLED:'true'}});
+  let ready=false;for(let i=0;i<120;i++){try{if((await fetch(base+'/login')).ok){ready=true;break}}catch{}await new Promise(a=>setTimeout(a,500))}assert.ok(ready);
+  browser=await chromium.launch({headless:true,executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe'});
+  const page=async user=>{phase='login-'+user.alias;const ctx=await browser.newContext();await ctx.route('**/*',route=>[base,c.url].includes(new URL(route.request().url()).origin)?route.continue():route.abort());const p=await ctx.newPage();p.setDefaultTimeout(20000);await p.goto(base+'/login');await p.locator('input[type=email]').fill(user.email);await p.locator('input[type=password]').fill(user.password);await p.getByRole('button',{name:'ログイン',exact:true}).click();await p.waitForURL(base+'/');phase='consent-'+user.alias;const d=p.getByRole('dialog');await d.waitFor({timeout:5000}).catch(()=>{});if(await d.isVisible()){for(const box of await d.getByRole('checkbox').all())await box.check();await d.getByRole('button',{name:'同意して続ける',exact:true}).click();await d.waitFor({state:'hidden'});}phase='moderation-'+user.alias;await p.goto(base+'/moderation');await d.waitFor({timeout:5000}).catch(()=>{});if(await d.isVisible()){for(const box of await d.getByRole('checkbox').all())await box.check();await d.getByRole('button',{name:'同意して続ける',exact:true}).click();await d.waitFor({state:'hidden'});}return p};
+  phase='unauthorized';const outsider=await page(creds[1]);await outsider.getByRole('button',{name:'一覧を更新',exact:true}).click();await outsider.getByText('一覧を取得できません。運営権限・ログイン・機能設定を確認してください。',{exact:true}).waitFor();ok('Non-operator queue access denied through Web');
+  phase='operator';const operator=await page(creds[0]);await operator.getByRole('button',{name:'一覧を更新',exact:true}).click();const item=operator.locator('article').filter({hasText:reason});await item.waitFor();ok('Operator sees pending and overdue queue');
+  await item.getByRole('button',{name:'非表示にして対応済み',exact:true}).click();await operator.getByText('対応理由を入力してください',{exact:true}).waitFor();ok('Empty resolution reason blocked');
+  await item.getByLabel('対応理由').fill('SYNTHETIC OPERATOR REVIEW');operator.once('dialog',d=>d.accept());await item.getByRole('button',{name:'非表示にして対応済み',exact:true}).click();await operator.getByText('対応結果を監査記録に保存しました。',{exact:true}).waitFor();
+  assert.equal((await admin.from('rooms').select('is_hidden').eq('id',fixture.room).single()).data.is_hidden,true);ok('Retired Creator room hidden with audited resolution');
+  await operator.getByRole('button',{name:'一覧を更新',exact:true}).click();await item.waitFor({state:'detached'});ok('Resolved receipt absent after reload');
+  phase='restore';await operator.locator('select').first().selectOption('room');await operator.getByLabel('対象ID',{exact:true}).fill(fixture.room);await operator.getByLabel('非表示にする（解除時は復旧）').uncheck();operator.once('dialog',d=>d.accept());await operator.getByRole('button',{name:'実行する',exact:true}).click();await operator.getByText('処理しました。対象の公開状態を確認してください。',{exact:true}).waitFor();assert.equal((await admin.from('rooms').select('is_hidden').eq('id',fixture.room).single()).data.is_hidden,false);ok('Scoped operator restores retired Creator room');
+  phase='withdrawing';const job=await admin.rpc('mvp_request_deletion',{p_actor:creds[0].id,p_attribution:'anonymous',p_policy:'withdrawal-draft-2026-10-21'});assert.ok(!job.error);
+  await operator.getByRole('button',{name:'一覧を更新',exact:true}).click();await operator.getByText('一覧を取得できません。運営権限・ログイン・機能設定を確認してください。',{exact:true}).waitFor();ok('Withdrawing operator denied with existing session');
+  await operator.screenshot({path:path.join(c.root,'docs/moderation-web-proof.png'),fullPage:true});
+  r.complete=true;
+ }catch(e){if(browser){const ps=browser.contexts().flatMap(x=>x.pages());if(ps.length)await ps[ps.length-1].screenshot({path:path.join(c.root,'docs/moderation-web-debug.png'),fullPage:true}).catch(()=>{});}r.failure={phase,code:e.name,assertion:e.name==='AssertionError'?e.message:undefined};process.exitCode=1}
+ finally{if(browser)await browser.close();if(server){server.kill();await new Promise(a=>{if(server.exitCode!==null||server.signalCode!==null)return a();server.once('exit',a);setTimeout(a,5000)});r.serverStopped=server.exitCode!==null||server.signalCode!==null}if(log!==undefined)fs.closeSync(log);save()}
+})().catch(()=>{console.error('MODERATION_WEB_SETUP_FAILED');process.exitCode=1});

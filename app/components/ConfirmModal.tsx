@@ -1,5 +1,7 @@
 'use client'
 
+import { useDialogFocus } from '@/lib/useDialogFocus'
+
 import React from 'react'
 
 export default function ConfirmModal({
@@ -23,6 +25,7 @@ export default function ConfirmModal({
   onCancel: () => void
   onConfirm: () => void
 }) {
+  const dialogFocus = useDialogFocus(open, onCancel, loading)
   if (!open) return null
 
   const smallButtonStyle: React.CSSProperties = {
@@ -54,6 +57,8 @@ export default function ConfirmModal({
   return (
     <div
       role="dialog"
+      aria-label={title}
+      {...dialogFocus}
       aria-modal="true"
       onClick={() => !loading && onCancel()}
       style={{
@@ -72,6 +77,8 @@ export default function ConfirmModal({
         style={{
           width: '100%',
           maxWidth: 420,
+          maxHeight: '90dvh',
+          overflowY: 'auto',
           background: '#fff',
           borderRadius: 14,
           padding: 14,

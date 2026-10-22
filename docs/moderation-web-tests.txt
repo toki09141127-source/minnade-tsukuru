@@ -1,0 +1,7 @@
+PASS Non-operator queue access denied through Web
+PASS Operator sees pending and overdue queue
+PASS Empty resolution reason blocked
+PASS Retired Creator room hidden with audited resolution
+PASS Resolved receipt absent after reload
+PASS Scoped operator restores retired Creator room
+PASS Withdrawing operator denied with existing session

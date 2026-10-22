@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react'
 
 export default function AttachmentView({
+  postId,
   path,
   mime,
 }: {
+  postId: string
   path: string | null | undefined
   mime: string | null | undefined
 }) {
@@ -24,10 +26,14 @@ export default function AttachmentView({
         const res = await fetch('/api/storage/sign', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ path: p }),
+          body: JSON.stringify({ postId }),
         })
 
-        const json = (await res.json().catch(() => ({}))) as any
+        const json = (await res.json().catch(() => ({}))) as {
+          error?: string
+          signedUrl?: string
+          url?: string
+        }
         if (!res.ok) {
           setErr(json?.error ?? '署名URLの取得に失敗しました')
           return
@@ -40,13 +46,13 @@ export default function AttachmentView({
         }
 
         setUrl(signedUrl)
-      } catch (e: any) {
-        setErr(e?.message ?? '署名URLの取得に失敗しました')
+      } catch (error: unknown) {
+        setErr(error instanceof Error ? error.message : '署名URLの取得に失敗しました')
       }
     }
 
     run()
-  }, [path])
+  }, [path, postId])
 
   const m = (mime ?? '').toLowerCase()
   const isImage = m.startsWith('image/')

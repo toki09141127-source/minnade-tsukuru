@@ -1,0 +1,2692 @@
+{
+  "project": "joedeuyrzimqyjapqpyh",
+  "source": "Dashboard catalog queries; read-only transaction; rollback; no user rows",
+  "columns": [
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "room_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "user_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "username",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "content",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "phase",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "like_count",
+      "type_name": "integer",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "edited_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "is_hidden",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "deleted_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "attachment_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "attachment_type",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "post_type",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "is_marked",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "marked_by",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "posts",
+      "attname": "marked_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "username",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "deleted_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "x_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "youtube_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "instagram_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "tiktok_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "website_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "bio",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "terms_version",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "terms_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "privacy_version",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "profiles",
+      "attname": "privacy_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "username",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "bio",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "avatar_url",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "links",
+      "type_name": "jsonb",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "public_profiles",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "room_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "user_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "requested_role",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "message",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "status",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "decided_by",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "decided_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "room_terms_version",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "room_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "forced_publish_ack_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_join_requests",
+      "attname": "core_lock_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "room_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "user_id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "joined_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "username",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "is_core",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "role",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "left_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "approved_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "approved_by",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "last_seen_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "room_terms_version",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "room_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "forced_publish_ack_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "room_members",
+      "attname": "core_lock_agreed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "title",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "work_type",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "page_format",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "time_limit_hours",
+      "type_name": "integer",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "status",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "host_ids",
+      "type_name": "uuid[]",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "created_by",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "started_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "ended_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "like_count",
+      "type_name": "integer",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "expires_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "deleted_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "is_adult",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "is_hidden",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "host_id",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "category",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "type",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "concept",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "enable_core_approval",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "enable_core_invite",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "core_invite_code",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "public",
+      "relname": "rooms",
+      "attname": "ai_level",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "id",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "name",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "owner",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "public",
+      "type_name": "boolean",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "avif_autodetection",
+      "type_name": "boolean",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "file_size_limit",
+      "type_name": "bigint",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "allowed_mime_types",
+      "type_name": "text[]",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "owner_id",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "type",
+      "type_name": "storage.buckettype",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "versioning_status",
+      "type_name": "text",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "lifecycle_configuration",
+      "type_name": "jsonb",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "buckets",
+      "attname": "lifecycle_configuration_generation",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "id",
+      "type_name": "uuid",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "bucket_id",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "name",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "owner",
+      "type_name": "uuid",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "created_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "updated_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "last_accessed_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "metadata",
+      "type_name": "jsonb",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "path_tokens",
+      "type_name": "text[]",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "version",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "owner_id",
+      "type_name": "text",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "user_metadata",
+      "type_name": "jsonb",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "archived_at",
+      "type_name": "timestamp with time zone",
+      "attnotnull": false
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "is_delete_marker",
+      "type_name": "boolean",
+      "attnotnull": true
+    },
+    {
+      "schema_name": "storage",
+      "relname": "objects",
+      "attname": "is_versioned",
+      "type_name": "boolean",
+      "attnotnull": true
+    }
+  ],
+  "foreignKeys": [
+    {
+      "conname": "identities_user_id_fkey",
+      "source_table": "auth.identities",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "mfa_factors_user_id_fkey",
+      "source_table": "auth.mfa_factors",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "mfa_recovery_code_sets_user_id_fkey",
+      "source_table": "auth.mfa_recovery_code_sets",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "oauth_authorizations_user_id_fkey",
+      "source_table": "auth.oauth_authorizations",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "oauth_consents_user_id_fkey",
+      "source_table": "auth.oauth_consents",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "one_time_tokens_user_id_fkey",
+      "source_table": "auth.one_time_tokens",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "scim_users_user_id_fkey",
+      "source_table": "auth.scim_users",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "conname": "sessions_user_id_fkey",
+      "source_table": "auth.sessions",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "webauthn_challenges_user_id_fkey",
+      "source_table": "auth.webauthn_challenges",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "webauthn_credentials_user_id_fkey",
+      "source_table": "auth.webauthn_credentials",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "decisions_decided_by_fkey",
+      "source_table": "decisions",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (decided_by) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "event_members_user_id_fkey",
+      "source_table": "event_members",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "events_created_by_fkey",
+      "source_table": "events",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id)"
+    },
+    {
+      "conname": "novel_drafts_updated_by_fkey",
+      "source_table": "novel_drafts",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (updated_by) REFERENCES auth.users(id)"
+    },
+    {
+      "conname": "post_likes_user_id_fkey",
+      "source_table": "post_likes",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "posts_marked_by_fkey",
+      "source_table": "posts",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (marked_by) REFERENCES auth.users(id) ON DELETE SET NULL"
+    },
+    {
+      "conname": "posts_room_id_fkey",
+      "source_table": "posts",
+      "target_table": "rooms",
+      "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "profiles_id_fkey",
+      "source_table": "profiles",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "public_profiles_id_fkey",
+      "source_table": "public_profiles",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_join_requests_decided_by_fkey",
+      "source_table": "room_join_requests",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (decided_by) REFERENCES auth.users(id)"
+    },
+    {
+      "conname": "room_join_requests_room_id_fkey",
+      "source_table": "room_join_requests",
+      "target_table": "rooms",
+      "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_join_requests_user_id_fkey",
+      "source_table": "room_join_requests",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_likes_room_id_fkey",
+      "source_table": "room_likes",
+      "target_table": "rooms",
+      "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_members_approved_by_fkey",
+      "source_table": "room_members",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (approved_by) REFERENCES auth.users(id)"
+    },
+    {
+      "conname": "room_members_room_id_fkey",
+      "source_table": "room_members",
+      "target_table": "rooms",
+      "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_members_user_id_fkey",
+      "source_table": "room_members",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_pre_archive_notes_author_id_fkey",
+      "source_table": "room_pre_archive_notes",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (author_id) REFERENCES auth.users(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "room_pre_archive_notes_room_id_fkey",
+      "source_table": "room_pre_archive_notes",
+      "target_table": "rooms",
+      "definition": "FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE"
+    },
+    {
+      "conname": "rooms_created_by_fkey",
+      "source_table": "rooms",
+      "target_table": "auth.users",
+      "definition": "FOREIGN KEY (created_by) REFERENCES auth.users(id)"
+    },
+    {
+      "conname": "objects_bucketId_fkey",
+      "source_table": "storage.objects",
+      "target_table": "storage.buckets",
+      "definition": "FOREIGN KEY (bucket_id) REFERENCES storage.buckets(id)"
+    },
+    {
+      "conname": "s3_multipart_uploads_bucket_id_fkey",
+      "source_table": "storage.s3_multipart_uploads",
+      "target_table": "storage.buckets",
+      "definition": "FOREIGN KEY (bucket_id) REFERENCES storage.buckets(id)"
+    },
+    {
+      "conname": "s3_multipart_uploads_parts_bucket_id_fkey",
+      "source_table": "storage.s3_multipart_uploads_parts",
+      "target_table": "storage.buckets",
+      "definition": "FOREIGN KEY (bucket_id) REFERENCES storage.buckets(id)"
+    }
+  ],
+  "triggers": [
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16689",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16690",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16717",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16718",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16753",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16754",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16944",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_16945",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17023",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17024",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17042",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17043",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17553",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17554",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17574",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17575",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17615",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17616",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17640",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17641",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17659",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17660",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17805",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_17806",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_18933",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_18934",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_18965",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_18966",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_19063",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_19064",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32905",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32906",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32910",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32911",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32920",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_32921",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_36289",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1650,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_setnull_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_36290",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_37419",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_37420",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_66368",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_66369",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_66385",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_66386",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_85783",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1650,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_setnull_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_85784",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_85831",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "RI_ConstraintTrigger_a_85832",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "auth",
+      "relname": "users",
+      "tgname": "on_auth_user_created_profile",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 21458,
+      "function_schema": "public",
+      "proname": "handle_new_user_profile",
+      "prosecdef": true
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "tgname": "RI_ConstraintTrigger_c_17632",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "tgname": "RI_ConstraintTrigger_c_17633",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "tgname": "RI_ConstraintTrigger_c_17642",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "decisions",
+      "tgname": "RI_ConstraintTrigger_c_17643",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "tgname": "RI_ConstraintTrigger_c_17571",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "tgname": "RI_ConstraintTrigger_c_17572",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "tgname": "RI_ConstraintTrigger_c_17576",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "event_members",
+      "tgname": "RI_ConstraintTrigger_c_17577",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17569",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17570",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17630",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17631",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17654",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_a_17655",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_c_17555",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "events",
+      "tgname": "RI_ConstraintTrigger_c_17556",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "tgname": "RI_ConstraintTrigger_c_17656",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "tgname": "RI_ConstraintTrigger_c_17657",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "tgname": "RI_ConstraintTrigger_c_17661",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "novel_drafts",
+      "tgname": "RI_ConstraintTrigger_c_17662",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "post_likes",
+      "tgname": "RI_ConstraintTrigger_c_17617",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "post_likes",
+      "tgname": "RI_ConstraintTrigger_c_17618",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "post_likes",
+      "tgname": "post_likes_count_del",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20210,
+      "function_schema": "public",
+      "proname": "handle_post_like_count",
+      "prosecdef": true
+    },
+    {
+      "nspname": "public",
+      "relname": "post_likes",
+      "tgname": "post_likes_count_ins",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20210,
+      "function_schema": "public",
+      "proname": "handle_post_like_count",
+      "prosecdef": true
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "RI_ConstraintTrigger_c_19004",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "RI_ConstraintTrigger_c_19005",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "RI_ConstraintTrigger_c_36291",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "RI_ConstraintTrigger_c_36292",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "trg_fill_post_username",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20344,
+      "function_schema": "public",
+      "proname": "fill_post_username",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "posts",
+      "tgname": "trg_posts_set_edited_at",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20216,
+      "function_schema": "public",
+      "proname": "set_posts_edited_at",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "profiles",
+      "tgname": "RI_ConstraintTrigger_c_18967",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "profiles",
+      "tgname": "RI_ConstraintTrigger_c_18968",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "profiles",
+      "tgname": "set_updated_at_on_profiles",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20339,
+      "function_schema": "public",
+      "proname": "set_updated_at",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "profiles",
+      "tgname": "trg_profiles_updated_at",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20339,
+      "function_schema": "public",
+      "proname": "set_updated_at",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "public_profiles",
+      "tgname": "RI_ConstraintTrigger_c_37421",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "public_profiles",
+      "tgname": "RI_ConstraintTrigger_c_37422",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "reports",
+      "tgname": "tr_reports_auto_hide",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 23728,
+      "function_schema": "public",
+      "proname": "apply_auto_hide",
+      "prosecdef": true
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32902",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32903",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32907",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32908",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32912",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "RI_ConstraintTrigger_c_32913",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_join_requests",
+      "tgname": "trg_room_join_requests_updated_at",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20339,
+      "function_schema": "public",
+      "proname": "set_updated_at",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "RI_ConstraintTrigger_c_19023",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "RI_ConstraintTrigger_c_19024",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "trg_room_likes_after_delete",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20300,
+      "function_schema": "public",
+      "proname": "room_likes_after_change",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "trg_room_likes_after_insert",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20300,
+      "function_schema": "public",
+      "proname": "room_likes_after_change",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "trg_room_likes_sync_del",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20320,
+      "function_schema": "public",
+      "proname": "sync_room_like_count",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_likes",
+      "tgname": "trg_room_likes_sync_ins",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20320,
+      "function_schema": "public",
+      "proname": "sync_room_like_count",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_18930",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_18931",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_18935",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_18936",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_32922",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "RI_ConstraintTrigger_c_32923",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_members",
+      "tgname": "trg_enforce_core_limit",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 19074,
+      "function_schema": "public",
+      "proname": "enforce_core_limit",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "tgname": "RI_ConstraintTrigger_c_19060",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "tgname": "RI_ConstraintTrigger_c_19061",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "tgname": "RI_ConstraintTrigger_c_19065",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "room_pre_archive_notes",
+      "tgname": "RI_ConstraintTrigger_c_19066",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_18928",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_18929",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19002",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19003",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19021",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19022",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19058",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_19059",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_32900",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_a_32901",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_c_17807",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "RI_ConstraintTrigger_c_17808",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "public",
+      "relname": "rooms",
+      "tgname": "trg_rooms_expires_at",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 20315,
+      "function_schema": "public",
+      "proname": "set_room_expires_at",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17106",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17107",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17154",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17155",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17174",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "RI_ConstraintTrigger_a_17175",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "enforce_bucket_name_length_trigger",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 17233,
+      "function_schema": "storage",
+      "proname": "enforce_bucket_name_length",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "protect_bucket_control_insert",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 85909,
+      "function_schema": "storage",
+      "proname": "protect_bucket_control_columns",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "protect_bucket_control_update",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 85909,
+      "function_schema": "storage",
+      "proname": "protect_bucket_control_columns",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "protect_bucket_control_update_role",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 85910,
+      "function_schema": "storage",
+      "proname": "enforce_bucket_lifecycle_service_role",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets",
+      "tgname": "protect_buckets_delete",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 28289,
+      "function_schema": "storage",
+      "proname": "protect_delete",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets_vectors",
+      "tgname": "RI_ConstraintTrigger_a_17290",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1654,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "buckets_vectors",
+      "tgname": "RI_ConstraintTrigger_a_17291",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "objects",
+      "tgname": "RI_ConstraintTrigger_c_17108",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "objects",
+      "tgname": "RI_ConstraintTrigger_c_17109",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "objects",
+      "tgname": "protect_objects_delete",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 28289,
+      "function_schema": "storage",
+      "proname": "protect_delete",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "objects",
+      "tgname": "update_objects_updated_at",
+      "tgenabled": "O",
+      "tgisinternal": false,
+      "function_oid": 17130,
+      "function_schema": "storage",
+      "proname": "update_updated_at_column",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads",
+      "tgname": "RI_ConstraintTrigger_a_17169",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1646,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_cascade_del",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads",
+      "tgname": "RI_ConstraintTrigger_a_17170",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1655,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_noaction_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads",
+      "tgname": "RI_ConstraintTrigger_c_17156",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads",
+      "tgname": "RI_ConstraintTrigger_c_17157",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads_parts",
+      "tgname": "RI_ConstraintTrigger_c_17171",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads_parts",
+      "tgname": "RI_ConstraintTrigger_c_17172",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads_parts",
+      "tgname": "RI_ConstraintTrigger_c_17176",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "s3_multipart_uploads_parts",
+      "tgname": "RI_ConstraintTrigger_c_17177",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "vector_indexes",
+      "tgname": "RI_ConstraintTrigger_c_17292",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1644,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_ins",
+      "prosecdef": false
+    },
+    {
+      "nspname": "storage",
+      "relname": "vector_indexes",
+      "tgname": "RI_ConstraintTrigger_c_17293",
+      "tgenabled": "O",
+      "tgisinternal": true,
+      "function_oid": 1645,
+      "function_schema": "pg_catalog",
+      "proname": "RI_FKey_check_upd",
+      "prosecdef": false
+    }
+  ]
+}

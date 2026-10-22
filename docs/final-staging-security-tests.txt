@@ -1,0 +1,722 @@
+
+> minnade-tsukuru@0.1.0 test:security
+> node docs/run-security-checks.cjs
+
+1. Public visible post allowed anonymously: HTTP 200
+2. Old arbitrary path input rejected: HTTP 400
+3. Public invalid post rejected {"is_hidden":true}: HTTP 404
+4. Public invalid post rejected {"is_hidden":null}: HTTP 404
+5. Public invalid post rejected {"deleted_at":"deleted"}: HTTP 404
+6. Public invalid post rejected {"attachment_url":null}: HTTP 404
+7. Public invalid room rejected {"status":"open"}: HTTP 404
+8. Public invalid room rejected {"status":"closed"}: HTTP 404
+9. Public invalid room rejected {"is_hidden":true}: HTTP 404
+10. Public invalid room rejected {"is_hidden":null}: HTTP 404
+11. Public invalid room rejected {"deleted_at":"deleted"}: HTTP 404
+12. Missing post denied: HTTP 404
+13. Missing room denied: HTTP 404
+14. Active member allowed: HTTP 200
+15. No token denied: HTTP 401
+16. Invalid token denied: HTTP 401
+17. Nonmember denied: HTTP 403
+18. Former member denied: HTTP 403
+19. Member hidden/deleted post denied: HTTP 404
+20. Member hidden/deleted post denied: HTTP 404
+21. Text post without legacy path accepted: HTTP 200
+22. Invalid attachment rejected rooms/room-b/images/x.png: HTTP 400
+23. Invalid attachment rejected https://example.invalid/a.png: HTTP 400
+24. Invalid attachment rejected rooms/room-a//x.png: HTTP 400
+25. Invalid attachment rejected rooms/room-a/../x.png: HTTP 400
+26. Invalid attachment rejected rooms/room-a/./x.png: HTTP 400
+27. Invalid attachment rejected rooms/room-a/images\x.png: HTTP 400
+28. Invalid attachment rejected rooms/room-a/: HTTP 400
+29. No attachment accepted: HTTP 200
+30. Former member cannot post: HTTP 403
+31. Supporter cannot submit final: HTTP 403
+32. Core can submit final: HTTP 200
+33. Published room cannot accept posts: HTTP 403
+--- Regression checks for additional fixes ---
+34. Unavailable room signing denied: HTTP 404
+35. Unavailable room posting denied: HTTP 404
+36. Unavailable room upload denied: HTTP 404
+37. Unavailable room signing denied: HTTP 404
+38. Unavailable room posting denied: HTTP 404
+39. Unavailable room upload denied: HTTP 404
+40. Legacy cross-room public signing denied: HTTP 404
+41. Legacy cross-room member signing denied: HTTP 404
+42. FIXED: legacy same-room path is not ownership evidence: HTTP 400
+43. Alternate public endpoint denies hidden post: HTTP 404
+44. Alternate public endpoint denies unpublished room: HTTP 404
+45. Alternate public endpoint redirects visible published attachment: HTTP 302
+46. Upload fails closed until ledger enabled: HTTP 503
+47. Ambiguous path denied on create: HTTP 400
+48. Ambiguous path denied on sign: HTTP 404
+49. Ambiguous path denied on create: HTTP 400
+50. Ambiguous path denied on sign: HTTP 404
+51. Ambiguous path denied on create: HTTP 400
+52. Ambiguous path denied on sign: HTTP 404
+53. No login denied: uploads: HTTP 401
+54. Nonmember denied: uploads: HTTP 403
+55. Former member denied: uploads: HTTP 403
+56. No login denied: posts/create: HTTP 401
+57. Nonmember denied: posts/create: HTTP 403
+58. Former member denied: posts/create: HTTP 403
+59. Enabled ledger reserves and confirms upload: HTTP 200
+60. Post uses atomic RPC: HTTP 200
+61. Shared rate limit rejects posts: HTTP 429
+62. Shared rate limit rejects uploads: HTTP 429
+63. DB guard failure fails closed: HTTP 503
+64. Long text rejected: HTTP 413
+65. Expired room refuses posts before cron: HTTP 403
+Completed 65 assertions; fake database/storage only; no external requests or real mutations.
+1. Atomic join has no legacy write fallback: 200
+2. Atomic join has no legacy write fallback: 200
+3. Atomic join has no legacy write fallback: 409
+4. Atomic join has no legacy write fallback: 403
+5. Atomic join has no legacy write fallback: 503
+6. Atomic join has no legacy write fallback: 401
+7. FIXED: retired expire has no DB access
+8. FIXED: retired debug has no Storage access
+9. FIXED: retired join cannot bypass consent/capacity or demote core: app/api/rooms/join/route.ts
+10. FIXED: retired join preserves is_core: app/api/rooms/join/route.ts
+11. Retired join denies unauthenticated caller: app/api/rooms/join/route.ts
+12. FIXED: retired join cannot bypass aged-core leave lock
+13. Control: aged core leave alone denied
+14. FIXED: current supporter join rejects hidden/deleted room
+15. Control: current supporter join requires consent
+16. FIXED: legacy expire/join has no DB access
+17. FIXED: retired creator approval cannot insert core
+18. Retired approval denies noncreator without DB access
+19. FIXED: former member cannot delete own post
+20. Control: cron denies missing secret
+21. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=true
+22. Retired endpoint never reaches service: app/api/rooms/expire/route.ts token=false
+23. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=true
+24. Retired endpoint never reaches service: app/api/debug/buckets/route.ts token=false
+25. Retired endpoint never reaches service: app/rooms/join/route.ts token=true
+26. Retired endpoint never reaches service: app/rooms/join/route.ts token=false
+27. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=true
+28. Retired endpoint never reaches service: app/api/rooms/expire/join/route.ts token=false
+29. Old privileged Core entry is retired: join-core-first-come
+30. Old privileged Core entry is retired: join-core-by-invite
+31. Disabled atomic Core route has no legacy fallback: approve-core
+32. Disabled atomic Core route has no legacy fallback: reject-core
+33. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":true}
+34. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"deleted_at":"2026-01-01"}
+35. Hidden/deleted/unknown visibility denies app/api/rooms/join-supporter/route.ts {"is_hidden":null}
+36. Visible open room accepts valid Member join/request: app/api/rooms/join-supporter/route.ts
+37. Closed room denies join/request: app/api/rooms/join-supporter/route.ts
+38. No bearer denies join/request: app/api/rooms/join-supporter/route.ts
+39. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":true}
+40. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"deleted_at":"2026-01-01"}
+41. Hidden/deleted/unknown visibility denies app/api/rooms/request-core/route.ts {"is_hidden":null}
+42. Visible open room accepts valid Member join/request: app/api/rooms/request-core/route.ts
+43. Closed room denies join/request: app/api/rooms/request-core/route.ts
+44. No bearer denies join/request: app/api/rooms/request-core/route.ts
+45. Supporter capacity still enforced for sequential requests
+46. Current supporter route preserves existing active core
+47. Active owner can still delete own post
+48. Nonmember cannot delete own post
+49. Active member cannot delete another owner post
+50. FIXED: documented Vercel cron Authorization header is accepted
+51. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"creator"}}
+52. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"role":"supporter"}}
+53. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":{"left_at":"left"}}
+54. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"anonymous":true}
+55. Retired route has no service dependency or side effect: app/api/rooms/join/route.ts {"member":null}
+56. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"creator"}}
+57. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"role":"supporter"}}
+58. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":{"left_at":"left"}}
+59. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"anonymous":true}
+60. Retired route has no service dependency or side effect: app/rooms/[id]/core-request/route.ts {"member":null}
+61. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"creator"}}
+62. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"role":"supporter"}}
+63. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":{"left_at":"left"}}
+64. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"anonymous":true}
+65. Retired route has no service dependency or side effect: app/rooms/[id]/core-approve/route.ts {"member":null}
+66. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"creator"}}
+67. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"role":"supporter"}}
+68. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":{"left_at":"left"}}
+69. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"anonymous":true}
+70. Retired route has no service dependency or side effect: app/rooms/[id]/core-reject/route.ts {"member":null}
+71. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"creator"}}
+72. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"role":"supporter"}}
+73. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":{"left_at":"left"}}
+74. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"anonymous":true}
+75. Retired route has no service dependency or side effect: app/rooms/[id]/core-revoke/route.ts {"member":null}
+76. Current approve-core still denies missing bearer
+77. Current approve-core keeps verified actor and request payload
+78. Current approve-core preserves RPC authorization failure
+79. Current reject-core still denies missing bearer
+80. Current reject-core keeps verified actor and request payload
+81. Current reject-core preserves RPC authorization failure
+82. Current approval rejects cross-room request before RPC
+83. Cron filters room {"expires_at":"2000-01-01"}
+84. Cron repeat is idempotent
+85. Cron filters room {"expires_at":"2000-01-01","is_hidden":true}
+86. Cron repeat is idempotent
+87. Cron filters room {"expires_at":"2000-01-01","deleted_at":"2020-01-01"}
+88. Cron repeat is idempotent
+89. Cron filters room {"expires_at":"2999-01-01"}
+90. Cron repeat is idempotent
+91. Cron filters room {"expires_at":null}
+92. Cron repeat is idempotent
+93. Cron filters room {"expires_at":"2000-01-01","status":"forced_publish"}
+94. Cron repeat is idempotent
+95. Cron fails closed for missing header/secret/DB failure
+96. Cron error hides internal details
+97. Cron fails closed for missing header/secret/DB failure
+98. Cron error hides internal details
+99. Cron fails closed for missing header/secret/DB failure
+100. Cron error hides internal details
+101. Rate limit blocks mutations: join-supporter
+102. Rate limit blocks mutations: request-core
+103. Rate limit blocks mutations: approve-core
+104. Rate limit blocks mutations: reject-core
+105. Rate limit blocks mutations: create
+106. Like authorization/rate/errors {"anonymous":true}
+107. Like authorization/rate/errors {"room":{"is_hidden":true}}
+108. Like authorization/rate/errors {"room":{"deleted_at":"2020-01-01"}}
+109. Like authorization/rate/errors {"guards":true,"rateDenied":true}
+110. Like authorization/rate/errors {"dbError":true}
+111. Like authorization/rate/errors {}
+112. Report spam limited
+113. Report length bounded
+114. Unread preserves never-seen room alongside seen room: true
+115. Unread ignores hidden post: true
+116. Unread ignores deleted post: true
+117. Unread omits hidden room: true
+118. Unread omits deleted room: true
+119. Unread omits former membership: true
+120. Unread preserves never-seen room alongside seen room: false
+121. Unread ignores hidden post: false
+122. Unread ignores deleted post: false
+123. Unread omits hidden room: false
+124. Unread omits deleted room: false
+125. Unread omits former membership: false
+126. Mark visibility and role: {"anonymous":true}
+127. Mark visibility and role: {"member":null}
+128. Mark visibility and role: {"member":{"role":"supporter"}}
+129. Mark visibility and role: {"member":{"left_at":"left"}}
+130. Mark visibility and role: {"room":{"is_hidden":true}}
+131. Mark visibility and role: {"room":{"is_hidden":null}}
+132. Mark visibility and role: {"room":{"deleted_at":"deleted"}}
+133. Mark visibility and role: {"room":{"status":"forced_publish"}}
+134. Mark visibility and role: {"room":{"expires_at":"2000-01-01"}}
+135. Mark visibility and role: {"post":{"is_hidden":true}}
+136. Mark visibility and role: {"post":{"is_hidden":null}}
+137. Mark visibility and role: {"post":{"deleted_at":"deleted"}}
+138. Mark visibility and role: {"post":{"room_id":"other"}}
+139. Mark visibility and role: {"dbError":true}
+140. Mark visibility and role: {}
+141. Mark visibility and role: {"member":{"role":"creator"}}
+142. Hidden/deleted/moved during mark rejects update and fallback read: {"is_hidden":true}
+143. Hidden/deleted/moved during mark rejects update and fallback read: {"deleted_at":"deleted"}
+144. Hidden/deleted/moved during mark rejects update and fallback read: {"room_id":"other"}
+145. Visible mark contention retains existing conflict response
+146. Withdrawal suspended without DB/Auth mutations, including retry: {"anonymous":true} 0
+147. Withdrawal suspended without DB/Auth mutations, including retry: {"anonymous":true} 1
+148. Withdrawal suspended without DB/Auth mutations, including retry: {} 0
+149. Withdrawal suspended without DB/Auth mutations, including retry: {} 1
+150. Withdrawal suspended without DB/Auth mutations, including retry: {"dbError":true} 0
+151. Withdrawal suspended without DB/Auth mutations, including retry: {"dbError":true} 1
+152. Withdrawal suspended without DB/Auth mutations, including retry: {"authDeleteError":true} 0
+153. Withdrawal suspended without DB/Auth mutations, including retry: {"authDeleteError":true} 1
+154. Withdrawal suspended without DB/Auth mutations, including retry: {"member":{"role":"creator"}} 0
+155. Withdrawal suspended without DB/Auth mutations, including retry: {"member":{"role":"creator"}} 1
+156. Invalid bearer cannot start withdrawal
+157. Withdrawal route has no service-role dependency or destructive fallback
+158. Withdrawal UI distinguishes accepted request from completion and does not log user out
+159. Retired redundant route app/api/update/route.ts
+160. Retired redundant route app/api/rooms/mark-read/route.ts
+161. Room deletion is authorized soft deletion {"anonymous":true}
+162. Room deletion is authorized soft deletion {"room":{"created_by":"other"}}
+163. Room deletion is authorized soft deletion {"room":{"status":"forced_publish"}}
+164. Room deletion is authorized soft deletion {"room":{"is_hidden":true}}
+165. Room deletion is authorized soft deletion {}
+166. Withdrawal intake requires confirmed current policy and verified actor 400
+167. Withdrawal intake requires confirmed current policy and verified actor 400
+168. Withdrawal intake requires confirmed current policy and verified actor 202
+169. Withdrawal intake requires confirmed current policy and verified actor 400
+170. Core management checks canonical Creator before privileged RPC approve-core
+171. Core management checks canonical Creator before privileged RPC reject-core
+172. Current UI retains endpoint join-supporter
+173. Current UI retains endpoint request-core
+174. Current UI retains endpoint approve-core
+175. Current UI retains endpoint reject-core
+176. Current UI retains endpoint leave
+177. Page uses current participation/approval UI only
+178. Obsolete UI callers removed
+179. Deferred report returns durable receipt without legacy fallback
+180. Report actor comes from verified session
+181. Processed report accepted
+182. Receipt failure sanitized without unsafe fallback
+183. Missing retry id rejected
+184. Unauthenticated receipt refused
+185. Operator queue bounded and noncacheable
+186. Anonymous queue does not reach DB
+187. Queue permission failure exposes no rows or DB error
+188. Resolution uses verified identity
+189. Resolution requires explicit confirmation
+190. Resolution failure sanitized and noncacheable
+191. Queue disabled by default
+192. Atomic like uses verified actor and no fallback mutation
+193. Atomic like requires complete intent
+194. Atomic like failure never falls back to toggle
+195. Room creation delegates atomic operation with verified actor
+196. Failed atomic creation never falls back to partial inserts
+197. Rate limit prevents privileged operation mvp_pending_reports
+198. Rate limit prevents privileged operation mvp_resolve_report
+199. Rate limit prevents privileged operation mvp_moderate
+200. Rate limit prevents privileged operation mvp_request_deletion
+201. Legacy report rejects unavailable/private target {"member":null}
+202. Legacy report rejects unavailable/private target {"member":{"left_at":"2020-01-01"}}
+203. Legacy report rejects unavailable/private target {"post":{"is_hidden":true}}
+204. Legacy report rejects unavailable/private target {"post":{"deleted_at":"2020-01-01"}}
+205. Legacy report rejects unavailable/private target {"room":{"is_hidden":true}}
+206. Duplicate target gets safe actionable response
+Completed 206 offline audit cases; GAP means vulnerability reproduced, not fixed. DB triggers/RLS are not simulated.
+1. Supported header and MIME image/png
+2. Wrong MIME image/png
+3. Executable extension image/png
+4. Supported header and MIME image/jpeg
+5. Wrong MIME image/jpeg
+6. Executable extension image/jpeg
+7. Supported header and MIME image/gif
+8. Wrong MIME image/gif
+9. Executable extension image/gif
+10. Supported header and MIME image/webp
+11. Wrong MIME image/webp
+12. Executable extension image/webp
+13. Supported header and MIME video/mp4
+14. Wrong MIME video/mp4
+15. Executable extension video/mp4
+16. Supported header and MIME video/webm
+17. Wrong MIME video/webm
+18. Executable extension video/webm
+19. Supported header and MIME application/pdf
+20. Wrong MIME application/pdf
+21. Executable extension application/pdf
+22. Supported header and MIME text/plain
+23. Wrong MIME text/plain
+24. Executable extension text/plain
+25. Reject invalid a.png (25 bytes)
+26. Reject invalid a.svg (6 bytes)
+27. Reject invalid a.html (6 bytes)
+28. Reject invalid a.zip (2 bytes)
+29. Reject invalid a.txt (6 bytes)
+30. Reject invalid a.txt (2 bytes)
+31. Reject invalid a.txt (2 bytes)
+32. Reject invalid a.txt (0 bytes)
+33. Reject invalid a.txt (4000001 bytes)
+34. Reject invalid a.jpg (2 bytes)
+35. Exact 4MB text accepted
+Completed 35 upload validation checks. Header checks do not prove file safety or remove EXIF.
+1. Generated name respects profile length/alphabet
+2. Generated name does not derive from email or auth id
+3. New fallback uses fresh random identity
+Completed 3 privacy regression checks; no real users.
+1. Post and ledger bind together
+2. Same key and payload replays same post
+3. Request stores SHA256 only, not duplicate content
+4. Different key cannot reuse upload
+5. Same key cannot change payload
+6. Other owner
+7. Other owner has no post side effect
+8. Other room
+9. Other room has no post side effect
+10. Expired
+11. Expired has no post side effect
+12. Not uploaded
+13. Not uploaded has no post side effect
+14. Failed upload
+15. Failed upload has no post side effect
+16. Cleanup claimed
+17. Cleanup claimed has no post side effect
+18. Hidden room
+19. Hidden room has no post side effect
+20. Unknown role
+21. Unknown role has no post side effect
+22. Unknown status
+23. Unknown status has no post side effect
+24. Unknown visibility
+25. Unknown visibility has no post side effect
+26. Deleted room
+27. Deleted room has no post side effect
+28. Published room
+29. Published room has no post side effect
+30. Former member
+31. Former member has no post side effect
+32. Nonmember
+33. Nonmember has no post side effect
+34. Supporter final denied
+35. Text-only post works
+36. Oversized text denied
+37. Missing upload denied
+38. Deleting post preserves used tombstone
+39. Deleted post upload cannot be reused
+40. Deleted post retry cannot recreate
+41. Owner FK preserves ledger on deletion
+42. Deleted owner cannot bind
+43. Room FK preserves cleanup path
+44. Post request failure rolls whole transaction back
+45. Rollback leaves no post and upload unused
+46. Untrusted role cannot execute actor RPC: anon
+47. Untrusted role cannot read ledger: anon
+48. Direct path mutation denied: anon
+49. Untrusted role cannot execute actor RPC: authenticated
+50. Untrusted role cannot read ledger: authenticated
+51. Direct path mutation denied: authenticated
+52. 21st post in fixed window denied
+53. Rate limit isolated by actor
+Completed 53 local PostgreSQL checks. Synthetic schema only; not Supabase or multi-connection validation.
+1. Legacy nonexistent column rejected
+2. Legacy nonexistent column rejected
+3. Legacy nonexistent column rejected
+4. Zero-row update can succeed without anonymizing any profile
+5. Auth FK failure does not undo earlier committed profile update
+6. Failed Auth deletion leaves account present
+7. Profile-only change leaves separately stored attribution intact in fixture
+8. Approval/decision references can still block deletion after creator handling
+9. Decision reference independently blocks deletion
+10. Deleting creator room to bypass FK would cascade other participant data
+11. Unblocked Auth deletion cascades profile and membership fixture rows
+Completed 11 synthetic withdrawal DB checks. Auth HTTP, Storage, actual triggers and concurrent sessions are NOT simulated.
+1. Deletion first result none
+2. Deletion resumes without duplicate external deletion none
+3. Deletion first result prepare
+4. Deletion resumes without duplicate external deletion prepare
+5. Deletion first result lookup
+6. Deletion resumes without duplicate external deletion lookup
+7. Deletion first result delete
+8. Deletion resumes without duplicate external deletion delete
+9. Deletion first result finalize
+10. Deletion resumes without duplicate external deletion finalize
+11. Deletion first result record
+12. Deletion resumes without duplicate external deletion record
+13. Review requirement never reaches Auth
+14. Busy lease prevents duplicate worker
+15. PII deterministic signal
+16. PII deterministic signal
+17. PII deterministic signal
+18. PII deterministic signal
+19. Unsafe log excluded
+20. Unsafe log excluded
+21. Unsafe log excluded
+22. Unsafe log excluded
+23. Unsafe log excluded
+24. Unsafe log excluded
+25. Reviewed clean log retained
+26. No provider fallback invents no content
+27. Generated PII fails closed
+28. Image EXIF/XMP/IPTC removed after re-encode
+29. Image dimensions retained
+30. Truncated image rejected by decoder
+31. Noncreator cannot kick
+32. Demotion retains membership
+33. Kick terminates membership without deleting
+34. Kicked rejoin denied at DB trigger
+35. Kicked Core request denied
+36. Kicked member cannot highlight
+37. Creator atomic highlight succeeds
+38. Stale highlight write conflicts
+39. Published room management denied
+40. Creator is not automatically a moderation operator
+41. Operator can hide published work
+42. Moderation replay creates one audit event
+43. Moderation key cannot change action on retry
+44. Core maximum is four besides Creator
+45. Deletion intake is idempotent
+46. Deletion retry cannot silently change attribution consent
+47. Durable lease excludes duplicate claim
+48. Cannot skip deletion stages
+49. Wrong lease cannot advance
+50. Durable stage transition
+51. Untrusted role denied jobs and management RPC anon
+52. Untrusted role denied jobs and management RPC authenticated
+53. Restrictive boundary overrides unconditional SELECT for private posts
+54. Invite secret column is not public
+55. Existing SECURITY DEFINER actor RPC is not public
+56. Direct role escalation denied by grants
+57. Active Creator retains private post read
+58. Kicked participant cannot read private posts
+59. Published visible posts remain readable
+60. Hidden work cannot leak posts through permissive policy
+61. Kicked participant cannot edit completion draft
+62. Creator saves draft with version
+63. Stale draft version cannot overwrite another edit
+64. Unsupported block structure rejected
+65. Kicked user cannot approve publication
+66. Creator can approve exact reviewed log content
+67. Deadline rejects edits even before cron runs
+68. Deadline publication freezes draft and missing-draft fallback
+69. Repeated publication is idempotent
+70. Incomplete publication has explicit non-fabricated fallback
+71. Published completion cannot be edited
+72. Approved unchanged log is public
+73. Changed attachment invalidates public approval
+74. Changed content invalidates previous public approval
+75. Unreviewed content blocked at direct SELECT boundary
+Completed 75 completion checks; synthetic/local only.
+1. Explicit not-found confirms Auth deletion
+2. Unknown DB/Storage preparation never deletes Auth
+3. Unresolved Storage blocks Auth
+4. Unverified retained work blocks Auth
+5. Receipt for another user rejected
+6. Missing write fence blocks Auth
+7. Receipt rechecked immediately before Auth
+8. Lost lease stops side effects
+9. 5xx not absence
+10. Generic404 not absence
+11. Forbidden not absence
+12. Mismatching Auth identity rejected
+13. Delete response loss stays auth_unknown
+14. Incomplete cleanup cannot complete job
+15. Claim outage returns retry without side effects
+16. Response loss resumes by existence check, no duplicate delete
+17. Live lease renews
+18. Wrong stage cannot renew
+19. Stale worker cannot release another lease
+20. Expired lease cannot revive
+21. Reclaimed lease survives old worker release
+22. Audited events FK prevents Auth deletion
+23. Audited novel draft FK prevents Auth deletion
+24. Auth CASCADE removes decisions in synthetic DB
+25. Auth CASCADE removes pre-archive notes in synthetic DB
+26. Browser cannot renew deletion lease
+Completed 26 deletion adapter checks; no external effects.
+1. Three relevant history rows retained
+2. Decision content retained
+3. Anonymous name applied to recovery snapshot
+4. Private original display name and another actor history excluded
+5. Actor identity not duplicated in payload
+6. Idempotent same snapshot
+7. Original history unmodified
+8. Changed source rejected on retry
+9. First snapshot not overwritten
+10. Wrong lease rejected
+11. Expired lease rejected
+12. Explicit keep-name choice retained
+13. Browser cannot read private recovery data
+14. Browser cannot execute retention RPC
+15. Snapshot success does not authorize Auth deletion
+16. No false verification or completion
+17. RPC failure sanitized and retryable
+Completed 17 retention snapshot checks; synthetic only.
+1. Public post name anonymized
+2. Shared work content retained
+3. Production history retained in place
+4. Duplicate request idempotent
+5. Cannot change agreed attribution after request
+6. Retiring account write rejected: UPDATE
+7. Retiring account write rejected: DELETE
+8. Retiring account write rejected: INSERT
+9. Retiring account write rejected: UPDATE
+10. Retiring account write rejected: UPDATE
+11. Retiring account write rejected: UPDATE
+12. Retiring account write rejected: DELETE
+13. Retiring account write rejected: INSERT
+14. Active user remains writable
+15. JWT actor fence rejects writes to another user row
+16. Chosen public name retained independently from Auth
+17. Keep-name original unchanged
+18. Unexpected trigger side effect rejects whole request
+19. Failed request rolls back prior profile update
+20. Failed request leaves no job or write fence
+21. Private job mapping inaccessible to anon
+22. Anon obtains only public label through RPC
+23. Public lookup bounded
+24. Unsupported snapshot isolation fails closed
+25. Public attribution lookup bounded in batches
+26. Lookup failure does not fall back to stale name
+27. Malformed attribution fails closed
+28. Empty posts require no lookup
+Completed 28 attribution/write-fence checks; synthetic only.
+1. Nonoperator denied
+2. Service role cannot read capability storage
+3. Service role cannot forge capability
+4. Direct privileged visibility write remains fenced
+5. Client session flag cannot bypass fence
+6. Operator hides withdrawing user post through RPC
+7. Identical request safely retried
+8. Conflicting reuse rejected
+9. Operator restores same post through scoped RPC
+10. Operator hides withdrawing creator room
+11. Exactly one audit per successful unique action
+12. Post body preserved
+13. Capabilities consumed before commit
+14. No bypass survives successful RPC
+15. Authenticated cannot call service-only RPC with spoofed operator
+16. JWT identity must match operator argument
+17. Unexpected AFTER trigger mutation aborts action
+18. Side effect rolled back
+19. Failed action leaves no audit success record
+20. Failure leaves no capability
+21. Audit failure aborts moderation
+22. Audit failure rolls back visibility
+23. Withdrawing operator denied even when still assigned
+Completed 23 scoped moderation checks; synthetic only.
+1. Write-fence rejection keeps receipt pending
+2. Receipt committed despite legacy trigger failure
+3. Failed legacy insert rolled back only inside subtransaction
+4. Withdrawal fence still blocks auto-hide
+5. Response-loss retry returns same receipt
+6. Conflicting retry rejected
+7. Legacy success marked processed
+8. Existing auto-hide succeeds for writable target
+9. Unexpected trigger failure also preserves receipt
+10. Only SQLSTATE recorded, not exception message
+11. Withdrawing reporter denied
+12. Direct legacy report route also fenced by reporter_user_id
+13. JWT actor mismatch rejected
+14. Browser cannot spoof service RPC
+15. Browser cannot read private reports
+16. Receipt persistence failure does not claim success
+17. Failed receipt leaves no partial row
+Completed 17 report intake checks; synthetic only.
+1. Nonoperator cannot read reasons or aggregate
+2. Queue returns bounded lookahead plus accurate overdue count
+3. List excludes reporter identity and internal errors
+4. Stable cursor handles equal timestamps
+5. Malformed cursor refused
+6. Authorized operator resolves retiring owner report and hides target
+7. Same request idempotent
+8. Conflicting retry refused
+9. Already resolved receipt cannot be overwritten
+10. Service role cannot rewrite resolution audit directly
+11. Hidden target committed
+12. Legacy processing state preserved
+13. Resolved receipt excluded from queue and backlog
+14. No-action resolution records reason
+15. Empty resolution reason rejected
+16. Audit insertion failure aborts completion
+17. Resolution failure rolls back hiding
+18. Resolution failure rolls back moderation audit too
+19. Standalone moderation ID cannot be reused as resolution
+20. Browser cannot spoof operator RPC
+21. JWT actor mismatch denied
+22. Second operator cannot overwrite first committed resolution
+23. Revocation blocks list and even successful request replay
+24. Transaction abort leaves receipt unresolved
+25. Retry after abort or lost response records exactly one resolution
+26. Cancellation rolls back resolution and moderation audit
+27. Same request succeeds after transient cancellation
+28. Withdrawing operator cannot list or resolve
+29. Withdrawal blocks successful request replay too
+Completed 29 report queue checks; synthetic only.
+PASS 1 Auth change during session lookup prevents old request
+PASS 2 Same-tick double click sends only one request
+PASS 3 Old rejection does not show error or unlock newer operation
+PASS 4 Current operation completes normally
+PASS 5 Late success cannot restore former account data
+PASS 6 Unmount invalidates late catch and finally
+PASS 7 Duplicate resolution click sends only one mutation
+PASS 8 Unknown result retry retains exact request and note
+PASS 9 Late resolution does not show success after auth change
+PASS 10 Standalone moderation double submit prevented
+PASS 11 Standalone moderation unknown result reuses intent ID
+PASS 12 Standalone moderation auth change clears target and suppresses late success
+PASS 13 Like same-tick double click sends one request
+PASS 14 Like retry preserves intent instead of toggling again
+PASS 15 Like auth change suppresses old response
+Completed 15 report queue UI checks; offline component harness.
+1. Only expired successfully uploaded row claimed
+2. Live lease excludes second worker
+3. Wrong token cannot finalize
+4. Expired lease replaces token
+5. Old worker cannot finalize new lease
+6. Storage success plus DB failure stays retryable
+7. Repeated idempotent remove followed by DB confirmation
+8. Deleted tombstone never reclaimed
+9. Malformed or legacy path never removed
+10. Malformed or legacy path never removed
+11. Malformed or legacy path never removed
+12. Malformed or legacy path never removed
+13. Bound, uncertain reserved and failed uploads preserved
+14. Retiring owner left for reviewed deletion workflow
+15. Browser role cannot claim cleanup
+Completed 15 upload cleanup checks; synthetic/mocked Storage only.
+1. Desired like created
+2. Lost response replay stays liked
+3. Changed payload cannot reuse request
+4. Stale state rejected
+5. Unlike with matching state
+6. Old request replay returns current state without undoing later unlike
+7. Only accepted intents retained
+8. Retiring actor cannot replay
+9. Hidden room denied
+10. Deleted room denied
+11. Browser RPC impersonation denied
+12. Direct browser mutation denied
+Completed 12 like request checks.
+1. Room and creator committed together
+2. Same creation retry returns original room
+3. Changed request payload rejected
+4. Client creator override rejected
+5. Invalid deadline rejected
+6. Membership failure rolls back room insert
+7. Aborted creation safely retries
+8. Withdrawal prevents creation and replay
+9. Shared DB limit enforced: account
+10. Shared DB limit enforced: moderation
+11. Shared DB limit enforced: moderation_read
+12. Browser direct RPC denied
+Completed 12 atomic room creation checks.
+1. Nonmember cannot report private post
+2. Missing target denied
+3. Left member denied
+4. Hidden post denied
+5. Deleted post denied
+6. Hidden parent denied
+7. Current member may report visible post
+8. Same reporter cannot add second target report with another ID
+9. Original receipt retry survives later hide
+10. Service role cannot bypass admission via internal function
+11. Unreviewed production log cannot be reported by outsider
+12. Reviewed public log may be reported by authenticated outsider
+13. Withdrawing reporter cannot replay
+Completed 13 report admission checks.
+1. Blocks unresolved unpublishedCreatorRooms
+2. Blocks unresolved ownedEvents
+3. Blocks unresolved blockingForeignKeys
+4. Blocks unresolved destructiveCascades
+5. Unknown evidence blocks complete
+6. Unknown evidence blocks profileCleanupVerified
+7. Unknown evidence blocks writeFenceVerified
+8. Unknown evidence blocks triggersVerified
+9. Unknown evidence blocks storageVerified
+10. Retains published upload even if expired
+11. Retains shared upload even if expired
+12. Retains everUsed upload even if expired
+13. Unknown upload never deleted
+14. Unknown upload never deleted
+15. Unknown upload never deleted
+16. Unknown upload never deleted
+17. Expired unused verified upload is candidate only
+18. Unexpired unused upload retained
+19. Invalid counts fail closed
+20. Complete plan does not certify prepared or invoke Auth
+Completed 20 deletion preflight checks; no external side effects.
+1. Synthetic explicit environment accepted offline only
+2. Unsafe configuration rejected
+3. Unsafe configuration rejected
+4. Unsafe configuration rejected
+5. Unsafe configuration rejected
+6. Unsafe configuration rejected
+7. Unsafe configuration rejected
+8. Unsafe configuration rejected
+9. Unsafe configuration rejected
+10. Unsafe configuration rejected
+11. Unsafe configuration rejected
+12. Unverified isolation rejected
+13. Unverified isolation rejected
+14. Unverified isolation rejected
+15. Unverified isolation rejected
+16. Unverified isolation rejected
+17. Unverified isolation rejected
+18. Production secret reuse rejected without printing value
+19. TLS certificate verification required
+20. Unsafe DB host or TLS override rejected
+21. Unsafe DB host or TLS override rejected
+22. Unsafe DB host or TLS override rejected
+Completed 22 staging safety checks; no network.

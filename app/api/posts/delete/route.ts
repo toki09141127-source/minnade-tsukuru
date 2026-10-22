@@ -46,12 +46,12 @@ export async function POST(req: Request) {
     // 2) ルーム確認（open以外は操作不可：安全側）
     const { data: room, error: roomErr } = await supabaseAdmin
       .from('rooms')
-      .select('id, status')
+      .select('id, status, is_hidden, deleted_at')
       .eq('id', post.room_id)
       .maybeSingle()
 
-    if (roomErr) return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
-    if (!room) return NextResponse.json({ ok: false, error: 'room not found' }, { status: 404 })
+    if (roomErr) return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
+    if (!room || room.is_hidden !== false || room.deleted_at != null) return NextResponse.json({ ok: false, error: 'room not found' }, { status: 404 })
     if (room.status !== 'open') {
       return NextResponse.json(
         { ok: false, error: `このルームは ${room.status} のため操作できません` },
@@ -65,9 +65,10 @@ export async function POST(req: Request) {
       .select('id')
       .eq('room_id', post.room_id)
       .eq('user_id', user.id)
+      .is('left_at', null)
       .maybeSingle()
 
-    if (memErr) return NextResponse.json({ ok: false, error: memErr.message }, { status: 500 })
+    if (memErr) return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 500 })
     if (!mem) {
       return NextResponse.json(
         { ok: false, error: 'ルームに参加してから操作してください' },
@@ -83,11 +84,11 @@ export async function POST(req: Request) {
       .eq('user_id', user.id) // 二重ガード
 
     if (updErr) {
-      return NextResponse.json({ ok: false, error: updErr.message }, { status: 400 })
+      return NextResponse.json({ ok: false, error: '処理できませんでした。時間をおいてお試しください' }, { status: 400 })
     }
 
     return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? 'server error' }, { status: 500 })
+  } catch (e: unknown) {
+    return NextResponse.json({ ok: false, error: '処理できませんでした' }, { status: 500 })
   }
 }

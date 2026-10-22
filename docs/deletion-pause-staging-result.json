@@ -1,0 +1,123 @@
+{
+  "runId": "9f355292-2881-419b-976e-cc9f5b9d1801",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "A paused intake rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Service role cannot operate pause",
+      "status": "PASS"
+    },
+    {
+      "name": "B worker acknowledges pause",
+      "status": "PASS"
+    },
+    {
+      "name": "B durable state remains resumable",
+      "status": "PASS"
+    },
+    {
+      "name": "B Auth preserved before delete",
+      "status": "PASS"
+    },
+    {
+      "name": "B unused object survives pre-Storage pause",
+      "status": "PASS"
+    },
+    {
+      "name": "B paused retry cannot claim",
+      "status": "PASS"
+    },
+    {
+      "name": "B E resume completes",
+      "status": "PASS"
+    },
+    {
+      "name": "B used object retained",
+      "status": "PASS"
+    },
+    {
+      "name": "B unused object removed after resume",
+      "status": "PASS"
+    },
+    {
+      "name": "B Auth explicitly absent after completion",
+      "status": "PASS"
+    },
+    {
+      "name": "C worker acknowledges pause",
+      "status": "PASS"
+    },
+    {
+      "name": "C durable state remains resumable",
+      "status": "PASS"
+    },
+    {
+      "name": "C Auth preserved before delete",
+      "status": "PASS"
+    },
+    {
+      "name": "C unused object survives pre-Storage pause",
+      "status": "PASS"
+    },
+    {
+      "name": "C paused retry cannot claim",
+      "status": "PASS"
+    },
+    {
+      "name": "C E resume completes",
+      "status": "PASS"
+    },
+    {
+      "name": "C used object retained",
+      "status": "PASS"
+    },
+    {
+      "name": "C unused object removed after resume",
+      "status": "PASS"
+    },
+    {
+      "name": "C Auth explicitly absent after completion",
+      "status": "PASS"
+    },
+    {
+      "name": "D worker acknowledges pause",
+      "status": "PASS"
+    },
+    {
+      "name": "D durable state remains resumable",
+      "status": "PASS"
+    },
+    {
+      "name": "D Auth preserved before delete",
+      "status": "PASS"
+    },
+    {
+      "name": "D paused retry cannot claim",
+      "status": "PASS"
+    },
+    {
+      "name": "D E resume completes",
+      "status": "PASS"
+    },
+    {
+      "name": "D used object retained",
+      "status": "PASS"
+    },
+    {
+      "name": "D unused object removed after resume",
+      "status": "PASS"
+    },
+    {
+      "name": "D Auth explicitly absent after completion",
+      "status": "PASS"
+    },
+    {
+      "name": "F simultaneous workers perform one Auth deletion",
+      "status": "PASS"
+    }
+  ],
+  "complete": true
+}

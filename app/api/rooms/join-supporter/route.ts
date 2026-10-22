@@ -1,3 +1,4 @@
+import { limitAction } from '../../../../lib/apiGuards'
 // app/api/rooms/join-supporter/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
@@ -23,7 +24,7 @@ async function getUserIdFromBearer(req: Request) {
   return { userId: data.user.id, error: null }
 }
 
-function parseConsent(body: any) {
+function parseConsent(body: { consent?: Record<string, unknown> } | null) {
   const consent = body?.consent ?? {}
   const roomTermsVersion = String(consent?.roomTermsVersion ?? '').trim()
   const roomAgreedAt = String(consent?.roomAgreedAt ?? '').trim()
@@ -61,74 +62,27 @@ export async function POST(req: Request) {
 
     const { url, serviceKey } = getEnv()
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+    const limited = await limitAction(admin, userId, 'join')
+    if (limited) return limited
 
-    const { data: room, error: roomErr } = await admin
-      .from('rooms')
-      .select('id, status')
-      .eq('id', roomId)
-      .maybeSingle()
-
-    if (roomErr) return NextResponse.json({ ok: false, error: roomErr.message }, { status: 500 })
-    if (!room) return NextResponse.json({ ok: false, error: 'ルームが見つかりません' }, { status: 404 })
-    if (room.status !== 'open') {
-      return NextResponse.json(
-        { ok: false, error: `このルームは ${room.status} のため参加できません` },
-        { status: 400 }
-      )
+    if (process.env.MVP_ATOMIC_JOIN_ENABLED === 'true') {
+      const { data, error: joinError } = await admin.rpc('mvp_join_member', {
+        p_actor: userId, p_room: roomId, p_terms: consentResult.value.roomTermsVersion,
+      })
+      const headers = { 'Cache-Control': 'no-store' }
+      if (joinError) {
+        const full = joinError.message === 'MEMBER_FULL'
+        return NextResponse.json({ ok: false, error: full ? 'Member枠が満員です（最大45）' : '参加できません。ルーム状態と同意内容を確認してください' },
+          { status: full ? 409 : 403, headers })
+      }
+      if (!['creator', 'core', 'supporter'].includes(data))
+        return NextResponse.json({ ok: false, error: '参加結果を確認できません。再読み込みしてください' }, { status: 503, headers })
+      return NextResponse.json({ ok: true, joined: true, role: data }, { headers })
     }
-
-    const { data: existing, error: exErr } = await admin
-      .from('room_members')
-      .select('role, left_at')
-      .eq('room_id', roomId)
-      .eq('user_id', userId)
-      .maybeSingle()
-
-    if (exErr) return NextResponse.json({ ok: false, error: exErr.message }, { status: 500 })
-    if (existing && existing.left_at == null) {
-      return NextResponse.json({ ok: true, joined: true, role: existing.role })
-    }
-
-    const { count: supporterCount, error: cntErr } = await admin
-      .from('room_members')
-      .select('user_id', { count: 'exact', head: true })
-      .eq('room_id', roomId)
-      .eq('role', 'supporter')
-      .is('left_at', null)
-
-    if (cntErr) return NextResponse.json({ ok: false, error: cntErr.message }, { status: 500 })
-    if ((supporterCount ?? 0) >= 45) {
-      return NextResponse.json(
-        { ok: false, error: 'supporter枠が満員です（最大45）' },
-        { status: 409 }
-      )
-    }
-
-    const { roomTermsVersion, roomAgreedAt, forcedPublishAckAt } = consentResult.value
-
-    const { error: upErr } = await admin.from('room_members').upsert(
-      {
-        room_id: roomId,
-        user_id: userId,
-        role: 'supporter',
-        is_core: false,
-        joined_at: new Date().toISOString(),
-        left_at: null,
-        approved_at: null,
-        approved_by: null,
-        room_terms_version: roomTermsVersion,
-        room_agreed_at: roomAgreedAt,
-        forced_publish_ack_at: forcedPublishAckAt,
-      },
-      { onConflict: 'room_id,user_id' }
-    )
-
-    if (upErr) return NextResponse.json({ ok: false, error: upErr.message }, { status: 500 })
-
-    return NextResponse.json({ ok: true, joined: true, role: 'supporter' })
-  } catch (e: any) {
+    return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
+  } catch {
     return NextResponse.json(
-      { ok: false, error: e?.message ?? 'server error' },
+      { ok: false, error: '処理に失敗しました。時間をおいてお試しください' },
       { status: 500 }
     )
   }

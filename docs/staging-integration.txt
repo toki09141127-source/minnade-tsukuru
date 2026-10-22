@@ -1,0 +1,22 @@
+
+> minnade-tsukuru@0.1.0 staging:integration
+> node scripts/staging/integration.cjs
+
+PASS Six synthetic Auth accounts created (no application roles assigned)
+PASS Password login
+PASS Independent second session
+PASS Session refresh
+PASS Local session logout
+PASS Logged-out refresh token rejected
+PASS Other session survives local logout
+PASS Invalid access token rejected
+PASS Disposable synthetic Auth user deleted without application data
+PASS Deleted synthetic user cannot login
+PASS Synthetic private object uploaded
+PASS Signed URL retrieves exact synthetic bytes
+PASS Anonymous private download denied
+PASS Anonymous signing denied
+PASS Anonymous upload denied
+PASS Storage bucket size limit enforced
+PASS Storage bucket MIME allowlist enforced
+Completed 17 staging service checks. App schema/RLS/withdrawal integration not tested. Synthetic fixtures retained.

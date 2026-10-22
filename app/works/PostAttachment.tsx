@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 
 type Props = {
+  postId: string
   attachment_url?: string | null
   attachment_type?: string | null
 }
@@ -17,7 +18,7 @@ function isImageAttachment(url: string, type: string) {
   return /\.(png|jpe?g|gif|webp|bmp|svg)$/.test(u)
 }
 
-export default function PostAttachment({ attachment_url, attachment_type }: Props) {
+export default function PostAttachment({ postId, attachment_url, attachment_type }: Props) {
   const path = useMemo(() => (attachment_url ?? '').trim(), [attachment_url])
   const type = useMemo(() => (attachment_type ?? '').trim().toLowerCase(), [attachment_type])
 
@@ -40,7 +41,7 @@ export default function PostAttachment({ attachment_url, attachment_type }: Prop
       const res = await fetch('/api/storage/sign', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ path }),
+        body: JSON.stringify({ postId }),
       })
 
       const json = await res.json().catch(() => ({}))
@@ -58,7 +59,7 @@ export default function PostAttachment({ attachment_url, attachment_type }: Prop
     return () => {
       canceled = true
     }
-  }, [path, type])
+  }, [path, postId, type])
 
   if (!path) return null
   if (type && !isImageAttachment(path, type)) return null

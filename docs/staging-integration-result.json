@@ -1,0 +1,109 @@
+{
+  "runId": "2baf4f68-f411-4313-9f05-2fad5276e97a",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Six synthetic Auth accounts created (no application roles assigned)",
+      "status": "PASS"
+    },
+    {
+      "name": "Password login",
+      "status": "PASS"
+    },
+    {
+      "name": "Independent second session",
+      "status": "PASS"
+    },
+    {
+      "name": "Session refresh",
+      "status": "PASS"
+    },
+    {
+      "name": "Local session logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Logged-out refresh token rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Other session survives local logout",
+      "status": "PASS"
+    },
+    {
+      "name": "Invalid access token rejected",
+      "status": "PASS"
+    },
+    {
+      "name": "Disposable synthetic Auth user deleted without application data",
+      "status": "PASS"
+    },
+    {
+      "name": "Deleted synthetic user cannot login",
+      "status": "PASS"
+    },
+    {
+      "name": "Synthetic private object uploaded",
+      "status": "PASS"
+    },
+    {
+      "name": "Signed URL retrieves exact synthetic bytes",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous private download denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous signing denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Anonymous upload denied",
+      "status": "PASS"
+    },
+    {
+      "name": "Storage bucket size limit enforced",
+      "status": "PASS"
+    },
+    {
+      "name": "Storage bucket MIME allowlist enforced",
+      "status": "PASS"
+    }
+  ],
+  "users": [
+    {
+      "alias": "creator-a",
+      "id": "4f2a05c3-1929-4a22-a08f-a8c8237892c1"
+    },
+    {
+      "alias": "core-b",
+      "id": "8b39a628-087a-4af1-8927-fc214f411600"
+    },
+    {
+      "alias": "member-c",
+      "id": "98d2f110-dfbb-4b27-bb70-c7b7e6e2389f"
+    },
+    {
+      "alias": "member-d",
+      "id": "da0d9e2b-5de8-4fc4-b5a2-f57afdf6e4f2"
+    },
+    {
+      "alias": "moderator-e",
+      "id": "32d24b7e-3a45-47e5-b5e1-eb7980ccc21f"
+    },
+    {
+      "alias": "kicked-f",
+      "id": "f6c68eab-fcec-4af3-81e4-3af31bb79646"
+    }
+  ],
+  "bucket": "synthetic-2baf4f68-f411-4313-9f05-2fad5276e97a",
+  "objects": [
+    "fixture/pixel.png"
+  ],
+  "cleanup": "retained for review",
+  "disposableUser": {
+    "id": "5d8eb81c-2ccb-4fd9-b467-f2ddb5e97fa4",
+    "deleted": true
+  }
+}

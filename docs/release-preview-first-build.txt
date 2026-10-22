@@ -1,0 +1,36 @@
+Vercel CLI 65.0.0 (Node.js 22.17.0)
+2026-10-22T05:04:21.418Z  Running build in Washington, D.C., USA (East) – iad1
+2026-10-22T05:04:21.419Z  Build machine configuration: 2 cores, 8 GB
+2026-10-22T05:04:21.436Z  Retrieving list of deployment files...
+2026-10-22T05:04:21.570Z  Previous build caches not available.
+2026-10-22T05:04:21.854Z  Downloading 151 deployment files...
+2026-10-22T05:04:22.846Z  Running "vercel build"
+2026-10-22T05:04:22.860Z  Vercel CLI 64.7.0
+2026-10-22T05:04:23.236Z  Installing dependencies...
+2026-10-22T05:04:23.894Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-22T05:04:27.626Z  npm warn deprecated @supabase/auth-helpers-shared@0.7.0: This package is now deprecated - please use the @supabase/ssr package instead.
+2026-10-22T05:04:29.125Z  npm warn deprecated @supabase/auth-helpers-nextjs@0.15.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+2026-10-22T05:04:37.012Z  
+2026-10-22T05:04:37.012Z  added 377 packages in 14s
+2026-10-22T05:04:37.012Z  
+2026-10-22T05:04:37.012Z  149 packages are looking for funding
+2026-10-22T05:04:37.012Z  run `npm fund` for details
+2026-10-22T05:04:37.014Z  npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+2026-10-22T05:04:37.014Z  npm warn install-scripts   unrs-resolver@1.11.1 (postinstall: napi-postinstall unrs-resolver 1.11.1 check)
+2026-10-22T05:04:37.014Z  npm warn install-scripts
+2026-10-22T05:04:37.014Z  npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-10-22T05:04:37.064Z  Detected Next.js version: 16.4.2
+2026-10-22T05:04:37.070Z  Running "npm run build"
+2026-10-22T05:04:37.190Z  npm warn Unknown env config "cache-dir". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-10-22T05:04:37.214Z  
+2026-10-22T05:04:37.214Z  > minnade-tsukuru@0.1.0 build
+2026-10-22T05:04:37.214Z  > next build --webpack
+2026-10-22T05:04:37.214Z  
+2026-10-22T05:04:37.720Z  ▲ Next.js 16.4.2 (webpack)
+2026-10-22T05:04:37.751Z  ⨯ Failed to load next.config.ts, see more info here https://nextjs.org/docs/messages/next-config-error
+2026-10-22T05:04:37.752Z  
+2026-10-22T05:04:37.753Z  > Build error occurred
+2026-10-22T05:04:37.765Z  Error: STAGING_NEXT_TARGET_REJECTED
+2026-10-22T05:04:37.765Z  at Object.<anonymous> (next.config.compiled.js:13:11)
+2026-10-22T05:04:37.804Z  Error: [BUILD_UTILS_SPAWN_1] Command "npm run build" exited with 1
+status	● Error

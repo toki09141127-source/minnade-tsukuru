@@ -1,0 +1,36 @@
+{
+  "runId": "ef2d427d-620a-4e5c-98d8-da268fea84f1",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Non-operator queue access denied through Web",
+      "status": "PASS"
+    },
+    {
+      "name": "Operator sees pending and overdue queue",
+      "status": "PASS"
+    },
+    {
+      "name": "Empty resolution reason blocked",
+      "status": "PASS"
+    },
+    {
+      "name": "Retired Creator room hidden with audited resolution",
+      "status": "PASS"
+    },
+    {
+      "name": "Resolved receipt absent after reload",
+      "status": "PASS"
+    },
+    {
+      "name": "Scoped operator restores retired Creator room",
+      "status": "PASS"
+    },
+    {
+      "name": "Withdrawing operator denied with existing session",
+      "status": "PASS"
+    }
+  ],
+  "complete": true,
+  "serverStopped": true
+}

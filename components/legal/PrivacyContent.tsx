@@ -1,16 +1,10 @@
+import { SUPPORT_EMAIL } from '@/lib/supportContact'
 import React from 'react'
 import { CURRENT_PRIVACY_VERSION } from '@/lib/legalVersions'
 
 const LAST_UPDATED = CURRENT_PRIVACY_VERSION
 
-function getContactEmail() {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_SUPPORT_EMAIL ||
-    process.env.SUPPORT_EMAIL ||
-    process.env.CONTACT_EMAIL ||
-    ''
-  return fromEnv.trim()
-}
+function getContactEmail() { return SUPPORT_EMAIL }
 
 type Section = {
   id: string
@@ -41,6 +35,7 @@ export default function PrivacyContent() {
           <li>アカウント登録情報（メールアドレス、認証用情報等）</li>
           <li>プロフィール情報（ユーザー名、自己紹介、SNSリンク、アイコン画像等）</li>
           <li>投稿情報（文章、画像、添付ファイル、コメント、制作ログ、作品情報等）</li>
+          <li>18歳以上であることの申告・確認日時（生年月日や本人確認書類はこの確認では取得しません）</li>
           <li>ルーム情報（参加履歴、役割、同意記録、AI利用レベル関連情報等）</li>
           <li>お問い合わせ情報</li>
           <li>通報・削除申立て情報</li>

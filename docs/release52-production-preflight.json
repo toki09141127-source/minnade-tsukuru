@@ -1,0 +1,12 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "at": "2026-10-22T07:59:16.654Z",
+  "facts": {
+    "public_tables": 14,
+    "ledger_absent": true,
+    "private_absent": true,
+    "pending_duplicates": 0,
+    "unknown_auth_fk": 0
+  },
+  "pass": true
+}

@@ -1,0 +1,87 @@
+ M app/api/account/delete/route.ts
+ M app/api/cron/publish/route.ts
+ M app/api/debug/buckets/route.ts
+ M app/api/notifications/pending-core-count/route.ts
+ M app/api/posts/create/route.ts
+ M app/api/posts/delete/route.ts
+ M app/api/posts/toggle-mark/route.ts
+ M app/api/reports/create/route.ts
+ M app/api/rooms/[id]/invite-code/route.ts
+ M app/api/rooms/approve-core/route.ts
+ M app/api/rooms/create/route.ts
+ M app/api/rooms/delete/route.ts
+ M app/api/rooms/expire/join/route.ts
+ M app/api/rooms/expire/route.ts
+ M app/api/rooms/join-core-by-invite/route.ts
+ M app/api/rooms/join-core-first-come/route.ts
+ M app/api/rooms/join-supporter/route.ts
+ M app/api/rooms/join/route.ts
+ M app/api/rooms/leave/route.ts
+ M app/api/rooms/like/route.ts
+ M app/api/rooms/mark-read/route.ts
+ M app/api/rooms/reject-core/route.ts
+ M app/api/rooms/request-core/route.ts
+ M app/api/rooms/seen/route.ts
+ M app/api/rooms/unread-map/route.ts
+ M app/api/storage/sign/route.ts
+ M app/api/update/route.ts
+ M app/api/uploads/public/[postId]/route.ts
+ M app/api/uploads/route.ts
+ M app/api/uploads/sign/route.ts
+ M app/components/ConfirmModal.tsx
+ M app/components/MarkRoomSeenOnView.tsx
+ M app/components/RoomBadges.tsx
+ M app/login/page.tsx
+ M app/page.tsx
+ M app/profile/DeleteAccountButton.tsx
+ M app/profile/set-bio/route.ts
+ M app/profile/set-sns-links/route.ts
+ M app/profile/set-username/route.ts
+ M app/rooms/RoomsListClient.tsx
+ M app/rooms/[id]/BoardClient.tsx
+ M app/rooms/[id]/DeleteRoomButton.tsx
+ D app/rooms/[id]/JoinButton.tsx
+ D app/rooms/[id]/OwnerCoreRequestsPanel.tsx
+ M app/rooms/[id]/ReportButton.tsx
+ M app/rooms/[id]/RoomDetailClient.tsx
+ M app/rooms/[id]/core-approve/route.ts
+ M app/rooms/[id]/core-reject/route.ts
+ M app/rooms/[id]/core-request/route.ts
+ M app/rooms/[id]/core-revoke/route.ts
+ M app/rooms/[id]/page.tsx
+ M app/rooms/join/route.ts
+ M app/rooms/page.tsx
+ M app/u/[username]/page.tsx
+ M app/works/MarkReadOnView.tsx
+ M app/works/PostAttachment.tsx
+ M app/works/WorksListClient.tsx
+ M app/works/[id]/AttachmentView.tsx
+ M app/works/[id]/SeenMarker.tsx
+ M app/works/[id]/page.tsx
+ M app/works/page.tsx
+ M components/RoomConsentModal.tsx
+ M components/TermsConsentGate.tsx
+ M lib/rooms/getUnreadMapForUser.ts
+ M package-lock.json
+ M package.json
+?? AGENTS.md
+?? app/api/moderation/
+?? app/api/posts/publication/
+?? app/api/rooms/manage-member/
+?? app/api/works/
+?? app/moderation/
+?? app/rooms/[id]/LogPublicationControls.tsx
+?? app/rooms/[id]/MemberManagement.tsx
+?? app/rooms/[id]/WorkDraftEditor.tsx
+?? docs/
+?? lib/accountDeletion.ts
+?? lib/accountDeletionAdapter.ts
+?? lib/accountDeletionRetention.ts
+?? lib/analyticsEvents.ts
+?? lib/apiGuards.ts
+?? lib/attachmentPath.ts
+?? lib/imagePrivacy.ts
+?? lib/publicationSafety.ts
+?? lib/uploadValidation.ts
+?? lib/useDialogFocus.ts
+?? supabase/

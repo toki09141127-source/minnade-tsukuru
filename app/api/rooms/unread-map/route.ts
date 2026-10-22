@@ -42,7 +42,7 @@ export async function GET(req: Request) {
       .is('left_at', null)
 
     if (memErr) {
-      return NextResponse.json({ error: memErr.message }, { status: 500 })
+      return NextResponse.json({ error: '未読情報を取得できません' }, { status: 500 })
     }
     if (!mems || mems.length === 0) {
       return NextResponse.json({ ok: true, map: {} }, { status: 200 })
@@ -52,7 +52,12 @@ export async function GET(req: Request) {
     // 4) Unread aggregation per room
     //    (Room数が多いときにN+1にならないよう、まとめて取る)
     // -------------------------
-    const roomIds = mems.map(m => m.room_id)
+    const requestedRoomIds = mems.map(m => m.room_id)
+    const { data: visibleRooms, error: roomError } = await supabaseAdmin.from('rooms')
+      .select('id').in('id', requestedRoomIds).eq('is_hidden', false).is('deleted_at', null)
+    if (roomError) return NextResponse.json({ error: '未読情報を取得できません' }, { status: 503 })
+    const roomIds = (visibleRooms ?? []).map(room => room.id)
+    if (roomIds.length === 0) return NextResponse.json({ ok: true, map: {} })
     const lastSeenMap = new Map<string, string | null>()
     for (const m of mems) lastSeenMap.set(m.room_id, m.last_seen_at ?? null)
 
@@ -61,7 +66,7 @@ export async function GET(req: Request) {
     const lastSeenValues = mems
       .map(m => m.last_seen_at)
       .filter(Boolean) as string[]
-    const minLastSeen = lastSeenValues.length
+    const minLastSeen = lastSeenValues.length === mems.length && lastSeenValues.length > 0
       ? new Date(Math.min(...lastSeenValues.map(v => new Date(v).getTime()))).toISOString()
       : null
 
@@ -69,6 +74,7 @@ export async function GET(req: Request) {
       .from('posts')
       .select('room_id,created_at,user_id')
       .in('room_id', roomIds)
+      .eq('is_hidden', false).is('deleted_at', null)
 
     if (minLastSeen) {
       postsQuery = postsQuery.gt('created_at', minLastSeen)
@@ -80,7 +86,7 @@ export async function GET(req: Request) {
 
     const { data: posts, error: postsErr } = await postsQuery
     if (postsErr) {
-      return NextResponse.json({ error: postsErr.message }, { status: 500 })
+      return NextResponse.json({ error: '未読情報を取得できません' }, { status: 500 })
     }
 
     // -------------------------
@@ -101,7 +107,7 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.json({ ok: true, map }, { status: 200 })
-  } catch (e: any) {
-    return NextResponse.json({ error: e?.message ?? 'Unknown error' }, { status: 500 })
+  } catch {
+    return NextResponse.json({ error: '未読情報を取得できません' }, { status: 500 })
   }
 }

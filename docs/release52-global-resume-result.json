@@ -1,0 +1,34 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "AUTH_LOGIN_RESUMES",
+      "pass": true
+    },
+    {
+      "name": "SERVICE_WRITE_RESUMES",
+      "pass": true
+    },
+    {
+      "name": "RPC_WRITE_RESUMES",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_UPLOAD_RESUMES",
+      "pass": true
+    },
+    {
+      "name": "NEW_TEST_OBJECT_BYTES_MATCH",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_DISPOSABLE_DELETE_RESUMES",
+      "pass": true
+    },
+    {
+      "name": "RETIREMENT_STAYS_PAUSED",
+      "pass": true
+    }
+  ],
+  "complete": true
+}
