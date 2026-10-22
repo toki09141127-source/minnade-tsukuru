@@ -214,7 +214,7 @@ export default function ProfilePage() {
               ユーザー名（2〜20文字）
             </label>
             <input
-              value={username}
+              aria-label="ユーザー名" value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="例：あかさたな"
               style={{
@@ -237,7 +237,7 @@ export default function ProfilePage() {
             </div>
 
             <textarea
-              value={bio}
+              aria-label="紹介文" value={bio}
               onChange={(e) => setBio(e.target.value)}
               maxLength={300}
               placeholder="例：創作ジャンル / 得意なこと / 参加したい制作 / 好きな作品 / SNS誘導など"
@@ -271,7 +271,7 @@ export default function ProfilePage() {
             <div style={{ marginTop: 12 }}>
               <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>X / Twitter</label>
               <input
-                value={xUrl}
+                aria-label="X / Twitter" value={xUrl}
                 onChange={(e) => setXUrl(e.target.value)}
                 placeholder="https://x.com/your_id"
                 style={{
@@ -291,7 +291,7 @@ export default function ProfilePage() {
             <div style={{ marginTop: 12 }}>
               <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>YouTube</label>
               <input
-                value={youtubeUrl}
+                aria-label="YouTube" value={youtubeUrl}
                 onChange={(e) => setYoutubeUrl(e.target.value)}
                 placeholder="https://www.youtube.com/@your_channel"
                 style={{
@@ -311,7 +311,7 @@ export default function ProfilePage() {
             <div style={{ marginTop: 12 }}>
               <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>Instagram</label>
               <input
-                value={instagramUrl}
+                aria-label="Instagram" value={instagramUrl}
                 onChange={(e) => setInstagramUrl(e.target.value)}
                 placeholder="https://www.instagram.com/your_id/"
                 style={{
@@ -331,7 +331,7 @@ export default function ProfilePage() {
             <div style={{ marginTop: 12 }}>
               <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>TikTok</label>
               <input
-                value={tiktokUrl}
+                aria-label="TikTok" value={tiktokUrl}
                 onChange={(e) => setTiktokUrl(e.target.value)}
                 placeholder="https://www.tiktok.com/@your_id"
                 style={{
@@ -351,7 +351,7 @@ export default function ProfilePage() {
             <div style={{ marginTop: 12 }}>
               <label style={{ display: 'block', fontSize: 14, marginBottom: 6 }}>Website</label>
               <input
-                value={websiteUrl}
+                aria-label="Website" value={websiteUrl}
                 onChange={(e) => setWebsiteUrl(e.target.value)}
                 placeholder="https://example.com"
                 style={{
@@ -408,7 +408,7 @@ export default function ProfilePage() {
               パスワード変更（変更しないなら空でOK）
             </label>
             <input
-              value={password}
+              aria-label="パスワード変更" value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="6文字以上"
               type="password"
@@ -435,7 +435,7 @@ export default function ProfilePage() {
               border: '1px solid #111',
               borderRadius: 10,
               cursor: canSave ? 'pointer' : 'not-allowed',
-              background: '#111',
+              background: 'var(--primary)',
               color: '#fff',
               opacity: canSave ? 1 : 0.5,
             }}

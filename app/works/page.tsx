@@ -1,16 +1,18 @@
-import WorksListClient from './WorksListClient'
-
-export const dynamic = 'force-dynamic'
-
+import { v2Enabled } from "@/lib/v2/server";
+import WorksListClient from "./WorksListClient";
+import Catalog from "@/app/components/v2/Catalog";
+export const dynamic = "force-dynamic";
 export default function WorksPage() {
   return (
-    <div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 900, margin: 0 }}>完成作品</h1>
-      <p style={{ marginTop: 6, opacity: 0.75, fontSize: 13 }}>
-        期限を迎えて公開されたルームの作品と制作記録を一覧表示します。
-      </p>
-
-      <WorksListClient />
-    </div>
-  )
+    <>
+      <header className="pageIntro">
+        <span className="eyebrow">MADE TOGETHER</span>
+        <h1>みんなで生まれた作品</h1>
+        <p>
+          ひとつひとつに、仲間との時間がある。作品も、制作の過程も楽しもう。
+        </p>
+      </header>
+      {v2Enabled() ? <Catalog mode="works" /> : <WorksListClient />}
+    </>
+  );
 }

@@ -1,36 +1,28 @@
-// app/rooms/page.tsx
-import RoomsListClient from './RoomsListClient'
-import Link from 'next/link'
-import { getUnreadMapForUser } from '@/lib/rooms/getUnreadMapForUser'
-
-export const dynamic = 'force-dynamic'
-
-export default async function RoomsPage() {
-  // ✅ SSRで未読Mapを先取り（開いた瞬間に未読が出る）
-  const initialUnreadMap = await getUnreadMapForUser({ excludeSelf: true })
-
+import { v2Enabled } from "@/lib/v2/server";
+import RoomsListClient from "./RoomsListClient";
+import Link from "next/link";
+import Catalog from "@/app/components/v2/Catalog";
+export const dynamic = "force-dynamic";
+export default function RoomsPage() {
   return (
-    <div style={{ maxWidth: 1100, margin: '24px auto', padding: '0 16px' }}>
-      {/* ← 上の作成ボタンだけ残す */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800 }}>制作ルーム一覧</h1>
-        <Link
-          href="/rooms/create"
-          style={{
-            padding: '10px 16px',
-            borderRadius: 12,
-            background: '#111',
-            color: '#fff',
-            fontWeight: 700,
-            textDecoration: 'none',
-          }}
-        >
-          ＋ルームを作成
+    <>
+      <header className="sectionHeader pageIntro">
+        <div>
+          <span className="eyebrow">FIND YOUR CREATIVE TEAM</span>
+          <h1>ルームを探す</h1>
+          <p>気になるアイデアに出会ったら、まずはひとこと参加してみよう。</p>
+        </div>
+        <Link className="btnPrimary" href="/rooms/create">
+          ＋ ルームを作る
         </Link>
-      </div>
-
-      {/* 一覧 */}
-      <RoomsListClient initialUnreadMap={initialUnreadMap} />
-    </div>
-  )
+      </header>
+      {v2Enabled() ? <Catalog /> : <RoomsListClient />}
+      <p className="muted">
+        完成した作品は{" "}
+        <Link className="textLink" href="/works">
+          作品一覧へ →
+        </Link>
+      </p>
+    </>
+  );
 }
