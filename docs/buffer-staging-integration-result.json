@@ -1,0 +1,95 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "eligible completed source from real staging DB",
+      "status": "PASS"
+    },
+    {
+      "name": "excluded real staging candidate absent",
+      "status": "PASS"
+    },
+    {
+      "name": "real candidate inputs preserve completed priority and max two",
+      "status": "PASS"
+    },
+    {
+      "name": "real-data dry-run does not change queue",
+      "status": "PASS"
+    },
+    {
+      "name": "TEST canary dry-run validates exact planned slot",
+      "status": "PASS"
+    },
+    {
+      "name": "eight real PostgREST enqueues converge on one row",
+      "status": "PASS"
+    },
+    {
+      "name": "duplicate TEST enqueue denied",
+      "status": "PASS"
+    },
+    {
+      "name": "eight real PostgREST claims yield one winner",
+      "status": "PASS"
+    },
+    {
+      "name": "stale fencing token denied",
+      "status": "PASS"
+    },
+    {
+      "name": "pre-send failed result persisted",
+      "status": "PASS"
+    },
+    {
+      "name": "retry backoff enforced in real DB",
+      "status": "PASS"
+    },
+    {
+      "name": "anon RPC denied by real PostgREST",
+      "status": "PASS"
+    },
+    {
+      "name": "service role direct queue read denied",
+      "status": "PASS"
+    }
+  ],
+  "checkedAt": "2026-10-22T13:57:52.999Z",
+  "dryRun": {
+    "mode": "dry-run",
+    "candidates": 5,
+    "planned": 0,
+    "queued": 0,
+    "preSendEligible": 0,
+    "writes": 0,
+    "sends": 0
+  },
+  "testDryRun": {
+    "mode": "dry-run",
+    "eligible": true,
+    "existing": false,
+    "writes": 0,
+    "sends": 0
+  },
+  "candidateMetadata": [
+    {
+      "kind": "new_room",
+      "targetId": "6208fe60-30e1-4982-8062-561045648a6b"
+    },
+    {
+      "kind": "deadline",
+      "targetId": "6208fe60-30e1-4982-8062-561045648a6b"
+    },
+    {
+      "kind": "completed",
+      "targetId": "9d8341d7-d03f-44ae-9426-1cbe6dcdecb4"
+    },
+    {
+      "kind": "completed",
+      "targetId": "76d5dae7-5995-4cf1-973e-89c92e2d3f64"
+    }
+  ],
+  "timeNote": "Normal same-day slots have elapsed; priority tested with real candidates at next-day planning clock. TEST uses explicit short slot.",
+  "bufferMutations": 0,
+  "productionConnected": false
+}

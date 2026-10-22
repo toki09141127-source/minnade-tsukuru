@@ -1,0 +1,21 @@
+{
+  "checkedAt": "2026-10-22T15:10:16.427Z",
+  "project": "fwqucffxdmbdczspkcyr",
+  "event": "completed_6208fe60-30e1-4982-8062-561045648a6b",
+  "bufferId": "6ada24ebbf6d801ac6f2bcaf",
+  "state": "cancelled",
+  "releaseStarted": "2026-10-22T15:07:17.537755+00:00",
+  "remote": {
+    "state": "missing"
+  },
+  "control": {
+    "reason": "AMBIGUOUS",
+    "enabled": false,
+    "singleton": true,
+    "stopped_at": "2026-10-22T15:08:45.254986+00:00",
+    "updated_at": "2026-10-22T15:08:45.254986+00:00"
+  },
+  "releaseRequests": 1,
+  "retries": 0,
+  "productionChanges": 0
+}

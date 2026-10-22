@@ -1,0 +1,14 @@
+CREATE ROLE anon;
+CREATE ROLE authenticated;
+CREATE ROLE service_role;
+CREATE TABLE rooms(id uuid PRIMARY KEY,title text,status text,is_hidden boolean,deleted_at timestamptz,is_adult boolean,created_by uuid,started_at timestamptz,expires_at timestamptz);
+CREATE TABLE work_drafts(room_id uuid,blocks jsonb,published_at timestamptz);
+CREATE TABLE room_members(room_id uuid,role text,left_at timestamptz,user_id uuid,joined_at timestamptz);
+CREATE TABLE account_deletion_jobs(actor_id uuid);
+CREATE TABLE posts(id uuid,room_id uuid);
+CREATE TABLE report_intake(id uuid,target_type text,target_id uuid);
+CREATE TABLE report_resolutions(receipt_id uuid);
+CREATE TABLE reports(target_room_id uuid,target_post_id uuid);
+CREATE TABLE buffer_clock(instant timestamptz);
+INSERT INTO buffer_clock VALUES ('2026-10-22T11:20:00Z');
+CREATE FUNCTION public.buffer_test_now() RETURNS timestamptz LANGUAGE sql STABLE AS $$ SELECT instant FROM public.buffer_clock $$;

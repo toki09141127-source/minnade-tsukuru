@@ -1,0 +1,33 @@
+{
+  "checkedAt": "2026-10-22T15:17:12.321Z",
+  "production": "BLOCKED",
+  "productionChanges": 0,
+  "autoSend": false,
+  "stagingMigrations": "029-039",
+  "localTests": 205,
+  "typecheck": "PASS",
+  "relevantLint": "PASS",
+  "build": "PASS",
+  "cancellation": "PASS",
+  "unknownSafety": "PASS",
+  "autoStop": "PASS",
+  "publicationVerification": "existing sent receipt PASS; new held release acceptance BLOCKED",
+  "scheduler": {
+    "minuteTicks": 12,
+    "httpTransport": "PASS",
+    "invalid200Rejected": 502,
+    "consecutiveFailures": 3,
+    "stopped": true,
+    "queuedSecrets": 0,
+    "publicRpcDenied": true,
+    "authenticatedEndToEnd": "NOT_VERIFIED"
+  },
+  "stagingFinal": {
+    "active": 0,
+    "unknown": 0,
+    "testAuthorization": false,
+    "scheduler": false,
+    "testJobs": 0
+  },
+  "newXPosts": 0
+}

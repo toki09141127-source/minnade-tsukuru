@@ -18,5 +18,5 @@
     "method": "Dashboard BEGIN READ ONLY / ROLLBACK"
   },
   "baselineScope": "audited public schema; client ACL closed; managed Storage unchanged",
-  "migrationsApplied": 28
+  "migrationsApplied": 39
 }

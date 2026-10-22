@@ -1,0 +1,12 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checkedAt": "2026-10-22T14:59:56.351Z",
+  "mode": "reserve-held-test",
+  "result": {
+    "mode": "canary",
+    "state": "succeeded",
+    "code": "BUFFER_ACCEPTED"
+  },
+  "productionConnected": false,
+  "autoSend": "OFF"
+}

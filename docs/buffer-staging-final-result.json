@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-22T14:11:48.341Z",
+  "state": "sent",
+  "attempts": 1,
+  "bufferId": "6ada172de8cca8cdcc55b722",
+  "sentAt": "2026-10-22T14:07:07.264+00:00",
+  "externalId": "2113270930105409955",
+  "externalUrl": "https://x.com/minnade_tsukuru/status/2113270930105409955",
+  "authorizationEnabled": false,
+  "duplicateAddedPreviouslyVerified": 0,
+  "bufferSentCount": 1,
+  "bufferQueueCount": 0,
+  "xVisible": true,
+  "autoSend": "OFF",
+  "productionConnected": false
+}

@@ -1603,3 +1603,67 @@ Production COMPLETE / GO（5〜10人β）。退会flag配信dpl_F68amKKbPxDp3Tgy
 18:55初回監視: HTTP/Auth200・添付hash一致・4xx/5xx/429/runtimeerror0・退会/通報滞留/不明副作用/RLS未設定/公開遅延0。毎時24回のheartbeat ID24 ACTIVEを作成/保存確認、2026-10-23 19:00 JSTまで。正常時通知なし、異常時のみこの会話へ。PC/Codex稼働が必要、管理Auth/SMTPログは自動収集外。
 
 最終秘密形状582text候補0、全28hash一致、appコードはbaa1e1bから不変、release scripts対象lint0error。既存871を再実行せず、追加は実本番とrunnerだけ。最終18項目はRELEASE_FINAL_ACCEPTANCE.md。AI_TASK done（本番反映・監視開始）。運営UIの恒久アカウント未指定、iPhone実機・別端末DPAPI復旧は残る。旧節のBLOCKED/本番未適用を最新状態と混同しない。
+
+## Buffer投稿計画の追加（2026-10-22）
+最新ユーザー依頼に基づき本番を変えず進行。第52節Production COMPLETE/5〜10人β GO、監視18:55 JST異常0を記録と担当チャットで照合。24時間観察は未完。
+lib/buffer/promotionPlanner.tsとdocs/buffer-planner-check.cjsを追加。日次2/新規1、JST昼夜、完成優先、安全性チェック、重複・不明送信結果除外、日曜週次を非送信で実装。47新規＋25接続回帰、型、追加lint成功。BUFFER_CONNECTION_SETUP.mdの旧公開待ち記述を更新。
+実API疎通・DB永続キュー・送信workerは未接続。秘密値取得なし、commit/push/deploy/本番変更/投稿なし。次はtrusted DB adapterと原子的予約・直前再判定・送信結果不明の照合を実装する。検収済み本体の監視を継続。
+
+## Buffer永続キュー・送信処理（2026-10-22、最新）
+feature/buffer-queue-send（基点a325926）でローカル実装完了。既存Buffer差分を保持。commit/push/merge/deploy/実DB適用/実送信/本番設定変更は全て無し。本番MVPと24時間監視の設定には触れていない。
+
+変更: 追加029 migration（review/queue、公開状態adapter、原子的予約/claim/fencing/結果記録）、lib/buffer/{sender,worker}.ts、既存promotionPlannerの送信前再検証、app/api/cron/buffer/route.ts。通常夜1/最大日2・完成優先・新規日1・締切/満席/日曜週次を維持。未レビュー/掲載除外/PII/通報/削除/非表示を再取得。未知結果と中断sendingは再送しない。接続前失敗だけ最大3attempt。canaryは指定event1件に固定、automaticは別環境ゲート。
+
+検証: 47 planner＋25 connection＋58 queue/worker/native PG＋11 route=141 PASS。native PGは127.0.0.1合成schema、8接続同時予約/claimと6接続cap、再接続後の永続化、送信後保存失敗、除外変更、ACLを確認。既存全MVPテストは再実行していない。型チェック・追加lint・diff成功。build最終結果はBUFFER_CONNECTION_SETUP末尾参照。
+
+dry-runは合成候補2→計画1→送信前適格1、書込0・送信0。実本番データdry-run/実staging/実API/Buffer予約/X投稿は未実施。ローカルBUFFER_API_KEYなしを存在真偽のみで確認。前回のVercel Secret保存記録は維持するが、今回秘密値を取得しない。
+
+残作業: 実stagingで既存schema/PostgREST権限との統合検収、掲載許可レビュー1件、秘密管理画面で対象環境のキー設定、実データdry-run→明示承認されたBuffer予約1件→X公開1件検収。push/merge/deploy/本番変更は最新ユーザーによる明示承認まで禁止。cron登録は未実施（既存vercel.json不変）。予約後の公開除外変更はBuffer側取消が必要で、自動取消は未実装。
+導入・停止・不明結果の手順はdocs/BUFFER_CONNECTION_SETUP.mdの最新節。次はstaging統合検収の準備と対象作品選定。AI_TASKは実環境検収待ちのin_progress。
+
+最終buildも外部通信遮断下でPASS（既存middleware非推奨警告のみ）。追加lintは0error/0warning、全体lint未実行。HEAD a325926から今回commitなし、作業ツリーに保持。既存vercel.json/公開cron/package-lock不変。
+
+
+## Buffer staging・X公開検収完了（2026-10-22 23:12 JST、最新）
+Status: done（今回のstaging統合検収・TEST予約/公開1件）。自動運用の本番導入は未実施。
+staging fwqucffxdmbdczspkcyr に029/030適用。実DB検収25群PASS（API13・SQL状態遷移11・ACL/RLS/trigger集約1）。実データdry-runは書込0/送信0、固定TEST canaryは適格1件。通常時間枠を過ぎた通常plannerは0件で正常。
+Buffer API接続PASS。TESTを1件のみ予約し、2026-10-22 23:07:07 JSTに公式 @minnade_tsukuru で公開。Buffer Sent1/Queue0、本文・投稿者・時刻をX画面でも確認。
+公開URL: https://x.com/minnade_tsukuru/status/2113270930105409955
+Buffer ID: 6ada172de8cca8cdcc55b722。DB state=sent、attempts=1、sent_at・external_id・external_url保存済み。予約後の同一event再投入0件を確認済み。追加TEST許可false、自動送信OFF、cron未登録。
+APIの公開リンクは数値アカウントID形式だったため初回照合unknown。再送せずX画面で公式アカウントへのリダイレクトを照合し、確認済み固定IDだけユーザー名URLへ正規化する修正と他ID拒否テストを追加。読取再照合でsentへ収束。
+最終検証: planner47 + connection25 + route11 + queue/nativePG78 = 161 PASS。typecheck・対象lint・外部通信遮断build PASS（既存middleware非推奨警告のみ）。全体lint・既存MVP全試験は再実行していない。
+追加変更: migration030、testCanary、sender.inspect、scripts/bufferのstaging専用runner/SQL/秘密登録補助、公開結果JSON。秘密はGit除外の.env.staging.localのみ、出力/commitなし。
+本番app/DB/設定変更・push/merge/deployなし。承認済みX TEST投稿1件のみ外部公開。並行監視の差分は保持。feature/buffer-queue-send / HEAD a325926、今回未commit。
+最終追加の予約RPCによる重複再確認は自動承認レビューで拒否され未実行。安全な読取snapshotでsent/attempts1/許可falseを最終確認し、既存の成功した重複検査を採用。
+次の1手: この差分と本番導入手順をレビューし、本番適用の明示承認を得る。自動ONは別判断。予約後の除外はBuffer側取消が必要（自動取消未実装）。証跡: docs/buffer-staging-final-result.json と各staging結果JSON。
+
+
+## Buffer production rollout STOP（2026-10-22、最新）
+最新添付3f3e6457でcommit/push/main/production migration/deploy/auto-send ONまで条件付き承認された。追加承認待ちではなく、重大安全条件未達のため本番反映前にSTOP。
+確認した重大問題: 029 buffer_claimは予定の15〜2分前に取得し、workerはBufferへの予約作成直前だけ除外再検証する。受付後はsucceededとなり、snapshot.queue/claimの対象外。以後非公開/通報/掲載除外になっても外部予約の取消経路がなく、X公開を抑止できない。以前の手動取消という制約は今回の自動運用条件を満たさない。
+追加不足: sender.inspect/buffer_reconcileはstaging-run手動操作だけで、通常automatic workerには未接続。公開結果不一致の自動検出・停止は未実装。cron登録も未実施。
+再現: node docs/buffer-production-blocker-check.cjs。実workerと合成RPCで予約受付後の非公開化→次回automaticを実行。合成send1、cancel0、inspect0、状態succeeded維持。これは不具合の再現成功であり安全性PASSではない。結果docs/buffer-production-blockers.json。ネットワーク0、実DB変更0、外部投稿0。追加診断lint PASS。既存161件/typecheck/build PASSは前フェーズ実績で、今回の不足を検証していなかった。
+Git: feature/buffer-queue-send、HEAD a325926。git fetch origin mainでremote最新a325926を確認。local mainはff1fe59のため、再開時は古いlocal mainを基準に上書きしない。今回commit/push/mergeなし、既存差分と並行監視差分を保持。
+環境識別は既存記録のみ: production Supabase joedeuyrzimqyjapqpyh、staging fwqucffxdmbdczspkcyr、Vercel sonetokiyas-projects/minnade-tsukuru。今回live production API/DB/secretの確認・変更は未実施。029/030本番適用・deploy・production dry-run・queue smoke・cron smoke・本番送信は未実施。auto-send OFFのまま。Buffer専用24h監視は未開始、既存MVP監視設定は変更なし。
+再開に必要な修正: 予約後の除外変更を外部公開まで安全に扱う送信方式/取消処理、通常予約の自動receipt照合、異常時にBufferだけ停止する制御と監視を実装し、stagingで取消/照合失敗/競合を検証。その後今回の有効な本番投入承認の範囲でrolloutを再開する。一般ユーザー作品で検証しない。
+Status: in_progress（重大な公開安全性の不足で本番投入BLOCKED）。V2.1へ専念できる完了状態ではない。
+
+
+## Buffer安全修正・staging再検収（2026-10-23 00:17 JST、最新）
+Status: in_progress / production BLOCKED。最新添付68410385の条件付き本番投入承認は有効だが、staging DoDが全PASSではないため本番操作へ進まない。
+
+実装: lifecycleによる予約後の適格性再評価、取消、通常公開結果照合、DBのBuffer専用kill switchを追加。予約受付をsentとせずscheduledで保存。通常投稿はBuffer下書き(saveToDraft)として保持し、予定時刻から2分以内に最新候補・停止状態・lease tokenを検証した1回のreleaseだけを許す。scheduler停止中に自律公開しない。release意図は先にDBへ保存、unknownを自動再送しない。公開照合は10分猶予、読取失敗3回で停止。除外/アカウント不一致/不整合/不明変更結果は即停止、停止後も取消/照合を継続。手動resumeはDB owner専用で未解決unknownを拒否。通常夜1/最大2/完成優先等は維持。
+
+staging適用: 029/030はhash不変。031制御・取消/照合、032未送信取消のcap補正、033固定取消TEST本文、034公開guard、035scheduler構造、036transport ACL試行、037同期HTTPへの置換、038HTTPオプション互換、039応答検証。035/036のpg_net方式は採用しない。Supabase管理者所有のため036のREVOKEは実効なしと判明し、実秘密の登録前に037以降へ置換。最終tickはVaultの専用cron secretをメモリ内で使用し、HTTPコード/失敗回数のみ保存。pg_netキューへ秘密を保存しない。既存Vercel publish cronは変更なし。Hobbyは毎分cron不可のためSupabase pg_cronを候補とする。
+
+検証: planner47 + connection25 + route11 + nativeDB122 = 205 PASS。typecheck・関連lint・外部通信遮断build PASS（既存middleware警告のみ）。合成再現テストは取消1/照合2となり旧ブロッカー再現false。staging追加状態遷移12群PASS。毎分DB tick 12回成功、HTTP疎通・HTML200拒否(502)・3回失敗停止・anon/authenticated/serviceからscheduler実行拒否を実検証。実credential付きデプロイ済みrouteとのcron end-to-endは未検証。全MVP試験/全体lintは再実行していない。
+
+実取消: Buffer ID 6ada20dff09f431dcae37955、23:54予定を23:43に除外→取消成功。予定時刻後も未公開。既存X TEST 2113270930105409955はAPI読取照合成功。
+公開方式の追加TEST: Buffer ID 6ada24ebbf6d801ac6f2bcaf を下書き保存、画面Drafts1/Queue0で確認。00:07:17にreleaseを1回実行したが成功応答として確定できずunknown/auto-send OFF。応答の詳細は当時保存しておらず原因未確定。再送0。読取ではdraftのまま、その後停止時cleanupで取消成功、DB cancelled/Buffer missing。追加X公開0、最終画面Queue0/Drafts0/Sent1。失敗を公開検収PASSと扱わない。次の検収用にHTTP status/typename/分類のみの秘密なし診断を追加した。
+
+実データdry-run: candidates3/planned0/queued0/preSendEligible0、writes0/sends0（深夜の通常時間枠外）。最終stagingはactive0/unknown0/autoSend=false/testAuthorization=false/scheduler=false、一時cronはunschedule済み。既存MVP監視設定は変更なし。Buffer専用24h監視は本番未稼働なので未開始。
+
+production DB/app/env/migration/deploy変更なし、main統合/pushなし。一般ユーザー作品の試験投稿なし、秘密露出なし（52対象ファイルで実環境秘密一致0）。branch feature/buffer-queue-send。既存監視の未commit差分は保全。
+残作業: 追加公開TESTの上限を超えるため最大1件の再検証許可を質問中。許可前は追加予約しない。新しい診断でrelease結果を特定し、修正後のheld→公開→自動DB sentとhosted cron end-to-endをPASSにしてから本番再判定。許可待ちを自動再送の根拠にしない。V2.1に専念できる完了状態ではない。
+証跡: buffer-safety-acceptance-result.json / buffer-held-publication-result.json / buffer-staging-cancellation-result.json / buffer-staging-migrations.json。
+Updated at: 2026-10-23 00:17 JST
