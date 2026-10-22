@@ -1,0 +1,159 @@
+{
+  "checks": [
+    {
+      "name": "home 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "home 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "home six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "rooms 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "rooms 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "rooms six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "create 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "create 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "create six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "room 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "room 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "room six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "works 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "works 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "works six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "work 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "work 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "work six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "log 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "log 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "log six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "mypage 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "mypage 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "mypage six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "profile 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "profile 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "profile six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "login 390 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "login 1440 WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "login six responsive widths",
+      "pass": true
+    },
+    {
+      "name": "Draft editor WCAG A/AA automated checks",
+      "pass": true
+    },
+    {
+      "name": "Long draft keeps sidebar at the top",
+      "pass": true
+    },
+    {
+      "name": "Draft editor and preview responsive",
+      "pass": true
+    },
+    {
+      "name": "Seven block types can be added without saving",
+      "pass": true
+    },
+    {
+      "name": "Block removal and keyboard-friendly reorder operate",
+      "pass": true
+    },
+    {
+      "name": "Stored synthetic greeting, summary and messages remain visibly AI",
+      "pass": true
+    },
+    {
+      "name": "AI messages fit mobile and desktop",
+      "pass": true
+    },
+    {
+      "name": "No uncaught errors or HTTP500 on displayed pages",
+      "pass": true
+    }
+  ],
+  "violations": [],
+  "complete": true,
+  "productionChanges": "NONE"
+}

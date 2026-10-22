@@ -1,0 +1,22 @@
+{
+  "checks": [
+    {
+      "name": "Stable build: create submit transitions to the created room",
+      "pass": true
+    },
+    {
+      "name": "320px composer posts and displays genuine synthetic image bytes",
+      "pass": true
+    },
+    {
+      "name": "Core resignation requires Creator approval and returns to Member",
+      "pass": true
+    },
+    {
+      "name": "Creator confirms removal; excluded Member cannot rejoin or post",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

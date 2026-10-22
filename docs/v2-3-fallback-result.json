@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "name": "V2 OFF navigation /",
+      "pass": true
+    },
+    {
+      "name": "V2 OFF navigation /rooms",
+      "pass": true
+    },
+    {
+      "name": "V2 OFF navigation /works",
+      "pass": true
+    },
+    {
+      "name": "V2 OFF navigation /mypage",
+      "pass": true
+    },
+    {
+      "name": "Stopped V2 API remains closed",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

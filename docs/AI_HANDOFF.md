@@ -1673,3 +1673,26 @@ Hosted自動19項目PASS: アプリlogin判定、保存済み合成AI summary、
 検収期待値の訂正も記録: HTTP200だけではVercel loginを成功扱いできずapp内容まで確認。作成用合成actorの3rooms/hour上限はそのまま維持し、空き枠のある既存合成Creatorで1room検収。AI OFFはtask自体を作らない仕様ではなくskipped監査履歴を保持するため、期待をskipped＋AI output0へ修正。これらのためDB設定・本番コード変更は行っていない。
 
 最新判定V2.2 PARTIALの残件は実OpenAI成功検収と、成功後のhosted新規生成確認。API復旧の連絡はまだなく再送なし。定時scheduler/実機は未検収として明記。既存040〜043はf7f3f96との差分0。検収・仕様文書と再実行スクリプトをV2ブランチでcommitする。Production Changes NONE。
+
+### V2.3 Creative Office UI — local complete / Preview acceptance in progress（2026-10-23 JST）
+
+develop/v2 / C:/dev/minnade/minnade-tsukuru-v2。開始4f0410aはclean。UI commit fd8494e、Home/Rooms/Room/Log/AI/Draft/Works/My Page/Createを刷新。caller-scoped catalog APIはService Role不使用、既存RLSを維持し、退会中actorを拒否。ローカルDBのV2.1/V2.2回帰144、AI offline52、catalog/security/contrast25、ブラウザ主要28、追加実操作4、表示・a11y38、AI UI状態4、V2停止時fallback5、MVP21suiteがPASS。型検査・関連lint（0error/0warning）・最新build・diff check成功。実AI呼出0、既存429未解消。
+
+320/375/390/768/1024/1440幅、draft409時入力保持、危険操作dialogのcancel初期focus/Escape、320px実画像upload、Core辞退承認・追放再参加拒否を確認。AI停止中も人間の制作を継続。既存RPCがCreatorにだけ返す他メンバー情報は広げない。My Pageの通知は既存Core申請と公開作品の範囲、退会後公開作品への参加履歴は継続。既存MVPへのV2 flag OFF fallbackを保持。
+
+Preview URL: https://minnade-tsukuru-staging-gogr4s5qk-sonetokiyas-projects.vercel.app 。staging専用projectにsource-only配信、production deployなし。ユーザーが新Preview限定Cookie取得・一時使用を承認済み。Protection不変でHosted検収へ進行。現時点ではHosted PASSとは扱わない。画像screenshotの読み込み中を完了画面と混同しないよう、一覧の取得完了待ちを検収へ追加。初期dev serverのHMR中遷移やselector誤りはbuild起動で再検証済み。
+
+変更はUI/APIと検収scripts/docs。package/lock/migration変更なし、main/Buffer checkoutは未変更、production DB/user data操作NONE。秘密値の表示/Git追加なし。残: Hosted A〜F、最終記録・検収commit、一時Cookie削除。
+
+
+### V2.3 COMPLETE — Hosted final acceptance（2026-10-23 JST）
+
+前節のHosted待ちは完了。UI commit fd8494e、同sourceのstaging Preview https://minnade-tsukuru-staging-gogr4s5qk-sonetokiyas-projects.vercel.app はREADY。Hosted79項目（主要28、create/upload/辞退/追放4、visual/a11y38、AI route mock4、Core編集と取得後log補完5）すべてPASS。local300checksとMVP21suite PASS。各JSONはdocs/v2-3-*、詳細V2_3_ACCEPTANCE.md。実AI呼出0、意図したmock503以外の500・uncaughtなし。
+
+主要320/375/390/768/1024/1440幅、21画面状態＋取得済みroom/log4状態のaxe違反0。全widthで横崩れなし。Coreのハイライトとhuman draft保存もHosted成功。公開済み合成fixtureを新UIでWork→公開log表示し、変更のない公開backendは隔離DBで回帰。今回新たなstaging公開worker/clock操作はしていない。
+
+型検査・関連lint・build/diff成功。package/lock/migrationは開始HEADと差分0。新runtime依存0。配信HTML/JS19件の既存secret混入0、repository/client bundleも0。Preview限定の一時Cookie/HTTP headers/redirect HTML3ファイルを削除、test browsers/server終了、Protection不変。値表示/Git追加なし。
+
+AI_TASK done。V2.3 COMPLETEはCreative Office UI＋staging検収の範囲。V2.2の実OpenAI429は未解消でPARTIAL維持、AI flags OFF。物理Android/iPhone・実利用性能・screen reader認証は未実施。Creator以外へのmember/Creator名義公開は既存RPC projection以上に広げない。通知は既存申請/辞退状態/公開作品のみで新通知DBなし。Buffer/V2の旧040採番衝突は将来merge前に整理。main/Buffer checkout・production DB/migration/deploy/user dataの変更NONE、pushなし。
+
+Next: 別依頼でV2.4 Free/Plus/Proへ進める。実AIを前提にする枠・課金検収は429復旧後に別途。今回の承認待ちなし。検収scripts/docsを後続develop/v2 commitにまとめる。

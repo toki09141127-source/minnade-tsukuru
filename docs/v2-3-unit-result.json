@@ -1,0 +1,106 @@
+{
+  "checks": [
+    {
+      "name": "Disabled V2 rejects before reading",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 1",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 2",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 3",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 4",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 5",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 6",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 7",
+      "pass": true
+    },
+    {
+      "name": "Malformed filter rejected 8",
+      "pass": true
+    },
+    {
+      "name": "Anonymous private collection rejected 9",
+      "pass": true
+    },
+    {
+      "name": "Anonymous private collection rejected 10",
+      "pass": true
+    },
+    {
+      "name": "Invalid token cannot silently become anonymous",
+      "pass": true
+    },
+    {
+      "name": "Departing account rejected before collection reads",
+      "pass": true
+    },
+    {
+      "name": "Activity always scopes to authenticated actor",
+      "pass": true
+    },
+    {
+      "name": "Active My Page excludes exited rooms",
+      "pass": true
+    },
+    {
+      "name": "Published My Page retains exited contributions",
+      "pass": true
+    },
+    {
+      "name": "Pagination returns eighteen plus continuation",
+      "pass": true
+    },
+    {
+      "name": "Active catalog excludes legacy, hidden, deleted and elapsed rooms",
+      "pass": true
+    },
+    {
+      "name": "Only allowlisted columns are selected",
+      "pass": true
+    },
+    {
+      "name": "Published card uses immutable snapshot text",
+      "pass": true
+    },
+    {
+      "name": "Database diagnostics never enter response",
+      "pass": true
+    },
+    {
+      "name": "WCAG AA text contrast primary",
+      "pass": true
+    },
+    {
+      "name": "WCAG AA text contrast active",
+      "pass": true
+    },
+    {
+      "name": "WCAG AA text contrast muted",
+      "pass": true
+    },
+    {
+      "name": "WCAG AA text contrast danger",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "network": "NONE"
+}

@@ -1,0 +1,26 @@
+{
+  "checks": [
+    {
+      "name": "Core changes highlight through Hosted UI",
+      "pass": true
+    },
+    {
+      "name": "Core AI request respects stopped feature state",
+      "pass": true
+    },
+    {
+      "name": "Core saves human draft successfully through Hosted UI",
+      "pass": true
+    },
+    {
+      "name": "Loaded room content: six widths, bounded DOM and zero axe violations",
+      "pass": true
+    },
+    {
+      "name": "Loaded log content: six widths, bounded DOM and zero axe violations",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

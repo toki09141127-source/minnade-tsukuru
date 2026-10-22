@@ -1,0 +1,214 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Safe same-room context accepted",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 1",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 2",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 3",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 4",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 5",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 6",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 7",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 8",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 9",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 10",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 11",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 12",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 13",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 14",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 15",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 16",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 17",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 18",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 19",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 20",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 21",
+      "pass": true
+    },
+    {
+      "name": "Sensitive or injection text rejected 22",
+      "pass": true
+    },
+    {
+      "name": "Unsafe context rejected before provider 23",
+      "pass": true
+    },
+    {
+      "name": "Unsafe provider output rejected 24",
+      "pass": true
+    },
+    {
+      "name": "Unknown top-level context fields stripped",
+      "pass": true
+    },
+    {
+      "name": "Unknown nested context field rejected",
+      "pass": true
+    },
+    {
+      "name": "Forbidden context cannot enter provider",
+      "pass": true
+    },
+    {
+      "name": "Model cannot invent authoritative decisions",
+      "pass": true
+    },
+    {
+      "name": "Cross-room output reference rejected",
+      "pass": true
+    },
+    {
+      "name": "Highlight evidence must actually be highlighted",
+      "pass": true
+    },
+    {
+      "name": "Non-draft task cannot return draft content",
+      "pass": true
+    },
+    {
+      "name": "Undeclared action field rejected",
+      "pass": true
+    },
+    {
+      "name": "Synthetic question passes the same validator",
+      "pass": true
+    },
+    {
+      "name": "Provider input excludes task authorization identifiers question",
+      "pass": true
+    },
+    {
+      "name": "Synthetic idea passes the same validator",
+      "pass": true
+    },
+    {
+      "name": "Provider input excludes task authorization identifiers idea",
+      "pass": true
+    },
+    {
+      "name": "Synthetic organize passes the same validator",
+      "pass": true
+    },
+    {
+      "name": "Provider input excludes task authorization identifiers organize",
+      "pass": true
+    },
+    {
+      "name": "Synthetic summarize passes the same validator",
+      "pass": true
+    },
+    {
+      "name": "Provider input excludes task authorization identifiers summarize",
+      "pass": true
+    },
+    {
+      "name": "Synthetic draft_assist passes the same validator",
+      "pass": true
+    },
+    {
+      "name": "Provider input excludes task authorization identifiers draft_assist",
+      "pass": true
+    },
+    {
+      "name": "Prompt separates highlights, decisions and tools",
+      "pass": true
+    },
+    {
+      "name": "Provider rejection classified 429 insufficient_quota",
+      "pass": true
+    },
+    {
+      "name": "Provider rejection classified 429 rate_limit_exceeded",
+      "pass": true
+    },
+    {
+      "name": "Provider rejection classified 429 unrecognized",
+      "pass": true
+    },
+    {
+      "name": "Provider rejection classified 401 invalid_api_key",
+      "pass": true
+    },
+    {
+      "name": "Provider rejection classified 500 unrecognized",
+      "pass": true
+    },
+    {
+      "name": "Provider network failure terminates without raw diagnostics",
+      "pass": true
+    },
+    {
+      "name": "Structured provider success validates output and safe request settings",
+      "pass": true
+    },
+    {
+      "name": "Provider refusal never becomes an AI message",
+      "pass": true
+    }
+  ],
+  "scope": "offline synthetic, zero network"
+}

@@ -1,31 +1,28 @@
 # AI_TASK
 
 ## Status
-in_progress
+done
 
 ## Objective
-V2.2 AI Creatorをdevelop/v2で実装・DB・UI・安全制御・staging E2E・Previewまで完成させる。
+V2.3 Creative Office UIをdevelop/v2で実装し、レスポンシブ・アクセシビリティ・staging Previewの主要操作まで検収する。
 
 ## Context
-専用worktree C:/dev/minnade/minnade-tsukuru-v2。staging fwqucffxdmbdczspkcyrのみ。production禁止。V2.1 HEAD f7f3f96から開始。既存migration不変。
+C:/dev/minnade/minnade-tsukuru-v2、開始HEAD 4f0410a、既存差分なし。V2.1/V2.2権限を保持。staging fwqucffxdmbdczspkcyrのみ。実AIは429復旧未確認のため再送しない。V2.2実AI残件を成功扱いしない。
 
 ## Tasks
-1. done: 044〜047 AI identity/task/output、safe context、role/RLS、rate/lease/idempotency/feature stopを実装・staging適用
-2. done: Provider adapter、manual/auto triggers、summary/draft assist、公開fallback、AI UI
-3. done: DB144、unit52、staging合成UI/API19＋自動/公開10、MVP21suite回帰、型/lint/build
-4. done: Hosted Preview READY、ログイン済みブラウザ9項目＋API/320・375・390・1280px自動検収19項目PASS。ユーザー承認済み検収Cookieを一時使用し削除済み
-5. pending: 実AI成功検収。3呼出HTTP429、原因未確定。ユーザーがAPI利用枠を確認中。利用可能との連絡までは再送しない
-6. done: SPEC/SAFETY/ACCEPTANCE/HANDOFF、検収記録を更新。実装commit8090808、検収記録は後続commit
+1. done: 共通tokens/nav/brand、Home/Rooms/Works/My Page、Room/Log/AI/Draft/Create刷新
+2. done: 320/375/390/768/1024/desktop、keyboard/contrast、権限・競合回帰
+3. done: staging専用Hosted Preview、合成アカウントの主要実操作
+4. done: DESIGN_SYSTEM/ACCEPTANCE/HANDOFF、V2 branch commit
 
 ## Do not
-production接続/変更/deploy、main変更/merge、Buffer混在、既存migration変更、秘密表示、既存差分破棄。
-未知429の連続再試行、未確認の実AI・無人schedulerをPASS扱いしない。
+production DB/migration/deploy/user data、main merge、Buffer混在、既存差分破棄、秘密表示、実AI再送。
 
 ## Validation
-添付e6ffcd30のA〜MとDefinition of Done。V2_2_ACCEPTANCE.mdを最新判定とする。現在PARTIAL。AI DB control/Preview envはOFF。
+添付1109a1b1のDefinition of Done。未確認項目はPASS扱いしない。
 
 ## Expected output
-実装・検証結果と残課題、Preview URL、Production Changes NONE。
+V2.3 COMPLETE（staging UI scope）。UI commit fd8494e、Hosted Preview READY。local300checks＋MVP21suite、Hosted79checks PASS。実AI429はV2.2残件。Production Changes NONE。
 
 ## Updated at
 2026-10-23 JST

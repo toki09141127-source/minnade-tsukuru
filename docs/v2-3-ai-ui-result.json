@@ -1,0 +1,24 @@
+{
+  "scope": "browser route mocks only; zero provider calls",
+  "checks": [
+    {
+      "name": "Long synthetic summary wraps at mobile and desktop",
+      "pass": true
+    },
+    {
+      "name": "Manual AI request has a nonblocking processing state",
+      "pass": true
+    },
+    {
+      "name": "Empty AI summary explains when content appears",
+      "pass": true
+    },
+    {
+      "name": "Synthetic AI failure leaves human composer usable",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE",
+  "expectedMockHttp503": 1
+}
