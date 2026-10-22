@@ -1,0 +1,264 @@
+{
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "migrations": [
+    {
+      "number": 1,
+      "file": "202610210001_attachment_ledger.sql",
+      "sha256": "df8c1f1284394a82d851c1d94b280e5b7056d4f1a72a8164928ce5583b7faa9e",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:00.350Z",
+      "finishedAt": "2026-10-22T09:29:00.622Z",
+      "newTableRlsChecked": 3
+    },
+    {
+      "number": 2,
+      "file": "202610210002_membership_guards.sql",
+      "sha256": "3928eec22ad14f27c5e2610e5bccf881186da15c28f9ca6c6099498b44d8a7b9",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:01.050Z",
+      "finishedAt": "2026-10-22T09:29:01.199Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 3,
+      "file": "202610210003_account_jobs.sql",
+      "sha256": "426c0823f4157e71669af7d598a8d62e05dfd62f53898401e39c147ada5eaa1f",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:01.343Z",
+      "finishedAt": "2026-10-22T09:29:01.490Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 4,
+      "file": "202610210004_moderation.sql",
+      "sha256": "c57d3e1b524e38e4bc12b31b5c8b3c2a7bbb116baf2fe4ecacd3349e42bb7df1",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:01.636Z",
+      "finishedAt": "2026-10-22T09:29:01.886Z",
+      "newTableRlsChecked": 2
+    },
+    {
+      "number": 5,
+      "file": "202610210005_read_boundaries.sql",
+      "sha256": "b4b300ad764851e440dc82accb36b750502a189147ba1f64601b39cdee7e0a57",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:23.288Z",
+      "finishedAt": "2026-10-22T09:29:23.493Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 6,
+      "file": "202610210006_work_drafts.sql",
+      "sha256": "cd90edbb90a3e67a08404f99e41e3cbbfd395144bd9a62ac8d8de4130fb3acfe",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:23.499Z",
+      "finishedAt": "2026-10-22T09:29:23.700Z",
+      "newTableRlsChecked": 2
+    },
+    {
+      "number": 7,
+      "file": "202610210007_deletion_lease.sql",
+      "sha256": "0b2a878dbca1dbac88d3ac0390e6fbea3334d3c44f7ea1ce0105a9b36a5fa401",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:24.109Z",
+      "finishedAt": "2026-10-22T09:29:24.293Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 8,
+      "file": "202610210008_deletion_retention.sql",
+      "sha256": "a65e75a10e93974fb1e2d5dc079001020c2baa580eb616ddb0d8b1c131967954",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:24.301Z",
+      "finishedAt": "2026-10-22T09:29:24.458Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 9,
+      "file": "202610210009_deletion_attribution_fence.sql",
+      "sha256": "c1bf83184e67771d26be4de1eceb5d31ca2e0ece04a4bdd05083d94ea9871ace",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:42.059Z",
+      "finishedAt": "2026-10-22T09:29:42.233Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 10,
+      "file": "202610210010_scoped_moderation.sql",
+      "sha256": "d8579c87d301f43d33b265e985bd023ede440caf21e431d8b66087a7fff6ae57",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:42.383Z",
+      "finishedAt": "2026-10-22T09:29:42.543Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 11,
+      "file": "202610210011_report_intake.sql",
+      "sha256": "4ffef9830595b51fdb48fb2399d3369609ae7d0455b8395149f097c840c4115b",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:42.689Z",
+      "finishedAt": "2026-10-22T09:29:42.847Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 12,
+      "file": "202610210012_report_queue.sql",
+      "sha256": "7e23a30c8ce0e6c308a5530ae09f77a5774e631fa7b07faac2bee70b9e7c8b3a",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:29:43.053Z",
+      "finishedAt": "2026-10-22T09:29:43.254Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 13,
+      "file": "202610210013_upload_cleanup.sql",
+      "sha256": "8e58d926611ba4b0ae4710158f2709bf2813503c610119955612ca1c5f54478a",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:19.103Z",
+      "finishedAt": "2026-10-22T09:30:19.300Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 14,
+      "file": "202610210014_like_requests.sql",
+      "sha256": "43d88408f4e5bacd9e593474b2747fe4a4749a0810b8be6ecfd7b1a3a47d3346",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:19.314Z",
+      "finishedAt": "2026-10-22T09:30:19.507Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 15,
+      "file": "202610210015_room_creation.sql",
+      "sha256": "f3a2b5ce594a5b31c67cc7987cbd2d31c24fb978038a78afe58ce71d81323343",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:19.713Z",
+      "finishedAt": "2026-10-22T09:30:19.914Z",
+      "newTableRlsChecked": 1
+    },
+    {
+      "number": 16,
+      "file": "202610210016_operator_rate_limits.sql",
+      "sha256": "16b2a90e417cce270a0cbb310eb833aeebd9a7d6b0330f78ac27223129c6c03c",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:20.125Z",
+      "finishedAt": "2026-10-22T09:30:20.326Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 17,
+      "file": "202610210017_report_admission.sql",
+      "sha256": "81ca8b6f81a71af6113dc2ccb5cda20d78d8d6e6d0cc1e2c81d37b182d434bec",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:20.331Z",
+      "finishedAt": "2026-10-22T09:30:20.529Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 18,
+      "file": "202610210018_member_admission.sql",
+      "sha256": "a6d48e10bd219abf591a4125485054bf384dbc74a0594cd4c077dc892becd2ba",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:20.535Z",
+      "finishedAt": "2026-10-22T09:30:20.739Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 19,
+      "file": "202610210019_core_admission.sql",
+      "sha256": "9376a676a4bd8769f826f7cde5873c650386e1b6c3a6c75762425f99facbb112",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:37.127Z",
+      "finishedAt": "2026-10-22T09:30:37.325Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 20,
+      "file": "202610210020_deletion_privacy_preconditions.sql",
+      "sha256": "7f11c8cf48a97ebbd9a4b2119564d17ad50ab1d76a9a95047466c7bca3bda39a",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:37.331Z",
+      "finishedAt": "2026-10-22T09:30:37.479Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 21,
+      "file": "202610210021_client_read_contract.sql",
+      "sha256": "4a10cde20c3164445914aeccfae086761afe43a45b489dfcdfa8d199b69fb86b",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:37.484Z",
+      "finishedAt": "2026-10-22T09:30:37.676Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 22,
+      "file": "202610210022_work_snapshot_read.sql",
+      "sha256": "6d7a718c833b298757edc1fce696b0683896b99f352660e18373b11a9347a7af",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:37.682Z",
+      "finishedAt": "2026-10-22T09:30:37.840Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 23,
+      "file": "202610210023_retained_actors.sql",
+      "sha256": "a77042c8bc93362154fc2cd1898fc73a9e6a28aec7c3f8a8b2d16c61183c7192",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:54.028Z",
+      "finishedAt": "2026-10-22T09:30:54.939Z",
+      "newTableRlsChecked": 4
+    },
+    {
+      "number": 24,
+      "file": "202610210024_deletion_prepare.sql",
+      "sha256": "4b783486ef3912cb3d944485510907e7fb1d8d5c5d718c6620b1116a0314e7fa",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:55.762Z",
+      "finishedAt": "2026-10-22T09:30:55.958Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 25,
+      "file": "202610210025_deletion_upload_fence.sql",
+      "sha256": "a84c778bf8454a4f7ce5027962f38b3940be4a8e5d8ab9f63671d7f50a0ca8ee",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:55.962Z",
+      "finishedAt": "2026-10-22T09:30:56.164Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 26,
+      "file": "202610220026_deletion_request_timestamp.sql",
+      "sha256": "66e8e90c5114bce460790d42bcd1433b1c74d0bc994251e77a6a7f86fa19c08d",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:30:56.170Z",
+      "finishedAt": "2026-10-22T09:30:56.368Z",
+      "newTableRlsChecked": 0
+    },
+    {
+      "number": 27,
+      "file": "202610220027_deletion_pause.sql",
+      "sha256": "27f1ee3e848599776092f09cb13bcb5a0006228de78638e2f3406c83b9018fbf",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:31:20.440Z",
+      "finishedAt": "2026-10-22T09:31:20.641Z",
+      "newTableRlsChecked": 3
+    },
+    {
+      "number": 28,
+      "file": "202610220028_release_consent.sql",
+      "sha256": "62cd7631d8c311a7b94d6f81c015cac9ec944fac40e4709527fcb370dc319c48",
+      "state": "applied",
+      "startedAt": "2026-10-22T09:31:21.259Z",
+      "finishedAt": "2026-10-22T09:31:21.461Z",
+      "newTableRlsChecked": 0
+    }
+  ],
+  "lastPhase": {
+    "first": 27,
+    "last": 28,
+    "public_tables": 30,
+    "mvp_functions": 55,
+    "at": "2026-10-22T09:31:21.608Z"
+  }
+}

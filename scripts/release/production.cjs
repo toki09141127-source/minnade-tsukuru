@@ -21,7 +21,7 @@ async function main(){
    const pass=facts.public_tables===14&&facts.ledger_absent&&facts.private_absent&&facts.pending_duplicates===0&&facts.unknown_auth_fk===0;fs.writeFileSync('docs/release52-production-preflight.json',JSON.stringify({projectRef:REF,at:new Date().toISOString(),facts,pass},null,2)+'\n');console.log(JSON.stringify({mode,...facts,pass}));if(!pass)throw Error('PRODUCTION_PREFLIGHT_FAILED');
   }else if(mode==='stop'){
    if(!read('release52-production-preflight.json').pass||journal.migrations.length)throw Error('INITIAL_PREFLIGHT_REQUIRED');
-   let sql=fs.readFileSync('docs/release52-staging-stop.sql','utf8');sql=sql.replace('rehearsal target: fwqucffxdmbdczspkcyr ONLY.','approved production target: '+REF+'.').replace('SELECT public.mvp_set_deletion_pause(true);',"DO $$ BEGIN IF to_regprocedure('public.mvp_set_deletion_pause(boolean)') IS NOT NULL THEN PERFORM public.mvp_set_deletion_pause(true); END IF; END $$;");
+   let sql=fs.readFileSync('docs/release52-staging-stop.sql','utf8');sql=sql.replace('rehearsal target: fwqucffxdmbdczspkcyr ONLY.','approved production target: '+REF+'.').replace('SELECT public.mvp_set_deletion_pause(true);',()=>"DO $$ BEGIN IF to_regprocedure('public.mvp_set_deletion_pause(boolean)') IS NOT NULL THEN PERFORM public.mvp_set_deletion_pause(true); END IF; END $$;");
    await c.query(sql);const state=await guard();if(state.count!==17)throw Error('PRODUCTION_GUARD_COUNT_UNEXPECTED');console.log(JSON.stringify({mode,guardedTables:state.count}));
   }else if(mode==='apply'){
    const m=/^(\d{1,2})-(\d{1,2})$/.exec(range||'');if(!m)throw Error('SMALL_PHASE_RANGE_REQUIRED');const first=Number(m[1]),last=Number(m[2]);if(first<1||last>28||last<first||last-first>5)throw Error('SMALL_PHASE_RANGE_REQUIRED');

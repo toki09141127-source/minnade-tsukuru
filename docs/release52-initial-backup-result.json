@@ -1,0 +1,20 @@
+{
+  "scope": "PRODUCTION READ ONLY; encrypted backup outside repository",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "startedAt": "2026-10-22T07:05:36.719Z",
+  "complete": true,
+  "database": {
+    "bytes": 2153359,
+    "sha256": "7ba9617008b32c28a69b5751a3750dc301d6b35d2ca9d97f6ba3c5db0ed6a9c0"
+  },
+  "roles": {
+    "bytes": 5494,
+    "sha256": "ec44106702d40b73537147d9fb1d1c0102da4ebc409dc73d50bf5365e5504107"
+  },
+  "serverVersion": "17.6",
+  "tableCount": 49,
+  "storageObjectCount": 16,
+  "storageBytes": 6270480,
+  "databaseChanged": false,
+  "finishedAt": "2026-10-22T07:07:33.322Z"
+}

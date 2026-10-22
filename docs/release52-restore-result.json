@@ -296,7 +296,8 @@
   "constraintNormalization": "PostgreSQL 18 table NOT NULL catalog entries omitted from comparison with PostgreSQL 17 pg_constraint; archived NOT NULL DDL remains applied",
   "tableCount": 49,
   "storageObjectCount": 16,
-  "backupSha256": "7ba9617008b32c28a69b5751a3750dc301d6b35d2ca9d97f6ba3c5db0ed6a9c0",
+  "backupSha256": "74f23ccee8cf8a971fc8f4ebe8840c935095faec35def0234be98659ff848501",
+  "localMaintenanceGuardRemoved": 17,
   "migrationRehearsal": [
     {
       "file": "202610210001_attachment_ledger.sql",

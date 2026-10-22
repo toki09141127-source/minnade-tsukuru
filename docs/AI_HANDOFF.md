@@ -1579,3 +1579,9 @@ commit/push/merge/production migration/production deploy/production smoke/24h監
 本番read-only preflight: public14表、attachment台帳/private schemaなし、pending重複0、未知Auth FK0。Technical871・Android/reset・staging SMTP・保守16+8+7・退会停止復旧29の証拠を再利用し、Production APPLY GO。公開GOは本番smoke完了後に判定。ユーザー最新添付6a13bc98の明示承認でこの実行内にcommit/push/反映へ進む。main自動配信はDB互換成立後。本番書込停止後にbackupを更新・再復元して最新復元点を確保する。
 
 最終index検査では、以前未追跡だった文書/ログ等の末尾空白・空行161件（凍結SQL6件を含む）を検出。処理意味に影響しない既存整形差分として記録し、凍結bytesを優先して修正しない。通常のtracked diff --checkはPASS。最終秘密形状走査の候補1件はoffline staging拒否テストの固定synthetic接続文字列で、実credentialではない。既存571ファイル消失0・appコード不変・28hash一致。
+
+### 第52節・本番migration適用完了
+
+release commit 4a1faeaをfeature branchへ通常push済み。本番停止SQLの文字列置換に構文エラーが2回あり、両方rollback・適用0を確認後にrunnerを修正。17表の一時guardを適用成功。18:24〜18:26 JSTの停止後backup（DB49表/Storage16個）を更新し、隔離restore68比較＋全28試適用＋Auth/Storage件数保持2件PASS、guard17件はlocalコピーだけ解除して試適用。元backupと初回証拠を保持。
+
+18:29〜18:31 JSTに本番001〜028を7phase/個別transaction/hash/RLS確認で全件適用成功。台帳release52-production-migrations.json。退会pause=true、全体guardは互換app Readyまで維持。本番Vercel非退会12flagを有効にする次回配信設定、退会2flagは無効。秘密env変更なし。次はmainへの通常fast-forward pushで既存本番workflowを起動する。
