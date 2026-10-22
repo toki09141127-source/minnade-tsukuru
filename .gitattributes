@@ -1,0 +1,5 @@
+# Keep the exact applied V2 SQL bytes, including their audited line endings.
+/supabase/migrations/202610230040_v2_membership.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/supabase/migrations/202610230041_v2_creation_log.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/supabase/migrations/202610230042_v2_publication.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/supabase/migrations/202610230043_v2_publication_withdrawal.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

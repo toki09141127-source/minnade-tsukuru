@@ -1,0 +1,379 @@
+{
+  "runId": "a2fa329a-9f97-44f4-a1b7-04a4b284e80a",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Staging synthetic Auth and current consent",
+      "pass": true
+    },
+    {
+      "name": "Creator and Member login through Web UI",
+      "pass": true
+    },
+    {
+      "name": "V2 Creator room screen",
+      "pass": true
+    },
+    {
+      "name": "Member explicit join, text and real synthetic image upload",
+      "pass": true
+    },
+    {
+      "name": "Core approval, highlight, review and genre draft save through UI",
+      "pass": true
+    },
+    {
+      "name": "K: UI conflict retains unsaved human content",
+      "pass": true
+    },
+    {
+      "name": "Member denied post highlight",
+      "pass": true
+    },
+    {
+      "name": "Member denied post exclude",
+      "pass": true
+    },
+    {
+      "name": "Member denied draft draft",
+      "pass": true
+    },
+    {
+      "name": "Member denied member kick",
+      "pass": true
+    },
+    {
+      "name": "Core cannot kick",
+      "pass": true
+    },
+    {
+      "name": "C: Concurrent fourth Core approval has one winner",
+      "pass": true
+    },
+    {
+      "name": "E: Kicked rejoin denied",
+      "pass": true
+    },
+    {
+      "name": "E: Kicked Core application denied",
+      "pass": true
+    },
+    {
+      "name": "E: Kicked posting denied",
+      "pass": true
+    },
+    {
+      "name": "E: Kicked upload API denied",
+      "pass": true
+    },
+    {
+      "name": "F: Voluntary leave permits rejoin",
+      "pass": true
+    },
+    {
+      "name": "G: Pending resignation retains power, then Member may leave",
+      "pass": true
+    },
+    {
+      "name": "D: Three rejected applications block fourth",
+      "pass": true
+    },
+    {
+      "name": "H: Excluded post remains visible inside room",
+      "pass": true
+    },
+    {
+      "name": "Capacity final slot admits one human",
+      "pass": true
+    },
+    {
+      "name": "Mobile 320 create",
+      "pass": true
+    },
+    {
+      "name": "Mobile 320 room",
+      "pass": true
+    },
+    {
+      "name": "Mobile 375 create",
+      "pass": true
+    },
+    {
+      "name": "Mobile 375 room",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390 create",
+      "pass": true
+    },
+    {
+      "name": "Mobile 390 room",
+      "pass": true
+    },
+    {
+      "name": "A/H: Work snapshot, CTA, safe public log and exclusion",
+      "pass": true
+    },
+    {
+      "name": "Public attachment authorization and synthetic bytes",
+      "pass": true
+    },
+    {
+      "name": "I: Safe incomplete work without generated text",
+      "pass": true
+    },
+    {
+      "name": "Mobile public log 320",
+      "pass": true
+    },
+    {
+      "name": "Mobile public log 375",
+      "pass": true
+    },
+    {
+      "name": "Mobile public log 390",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE",
+  "navigation": [
+    {
+      "method": "GET",
+      "path": "/login"
+    },
+    {
+      "method": "GET",
+      "path": "/login"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/create"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/create"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/create"
+    },
+    {
+      "method": "GET",
+      "path": "/rooms/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/works/fac13331-22d3-4cbf-99c3-78c532463ff6"
+    },
+    {
+      "method": "GET",
+      "path": "/works/055f0d11-f69b-479b-b5dc-888561c947b8"
+    },
+    {
+      "method": "GET",
+      "path": "/works/fac13331-22d3-4cbf-99c3-78c532463ff6/log"
+    },
+    {
+      "method": "GET",
+      "path": "/works/fac13331-22d3-4cbf-99c3-78c532463ff6/log"
+    },
+    {
+      "method": "GET",
+      "path": "/works/fac13331-22d3-4cbf-99c3-78c532463ff6/log"
+    }
+  ],
+  "responses": [
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/post",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/post",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/draft",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/draft",
+      "status": 409
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/state",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/log",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    },
+    {
+      "path": "/api/v2/work",
+      "status": 200
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 409 (Conflict)",
+    "TypeError: Failed to fetch\n    at [URL]\n    at tD ([URL]\n    at tB ([URL]\n    at [URL]\n    at rg._useSession ([URL]\n    at async rg._getUser ([URL]\n    at async [URL]"
+  ],
+  "failedRequests": [
+    {
+      "path": "/api/v2/state",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/v2/state",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/v2/log",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/v2/log",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/v2/log",
+      "error": "net::ERR_ABORTED"
+    },
+    {
+      "path": "/api/v2/log",
+      "error": "net::ERR_ABORTED"
+    }
+  ],
+  "serverStopped": true
+}

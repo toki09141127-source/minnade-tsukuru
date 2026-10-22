@@ -1,0 +1,110 @@
+{
+  "scope": "offline; no network",
+  "checks": [
+    {
+      "name": "Valid human genre template novel",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs novel",
+      "pass": true
+    },
+    {
+      "name": "Valid human genre template illustration",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs illustration",
+      "pass": true
+    },
+    {
+      "name": "Valid human genre template manga",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs manga",
+      "pass": true
+    },
+    {
+      "name": "Valid human genre template video",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs video",
+      "pass": true
+    },
+    {
+      "name": "Valid human genre template music",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs music",
+      "pass": true
+    },
+    {
+      "name": "Valid human genre template other",
+      "pass": true
+    },
+    {
+      "name": "Unique template block IDs other",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 12",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 13",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 14",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 15",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 16",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 17",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 18",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 19",
+      "pass": true
+    },
+    {
+      "name": "Unsafe or oversized block case 20",
+      "pass": true
+    },
+    {
+      "name": "Image shape allows only a post reference; DB verifies ownership",
+      "pass": true
+    },
+    {
+      "name": "Public HTTPS link shape accepted",
+      "pass": true
+    },
+    {
+      "name": "V2 flag cannot enable production",
+      "pass": true
+    },
+    {
+      "name": "Explicit staging plus flag accepted",
+      "pass": true
+    },
+    {
+      "name": "V2 operational flag stops new routes",
+      "pass": true
+    }
+  ],
+  "complete": true
+}

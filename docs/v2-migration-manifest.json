@@ -1,0 +1,50 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "productionChanges": "NONE",
+  "files": [
+    {
+      "file": "202610230040_v2_membership.sql",
+      "sha256": "5c4898e0e58c9548caefbe13aeba210a90a7856d270f80ffe89dfb85c357e53a",
+      "stagingApplied": true,
+      "appliedVia": "Supabase staging SQL Editor; transaction success"
+    },
+    {
+      "file": "202610230041_v2_creation_log.sql",
+      "sha256": "37d1d5c79c7755a015b6a3728260c4574ce26558cc6ead03ffbd288bac378ed4",
+      "stagingApplied": true,
+      "appliedVia": "Supabase staging SQL Editor; transaction success"
+    },
+    {
+      "file": "202610230042_v2_publication.sql",
+      "sha256": "ebeb044fdedaf552ae6272a67e95767ce24802d138418caa74f7e3a11c8f4701",
+      "stagingApplied": true,
+      "appliedVia": "Supabase staging SQL Editor; transaction success"
+    },
+    {
+      "file": "202610230043_v2_publication_withdrawal.sql",
+      "sha256": "76358fa99c18aa00f458e7f9e02bf24aee9a3a7c4ef7e8713e4e9af2fda8e0db",
+      "stagingApplied": true,
+      "appliedVia": "Supabase staging SQL Editor; transaction success"
+    }
+  ],
+  "checkedAt": "2026-10-22T16:23:39.252Z",
+  "stagingAudit": {
+    "rlsTables": 3,
+    "requiredIndexes": 3,
+    "v2Triggers": 5,
+    "authenticatedCreate": true,
+    "anonWriteDenied": true,
+    "serviceActorSpoofDenied": true,
+    "snapshotWriteDenied": true,
+    "privateReadDenied": true,
+    "finalReadOnly": {
+      "helperRemoved": true,
+      "immutableTriggerEnabled": 1,
+      "legacyDueOpenBefore": 7,
+      "legacyDueOpenAfter": 7,
+      "fixtureSnapshots": 2,
+      "rlsTables": 3,
+      "fixtureLockReleased": true
+    }
+  }
+}

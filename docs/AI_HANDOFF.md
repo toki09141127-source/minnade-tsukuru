@@ -1603,3 +1603,39 @@ Production COMPLETE / GO（5〜10人β）。退会flag配信dpl_F68amKKbPxDp3Tgy
 18:55初回監視: HTTP/Auth200・添付hash一致・4xx/5xx/429/runtimeerror0・退会/通報滞留/不明副作用/RLS未設定/公開遅延0。毎時24回のheartbeat ID24 ACTIVEを作成/保存確認、2026-10-23 19:00 JSTまで。正常時通知なし、異常時のみこの会話へ。PC/Codex稼働が必要、管理Auth/SMTPログは自動収集外。
 
 最終秘密形状582text候補0、全28hash一致、appコードはbaa1e1bから不変、release scripts対象lint0error。既存871を再実行せず、追加は実本番とrunnerだけ。最終18項目はRELEASE_FINAL_ACCEPTANCE.md。AI_TASK done（本番反映・監視開始）。運営UIの恒久アカウント未指定、iPhone実機・別端末DPAPI復旧は残る。旧節のBLOCKED/本番未適用を最新状態と混同しない。
+
+
+## V2.1開始（2026-10-22）
+ユーザー添付14154a58に従いdevelop/v2をa325926からC:/dev/minnade/minnade-tsukuru-v2へ分離。元feature/buffer-queue-sendの差分は変更しない。migrationは031以降。production操作禁止、staging synthetic検収を承認済み。既存MVP room互換を保持しV2 roomを識別する追加設定を導入する。
+
+
+### V2.1再開用チェックポイント（2026-10-22 23:38 JST）
+専用develop/v2 / C:/dev/minnade/minnade-tsukuru-v2、基点a325926。未commit。031_v2_membership / 032_v2_creation_log / 033_v2_publicationをローカル追加し、lib/v2/{domain,server,client}.ts、app/api/v2/[operation]/route.ts、scripts/v2/{local,behavior}.cjsを実装。隔離native PostgreSQLで監査済みschema＋001〜028＋新3本適用、48チェック成功（結果complete=true、serverStopped=true）。役割/同意/定員とCore最終枠競合/辞退/追放/3拒否/ハイライト二重操作/draft競合/PII・HTML拒否/公開除外/snapshot/重複公開を検証。staging未適用、UI未実装、typecheck/lint/build未実行、V2.1未完了。
+新たに元Buffer作業側が031/032も追加したため、V2 migrationは実適用前に101〜103等の別番号へ変更する必要がある（既存001〜028変更禁止）。元Bufferの未commit作業は触らない。
+残作業: 新RPCのレート制御・Creatorの明示同意をDB引数でも保証、添付image実台帳参照正常系、post/search/公開CTA/ブロックeditor/room create/Core管理UI、追加race/regression、staging schema/RLS/grantsとsynthetic E2E、mobile320/375/390、SPEC/ACCEPTANCE、V2限定commit。v2Enabledはstaging ref完全一致を要求しproductionを拒否。V2 .env.staging.localはstagingだけをコピーしBufferキーは除外。秘密値出力なし。
+本番監視heartbeat 24を別途処理し、既知runtime窓欠落以外の異常なし。V2のStatusはin_progress、完了とは扱わない。
+
+### V2.1 UI・DB再検証（2026-10-23）
+V2専用画面、認証由来のRPC/API、共通ブロック編集・画像候補・検索/フィルタ・公開CTAを追加。隔離native PostgreSQL 68件PASS。既存MVP offline regression成功、staging設定のローカルbuild成功、TypeScript成功。追加検査で余分なblockフィールド、遅延upload登録、退会capability保持、監査済みroom_join_requests.updated_atとの完全一致、旧公開関数のSQL変数衝突を修正。既存001〜028は未変更。Buffer側039まで進行したため、未適用V2を040〜042へ採番。040/041はstaging SQL EditorでSuccess、042は適用処理中。production変更NONE。staging synthetic E2Eはこれから。
+
+### V2.1完了（2026-10-23 JST）
+
+ユーザー最新添付d7e9e12cのDefinition of Doneを、develop/v2 / C:/dev/minnade/minnade-tsukuru-v2（base a325926）で完了。判定V2.1 COMPLETEはローカル＋実stagingに限る。本番変更 NONE、main merge/push/deployなし、Buffer作業側は変更なし。旧節の031〜036番号・staging未適用・UI未完了の記録は途中経過であり、本節を最新とする。
+
+040〜043をstaging fwqucffxdmbdczspkcyrへ個別transactionで適用。040は同意/定員/Core/辞退/変更不可、041は制作ログ/blocks/退会との互換/遅延upload fence、042はsnapshot/公開、043は退会中pendingの公開終了処理をprivateの完全一致単行capabilityへ限定。通常UPDATEは退会fenceで引き続き拒否。001〜028は元checkoutと28件すべてbyte/hash一致。適用4ファイルのhash一致、manifest更新済み。
+
+Creator/Core/Member、Core上限4・拒否3回・辞退・即時降格、最大50人の同意join、退出/追放、制作ログ検索/filter/highlight/公開除外、共通7block・6ジャンルtemplate・409時入力保持、締切snapshot・未完成fallback、Work→「この作品ができるまで」まで実装。既存MVPの画面・投稿/添付認可・いいね/通報/既読経路を継続。画像は同roomのbound台帳から選び、公開時に再認可する。
+
+staging Auth12合成アカウント、専用room、16px合成PNGだけ使用。最新production buildをlocalhostへ起動して実stagingとUI/APIを検収。A〜Kを完了。限定公開は全非対象roomのrow lock＋advisory sentinelで対象2roomだけ許可し、同時worker処理2/0・snapshot各1件。終了後helper撤去、guard ROLLBACK、immutable trigger有効、非V2公開待ち7件不変。最終READ ONLY照合の初回はカラム名hidden_at誤りで拒否、既存is_hiddenへ修正して成功（変更なし）。
+
+検証: 隔離native PG81 PASS、unit26 PASS、staging UI/API33 PASS、最終補完UI7 PASS、並行公開scenario PASS。既存offline回帰21suite全成功。typecheck成功、関連lint0error/0warning、最新UI build成功、diff/staged diff成功。最後の11 DB追加検査でMember/Coreの承認/拒否禁止、降格直後の権限喪失、Core追放時の貢献保持、my filterも確認。補完UIでは実画像表示＋SHA256、検索/filter、キーボード作成、削除dialog focus/Escape復帰、Creator未公開論理削除を確認。全test server停止済み。
+
+検収中に修正した問題: PII余分field、画像MIME filter、遅延upload、退会capabilityとupdated_at trigger、旧MVP公開変数衝突、退会中pending公開fence、hydration前送信、認証token更新による入力消失、可変label。補完検査初回のhighlight失敗は既に解除済みfixtureへの誤った期待値で、再照合後修正しPASS。本番で同等問題が現在存在するとは断定せず、今回本番調査/修正なし。
+
+変更: app/api/v2、app/components/v2、lib/v2、既存3画面のV2分岐、works/[id]/log、migrations040〜043、scripts/v2、V2 SPEC/ACCEPTANCE/results/manifest、AI_TASK/HANDOFF。DB/API commit46268a9、UI commit71629ad、検収docs/scriptsは後続V2 commit。Git外のenv/fixture/tokenをcommitしない。secret形状走査候補0、値の出力なし。
+
+未確認/制限: 実Android/iPhoneのV2検収、hosted V2 Preview、定時cron配信、本番反映は今回未実施。モバイルは320/375/390 viewport。既存ロック順のdeadlockは全transaction中止と手動再試行で安全性を保持。V2_ENABLEDはUI/APIの停止だけで、DB RPC/worker全停止ではない。E2E記録の409/遷移abortを削除せず保持。詳しくはV2_1_ACCEPTANCE.md。
+
+次: V2.2 AI Creatorへ分離して着手可能。本番へ出す場合は別途、実機/Previewと移行・停止/復旧を含む公開判断が必要。今回の実装承認待ちはなし。
+
+最終Git検査: Gitの改行正規化が040/041の適用hashと異なったため、新V2 4ファイルだけ-text属性で実バイトを保持。既存001〜028と作業中SQLは変更せず、indexの4hashも適用manifestと一致させた。SQL処理内容の変更ではない。

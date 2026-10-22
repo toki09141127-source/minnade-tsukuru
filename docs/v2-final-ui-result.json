@@ -1,0 +1,36 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "Anonymous snapshot image renders synthetic 16px bytes",
+      "pass": true
+    },
+    {
+      "name": "Anonymous attachment bytes match the synthetic fixture SHA256",
+      "pass": true
+    },
+    {
+      "name": "Public log body search uses bounded server results",
+      "pass": true
+    },
+    {
+      "name": "Public image filter and unhighlighted final fixture exclusion",
+      "pass": true
+    },
+    {
+      "name": "Latest production build creates V2 room via labeled controls and keyboard",
+      "pass": true
+    },
+    {
+      "name": "Creator deletion dialog traps initial focus, Escape cancels and restores focus",
+      "pass": true
+    },
+    {
+      "name": "Creator soft deletes only the new unpublished synthetic room",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE",
+  "serverStopped": true
+}
