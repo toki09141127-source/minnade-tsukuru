@@ -1,8 +1,11 @@
 // app/rooms/create/page.tsx
 import Link from 'next/link'
+import {v2Enabled} from '@/lib/v2/server'
+import V2CreateRoom from '@/app/components/v2/CreateRoom'
 import RoomCreateClient from './RoomCreateClient'
 
 export default function RoomCreatePage() {
+  if(v2Enabled()) return <V2CreateRoom/>
   return (
     <div style={{ maxWidth: 820, margin: '24px auto', padding: '0 16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>

@@ -1,3 +1,5 @@
+import {v2Enabled} from '@/lib/v2/server'
+import V2Work from '@/app/components/v2/Work'
 import { departedAuthorLabels } from '@/lib/departedAuthorLabels'
 import type { WorkBlock } from '@/lib/publicationSafety'
 // app/works/[id]/page.tsx
@@ -93,6 +95,10 @@ export default async function WorkDetailPage({ params }: { params: Promise<{ id:
     )
   }
 
+  if(v2Enabled()) {
+    const {data} = await supabase.from('rooms').select('v2_enabled').eq('id',roomId).maybeSingle()
+    if(data?.v2_enabled) return <V2Work roomId={roomId}/>
+  }
   const baseSelect = 'id, user_id, username, content, created_at, is_hidden, post_type, deleted_at, attachment_url, attachment_type'
 
   const { data: finalPosts } = await supabase

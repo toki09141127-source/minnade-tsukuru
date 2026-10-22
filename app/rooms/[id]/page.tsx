@@ -1,3 +1,5 @@
+import {v2Enabled} from '@/lib/v2/server'
+import V2Room from '@/app/components/v2/Room'
 import Link from 'next/link'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 
@@ -88,6 +90,10 @@ export default async function RoomDetailPage({ params }: { params: Promise<Param
     )
   }
 
+  if(v2Enabled()) {
+    const {data} = await supabaseAdmin.from('rooms').select('v2_enabled,deleted_at,is_hidden').eq('id',roomId).maybeSingle()
+    if(data?.v2_enabled && !data.deleted_at && !data.is_hidden) return <V2Room roomId={roomId}/>
+  }
   const room = await fetchRoomWithOptionalEndedAt(roomId)
 
   if (!room || room.deleted_at || room.is_hidden) {
