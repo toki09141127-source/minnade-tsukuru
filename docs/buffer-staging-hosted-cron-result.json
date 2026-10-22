@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-10-22T18:46:10.758Z",
+  "url": "https://minnade-tsukuru-staging-5pz40ulv9-sonetokiyas-projects.vercel.app",
+  "unauthorized": {
+    "status": 401,
+    "code": "UNAUTHORIZED"
+  },
+  "overlap": [
+    {
+      "status": 200,
+      "mode": "dry-run",
+      "writes": 0,
+      "sends": 0
+    },
+    {
+      "status": 200,
+      "mode": "dry-run",
+      "writes": 0,
+      "sends": 0
+    }
+  ],
+  "productionChanged": false
+}

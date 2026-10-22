@@ -62,11 +62,11 @@ export function createBufferSender(key: string, transport: Transport = fetch) {
         return { state: 'unknown' }
       } catch { return { state: 'unknown' } }
     },
-    async release(id: string): Promise<'released' | 'unknown'> {
+    async release(id: string, p?: PlannedPromotion): Promise<'released' | 'unknown'> {
       if (!key || !/^[a-zA-Z0-9_-]{1,150}$/.test(id)) return 'unknown'
       try {
         const r = await request('mutation MinntukuRelease($input: EditPostInput!) { editPost(input: $input) { __typename ... on PostActionSuccess { post { id } } ... on MutationError { message } } }',
-          {input:{id,mode:'shareNow',schedulingType:'automatic',saveToDraft:false}})
+          {input:{id,mode:'shareNow',schedulingType:'automatic',saveToDraft:false,dueAt:null,...(p?{text:p.text}:{})}})
         if (!r.ok) return 'unknown'
         const b = await r.json()
         if (b.errors !== undefined && (!Array.isArray(b.errors) || b.errors.length)) return 'unknown'

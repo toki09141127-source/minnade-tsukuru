@@ -1,17 +1,18 @@
 {
   "projectRef": "fwqucffxdmbdczspkcyr",
-  "checkedAt": "2026-10-22T15:08:48.385Z",
+  "checkedAt": "2026-10-22T18:40:04.435Z",
   "mode": "maintain-held-test",
   "result": {
     "processed": 1,
     "control": {
-      "reason": "AMBIGUOUS",
+      "reason": "MANUAL",
       "enabled": false,
       "singleton": true,
-      "stopped_at": "2026-10-22T15:08:45.254986+00:00",
-      "updated_at": "2026-10-22T15:08:45.254986+00:00"
+      "stopped_at": "2026-10-22T18:29:48.77016+00:00",
+      "updated_at": "2026-10-22T18:29:48.77016+00:00"
     }
   },
+  "transportEvidence": [],
   "productionConnected": false,
   "autoSend": "OFF"
 }

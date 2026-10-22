@@ -9,7 +9,7 @@ type TestSnapshot = {
   receipt: { state: string } | null
 }
 /** Not called by cron. Requires a separately seeded, single TEST authorization. */
-export async function runTestCanary(rpc: Rpc, sender: ReturnType<typeof createBufferSender>, dryRun = true, hold = false) {
+export async function runTestCanary(rpc: Rpc, sender: ReturnType<typeof createBufferSender>, dryRun = true, hold = false, manual = false) {
   const call = async (name: string, args?: Record<string, unknown>) => {
     const r = await rpc(name, args)
     if (r.error) throw new Error('CANARY_DB_UNAVAILABLE')
@@ -31,7 +31,7 @@ export async function runTestCanary(rpc: Rpc, sender: ReturnType<typeof createBu
   // Check the real channel before creating any persistent queue reservation.
   if (!await sender.preflight()) throw new Error('CANARY_CHANNEL_UNVERIFIED')
   await call('buffer_reserve_test')
-  const q = await call('buffer_claim', { p_event: a.event_id }) as { token: string; body: string; due_at: string } | null
+  const q = await call(manual ? 'buffer_claim_test' : 'buffer_claim', { p_event: a.event_id }) as { token: string; body: string; due_at: string } | null
   if (!q) return { mode: 'canary', sends: 0 }
   const finish = async (state: string, code: string, id?: string, due?: string) => {
     const saved = await call('buffer_finish', { p_event: a.event_id, p_token: q.token, p_state: state, p_code: code, p_id: id ?? null, p_due: due ?? null })

@@ -287,6 +287,53 @@ async function main(){
   ok((await draftSender.send(p)).state==='succeeded','production sender defaults to nonpublishing draft');
   ok(await createBufferSender('synthetic',async()=>reply({data:{editPost:{__typename:'PostActionSuccess',post:{id:'held'}}}})).release('held')==='released','release exact remote id');
   ok(await createBufferSender('synthetic',async()=>{throw Error('timeout')}).release('held')==='unknown','release timeout is never retried');
+
+  await db.exec(fs.readFileSync('supabase/migrations/202610230040_buffer_manual_test.sql','utf8').replaceAll('clock_timestamp()','public.buffer_test_now()').replaceAll('now()','public.buffer_test_now()').replaceAll('public.buffer_test_public.buffer_test_now()','public.buffer_test_now()'));
+  await resetDelivery();await db.exec('UPDATE buffer_queue SET release_started_at=NULL');await rpc('buffer_stop',{p_reason:'MANUAL'});
+  await db.query('UPDATE buffer_test_authorization SET enabled=true,due_at=$1',[at]);
+  await db.query('UPDATE buffer_queue SET due_at=$1,body=$2',[at,BUFFER_TEST_BODY]);
+  ok((await rpc('buffer_manual_test_allowed',{p_event:p.eventId})).data===true,'manual TEST authorization while auto OFF');
+  ok((await rpc('buffer_claim')).data===null,'automatic claim remains OFF during manual TEST');
+  let manualReleases=0;await maintainBuffer(rpc,{...held,release:async()=>{manualReleases++;return 'released'}},()=>true,p.eventId);
+  ok(manualReleases===1&&(await rpc('buffer_control_state')).data.enabled===false,'manual TEST release preserves auto OFF');
+  await db.exec('UPDATE buffer_queue SET checked_at=NULL');
+  await maintainBuffer(rpc,{...held,inspect:async()=>({state:'sent',sentAt:at,externalUrl:'https://x.com/minnade_tsukuru/status/123456789'})},()=>true,p.eventId);
+  ok(await scalar('SELECT state FROM buffer_queue')==='sent','manual TEST publication verified to sent');
+  await rpc('buffer_stop',{p_reason:'VERIFY_UNKNOWN'});
+  ok((await rpc('buffer_manual_test_allowed',{p_event:p.eventId})).data===false,'auto-stop revokes manual authorization too');
+  for(const role of ['anon','authenticated']){await db.exec('SET ROLE '+role);await assert.rejects(()=>rpc('buffer_manual_test_allowed',{p_event:p.eventId}));ok(true,'client cannot use manual TEST permission');await db.exec('RESET ROLE');}
+  let input;await createBufferSender('synthetic',async(u,i)=>{input=JSON.parse(i.body).variables.input;return reply({data:{editPost:{__typename:'PostActionSuccess',post:{id:'held'}}}})}).release('held',p);
+  ok(input.text===p.text&&input.dueAt===null&&input.mode==='shareNow','release explicitly preserves verified text and clears scheduled timestamp');
+
+  await db.exec(`
+   CREATE SCHEMA extensions; CREATE SCHEMA vault;
+   CREATE TYPE extensions.http_header AS (field text,value text);
+   CREATE TYPE extensions.http_request AS (method text,uri text,headers extensions.http_header[],content_type text,content text);
+   CREATE TYPE extensions.http_response AS (status integer,content_type text,headers extensions.http_header[],content text);
+   CREATE TABLE vault.decrypted_secrets(name text,decrypted_secret text);
+   CREATE TABLE buffer_scheduler_config(singleton boolean PRIMARY KEY,enabled boolean,endpoint text,last_tick timestamptz,consecutive_failures integer DEFAULT 0,last_status integer);
+   INSERT INTO buffer_scheduler_config(singleton,enabled,endpoint) VALUES(true,false,'https://minnade-tsukuru.vercel.app/api/cron/buffer');
+   INSERT INTO vault.decrypted_secrets VALUES('minntuku_buffer_cron',repeat('c',32)),('minntuku_buffer_staging_automation',repeat('a',32));
+   CREATE TABLE http_fixture(last_headers extensions.http_header[],calls integer DEFAULT 0,status integer DEFAULT 200,content_type text DEFAULT 'application/json',content text DEFAULT '{"mode":"dry-run"}');
+   INSERT INTO http_fixture DEFAULT VALUES;
+   CREATE FUNCTION extensions.http_set_curlopt(text,text) RETURNS boolean LANGUAGE sql AS 'SELECT true';
+   CREATE FUNCTION extensions.http(r extensions.http_request) RETURNS extensions.http_response LANGUAGE plpgsql AS $$ DECLARE f http_fixture%ROWTYPE; BEGIN UPDATE http_fixture SET last_headers=r.headers,calls=calls+1 RETURNING * INTO f; RETURN ROW(f.status,f.content_type,NULL,f.content)::extensions.http_response; END $$;
+  `);
+  await db.exec(fs.readFileSync('supabase/migrations/202610230041_buffer_staging_scheduler_auth.sql','utf8'));
+  ok(await scalar('SELECT buffer_scheduler_tick()')===null&&await scalar('SELECT calls FROM http_fixture')===0,'disabled scheduler never calls HTTP');
+  await db.exec('UPDATE buffer_scheduler_config SET enabled=true');
+  ok(Number(await scalar('SELECT buffer_scheduler_tick()'))===200&&await scalar('SELECT cardinality(last_headers) FROM http_fixture')===1,'production scheduler sends only cron authorization');
+  await db.exec("UPDATE buffer_scheduler_config SET endpoint='https://minnade-tsukuru-staging-test.vercel.app/api/cron/buffer'");
+  ok(Number(await scalar('SELECT buffer_scheduler_tick()'))===200&&await scalar('SELECT cardinality(last_headers) FROM http_fixture')===2,'staging scheduler adds dedicated automation credential');
+  await db.exec("UPDATE vault.decrypted_secrets SET decrypted_secret='' WHERE name='minntuku_buffer_staging_automation'");
+  const callsBefore=await scalar('SELECT calls FROM http_fixture');
+  ok(await scalar('SELECT buffer_scheduler_tick()')===null&&await scalar('SELECT calls FROM http_fixture')===callsBefore,'missing staging credential fails closed before network');
+  await db.exec("UPDATE vault.decrypted_secrets SET decrypted_secret=repeat('a',32) WHERE name='minntuku_buffer_staging_automation'; UPDATE http_fixture SET content_type='text/html'");
+  ok(Number(await scalar('SELECT buffer_scheduler_tick()'))===502,'SSO HTML 200 cannot pass scheduler verification');
+  await db.exec('SELECT buffer_scheduler_tick(); SELECT buffer_scheduler_tick()');
+  ok((await rpc('buffer_control_state')).data.enabled===false&&await scalar('SELECT consecutive_failures FROM buffer_scheduler_config')===3,'three scheduler failures stop Buffer');
+  for(const role of ['anon','authenticated','service_role']){await db.exec('SET ROLE '+role);await assert.rejects(db.query('SELECT buffer_scheduler_tick()'));await db.exec('RESET ROLE');ok(true,role+' cannot execute owner scheduler');}
+  const competing=await connect();try{await competing.exec('BEGIN; SELECT pg_advisory_xact_lock(54221037)');ok(await scalar('SELECT buffer_scheduler_tick()')===null,'overlapping scheduler invocation skips HTTP');}finally{await competing.exec('ROLLBACK');await competing.close();}
   console.log('BUFFER_QUEUE_CHECKS '+checks+' PASS');
   console.log('DRY_RUN synthetic candidates=2 planned=1 preSendEligible=1 writes=0 sends=0');
  } finally {await db.close()}

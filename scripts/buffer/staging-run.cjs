@@ -32,12 +32,12 @@ async function main(){
   const s=await rpc('buffer_test_snapshot'); const a=s.data?.authorization; if(s.error||!a)throw Error('TEST_AUTH_REQUIRED');
   const {maintainBuffer}=load(path.join(root,'lib/buffer/lifecycle.ts'));
   const {validateScheduledTestCanary}=load(path.join(root,'lib/buffer/promotionPlanner.ts'));
-  result=await maintainBuffer(rpc,sender,(c,p,now)=>p.eventId===a.event_id&&p.text===a.body&&Date.parse(p.dueAt)===Date.parse(a.due_at)&&validateScheduledTestCanary(c,p,now));
+  result=await maintainBuffer(rpc,sender,(c,p,now)=>p.eventId===a.event_id&&p.text===a.body&&Date.parse(p.dueAt)===Date.parse(a.due_at)&&validateScheduledTestCanary(c,p,now),a.event_id);
  }else if(mode==='check'){
   if(!env.BUFFER_API_KEY)throw Error('BUFFER_API_KEY_REQUIRED');
   result={api:await sender.preflight()?'PASS':'FAIL',mutation:false};
  }else if(mode==='reserve-held-test'){
-  result=await runTestCanary(rpc,sender,false,true);
+  result=await runTestCanary(rpc,sender,false,true,true);
  }else if(mode==='reserve-one'){
   if(!env.BUFFER_API_KEY)throw Error('BUFFER_API_KEY_REQUIRED');
   result=await runTestCanary(rpc,sender,false);

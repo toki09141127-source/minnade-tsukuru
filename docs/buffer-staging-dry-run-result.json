@@ -1,10 +1,10 @@
 {
   "projectRef": "fwqucffxdmbdczspkcyr",
-  "checkedAt": "2026-10-22T15:13:36.183Z",
+  "checkedAt": "2026-10-22T18:48:43.885Z",
   "mode": "dry-run",
   "result": {
     "mode": "dry-run",
-    "candidates": 3,
+    "candidates": 4,
     "planned": 0,
     "queued": 0,
     "preSendEligible": 0,

@@ -8,7 +8,7 @@ type Delivery = {event_id: string;content_key: string;kind: PlannedPromotion['ki
 type Control = {enabled: boolean;reason: string}
 
 export async function maintainBuffer(rpc: Rpc, sender: ReturnType<typeof createBufferSender>,
-  validate: typeof validateScheduledPromotion = validateScheduledPromotion) {
+  validate: typeof validateScheduledPromotion = validateScheduledPromotion, manualEvent?: string) {
   const call = async (name: string, args?: Record<string, unknown>) => {
     const r = await rpc(name,args)
     if (r.error) throw Error('BUFFER_DB_UNAVAILABLE')
@@ -31,7 +31,8 @@ export async function maintainBuffer(rpc: Rpc, sender: ReturnType<typeof createB
       const control = await call('buffer_control_state') as Control
       const eligible = validate(s.candidates.find(c=>c.id===q.event_id),p,s.now)
       if (!eligible) await stop('EXCLUDED')
-      let mustCancel = q.cancel_requested || !eligible || !control.enabled
+      const manual = manualEvent === q.event_id && await call('buffer_manual_test_allowed',{p_event:q.event_id}) === true
+      let mustCancel = q.cancel_requested || !eligible || (!control.enabled && !manual)
       if (mustCancel && !q.cancel_requested) {
         if (await call('buffer_delivery_cancel_mark',{p_event:q.event_id,p_token:q.delivery_token}) !== true) {
           await stop('INTEGRITY'); throw Error('BUFFER_DELIVERY_FENCED')
@@ -63,14 +64,14 @@ export async function maintainBuffer(rpc: Rpc, sender: ReturnType<typeof createB
           await finish(await sender.cancel(q.buffer_id))
           continue
         }
-        if (await call('buffer_release_guard',{p_event:q.event_id,p_token:q.delivery_token}) !== true) {
+        if (await call(manual ? 'buffer_release_test_guard' : 'buffer_release_guard',{p_event:q.event_id,p_token:q.delivery_token}) !== true) {
           await stop('INTEGRITY')
           await call('buffer_delivery_cancel_mark',{p_event:q.event_id,p_token:q.delivery_token})
           await finish(await sender.cancel(q.buffer_id))
           continue
         }
         // Persist intent BEFORE the mutation; any timeout/crash forbids another release.
-        await finish(await sender.release(q.buffer_id) === 'released' ? 'waiting' : 'unknown')
+        await finish(await sender.release(q.buffer_id,p) === 'released' ? 'waiting' : 'unknown')
       } else if (receipt.state === 'scheduled') {
         if (Date.now() > Date.parse(q.due_at) + 10*60_000) await finish('unknown')
         else await finish('scheduled')

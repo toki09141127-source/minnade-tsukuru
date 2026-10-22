@@ -48,6 +48,14 @@
       "sha256": "2e9504446203dd07e532dce2c3fee15641bd6a0058c9b3394f9390b0fbe10090",
       "appliedSha256": "522376b452b8f61dd18b1a2bc4e2d72bfdbcbfd8c3a38d090a24cc6a23799ac9",
       "normalization": "Removed trailing blank line only after staging application"
+    },
+    {
+      "file": "202610230040_buffer_manual_test.sql",
+      "sha256": "f505b848a577831729a683ec4a7708c96966f8b40eeff45ff813f83453557325"
+    },
+    {
+      "file": "202610230041_buffer_staging_scheduler_auth.sql",
+      "sha256": "afce5b7a31f064cc8a6b2bbfb114890510238d94146adac59f99f1371aa10969"
     }
   ],
   "appliedVia": "staging Dashboard SQL editor",
@@ -58,6 +66,9 @@
   "bufferReservationCount": 1,
   "duplicateEnqueueAdded": 0,
   "postReservationChecks": 12,
-  "heldReleaseAcceptance": "BLOCKED",
-  "note": "036 revoke ineffective on Supabase-owned pg_net objects; 037-039 replace transport with private synchronous HTTP. No real credential was queued."
+  "heldReleaseAcceptance": "PASS",
+  "note": "036 revoke ineffective on Supabase-owned pg_net objects; 037-039 replace transport with private synchronous HTTP. No real credential was queued.",
+  "latestHeldRelease": "6ada5651ca69a1b7d3cfec46",
+  "hostedCronAuth": "PASS",
+  "schedulerEndToEnd": "BLOCKED_STAGING_DB_CREDENTIAL_REQUIRED"
 }

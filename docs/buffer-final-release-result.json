@@ -1,0 +1,26 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checkedAt": "2026-10-22T18:39:18.596Z",
+  "mode": "maintain-held-test",
+  "result": {
+    "processed": 1,
+    "control": {
+      "reason": "MANUAL",
+      "enabled": false,
+      "singleton": true,
+      "stopped_at": "2026-10-22T18:29:48.77016+00:00",
+      "updated_at": "2026-10-22T18:29:48.77016+00:00"
+    }
+  },
+  "transportEvidence": [
+    {
+      "operation": "MinntukuRelease",
+      "httpStatus": 200,
+      "resultType": "PostActionSuccess",
+      "graphqlErrors": 0,
+      "category": null
+    }
+  ],
+  "productionConnected": false,
+  "autoSend": "OFF"
+}

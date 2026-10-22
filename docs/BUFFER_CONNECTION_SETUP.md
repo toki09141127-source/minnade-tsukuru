@@ -198,3 +198,31 @@ production DB/app/env/migration/deploy変更なし、main統合/pushなし。一
 残作業: 追加公開TESTの上限を超えるため最大1件の再検証許可を質問中。許可前は追加予約しない。新しい診断でrelease結果を特定し、修正後のheld→公開→自動DB sentとhosted cron end-to-endをPASSにしてから本番再判定。許可待ちを自動再送の根拠にしない。V2.1に専念できる完了状態ではない。
 証跡: buffer-safety-acceptance-result.json / buffer-held-publication-result.json / buffer-staging-cancellation-result.json / buffer-staging-migrations.json。
 Updated at: 2026-10-23 00:17 JST
+
+
+## 最終1件公開検収（2026-10-23 03:49 JST、最新）
+Status: in_progress。添付3f05b307の最大1件だけを使用し、最終TESTはPASS。追加予約・再送・別TESTは実施しない。
+
+手動TESTは040の限定guardでauto-send=false/MANUALのまま実施。Buffer ID 6ada5651ca69a1b7d3cfec46、予定03:39。公開直前に再評価、03:39:15にrelease意図を永続化し、editPostを1回だけ実行、HTTP200/PostActionSuccess。03:39:16.447公開、03:40:03.341に通常lifecycleでDB sent確定。external_id=2113339419771982087、external_url=https://x.com/minnade_tsukuru/status/2113339419771982087、sent_at/checked_at保存。X公開ページでも公式アカウントとTEST本文を確認。attempts1、同一候補再enqueue追加0、auto-send OFF。TEST許可は成功後falseに戻した。
+
+releaseは検証済み本文を明示しdueAt=nullへ変更。以前の失敗応答が保存されていないため、以前の原因を断定しない。今回の新方式は実公開からDB sentまで成功した。新規TESTを要求する残課題はない。
+
+cron: staging preview dpl_GnAKC652xwcXwhXi7XgWQxEy29aK Ready。https://minnade-tsukuru-staging-5pz40ulv9-sonetokiyas-projects.vercel.app の /api/cron/buffer で認証なし401、認証付き同時2実行200/dry-run/writes0/sends0。Vercel SSOは維持し公式automation credentialを使用。資格情報はWindows暗号化保管、Vercel preview専用Secret、表示/commitなし。041をstaging適用し、Vaultのautomation credentialはstaging宛にのみ付与。production宛ヘッダーは従来のcron認証だけ。
+
+未完了: STAGING_DATABASE_URLが未登録（空または仮値）で、DB Vaultへの秘密登録とpg_cron→Vercel全経路が未検収。本人へ.env.staging.localのstaging接続URLを安全に登録するよう依頼済み。秘密をチャットに貼らせない。DB schedulerはOFFのまま。全経路PASS前にmain/push/production操作へ進まない。正式なDB接続を得たらVault登録・OFF/dry-runでscheduler検収、不要な一時cronを解除し、既存条件付き承認に沿って本番再判定。追加TESTは不要かつ禁止。
+
+検証: planner47 + connection25 + route11 + nativeDB140 = 223 PASS（scheduler認証・OFF・HTML200拒否・3回失敗停止・権限拒否・競合skipを含む）。型チェック・関連lint・build PASS。追加運用scriptの未使用変数warningを除去済み。git diff --check PASS。最終staging dry-runはcandidates4/planned0/queued0/preSendEligible0/writes0/sends0。深夜の通常枠外。040/041適用済み、production migrationsなし。
+
+branch feature/buffer-queue-send / HEAD 53e6c01、今回差分未commit。push/main merge/production deployなし。production DB/app/env変更なし。Buffer auto-send OFF、Buffer専用24h監視NOT STARTED、既存MVP監視差分/設定は保持。Buffer/X Production BLOCKED（cron全経路未完）。V2.1へ完全専念はまだ不可。
+証跡: buffer-final-release-result.json / buffer-final-publication-result.json / buffer-final-test-progress.json / buffer-staging-hosted-cron-result.json / buffer-staging-dry-run-result.json。
+Updated at: 2026-10-23 03:49 JST
+
+
+## DB接続登録後の再確認（2026-10-23 03:59:32 JST）
+Status: in_progress。本人の登録済み返信を受け接続前検査を実施したが、指定.env.staging.localのSTAGING_DATABASE_URLは空文字のまま。定義は1件、類似名の別ファイルなし、ファイル最終更新は2026-10-22 22:54:50 JST。秘密内容は出力していない。DB接続・Vault登録・scheduler全経路は未実施。エディターで対象ファイルを保存してから再開が必要。追加TEST・本番変更・push/merge/deployなし。最終TEST PASSと223テストPASSの状態を維持。
+
+
+## cron全経路検収完了・本番導入開始（2026-10-23 04:07 JST）
+Status: in_progress。登録済みstaging session pooler接続成功。Vaultの専用秘密をパラメーターで登録し、DB tick→Vercel dry-runは200。pg_cron定期実行もsucceeded/HTTP200、queueとattempts不変、送信0。一時cron解除、staging scheduler/auto-send OFFへ戻した。223テストPASS、hosted認証なし401/認証付き同時200。最終TEST成功のため追加TESTなし。
+本番read-only事前検査: /・/login・/rooms・/works・Auth200、退会pause=false、不明副作用0、RLS不足0、Buffer既存表なし。既存MVP関数hash保存。Supabase statusはMonitoring継続だが現在の接続と主要経路に異常なし。
+新規本番データ搬出は自動承認レビューで保存先の明示承認不足として拒否。搬出せず、既存バックアップ/復旧検証記録の整合性を確認。導入はBuffer専用追加のみ、各migrationのトランザクションと既存MVP関数hash/RLSを検査。036はstagingで無効だったpg_net ACL試行のため本番不要、040/041は手動TEST/staging認証用のため本番不要。本番対象029-035,037-039を個別適用予定。
