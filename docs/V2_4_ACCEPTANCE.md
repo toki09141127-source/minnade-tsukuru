@@ -12,7 +12,7 @@ Scope: develop/v2, C:/dev/minnade/minnade-tsukuru-v2; staging fwqucffxdmbdczspkc
 - 048–052 staging application complete, exact-byte hashes in v2-4-staging-migrations.json, AI DB flag false.
 
 ## Local/UI completion
-- Local UI: 25 PASS; Pricing month/year, keyboard selection, usage, profile edit/save, Creator settings, Core and Free restrictions, unauthorized API. Six widths 320/375/390/768/1024/1440; 10 loaded screen states axe violations 0. Screenshots visually inspected.
+- Local UI: 24 PASS; Pricing month/year, keyboard selection, usage, profile edit/save, Creator settings, Core and Free restrictions, unauthorized API. Six widths 320/375/390/768/1024/1440; 10 loaded screen states axe violations 0. Screenshots visually inspected.
 - Payment-state UI: 4 PASS (mock states), expired grace/past_due, unpaid and incomplete retain Portal/cancellation; pending operation blocks a different request after reload. These are UI mocks, not additional real Stripe payments.
 - Collaboration UI regression: 28 PASS on latest V2 billing source: discovery, consent/join, Core approval, posting/search, highlight/exclusion, draft save and 409 input retention, AI OFF, My Page, six widths and dialog focus. No HTTP500 or uncaught errors.
 - Read-only staging metadata: 22 PASS including all new table RLS/direct ACL, private helper EXECUTE denial, AI OFF, 040–052 applied-byte hashes. No user rows retrieved.
@@ -21,7 +21,7 @@ Scope: develop/v2, C:/dev/minnade/minnade-tsukuru-v2; staging fwqucffxdmbdczspkc
 ## Hosted status and remaining acceptance
 Final source Preview: https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app — READY (Vercel build complete; Hosted acceptance not yet executed). Earlier 9sfb8v7a2 is superseded.
 The final Preview access Cookie + real signed-test-webhook forwarding permission is pending. Old V2.3/other Preview approvals are not reused. No new access cookie has been acquired; protection settings unchanged.
-Prepared scripts: preview-access (exact final URL), preview-listener (loopback relay injects authorized Cookie only into exact Preview; raw body/signature transient, never saved), preview-payment (Plus and Pro real test Checkout→signed webhook→usage/settings→cancel), browser --preview (25 UI checks), states --preview, preview-secrets.
+Prepared scripts: preview-access (exact final URL), preview-listener (loopback relay injects authorized Cookie only into exact Preview; raw body/signature transient, never saved), preview-payment (Plus and Pro real test Checkout→signed webhook→usage/settings→cancel), browser --preview (24 UI checks), states --preview, preview-secrets.
 Run only after exact approval: preview-access; preview-payment --preview; browser --preview; states --preview; preview-secrets. Finally delete exact v24-preview-access.json / v24-preview-access-headers.txt / v24-preview-login.html within .staging-private, stop relay/browser, and record actual results. Do not claim Hosted PASS from Vercel READY alone.
 No production/live payment. No permanent externally reachable webhook endpoint configured; official CLI forwarding is a bounded acceptance transport. Ongoing test operations need the listener or a separately approved durable test endpoint.
 

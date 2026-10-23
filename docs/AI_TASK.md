@@ -14,7 +14,7 @@ V2.4 Free/Plus/Pro・課金・AI creditをstaging/test modeだけで実装し検
 2. done: Stripe test adapter/Webhook/ライフサイクル/退会整合
 3. done: Pricing/Billing/Usage/Customization UI
 4. in_progress: unit/DB/security/concurrency/staging/Hosted Preview/回帰
-5. in_progress: SPEC/ACCEPTANCE/CREDIT/HANDOFFとV2 branch commit
+5. done: SPEC/ACCEPTANCE/CREDIT/HANDOFFとV2 branch commit（実装・検収記録、最終結果はHosted後に追記）
 
 ## Do not
 production DB/migration/deploy/payment、live mode、実カード、main merge、Buffer混在、秘密出力、既存差分破棄。
@@ -29,4 +29,4 @@ V2.4結果・証拠・残件。Production Changes NONE / Live Billing OFF。
 2026-10-23 JST
 
 ## Current checkpoint
-実装commit7f89628、修正5c37a32。DB213、unit31、実Stripe16＋clock11、local UI25＋支払状態4＋共同制作UI28、型/lint/build・MVP回帰PASS。最終Preview 4wqvksxt4（deploy JSONで状態確認）。新Preview限定Cookie/Webhook転送の承認待ち（USER APPROVAL REQUIRED）。Production NONE / Live OFF。
+実装commit7f89628、修正5c37a32。DB213、unit31、実Stripe16＋clock11、local UI24＋支払状態4＋共同制作UI28、型/lint/build・MVP回帰PASS。最終Preview 4wqvksxt4（deploy JSONで状態確認）。新Preview限定Cookie/Webhook転送の承認待ち（USER APPROVAL REQUIRED）。Production NONE / Live OFF。

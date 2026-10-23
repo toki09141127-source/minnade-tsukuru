@@ -1709,7 +1709,9 @@ develop/v2 / C:/dev/minnade/minnade-tsukuru-v2、HEAD3cc489a cleanを確認。�
 隔離DB204件、billing unit25件、AI安全性52件、MVP既存回帰21suite、型・buildはPASS。MVPの課金モジュール不要importをV2 staging限定の遅延importへ修正。月末anchorとAI inactivity dedupeの境界修正052を追加中。Preview/UI検収・最終記録は未完了。実OpenAI再送0。Status in_progress。
 
 ### V2.4 local完了・Hosted検収へ（2026-10-23 JST）
-実装commit 7f89628（develop/v2）。追加052をstaging適用済み、DB213、billing unit31、実Stripe16＋Test Clock11、local UI25（6幅・axe10画面状態違反0）、型/lint/build/MVP回帰成功。退会hookの型検査失敗を修正し最新build成功。AIフォームのtextarea/selectラベルを安定化、狭い設定欄は1列化。適用済みSQLのCRLFを保持するためwhitespace属性を追加し、HEAD内の5hashもmanifest一致（SQL内容変更なし）。stagingメタデータ22項目PASS、全billing表RLS/直接grant拒否、private関数非公開、AI flag OFF。秘密値走査0。Preview準備中、未検収をPASSとしない。Production NONE / Live Billing OFF。
+実装commit 7f89628（develop/v2）。追加052をstaging適用済み、DB213、billing unit31、実Stripe16＋Test Clock11、local UI24（6幅・axe10画面状態違反0）、型/lint/build/MVP回帰成功。退会hookの型検査失敗を修正し最新build成功。AIフォームのtextarea/selectラベルを安定化、狭い設定欄は1列化。適用済みSQLのCRLFを保持するためwhitespace属性を追加し、HEAD内の5hashもmanifest一致（SQL内容変更なし）。stagingメタデータ22項目PASS、全billing表RLS/直接grant拒否、private関数非公開、AI flag OFF。秘密値走査0。Preview準備中、未検収をPASSとしない。Production NONE / Live Billing OFF。
 
 ### V2.4最終Preview待ち（2026-10-23 JST）
 追加source commit 5c37a32: 猶予切れでFree表示になっても支払い確認/解約の入口を残す。4 UI状態テストPASS。共同制作UI28回帰PASS、最新source build PASS。最終Preview 4wqvksxt4を配信、旧9sfb8v7a2は検収対象から除外。USER APPROVAL REQUIRED: この最終URL限定のCookie取得・一時保存・自動UIと署名Webhook転送（完了後削除）。質問済み、まだ実行していない。旧Preview承認を流用しない。独立検証は完了、Hostedを合格扱いせずV2.4 PARTIAL / AI_TASK in_progress維持。
+
+最終集計訂正: local UIはJSONのcheck単位で24件（6幅/axe10状態はその内訳）。上記25件表記を訂正した。合計401 check＋既存MVP21suite（集計JSON参照）、全実行済み項目PASS。検証記録commit e7a50e2。最終Preview READY、Hosted実操作は承認待ちで未実行。新Cookieファイルなし、テスト用listener/browser/serverは終了。push/main merge/production操作なし。次は最終URL限定の承認回答を確認して用意したHosted scriptsを実行し、実績に応じてAI_TASK/Acceptanceを更新する。
