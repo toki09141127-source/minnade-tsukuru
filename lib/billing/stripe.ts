@@ -207,7 +207,11 @@ export class StripeTestProvider implements PaymentProvider {
     if (s.status !== "active" || s.pending_update)
       throw new BillingError("PAYMENT_PENDING");
     const existingSchedule = typeof s.schedule === "object" ? s.schedule : null;
-    if (ref(s.schedule) && existingSchedule?.metadata?.v24_request !== request)
+    if (
+      ref(s.schedule) &&
+      existingSchedule?.metadata?.v24_request &&
+      existingSchedule.metadata.v24_request !== request
+    )
       throw new BillingError("CHANGE_ALREADY_SCHEDULED");
     if (current.plan === plan && current.cycle === cycle) return;
     if (rank[plan] > rank[current.plan] && cycle === current.cycle) {
@@ -224,19 +228,25 @@ export class StripeTestProvider implements PaymentProvider {
       );
     } else {
       const schedule =
-        existingSchedule ??
-        this.test(
-          await this.stripe.subscriptionSchedules.create(
-            { from_subscription: id, metadata: { v24_request: request } },
-            { idempotencyKey: "v24-schedule-" + request },
-          ),
-        );
+        existingSchedule?.metadata?.v24_request === request
+          ? existingSchedule
+          : this.test(
+              await this.stripe.subscriptionSchedules.create(
+                { from_subscription: id },
+                { idempotencyKey: "v24-schedule-v2-" + request },
+              ),
+            );
+      // Stripe forbids metadata alongside from_subscription. An untagged schedule
+      // is recoverable only when this operation's idempotent create returns its exact ID.
+      if (existingSchedule && schedule.id !== existingSchedule.id)
+        throw new BillingError("CHANGE_ALREADY_SCHEDULED");
       if (!schedule.current_phase)
         throw new BillingError("SCHEDULE_UNAVAILABLE");
       this.test(
         await this.stripe.subscriptionSchedules.update(
           schedule.id,
           {
+            metadata: { v24_request: request },
             end_behavior: "release",
             proration_behavior: "none",
             phases: [

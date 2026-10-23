@@ -187,11 +187,13 @@ const load = (file) => {
         },
       },
       subscriptionSchedules: {
-        create: async () => ({
+        create: async (params) => {
+          assert.deepEqual(Object.keys(params),["from_subscription"],"Stripe migration forbids extra creation parameters");
+          return ({
           id: "sub_sched_fixture",
           livemode: false,
           current_phase: { start_date: 100, end_date: 9999999999 },
-        }),
+        }); },
         update: async (id, p, opts) => {
           calls.push({ op: "schedule", id, p, opts });
           return { id, livemode: false };
@@ -326,8 +328,9 @@ const load = (file) => {
     const originalCreate = fake.subscriptionSchedules.create;
     fake.subscriptionSchedules.create = async (...args) => {
       creations++;
+      assert.equal(args[1].idempotencyKey,"v24-schedule-v2-resume-schedule");
       const q = await originalCreate(...args);
-      q.metadata = { v24_request: "resume-schedule" };
+      q.metadata = {};
       subscription = { ...subscription, schedule: q };
       return q;
     };
@@ -336,7 +339,9 @@ const load = (file) => {
         crash = false;
         throw Error("SIMULATED_CONNECTION_LOSS");
       }
-      return originalUpdate(...args);
+      const result=await originalUpdate(...args);
+      subscription.schedule.metadata=args[1].metadata;
+      return result;
     };
     await assert.rejects(() =>
       p.change("cus_fixture", "sub_fixture", "plus", "year", "resume-schedule"),
@@ -349,9 +354,9 @@ const load = (file) => {
       "resume-schedule",
     );
     ok(
-      creations === 1 &&
+      creations === 2 &&
         calls.at(-1).p.phases[1].items[0].price === "price_PLUSYEAR",
-      "retry resumes own schedule after create/update partial failure",
+      "retry proves untagged schedule ownership through identical idempotency key",
     );
     await assert.rejects(() =>
       p.change(
@@ -363,6 +368,10 @@ const load = (file) => {
       ),
     );
     ok(true, "different operation cannot overwrite existing schedule");
+    subscription.schedule.metadata={};
+    fake.subscriptionSchedules.create=async()=>({...subscription.schedule,id:"sub_sched_other"});
+    await assert.rejects(()=>p.change("cus_fixture","sub_fixture","plus","year","wrong-owner"));
+    ok(true,"untagged external schedule cannot be adopted by another operation");
     subscription = { ...subscription, schedule: null };
     fake.subscriptionSchedules.create = originalCreate;
     fake.subscriptionSchedules.update = originalUpdate;
