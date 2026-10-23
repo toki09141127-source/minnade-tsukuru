@@ -1,7 +1,6 @@
 import "server-only";
 import {
   AI_LIMITS,
-  OUTPUT_SCHEMA,
   providerRequest,
   validateOutput,
   type AiTask,
@@ -54,7 +53,7 @@ export class OpenAiProvider implements AiProvider {
               type: "json_schema",
               name: "room_assistance",
               strict: true,
-              schema: OUTPUT_SCHEMA,
+              schema: request.schema,
             },
           },
         }),

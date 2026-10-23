@@ -214,6 +214,27 @@ denied(
     context: c,
     attempt: 1,
   };
+  const unmarked = { ...c, posts: [{ ...c.posts[0], highlight: false }] };
+  const beforeSchema = JSON.stringify(safe.OUTPUT_SCHEMA);
+  const sourceSchema = safe.providerRequest({ ...task, context: unmarked }).schema;
+  ok(sourceSchema.properties.highlightNotes.maxItems === 0,
+    "No highlighted posts forces empty highlight notes before generation");
+  ok(sourceSchema.properties.unresolved.items.properties.refs.items.enum[0] === c.posts[0].ref,
+    "Unmarked same-room posts remain usable for normal source references");
+  const mixed = { ...c, posts: [...c.posts, { ...c.posts[0], ref: "650e8400-e29b-41d4-a716-446655440000", highlight: false }] };
+  const markedSchema = safe.providerRequest({ ...task, context: mixed }).schema;
+  const markedRefs = markedSchema.properties.highlightNotes.items.properties.refs.items.enum;
+  ok(markedRefs.length === 1 && markedRefs[0] === c.posts[0].ref,
+    "Highlight source enum excludes unmarked posts in mixed context");
+  const emptySchema = safe.providerRequest({ ...task, context: { ...c, posts: [] } }).schema;
+  ok(emptySchema.properties.unresolved.items.properties.refs.maxItems === 0,
+    "Empty room cannot generate a source ref");
+  ok(sourceSchema.properties.nextActions.items.properties.refs.maxItems === 5 && sourceSchema.properties.nextActions.maxItems === 8,
+    "Generation uses validator list and ref bounds");
+  ok(sourceSchema.properties.draftText.enum[0] === "" && !safe.providerRequest({ ...task, kind: "draft_assist" }).schema.properties.draftText.enum,
+    "Only draft assistance can produce proposal draft text");
+  ok(JSON.stringify(safe.OUTPUT_SCHEMA) === beforeSchema,
+    "Per-room schema does not mutate shared schema or contaminate another room");
   const live = new OpenAiProvider("TEST-NOT-A-REAL-KEY", "test-model");
   for (const [status, providerCode, expected] of [
     [429, "insufficient_quota", "PROVIDER_QUOTA"],
@@ -249,6 +270,7 @@ denied(
     assert.equal(sent.store, false);
     assert.equal(sent.tools, undefined);
     assert.equal(sent.text.format.strict, true);
+    assert.deepEqual(sent.text.format.schema.properties.highlightNotes.items.properties.refs.items.enum, [c.posts[0].ref]);
     return {
       ok: true,
       text: async () =>

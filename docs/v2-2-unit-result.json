@@ -178,6 +178,34 @@
       "pass": true
     },
     {
+      "name": "No highlighted posts forces empty highlight notes before generation",
+      "pass": true
+    },
+    {
+      "name": "Unmarked same-room posts remain usable for normal source references",
+      "pass": true
+    },
+    {
+      "name": "Highlight source enum excludes unmarked posts in mixed context",
+      "pass": true
+    },
+    {
+      "name": "Empty room cannot generate a source ref",
+      "pass": true
+    },
+    {
+      "name": "Generation uses validator list and ref bounds",
+      "pass": true
+    },
+    {
+      "name": "Only draft assistance can produce proposal draft text",
+      "pass": true
+    },
+    {
+      "name": "Per-room schema does not mutate shared schema or contaminate another room",
+      "pass": true
+    },
+    {
       "name": "Provider rejection classified 429 insufficient_quota",
       "pass": true
     },
