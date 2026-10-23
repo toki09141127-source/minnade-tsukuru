@@ -1,30 +1,29 @@
 # AI_TASK
 
 ## Status
-done
+in_progress
 
 ## Objective
-V2.5 運営管理画面・基盤を develop/v2 / staging / Hosted Previewで実装・検収する。
+最新mainとV2.1〜V2.5を統合し、V2 Release Candidateの移行・統合E2E・安全性・Hosted Previewを検収する。
 
 ## Context
-添付66dbe3b8の要件。開始b794e0e clean、実装79a15d7。承認済み6jtg2klwo Preview / staging fwqucffxdmbdczspkcyr限定。production操作なし。
+ユーザー添付1d1b7e1c。開始develop/v2 cfd91f3、remote main 402719b。main→V2方向のみ。Buffer本番を維持し、本番には触れない。
 
 ## Tasks
-1. done: Owner/Moderator、caller RPC、immutable監査・CAS・冪等性
-2. done: 053〜055 staging適用、既存停止/退会/AIとの接続
-3. done: 9管理領域＋staff、確認UI・限定投影・モバイル対応
-4. done: DB317、unit32、metadata16、local UI22、MVP21 suites
-5. done: Hosted UI22・追加10・モバイル5、axe0・秘密走査・cleanup・最終COMPLETE判定
-6. done: SPEC/ACCEPTANCE/権限/runbook/HANDOFF。develop/v2へ検収記録をローカルcommit
+1. main統合と履歴保持
+2. 適用済み本番SQLを固定、V2旧040〜055→canonical042〜057の対応・二重適用防止
+3. 隔離fresh DB再構築、統合・権限・競合・退会・Buffer/MVP回帰
+4. stagingのみsynthetic AI / Stripe test E2Eと新Hosted RC Preview検収
+5. RC移行/復旧/既知課題文書、全条件を根拠付きで判定、RC branch/tag
 
 ## Do not
-production DB/Auth/Storage/moderation/flags/deploy/migration、live Stripe、production本文/PII閲覧、main merge、既存SQL改変、秘密出力、実OpenAI再送。
+本番DB/Auth/Storage/設定/deploy/migration、V2→main、live Stripe、実OpenAI再送、秘密表示、既存差分破棄、force push。
 
 ## Validation
-424 checks + MVP21 suites PASS。型/関連lint/build/diff PASS。A〜P/DoDをV2_5_ACCEPTANCEへ対応付け。Cookie0、有効合成session/refresh token0、停止設定復元。
+Canonical順序/hash/旧staging履歴、fresh DB、統合E2E、権限/競合/退会、Buffer/MVP、型/lint/build、Hosted操作/レスポンシブ/axeを実結果で記録。未確認をPASS扱いしない。
 
 ## Expected output
-V2.5 COMPLETE（staging / Hosted Preview）。Production Changes NONE / Live Billing OFF。次はV2全体の統合検収・本番移行準備。V2.2実AI429はKnown Issue。
+V2_RC_ACCEPTANCE / MIGRATION_MATRIX / BACKUP_RESTORE_PLAN / PRODUCTION_ROLLOUT / KNOWN_ISSUES、HANDOFF、RC固定、Production Changes NONE。
 
 ## Updated at
-2026-10-23 JST
+2026-10-24 JST

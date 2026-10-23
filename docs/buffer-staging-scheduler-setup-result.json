@@ -1,0 +1,53 @@
+{
+  "mode": "setup",
+  "tick": 200,
+  "before": {
+    "control": {
+      "enabled": false,
+      "reason": "MANUAL"
+    },
+    "scheduler": {
+      "enabled": true,
+      "last_tick": null,
+      "last_status": null,
+      "consecutive_failures": 0
+    },
+    "queue": [
+      {
+        "state": "cancelled",
+        "n": 3,
+        "attempts": 5
+      },
+      {
+        "state": "sent",
+        "n": 2,
+        "attempts": 2
+      }
+    ]
+  },
+  "after": {
+    "control": {
+      "enabled": false,
+      "reason": "MANUAL"
+    },
+    "scheduler": {
+      "enabled": true,
+      "last_tick": "2026-10-22T19:03:03.048Z",
+      "last_status": 200,
+      "consecutive_failures": 0
+    },
+    "queue": [
+      {
+        "state": "cancelled",
+        "n": 3,
+        "attempts": 5
+      },
+      {
+        "state": "sent",
+        "n": 2,
+        "attempts": 2
+      }
+    ]
+  },
+  "cronScheduled": true
+}

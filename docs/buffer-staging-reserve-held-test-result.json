@@ -1,0 +1,21 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checkedAt": "2026-10-22T18:30:41.708Z",
+  "mode": "reserve-held-test",
+  "result": {
+    "mode": "canary",
+    "state": "succeeded",
+    "code": "BUFFER_ACCEPTED"
+  },
+  "transportEvidence": [
+    {
+      "operation": "MinntukuSchedule",
+      "httpStatus": 200,
+      "resultType": "PostActionSuccess",
+      "graphqlErrors": 0,
+      "category": null
+    }
+  ],
+  "productionConnected": false,
+  "autoSend": "OFF"
+}

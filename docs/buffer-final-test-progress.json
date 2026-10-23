@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-22T18:32:46.101Z",
+  "event": "completed_83e4f064-891b-4c0f-ba56-c436236db037",
+  "bufferId": "6ada5651ca69a1b7d3cfec46",
+  "state": "scheduled",
+  "dueAt": "2026-10-22T18:39:00+00:00",
+  "checkedAtDb": "2026-10-22T18:31:10.35421+00:00",
+  "attempts": 1,
+  "duplicateRowsAdded": 0,
+  "control": {
+    "reason": "MANUAL",
+    "enabled": false,
+    "singleton": true,
+    "stopped_at": "2026-10-22T18:29:48.77016+00:00",
+    "updated_at": "2026-10-22T18:29:48.77016+00:00"
+  }
+}

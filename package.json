@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:security": "node docs/run-security-checks.cjs",
+    "test:buffer": "node docs/buffer-planner-check.cjs && node docs/buffer-connection-check.cjs && node docs/buffer-worker-route-check.cjs && node docs/buffer-native-check.cjs",
     "staging:check": "node scripts/staging/check.cjs",
     "staging:smoke": "node scripts/staging/smoke.cjs",
     "staging:db-check": "node scripts/staging/database-check.cjs",

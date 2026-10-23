@@ -1,0 +1,20 @@
+{
+  "offline": true,
+  "networkCalls": 0,
+  "productionChanges": 0,
+  "blockers": [
+    {
+      "id": "POST_RESERVATION_EXCLUSION",
+      "reproduced": false,
+      "explanation": "After exclusion the managed worker cancels the external reservation and stops new sending."
+    },
+    {
+      "id": "AUTOMATIC_RECEIPT_RECONCILIATION",
+      "reproduced": false,
+      "explanation": "The managed worker reads accepted ordinary receipts."
+    }
+  ],
+  "sendsSynthetic": 1,
+  "cancellations": 1,
+  "receiptReads": 2
+}

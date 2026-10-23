@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-22T19:14:26.784Z",
+  "control": {
+    "enabled": true,
+    "reason": "OPERATOR_RESUMED"
+  },
+  "scheduler": {
+    "enabled": true,
+    "last_tick": "2026-10-22T19:14:05.378Z",
+    "last_status": 200,
+    "consecutive_failures": 0
+  },
+  "queue": [],
+  "duplicates": 0,
+  "cron": [
+    {
+      "status": "succeeded",
+      "start_time": "2026-10-22T19:14:00.150Z",
+      "end_time": "2026-10-22T19:14:05.379Z"
+    }
+  ]
+}

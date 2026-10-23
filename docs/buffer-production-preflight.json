@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-22T19:04:51.166Z",
+  "project": "joedeuyrzimqyjapqpyh",
+  "db": {
+    "buffer_absent": true,
+    "deletion_paused": false,
+    "missing_rls": 0,
+    "uncertain_effects": 0,
+    "mvp_function_hash": "0230698dafbb6c3a80d603c5211d3ef1"
+  },
+  "http": {
+    "/": 200,
+    "/rooms": 200,
+    "auth": 200,
+    "/login": 200,
+    "/works": 200
+  },
+  "pass": true,
+  "productionChanged": false,
+  "note": "Existing /login entry verified; /auth is a callback directory.",
+  "existingBackupVerified": true,
+  "newDataExport": false
+}

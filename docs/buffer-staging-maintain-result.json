@@ -1,0 +1,17 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checkedAt": "2026-10-22T14:43:05.048Z",
+  "mode": "maintain",
+  "result": {
+    "processed": 1,
+    "control": {
+      "reason": "EXCLUDED",
+      "enabled": false,
+      "singleton": true,
+      "stopped_at": "2026-10-22T14:43:02.840539+00:00",
+      "updated_at": "2026-10-22T14:43:02.840539+00:00"
+    }
+  },
+  "productionConnected": false,
+  "autoSend": "OFF"
+}

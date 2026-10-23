@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-10-22T18:40:15.517Z",
+  "event": "completed_83e4f064-891b-4c0f-ba56-c436236db037",
+  "state": "sent",
+  "bufferId": "6ada5651ca69a1b7d3cfec46",
+  "dueAt": "2026-10-22T18:39:00+00:00",
+  "sentAt": "2026-10-22T18:39:16.447+00:00",
+  "externalUrl": "https://x.com/minnade_tsukuru/status/2113339419771982087",
+  "verifiedAt": "2026-10-22T18:40:03.341635+00:00",
+  "releaseStartedAt": "2026-10-22T18:39:15.864463+00:00",
+  "attempts": 1,
+  "control": {
+    "reason": "MANUAL",
+    "enabled": false,
+    "singleton": true,
+    "stopped_at": "2026-10-22T18:29:48.77016+00:00",
+    "updated_at": "2026-10-22T18:29:48.77016+00:00"
+  },
+  "duplicateRowsAdded": 0,
+  "productionConnected": false,
+  "externalId": "2113339419771982087",
+  "testAuthorizationEnabled": false
+}

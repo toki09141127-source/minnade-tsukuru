@@ -1,0 +1,74 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "applied": [
+    {
+      "file": "202610220029_buffer_queue.sql",
+      "sha256": "1616ef97b5eb28d09428247d70fbd24572542a783728a28121c962acc25dd244"
+    },
+    {
+      "file": "202610220030_buffer_delivery.sql",
+      "sha256": "6dd63bf632359f112f3fff46e7d3947eebe2f55c91b033fd70439dcb0c5105be"
+    },
+    {
+      "file": "202610220031_buffer_delivery_control.sql",
+      "sha256": "b95d8b959c7b30a06b8aa32db4cd8b4dc147b750c282fa13aff3ec1b94dcf1d1"
+    },
+    {
+      "file": "202610220032_buffer_cancelled_capacity.sql",
+      "sha256": "07f400a2a8ed23080c38979c882c83dcd728a9c29b7edc60fc0cd5a430b01184"
+    },
+    {
+      "file": "202610220033_buffer_cancel_test_text.sql",
+      "sha256": "e6020e1727629285553132b17ddd0e02c5657ceedf6b78b16f093db987842671"
+    },
+    {
+      "file": "202610220034_buffer_release_guard.sql",
+      "sha256": "6b4292a67e9ff886efc56795267c5cbc9ec613d5e514129ef7e4270ba0f959c3"
+    },
+    {
+      "file": "202610220035_buffer_scheduler.sql",
+      "sha256": "09b4db473a6d78cf524316f5496e39747b8927dc57f7bfb46ac590903d8cc5f6"
+    },
+    {
+      "file": "202610220036_buffer_transport_acl.sql",
+      "sha256": "8eb626648750fc8d71fd9839c7425a8e91e9704b852ed25a12b15fd2539df38c"
+    },
+    {
+      "file": "202610220037_buffer_private_http.sql",
+      "sha256": "3196cfbc994e28195a48c9677241d52d0ba3fa35585dc172fd4e3ee2ec32007a"
+    },
+    {
+      "file": "202610220038_buffer_http_options.sql",
+      "sha256": "f49309756a369be9254d59220bb4fe29b36c323c8d8d7a2d4c0c76ce6dd26f22",
+      "appliedSha256": "1f184958836127fc3490f2e63fa0cc888078235d1efe207cd9fdec12bacf9036",
+      "normalization": "Removed trailing blank line only after staging application"
+    },
+    {
+      "file": "202610220039_buffer_scheduler_response.sql",
+      "sha256": "2e9504446203dd07e532dce2c3fee15641bd6a0058c9b3394f9390b0fbe10090",
+      "appliedSha256": "522376b452b8f61dd18b1a2bc4e2d72bfdbcbfd8c3a38d090a24cc6a23799ac9",
+      "normalization": "Removed trailing blank line only after staging application"
+    },
+    {
+      "file": "202610230040_buffer_manual_test.sql",
+      "sha256": "f505b848a577831729a683ec4a7708c96966f8b40eeff45ff813f83453557325"
+    },
+    {
+      "file": "202610230041_buffer_staging_scheduler_auth.sql",
+      "sha256": "afce5b7a31f064cc8a6b2bbfb114890510238d94146adac59f99f1371aa10969"
+    }
+  ],
+  "appliedVia": "staging Dashboard SQL editor",
+  "productionConnected": false,
+  "sqlStateChecks": 11,
+  "aclRlsTriggerChecks": "PASS",
+  "stagingApiChecks": 13,
+  "bufferReservationCount": 1,
+  "duplicateEnqueueAdded": 0,
+  "postReservationChecks": 12,
+  "heldReleaseAcceptance": "PASS",
+  "note": "036 revoke ineffective on Supabase-owned pg_net objects; 037-039 replace transport with private synchronous HTTP. No real credential was queued.",
+  "latestHeldRelease": "6ada5651ca69a1b7d3cfec46",
+  "hostedCronAuth": "PASS",
+  "schedulerEndToEnd": "BLOCKED_STAGING_DB_CREDENTIAL_REQUIRED"
+}

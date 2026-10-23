@@ -1,0 +1,15 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checkedAt": "2026-10-22T18:30:31.202Z",
+  "mode": "canary-dry-run",
+  "result": {
+    "mode": "dry-run",
+    "eligible": true,
+    "existing": false,
+    "writes": 0,
+    "sends": 0
+  },
+  "transportEvidence": [],
+  "productionConnected": false,
+  "autoSend": "OFF"
+}
