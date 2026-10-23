@@ -2,6 +2,8 @@
 const fs = require("node:fs"),
   crypto = require("node:crypto"),
   assert = require("node:assert/strict");
+if (fs.existsSync("docs/v2-rc-migration-map.json"))
+  throw new Error("LEGACY_INSTALLER_RETIRED_USE_RC_MIGRATION_PLAN");
 (async () => {
   let db;
   try {

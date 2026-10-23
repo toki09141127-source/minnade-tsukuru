@@ -34,6 +34,13 @@ async function main(){
  delete env.BUFFER_RUN_MODE;await test(200);
  assert.deepEqual(calls,['buffer_snapshot','buffer_snapshot']);count++;
  env.BUFFER_CRON_SECRET='dedicated';await test(401);await test(200,'Bearer dedicated');
+ for(const marker of ['VERCEL_ENV','STAGING_TEST','NEXT_PUBLIC_SUPABASE_URL']){
+  const old=env[marker];env[marker]=marker==='VERCEL_ENV'?'preview':marker==='STAGING_TEST'?'true':'https://fwqucffxdmbdczspkcyr.supabase.co';
+  const before=calls.length;env.BUFFER_CANARY_ACCEPTED='true';env.BUFFER_API_KEY='synthetic';
+  for(const mode of ['automatic','canary','enqueue']){env.BUFFER_RUN_MODE=mode;await test(503,'Bearer dedicated');}
+  assert.equal(calls.length,before);count++;await test(200,'Bearer dedicated','?dryRun=1');
+  if(old===undefined)delete env[marker];else env[marker]=old;
+ }
  console.log('BUFFER_ROUTE_CHECKS '+count+' PASS; no network');
 }
 main().catch(e=>{console.error(e.message);process.exitCode=1});

@@ -135,7 +135,7 @@ export class OpenAiProvider implements AiProvider {
     };
   }
 }
-/** Synthetic provider is never selectable on a deployed Vercel environment. */
+/** Synthetic provider is available only locally or in the explicitly opted-in staging RC Preview. */
 export class SyntheticProvider implements AiProvider {
   async generate(task: AiTask) {
     providerRequest(task);
@@ -188,7 +188,11 @@ export function aiConfigured() {
     ((process.env.AI_PROVIDER === "openai" && !!process.env.OPENAI_API_KEY) ||
       (process.env.AI_PROVIDER === "synthetic" &&
         process.env.STAGING_TEST === "true" &&
-        !process.env.VERCEL))
+        (!process.env.VERCEL ||
+          (process.env.VERCEL_ENV === "preview" &&
+            process.env.V2_RC_SYNTHETIC_AI === "true" &&
+            process.env.NEXT_PUBLIC_SUPABASE_URL ===
+              "https://fwqucffxdmbdczspkcyr.supabase.co"))))
   );
 }
 export function getAiProvider(

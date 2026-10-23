@@ -1,0 +1,79 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "exact staging",
+      "pass": true
+    },
+    {
+      "name": "managed extension exists pg_cron",
+      "pass": true
+    },
+    {
+      "name": "managed extension exists pg_net",
+      "pass": true
+    },
+    {
+      "name": "managed extension exists http",
+      "pass": true
+    },
+    {
+      "name": "managed extension exists supabase_vault",
+      "pass": true
+    },
+    {
+      "name": "managed RPC ACL public.buffer_scheduler_tick",
+      "pass": true
+    },
+    {
+      "name": "managed RPC ACL public.v25_admin_action",
+      "pass": true
+    },
+    {
+      "name": "actual scheduler uses synchronous HTTP only",
+      "pass": true
+    },
+    {
+      "name": "actual scheduler concurrency lock",
+      "pass": true
+    },
+    {
+      "name": "staging scheduler OFF",
+      "pass": true
+    },
+    {
+      "name": "staging Buffer OFF",
+      "pass": true
+    },
+    {
+      "name": "actual RLS room_ai_creators",
+      "pass": true
+    },
+    {
+      "name": "actual RLS room_ai_tasks",
+      "pass": true
+    },
+    {
+      "name": "actual RLS room_ai_outputs",
+      "pass": true
+    },
+    {
+      "name": "actual RLS billing_accounts",
+      "pass": true
+    },
+    {
+      "name": "actual RLS ai_credit_ledger",
+      "pass": true
+    },
+    {
+      "name": "actual RLS admin_users",
+      "pass": true
+    },
+    {
+      "name": "actual RLS admin_audit",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "dataRead": "catalogs and control booleans only"
+}

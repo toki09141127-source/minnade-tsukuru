@@ -23,6 +23,9 @@ export async function GET(req: Request) {
   if (!['dry-run', 'enqueue', 'canary', 'automatic'].includes(mode)) {
     return response(503, { code: 'INVALID_MODE' })
   }
+  // Staging/Preview may inspect the queue but never mutate or contact Buffer/X.
+  const sandbox = process.env.VERCEL_ENV === 'preview' || process.env.STAGING_TEST === 'true' || process.env.NEXT_PUBLIC_SUPABASE_URL === 'https://fwqucffxdmbdczspkcyr.supabase.co'
+  if (sandbox && mode !== 'dry-run') return response(503, { code: 'STAGING_BUFFER_READ_ONLY' })
   if (mode === 'automatic' && process.env.BUFFER_CANARY_ACCEPTED !== 'true') {
     return response(503, { code: 'CANARY_REQUIRED' })
   }
