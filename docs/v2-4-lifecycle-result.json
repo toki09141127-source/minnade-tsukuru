@@ -1,0 +1,52 @@
+{
+  "scope": "real Stripe test clocks + signed webhook to real staging; synthetic users only",
+  "checks": [
+    {
+      "name": "Test-clock Pro activated by signed webhook",
+      "pass": true
+    },
+    {
+      "name": "Before renewal downgrade retains Pro",
+      "pass": true
+    },
+    {
+      "name": "Clock renewal switches Pro to Plus with next-period allowance",
+      "pass": true
+    },
+    {
+      "name": "Cancellation at actual test-clock renewal becomes Free",
+      "pass": true
+    },
+    {
+      "name": "Actual failed renewal enters three-day grace without new credit grant",
+      "pass": true
+    },
+    {
+      "name": "Paid retry restores active Plus and grants the period once",
+      "pass": true
+    },
+    {
+      "name": "Monthly-to-yearly change occurs only at test-clock renewal",
+      "pass": true
+    },
+    {
+      "name": "Deletion preparation cancels actual test subscription before Auth deletion",
+      "pass": true
+    },
+    {
+      "name": "Repeated billing retirement is idempotent",
+      "pass": true
+    },
+    {
+      "name": "Billing retirement does not delete Auth or bypass existing deletion workflow",
+      "pass": true
+    },
+    {
+      "name": "Retirement webhook quarantined instead of reactivating account",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF"
+}

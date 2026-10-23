@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "provider": "stripe_test",
+  "products": 2,
+  "prices": 4,
+  "portalLimitedToPaymentMethodsAndInvoices": true,
+  "liveMode": false,
+  "productionChanges": "NONE"
+}

@@ -1,0 +1,95 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "billing_accounts RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "billing_events RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "billing_operations RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "ai_credit_periods RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "ai_credit_ledger RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "room_ai_entitlements RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "ai_profiles RLS and no direct client/service data grants",
+      "pass": true
+    },
+    {
+      "name": "private helper RPCs not executable by API roles",
+      "pass": true
+    },
+    {
+      "name": "global AI flag remains intentionally OFF",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230040_v2_membership.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230041_v2_creation_log.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230042_v2_publication.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230043_v2_publication_withdrawal.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230044_ai_creator.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230045_ai_publication.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230046_ai_control_scope.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230047_ai_bounded_publication.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230048_billing_foundation.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230049_ai_credit_settings.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230050_billing_deletion_fence.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230051_billing_retry_state.sql",
+      "pass": true
+    },
+    {
+      "name": "applied bytes 202610230052_billing_period_timing.sql",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "transaction": "READ ONLY / ROLLBACK"
+}

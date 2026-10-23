@@ -1,0 +1,34 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "files": [
+    {
+      "file": "202610230048_billing_foundation.sql",
+      "sha256": "cf530be811d39113ddd2f3c25c7a74d8a3fa03d1238774286ee63078a8f42ffe",
+      "applied": true
+    },
+    {
+      "file": "202610230049_ai_credit_settings.sql",
+      "sha256": "b1800a658176e4b9aeeaa686c6994d834eaffec069c8292753f96d1f05de9db7",
+      "applied": true
+    },
+    {
+      "file": "202610230050_billing_deletion_fence.sql",
+      "sha256": "9622ec6719d619b2468736362b64911488af00d716d1c56e6538517eb210d75e",
+      "applied": true
+    },
+    {
+      "file": "202610230051_billing_retry_state.sql",
+      "sha256": "e09feb63978689a1aac452c0e15f2805064742cafa2f3460e48b93afc09f49a4",
+      "applied": true
+    },
+    {
+      "file": "202610230052_billing_period_timing.sql",
+      "sha256": "599a0253f03b30c7cf43953b4d08c629bd82771fe0dbaeffabc5cdddf65df03a",
+      "applied": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "complete": true,
+  "aiEnabled": false
+}

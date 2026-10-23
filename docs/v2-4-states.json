@@ -1,0 +1,23 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "past_due retains payment recovery and cancellation controls",
+      "pass": true
+    },
+    {
+      "name": "unpaid retains payment recovery and cancellation controls",
+      "pass": true
+    },
+    {
+      "name": "incomplete retains payment recovery and cancellation controls",
+      "pass": true
+    },
+    {
+      "name": "Unknown operation blocks a different payment intent after reload",
+      "pass": true
+    }
+  ],
+  "scope": "UI route mocks only; no payment mutation",
+  "productionChanges": "NONE"
+}

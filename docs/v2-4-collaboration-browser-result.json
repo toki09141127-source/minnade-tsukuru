@@ -1,0 +1,170 @@
+{
+  "scope": "real staging; synthetic users; local browser; no real AI",
+  "checks": [
+    {
+      "name": "Caller-scoped rooms catalog has correct status and bounded rows",
+      "pass": true
+    },
+    {
+      "name": "Caller-scoped works catalog has correct status and bounded rows",
+      "pass": true
+    },
+    {
+      "name": "Anonymous My Page data rejected",
+      "pass": true
+    },
+    {
+      "name": "Invalid catalog filters rejected",
+      "pass": true
+    },
+    {
+      "name": "Home brand and primary actions rendered",
+      "pass": true
+    },
+    {
+      "name": "Room discovery search, genre, AI and deadline controls operate",
+      "pass": true
+    },
+    {
+      "name": "Anonymous Work opens read-only public production log",
+      "pass": true
+    },
+    {
+      "name": "Creator, Core candidate and Member login through UI",
+      "pass": true
+    },
+    {
+      "name": "Creator opens room created through consent UI; navigation separately verified",
+      "pass": true
+    },
+    {
+      "name": "Member join requires consent and unlocks composer",
+      "pass": true
+    },
+    {
+      "name": "Member posts and searches own production log",
+      "pass": true
+    },
+    {
+      "name": "Member requests Core and Creator approves through UI",
+      "pass": true
+    },
+    {
+      "name": "Member cannot invoke Creator operation directly",
+      "pass": true
+    },
+    {
+      "name": "Creator highlights and excludes with distinct state",
+      "pass": true
+    },
+    {
+      "name": "Creator edits, previews and saves reviewed draft",
+      "pass": true
+    },
+    {
+      "name": "Concurrent draft 409 preserves typed input",
+      "pass": true
+    },
+    {
+      "name": "AI stop leaves human creation intact",
+      "pass": true
+    },
+    {
+      "name": "My Page tabs and profile navigation operate",
+      "pass": true
+    },
+    {
+      "name": "home fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "rooms fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "create fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "room fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "works fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "work fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "log fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "mypage fits all six widths",
+      "pass": true
+    },
+    {
+      "name": "Dangerous action dialog focuses cancel and Escape safely closes",
+      "pass": true
+    },
+    {
+      "name": "No uncaught browser error or HTTP 500",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "productionChanges": "NONE",
+  "browserErrors": [],
+  "serverErrors": [],
+  "navigation": [
+    "/",
+    "/",
+    "/rooms",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23/log",
+    "/login",
+    "/login",
+    "/",
+    "/login",
+    "/login",
+    "/",
+    "/login",
+    "/login",
+    "/",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/mypage",
+    "/mypage",
+    "/",
+    "/",
+    "/rooms",
+    "/rooms",
+    "/rooms/create",
+    "/rooms/create",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/works",
+    "/works",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23/log",
+    "/works/d1b7e6cd-8123-42ca-9aeb-d1944507ba23/log",
+    "/mypage",
+    "/mypage",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a",
+    "/rooms/4234e276-549a-4c02-a2c5-b4110479647a"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "valid signature accepted",
+      "pass": true
+    },
+    {
+      "name": "changed payload signature denied",
+      "pass": true
+    },
+    {
+      "name": "invalid signature denied",
+      "pass": true
+    },
+    {
+      "name": "expired signed request denied",
+      "pass": true
+    },
+    {
+      "name": "live event rejected",
+      "pass": true
+    },
+    {
+      "name": "live key rejected before network",
+      "pass": true
+    },
+    {
+      "name": "paid current subscription establishes Plus",
+      "pass": true
+    },
+    {
+      "name": "customer internal account mapping required",
+      "pass": true
+    },
+    {
+      "name": "failed pending upgrade keeps previously paid current period",
+      "pass": true
+    },
+    {
+      "name": "unpaid initial invoice cannot activate",
+      "pass": true
+    },
+    {
+      "name": "upgrade waits for payment with provider proration",
+      "pass": true
+    },
+    {
+      "name": "cycle switch scheduled at renewal",
+      "pass": true
+    },
+    {
+      "name": "retry resumes own schedule after create/update partial failure",
+      "pass": true
+    },
+    {
+      "name": "different operation cannot overwrite existing schedule",
+      "pass": true
+    },
+    {
+      "name": "cancellation scheduled not immediate",
+      "pass": true
+    },
+    {
+      "name": "portal cannot bypass scheduled plan-change rules",
+      "pass": true
+    },
+    {
+      "name": "second active subscription checkout denied",
+      "pass": true
+    },
+    {
+      "name": "parallel open checkout denied",
+      "pass": true
+    },
+    {
+      "name": "test checkout uses mapped customer and card allowlist",
+      "pass": true
+    },
+    {
+      "name": "return URL does not grant or contain session token",
+      "pass": true
+    },
+    {
+      "name": "customer creation idempotent and not email-mapped",
+      "pass": true
+    },
+    {
+      "name": "invalid preferences and prompt injection denied",
+      "pass": true
+    },
+    {
+      "name": "Plus cannot set Pro custom instructions",
+      "pass": true
+    },
+    {
+      "name": "custom preference is untrusted data separate from immutable safety prompt",
+      "pass": true
+    },
+    {
+      "name": "old delivery uses current provider state after serialized lease",
+      "pass": true
+    },
+    {
+      "name": "duplicate webhook avoids remote reactivation",
+      "pass": true
+    },
+    {
+      "name": "provider failure releases lease for bounded retry",
+      "pass": true
+    },
+    {
+      "name": "actual server accepts configured staging test mode",
+      "pass": true
+    },
+    {
+      "name": "actual production Vercel boundary refuses billing",
+      "pass": true
+    },
+    {
+      "name": "actual production Supabase ref refuses billing",
+      "pass": true
+    },
+    {
+      "name": "provider redirect cannot target arbitrary origin",
+      "pass": true
+    }
+  ],
+  "scope": "offline Stripe signature + adapter tests; no provider API calls",
+  "liveBilling": "OFF",
+  "productionChanges": "NONE"
+}

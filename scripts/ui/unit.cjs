@@ -21,13 +21,15 @@ const cache = new Map(),
       module: m,
       exports: m.exports,
       require: (name) =>
-        name === "@/lib/publicationSafety"
-          ? load("lib/publicationSafety.ts")
-          : name === "./safety"
-            ? load("lib/ai/safety.ts")
-            : name === "server-only"
-              ? {}
-              : require(name),
+        name.startsWith("@/lib/")
+          ? load(name.replace("@/", "") + ".ts")
+          : name === "@/lib/publicationSafety"
+            ? load("lib/publicationSafety.ts")
+            : name === "./safety"
+              ? load("lib/ai/safety.ts")
+              : name === "server-only"
+                ? {}
+                : require(name),
       process: { env: {} },
       fetch: (...args) => providerFetch(...args),
       AbortSignal,

@@ -1,0 +1,10 @@
+{
+  "productionChanges": "NONE",
+  "lint": 0,
+  "typecheck": 0,
+  "mvp": 0,
+  "unit": 0,
+  "ai": 0,
+  "secrets": 0,
+  "complete": true
+}

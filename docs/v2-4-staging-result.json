@@ -1,0 +1,74 @@
+{
+  "scope": "real Supabase staging and real Stripe test API; signed events via official Stripe CLI to local production build",
+  "checks": [
+    {
+      "name": "Synthetic staging users authenticated with current consent",
+      "pass": true
+    },
+    {
+      "name": "App creates real Stripe test Checkout",
+      "pass": true
+    },
+    {
+      "name": "Checkout creation and return do not activate subscription",
+      "pass": true
+    },
+    {
+      "name": "Stripe test Checkout completed through browser",
+      "pass": true
+    },
+    {
+      "name": "Actual Stripe-signed webhook activates Plus in staging",
+      "pass": true
+    },
+    {
+      "name": "Plus monthly grant from authoritative webhook",
+      "pass": true
+    },
+    {
+      "name": "Paid immediate upgrade activates Pro and tops up credits",
+      "pass": true
+    },
+    {
+      "name": "Pro saved profile persisted through authenticated API",
+      "pass": true
+    },
+    {
+      "name": "Automatic greeting consumes zero user credits",
+      "pass": true
+    },
+    {
+      "name": "Core cannot edit Creator AI settings",
+      "pass": true
+    },
+    {
+      "name": "Member cannot charge Creator",
+      "pass": true
+    },
+    {
+      "name": "Synthetic AI completion settles Creator credits for Core request",
+      "pass": true
+    },
+    {
+      "name": "Cancel schedules end while current Pro remains",
+      "pass": true
+    },
+    {
+      "name": "Cancel reservation can be reversed",
+      "pass": true
+    },
+    {
+      "name": "Downgrade and yearly switch scheduled while current Pro retained",
+      "pass": true
+    },
+    {
+      "name": "Restricted real test Billing Portal created",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "liveBilling": "OFF",
+  "productionChanges": "NONE",
+  "checkoutBrowser": "PASS",
+  "actualStripeWebhook": true
+}

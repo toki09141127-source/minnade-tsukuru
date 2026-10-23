@@ -1696,3 +1696,20 @@ Preview URL: https://minnade-tsukuru-staging-gogr4s5qk-sonetokiyas-projects.verc
 AI_TASK done。V2.3 COMPLETEはCreative Office UI＋staging検収の範囲。V2.2の実OpenAI429は未解消でPARTIAL維持、AI flags OFF。物理Android/iPhone・実利用性能・screen reader認証は未実施。Creator以外へのmember/Creator名義公開は既存RPC projection以上に広げない。通知は既存申請/辞退状態/公開作品のみで新通知DBなし。Buffer/V2の旧040採番衝突は将来merge前に整理。main/Buffer checkout・production DB/migration/deploy/user dataの変更NONE、pushなし。
 
 Next: 別依頼でV2.4 Free/Plus/Proへ進める。実AIを前提にする枠・課金検収は429復旧後に別途。今回の承認待ちなし。検収scripts/docsを後続develop/v2 commitにまとめる。
+
+
+### V2.4開始（2026-10-23 JST）
+develop/v2 / C:/dev/minnade/minnade-tsukuru-v2、HEAD3cc489a cleanを確認。添付37f0808bによりstaging課金実装・migration・Preview・V2commitを承認済み。production/live payment禁止。V2 staging envにStripe変数なし、DB URL未設定。テストキー用非表示入力helperを用意し、合成provider/隔離DB実装を先行。V2.2実AI429は別残件、再送なし。
+
+### Stripe plugin接続・商品価格照合（2026-10-23 JST）
+このチャットでOAuth接続先と保存済みsk_test_キーのアカウントを再照合し、双方acct_1USz6gLZaDd1Edb0（みんなで作ろうサンドボックス）、livemode=falseを確認。Stripe pluginで既存2商品・4 recurring JPY価格を確認: Plus月780/年7800、Pro月1980/年19800。4件ともactive、周期1、staging設定の4 Price IDと一致。既存設定を再利用し、新規商品・価格の重複作成なし。キー値/OAuth資格情報は出力なし。tax_behaviorはunspecifiedのため税込/税別・Tax検収は未確定。この確認はCheckout/Webhook E2E成功を意味しない。V2.4全体のAI_TASKはin_progress維持。アプリコード・DB・本番・決済・deploy・commit/push変更なし。
+
+### V2.4実Stripe検収チェックポイント（2026-10-23 JST）
+048〜051をstagingだけへ適用しhashを固定。実Stripe test Checkoutのブラウザ完了＋署名Webhook、Plus/Pro即時反映、Creator共有枠、Core/Member制限、設定保存/再利用など16件PASS。Stripe Test Clockで更新時降格/解約、実失敗カードの3日grace・追加付与停止・支払復旧、月→年切替、退会前subscription停止/反復/遅延Webhook隔離11件PASS。Auth削除・本番変更は実施していない。
+隔離DB204件、billing unit25件、AI安全性52件、MVP既存回帰21suite、型・buildはPASS。MVPの課金モジュール不要importをV2 staging限定の遅延importへ修正。月末anchorとAI inactivity dedupeの境界修正052を追加中。Preview/UI検収・最終記録は未完了。実OpenAI再送0。Status in_progress。
+
+### V2.4 local完了・Hosted検収へ（2026-10-23 JST）
+実装commit 7f89628（develop/v2）。追加052をstaging適用済み、DB213、billing unit31、実Stripe16＋Test Clock11、local UI25（6幅・axe10画面状態違反0）、型/lint/build/MVP回帰成功。退会hookの型検査失敗を修正し最新build成功。AIフォームのtextarea/selectラベルを安定化、狭い設定欄は1列化。適用済みSQLのCRLFを保持するためwhitespace属性を追加し、HEAD内の5hashもmanifest一致（SQL内容変更なし）。stagingメタデータ22項目PASS、全billing表RLS/直接grant拒否、private関数非公開、AI flag OFF。秘密値走査0。Preview準備中、未検収をPASSとしない。Production NONE / Live Billing OFF。
+
+### V2.4最終Preview待ち（2026-10-23 JST）
+追加source commit 5c37a32: 猶予切れでFree表示になっても支払い確認/解約の入口を残す。4 UI状態テストPASS。共同制作UI28回帰PASS、最新source build PASS。最終Preview 4wqvksxt4を配信、旧9sfb8v7a2は検収対象から除外。USER APPROVAL REQUIRED: この最終URL限定のCookie取得・一時保存・自動UIと署名Webhook転送（完了後削除）。質問済み、まだ実行していない。旧Preview承認を流用しない。独立検証は完了、Hostedを合格扱いせずV2.4 PARTIAL / AI_TASK in_progress維持。

@@ -1,0 +1,61 @@
+{
+  "sourceCommit": "5c37a3259092822d3b7faef81784e063d87df198",
+  "status": "PARTIAL",
+  "hosted": "READY; exact Preview access approval pending",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "results": {
+    "regression-local-result": {
+      "complete": true,
+      "checks": 213
+    },
+    "unit-result": {
+      "complete": true,
+      "checks": 31
+    },
+    "staging-result": {
+      "complete": true,
+      "checks": 16
+    },
+    "lifecycle-result": {
+      "complete": true,
+      "checks": 11
+    },
+    "local-ui": {
+      "complete": true,
+      "checks": 24
+    },
+    "states": {
+      "complete": true,
+      "checks": 4
+    },
+    "collaboration-browser-result": {
+      "complete": true,
+      "checks": 28
+    },
+    "staging-metadata": {
+      "complete": true,
+      "checks": 22
+    },
+    "aiRegression": {
+      "complete": true,
+      "checks": 52
+    }
+  },
+  "static": {
+    "productionChanges": "NONE",
+    "lint": 0,
+    "typecheck": 0,
+    "mvp": 0,
+    "unit": 0,
+    "ai": 0,
+    "secrets": 0,
+    "complete": true
+  },
+  "latestBuild": {
+    "complete": true,
+    "exitCode": 0,
+    "productionChanges": "NONE"
+  },
+  "secrets": 0
+}
