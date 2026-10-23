@@ -1868,3 +1868,19 @@ Production app impact: Buffer専用DBオブジェクト・Vault/環境変数・A
 証跡: buffer-production-migrations.json / buffer-production-smoke-result.json / buffer-production-app-health.json / buffer-production-enabled.json / buffer-production-monitor-latest.json / buffer-staging-scheduler-*-result.json。
 Next: 本番Buffer専用監視を継続し、V2.1の実装へ専念可能。本人の追加操作不要。追加TESTは禁止のまま。
 Updated at: 2026-10-23 04:15 JST
+
+
+## V2 Release Candidate統合検収（2026-10-24 JST、最新）
+Status: done / V2 RELEASE CANDIDATE COMPLETE。user添付1d1b7e1cおよびRC exact-host Cookie承認に基づく。
+
+main402719b→develop/v2を686121aでmerge、application1523476。既存差分・旧phase runnerを維持。main/production変更NONE。canonical main001〜041、V2旧040〜055→042〜057はSQL bytes維持、058だけstaging追加。本番適用38件hash不変。旧staging番号履歴も保持。
+
+検証: fresh58本/334 checks、synthetic dump/restore（77表/516構造/92 policy/144 index）、actual staging46 checksと追加26表RLS/直接DML拒否。MVP21 suites、Buffer238、AI52/billing32/RC8。local/Hosted統合各24、Stripe Hosted12/16/7/security9、運営focused10+追加8+mobile5+console2。初回22機能checks/axe0はconsole分類で全体falseだった証跡を保持し、Moderator403を切分けて最終unexpected0。型・関連lint・build PASS、application sourceはPreviewと一致。
+
+退会は実staging合成paid Creator1名だけ、使用済添付保持/未使用削除、公開snapshot保持/名義匿名化、課金停止を先行しAuth最後、password/refresh拒否。Storage/Auth故障とjob lease競合も確認。他job変更0。既存Owner復旧手順で合成unknownを照合して再開、job/effect書換えなし。
+
+Cookie削除、browser/forwarder終了、14合成アカウントsessions/refresh失効、保存token除去、通常2顧客+clock2顧客のtest契約残存0。staging AI/退会受付/worker・Buffer scheduler/auto-sendは元のOFF。production/live/OpenAI呼出し0。Service Role38箇所（main35、追加3はAI worker/billing worker/metadata telemetry）、authenticated管理RPCとrole制限を維持。
+
+主変更: .gitattributes、canonical migration filenames/058、Buffer Preview write guard、synthetic provider exact-host boundary、scripts/rc/*、scripts/admin/behavior.cjs、legacy installer guard、docs/V2_RC_*とv2-rc-*証跡/TASK/HANDOFF。旧local runnerの一括置換は自動承認レビューに拒否されたため、置換せず追加RC runnerで完遂。
+
+Known Issues: 実OpenAI429、Android/iPhone RC実機、managed extension新規install/別端末restore、Auth/SMTPログ、live Stripe OFF。production allowlist/Owner指定/最新backup復元/移行リハーサル/価格credit/課金法務は別ゲート。次は本番移行前最終検収。新機能追加freeze。RC branch/tagとpush結果は最終Git記録参照。

@@ -1,0 +1,23 @@
+{
+  "project": "minnade-tsukuru-staging",
+  "environment": "preview",
+  "updated": [
+    "ADMIN_ENABLED",
+    "V2_ENABLED",
+    "STAGING_TEST",
+    "AI_ENABLED",
+    "AI_PROVIDER",
+    "V2_RC_SYNTHETIC_AI",
+    "BUFFER_RUN_MODE",
+    "BUFFER_CANARY_ACCEPTED",
+    "BILLING_ENABLED",
+    "BILLING_PROVIDER",
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "STRIPE_TEST_WEBHOOK_SECRET",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "STRIPE_TEST_SECRET_KEY"
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

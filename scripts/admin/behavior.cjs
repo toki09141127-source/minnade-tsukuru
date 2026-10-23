@@ -405,13 +405,15 @@ module.exports = async ({ db, connect, report }) => {
   );
   ok((await feature("deletion_intake", true)).ok, "deletion intake resume");
   await db.query("TRUNCATE mvp_private.admin_rate");
-  for (let n = 0; n < 30; n++)
-    await action(normal, "suspend", "user", other, 0, true);
-  ok(
-    (await action(normal, "suspend", "user", other, 0, true)).error ===
-      "ADMIN_RATE_LIMITED",
-    "failed attempts also rate limited",
-  );
+  // The fixed minute bucket may roll over during connection setup. Two buckets
+  // require at most 61 denials; do not reset or weaken the actual limiter.
+  let limited = false;
+  for (let n = 0; n < 61 && !limited; n++) {
+    const r = await action(normal, "suspend", "user", other, 0, true);
+    assert.ok(["ADMIN_FORBIDDEN", "ADMIN_RATE_LIMITED"].includes(r.error));
+    limited = r.error === "ADMIN_RATE_LIMITED";
+  }
+  ok(limited, "failed attempts also rate limited across minute boundary");
   ok(
     Number(
       (

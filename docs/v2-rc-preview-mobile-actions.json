@@ -1,0 +1,32 @@
+{
+  "complete": true,
+  "scope": "Hosted Preview 375px actual controls",
+  "checks": [
+    {
+      "name": "Keyboard Enter opens confirmation; Escape restores focus without mutation",
+      "pass": true
+    },
+    {
+      "name": "375px posts stop and recovery through confirmed UI",
+      "pass": true
+    },
+    {
+      "name": "375px uploads stop and recovery through confirmed UI",
+      "pass": true
+    },
+    {
+      "name": "Owner room-scoped joins stop/recovery works on mobile",
+      "pass": true
+    },
+    {
+      "name": "Mobile action browser has no console / hydration / uncaught / 5xx errors",
+      "pass": true
+    }
+  ],
+  "violations": [],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "previewUrl": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "controlsRestored": true,
+  "browserClosed": true
+}

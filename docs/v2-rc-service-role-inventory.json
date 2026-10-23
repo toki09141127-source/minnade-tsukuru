@@ -1,0 +1,199 @@
+{
+  "scope": "static source inventory + RC behavior evidence; no new broad service grants",
+  "source": "1523476",
+  "productionChanges": "NONE",
+  "files": [
+    {
+      "file": "app/api/account/delete/route.ts",
+      "category": "actor-bound durable deletion",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/cron/account-deletion/route.ts",
+      "category": "authenticated background worker",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/cron/buffer/route.ts",
+      "category": "authenticated background worker",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/cron/publish/route.ts",
+      "category": "authenticated background worker",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/moderation/reports/route.ts",
+      "category": "legacy operator-only; V2 entry retired",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/moderation/route.ts",
+      "category": "legacy operator-only; V2 entry retired",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/posts/create/route.ts",
+      "category": "verified actor + DB post guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/posts/delete/route.ts",
+      "category": "verified actor + DB post guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/posts/publication/route.ts",
+      "category": "verified actor + DB post guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/posts/toggle-mark/route.ts",
+      "category": "verified actor + DB post guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/reports/create/route.ts",
+      "category": "actor-bound report admission",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/[id]/invite-code/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/_shared.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/approve-core/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/create/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/delete/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/join-supporter/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/leave/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/like/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/manage-member/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/reject-core/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/request-core/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/seen/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/rooms/unread-map/route.ts",
+      "category": "verified actor + atomic membership/room guards",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/storage/sign/route.ts",
+      "category": "validated attachment ledger/signing",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/uploads/route.ts",
+      "category": "validated attachment ledger/signing",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/uploads/sign/route.ts",
+      "category": "validated attachment ledger/signing",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/api/works/draft/route.ts",
+      "category": "verified Creator/Core draft",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/profile/set-bio/route.ts",
+      "category": "verified self-profile",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/profile/set-sns-links/route.ts",
+      "category": "verified self-profile",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/profile/set-username/route.ts",
+      "category": "verified self-profile",
+      "addedSinceMain": false
+    },
+    {
+      "file": "app/rooms/[id]/page.tsx",
+      "category": "scoped SSR/read aggregation",
+      "addedSinceMain": false
+    },
+    {
+      "file": "lib/admin/server.ts",
+      "category": "allowlisted security-event telemetry",
+      "addedSinceMain": true
+    },
+    {
+      "file": "lib/ai/worker.ts",
+      "category": "AI lease/context worker",
+      "addedSinceMain": true
+    },
+    {
+      "file": "lib/billing/server.ts",
+      "category": "test billing canonical state worker",
+      "addedSinceMain": true
+    },
+    {
+      "file": "lib/rooms/getUnreadMapForUser.ts",
+      "category": "scoped SSR/read aggregation",
+      "addedSinceMain": false
+    },
+    {
+      "file": "lib/supabase/admin.ts",
+      "category": "server client factory",
+      "addedSinceMain": false
+    },
+    {
+      "file": "lib/supabase/server.ts",
+      "category": "server client factory",
+      "addedSinceMain": false
+    }
+  ],
+  "mainFileCount": 35,
+  "currentFileCount": 38
+}

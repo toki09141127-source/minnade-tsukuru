@@ -1,0 +1,43 @@
+{
+  "complete": true,
+  "scope": "Hosted Preview APIs + actual staging synthetic fixtures",
+  "checks": [
+    {
+      "name": "F AI OFF denies manual request; human posting and forced publication succeed",
+      "pass": true
+    },
+    {
+      "name": "G upload OFF rejects new object and preserves published attachment read",
+      "pass": true
+    },
+    {
+      "name": "N hidden log post and attachment disappear; published work stays consistent",
+      "pass": true
+    },
+    {
+      "name": "O suspended Creator retains published work; active-room writes denied",
+      "pass": true
+    },
+    {
+      "name": "H intake OFF creates no deletion job; worker stays paused",
+      "pass": true
+    },
+    {
+      "name": "L report dismissal never restores hidden content",
+      "pass": true
+    },
+    {
+      "name": "K Hosted concurrent hide/restore has one winner, one audit, safe conflict",
+      "pass": true
+    },
+    {
+      "name": "I/J test grace projection and action classes audited without public access",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "realAiCalls": 0,
+  "previewUrl": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "flagsRestored": true
+}

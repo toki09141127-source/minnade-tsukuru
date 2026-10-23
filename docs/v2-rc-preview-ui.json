@@ -1,0 +1,59 @@
+{
+  "complete": true,
+  "scope": "Hosted staging Preview",
+  "checks": [
+    {
+      "name": "Anonymous / normal / suspended / Moderator / CSRF / confirmation rejected",
+      "pass": true
+    },
+    {
+      "name": "Management projections omit Auth/payment/prompt private fields",
+      "pass": true
+    },
+    {
+      "name": "Moderator restore UI writes immutable audit",
+      "pass": true
+    },
+    {
+      "name": "Hide UI blocks direct anonymous room read",
+      "pass": true
+    },
+    {
+      "name": "Report review/resolve and internal note UI independent of visibility",
+      "pass": true
+    },
+    {
+      "name": "Suspend/restore UI retains contribution data",
+      "pass": true
+    },
+    {
+      "name": "Owner post stop UI and audited recovery",
+      "pass": true
+    },
+    {
+      "name": "Owner role grant/revoke UI is effective immediately",
+      "pass": true
+    },
+    {
+      "name": "Search empty state never confused with failed loading",
+      "pass": true
+    },
+    {
+      "name": "Unavailable response clears stale data and does not show zero",
+      "pass": true
+    }
+  ],
+  "violations": [],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "previewUrl": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "browser": {
+    "uncaught": 0,
+    "console": 0,
+    "consoleDetails": [],
+    "expectedNegativeConsole": 0,
+    "hydration": 0,
+    "serverErrors": 0
+  },
+  "sessionsClosed": true
+}

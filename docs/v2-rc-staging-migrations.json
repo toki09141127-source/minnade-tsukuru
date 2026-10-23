@@ -1,0 +1,13 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "scope": "incremental RC only; legacy V2 history unchanged",
+  "productionChanges": "NONE",
+  "files": [
+    {
+      "file": "202610240058_v2_buffer_capacity.sql",
+      "sha256": "f33c473401238e214df43d05cffb9d919e4a1ba10d4351649dcff89abda5e026",
+      "state": "applied"
+    }
+  ],
+  "complete": true
+}

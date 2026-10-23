@@ -695,7 +695,7 @@
       "source": "RC integration",
       "sha256": "f33c473401238e214df43d05cffb9d919e4a1ba10d4351649dcff89abda5e026",
       "productionApplied": false,
-      "stagingHistory": "not yet applied",
+      "stagingHistory": "incremental RC058 applied; legacy V2 history unchanged",
       "requiredOnFresh": true,
       "purpose": "V2 capacity-aware Buffer recruitment; legacy 45-slot semantics preserved",
       "dependency": "main029-041 and V2 042-057"

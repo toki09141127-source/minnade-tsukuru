@@ -1,0 +1,24 @@
+{
+  "complete": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "syntheticAccounts": 2,
+  "sessionsRevoked": 14,
+  "subscriptionsRemaining": 0,
+  "activeAuthSessions": 0,
+  "activeRefreshTokens": 0,
+  "originalFlagsRestored": true,
+  "bufferStopped": true,
+  "persistedAuthTokensRemoved": true,
+  "webhooks": {
+    "forwarded": 1,
+    "success": 1,
+    "retryable": 0
+  },
+  "webhookForwardingStopped": true,
+  "cookieFileDeleted": true,
+  "browserContextsClosedByRunners": true,
+  "testClockAccountsVerified": 2,
+  "testClockSubscriptionsRemaining": 0,
+  "forwarderProcessesRemaining": 0
+}

@@ -1,0 +1,44 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Invalid signature rejected",
+      "pass": true
+    },
+    {
+      "name": "Expired signature rejected",
+      "pass": true
+    },
+    {
+      "name": "Valid signed event refetches canonical state instead of forged cancellation",
+      "pass": true
+    },
+    {
+      "name": "Duplicate delivery cannot grant credit twice",
+      "pass": true
+    },
+    {
+      "name": "Out-of-order old event cannot roll back paid plan or duplicate credits",
+      "pass": true
+    },
+    {
+      "name": "Concurrent duplicate safely retries after lease contention",
+      "pass": true
+    },
+    {
+      "name": "Unknown customer fails closed without modifying mapped account",
+      "pass": true
+    },
+    {
+      "name": "Missing customer mapping fails closed",
+      "pass": true
+    },
+    {
+      "name": "Preview protection access does not grant app billing authentication",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "scope": "synthetic signed payloads; real test canonical Stripe state; no live events"
+}

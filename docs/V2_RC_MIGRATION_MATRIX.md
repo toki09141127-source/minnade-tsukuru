@@ -65,3 +65,6 @@ Main 402719b → V2 686121a. 本番適用済み38ファイルの番号・名前�
 | 202610230057_admin_read_models.sql | V2 staging (旧0055) | admin_read_models | no | fresh yes | forward fix | previous V2 migration |
 
 各SHA256とstaging履歴: [map](v2-rc-migration-map.json)。実DBのmigration記録を書き換えて新番号を適用済みとは扱わない。
+
+## RC追加058
+202610240058_v2_buffer_capacity.sql: main側Bufferの固定Member45枠とV2可変定員の不一致を解消。V2はCreator/Core/Memberを含むactive人数、MVPは従来supporter45枠。既存適用SQLは変更なし。freshとstagingで適用、production未適用。canonical001〜058。

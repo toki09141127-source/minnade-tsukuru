@@ -1,0 +1,111 @@
+{
+  "complete": false,
+  "scope": "Hosted staging Preview",
+  "checks": [
+    {
+      "name": "overview six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "reports six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "users six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "rooms six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "works six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "ai six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "billing six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "system six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "audit six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "staff six widths / axe zero",
+      "pass": true
+    },
+    {
+      "name": "Owner all nine areas and staff management",
+      "pass": true
+    },
+    {
+      "name": "Moderator no Owner UI or system route",
+      "pass": true
+    },
+    {
+      "name": "Anonymous / normal / suspended / Moderator / CSRF / confirmation rejected",
+      "pass": true
+    },
+    {
+      "name": "Management projections omit Auth/payment/prompt private fields",
+      "pass": true
+    },
+    {
+      "name": "Moderator restore UI writes immutable audit",
+      "pass": true
+    },
+    {
+      "name": "Hide UI blocks direct anonymous room read",
+      "pass": true
+    },
+    {
+      "name": "Report review/resolve and internal note UI independent of visibility",
+      "pass": true
+    },
+    {
+      "name": "Suspend/restore UI retains contribution data",
+      "pass": true
+    },
+    {
+      "name": "Owner post stop UI and audited recovery",
+      "pass": true
+    },
+    {
+      "name": "Owner role grant/revoke UI is effective immediately",
+      "pass": true
+    },
+    {
+      "name": "Search empty state never confused with failed loading",
+      "pass": true
+    },
+    {
+      "name": "Unavailable response clears stale data and does not show zero",
+      "pass": true
+    }
+  ],
+  "violations": [],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "previewUrl": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "browser": {
+    "uncaught": 0,
+    "console": 1,
+    "expectedNegativeConsole": 1,
+    "hydration": 0,
+    "serverErrors": 0
+  },
+  "failure": {
+    "phase": "finish",
+    "code": "ERR_ASSERTION",
+    "message": "Expected values to be strictly equal:\n\n1 !== 0\n"
+  },
+  "sessionsClosed": true
+}

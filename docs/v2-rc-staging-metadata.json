@@ -72,8 +72,295 @@
     {
       "name": "actual RLS admin_audit",
       "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.core_resignations",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.v2_room_events",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.v2_work_snapshots",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny mvp_private.ai_control",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.room_ai_creators",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.room_ai_tasks",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.room_ai_outputs",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.room_ai_moderation",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny mvp_private.billing_config",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.billing_accounts",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.billing_events",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.billing_operations",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.ai_credit_periods",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.ai_credit_ledger",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.room_ai_entitlements",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.ai_profiles",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_users",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_audit",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_notes",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_subjects",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_suspensions",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_room_controls",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_report_reviews",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny mvp_private.admin_control",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny public.admin_security_events",
+      "pass": true
+    },
+    {
+      "name": "V2 table RLS and direct write deny mvp_private.admin_rate",
+      "pass": true
+    },
+    {
+      "name": "all canonical V2 added tables enumerated",
+      "pass": true
+    },
+    {
+      "name": "Auth FK deletion allowlist preserved",
+      "pass": true
     }
   ],
   "productionChanges": "NONE",
-  "dataRead": "catalogs and control booleans only"
+  "dataRead": "catalogs and control booleans only",
+  "rls": [
+    {
+      "name": "public.core_resignations",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.v2_room_events",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.v2_work_snapshots",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "mvp_private.ai_control",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.room_ai_creators",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.room_ai_tasks",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.room_ai_outputs",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.room_ai_moderation",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "mvp_private.billing_config",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.billing_accounts",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.billing_events",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.billing_operations",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.ai_credit_periods",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.ai_credit_ledger",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.room_ai_entitlements",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.ai_profiles",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_users",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_audit",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_notes",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_subjects",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_suspensions",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_room_controls",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_report_reviews",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "mvp_private.admin_control",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "public.admin_security_events",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    },
+    {
+      "name": "mvp_private.admin_rate",
+      "rls": true,
+      "anon_write": false,
+      "user_write": false
+    }
+  ],
+  "authFk": [
+    {
+      "relname": "billing_accounts",
+      "conname": "billing_accounts_owner_id_fkey",
+      "confdeltype": "n"
+    },
+    {
+      "relname": "profiles",
+      "conname": "profiles_id_fkey",
+      "confdeltype": "c"
+    },
+    {
+      "relname": "public_profiles",
+      "conname": "public_profiles_id_fkey",
+      "confdeltype": "c"
+    }
+  ]
 }

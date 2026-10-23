@@ -1,0 +1,27 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Owner all admin pages normal navigation without console errors",
+      "pass": true
+    },
+    {
+      "name": "Moderator Owner-only request is 403; any emitted console event matches that denial",
+      "pass": true
+    }
+  ],
+  "expectedNegative": [
+    {
+      "scenario": "Moderator Owner-only page",
+      "status": 403,
+      "console": 1
+    }
+  ],
+  "productionChanges": "NONE",
+  "browser": {
+    "unexpectedConsole": 0,
+    "uncaught": 0,
+    "hydration": 0,
+    "unexpectedServer": 0
+  }
+}

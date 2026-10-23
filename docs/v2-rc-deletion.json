@@ -1,0 +1,91 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Paid synthetic Creator has retained published snapshot and used/unused attachments",
+      "pass": true
+    },
+    {
+      "name": "Concurrent exact-actor withdrawal creates one durable job; intake restored OFF",
+      "pass": true
+    },
+    {
+      "name": "Competing exact-job worker cannot acquire a live lease",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing account cannot regain writing membership",
+      "pass": true
+    },
+    {
+      "name": "Injected Storage failure retains Auth and resumable job",
+      "pass": true
+    },
+    {
+      "name": "Paid synthetic Creator has retained published snapshot and used/unused attachments",
+      "pass": true
+    },
+    {
+      "name": "Concurrent exact-actor withdrawal creates one durable job; intake restored OFF",
+      "pass": true
+    },
+    {
+      "name": "Competing exact-job worker cannot acquire a live lease",
+      "pass": true
+    },
+    {
+      "name": "Withdrawing account cannot regain writing membership",
+      "pass": true
+    },
+    {
+      "name": "Billing cancellation and Storage finish before attempted Auth; Auth failure remains retryable",
+      "pass": true
+    },
+    {
+      "name": "Retry completes real Auth deletion last; completed replay is idempotent",
+      "pass": true
+    },
+    {
+      "name": "Deleted synthetic credentials and old refresh token are rejected",
+      "pass": true
+    },
+    {
+      "name": "Contribution anonymized, published snapshot retained unchanged",
+      "pass": true
+    },
+    {
+      "name": "Post-deletion exact used attachment content retained; unused SDK download denied and metadata absent",
+      "pass": true
+    },
+    {
+      "name": "Billing account detached from Auth; exact synthetic customer subscriptions canceled; no reactivation",
+      "pass": true
+    },
+    {
+      "name": "Other deletion jobs unchanged throughout this test; original intake/worker flags restored",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "scope": "One RC synthetic paid Creator; exact job worker; real staging Auth/Storage; signed test webhook",
+  "otherJobsUntouched": true,
+  "flagsRestored": true,
+  "webhooks": {
+    "forwarded": 1,
+    "success": 1,
+    "retryable": 0
+  },
+  "forwardingStopped": true,
+  "priorFailure": {
+    "phase": "auth retry",
+    "code": "ERR_ASSERTION",
+    "check": "ASSERTION"
+  },
+  "operatorRecovery": "Owner-only resume after exact injected effects verified; no job or effect rewriting",
+  "previousVerificationFailure": {
+    "phase": "finish",
+    "code": "ERR_ASSERTION",
+    "check": "ASSERTION"
+  }
+}

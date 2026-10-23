@@ -1,7 +1,7 @@
 # AI_TASK
 
 ## Status
-in_progress
+done
 
 ## Objective
 最新mainとV2.1〜V2.5を統合し、V2 Release Candidateの移行・統合E2E・安全性・Hosted Previewを検収する。
@@ -27,3 +27,6 @@ V2_RC_ACCEPTANCE / MIGRATION_MATRIX / BACKUP_RESTORE_PLAN / PRODUCTION_ROLLOUT /
 
 ## Updated at
 2026-10-24 JST
+
+## Result
+V2 RELEASE CANDIDATE COMPLETE。詳細はV2_RC_ACCEPTANCE.md。58 migrations / fresh334 / actual RLS26表 / Hosted / Stripe test / real synthetic account deletion PASS。一時Cookie削除・14 sessions失効・forwarder停止。本番変更NONE、実OpenAI再送0、live billing OFF。RC freeze後は本番移行前最終検収へ。

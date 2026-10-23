@@ -354,6 +354,10 @@
       "pass": true
     },
     {
+      "name": "legacy MVP retains 45 supporter recruitment seats",
+      "pass": true
+    },
+    {
       "name": "Creator creates V2 room with immutable settings",
       "pass": true
     },
@@ -1526,7 +1530,7 @@
       "pass": true
     },
     {
-      "name": "V25 failed attempts also rate limited",
+      "name": "V25 failed attempts also rate limited across minute boundary",
       "pass": true
     },
     {
@@ -1620,6 +1624,10 @@
     {
       "name": "V25 no manual entitlement action exists",
       "pass": true
+    },
+    {
+      "name": "synthetic backup restores data counts, schema, RLS, ACL, functions, triggers, constraints, indexes",
+      "pass": true
     }
   ],
   "complete": true,
@@ -1634,5 +1642,17 @@
     "realNetworkCalls": 0,
     "managedExtensionInstallation": "NOT_TESTED"
   },
-  "serverStopped": true
+  "restore": {
+    "scope": "synthetic RC database only",
+    "complete": true,
+    "hash": "cc3273025730e50cd43a3bb0c7204e04c817c1688fd37116cfecb603386b989f",
+    "tables": 77,
+    "structures": 516,
+    "policies": 92,
+    "indexes": 144,
+    "archiveSha256": "b698b8d8e51b62a07ffb895ac74a7948048909d7ca398f95d7f19064796ae985",
+    "productionBackupCreated": false
+  },
+  "serverStopped": true,
+  "temporaryClusterRemoved": true
 }

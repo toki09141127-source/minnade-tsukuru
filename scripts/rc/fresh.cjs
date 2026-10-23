@@ -121,6 +121,8 @@ const { load } = require("../staging/safety.cjs");
 
     if (fs.existsSync("scripts/admin/behavior.cjs"))
       await require("../admin/behavior.cjs")({ db: c, connect, report });
+    phase = 'synthetic backup restore';
+    await require('./restore.cjs')({db:c,options,Client,dir,bin,report});
     report.complete = true;
   } catch (e) {
     report.failure = {
@@ -140,6 +142,10 @@ const { load } = require("../staging/safety.cjs");
     }
     if (started) run("pg_ctl", ["-D", data, "-m", "fast", "-w", "stop"]);
     report.serverStopped = true;
+    const relative=path.relative(path.resolve(os.tmpdir()),path.resolve(dir));
+    if(!relative||relative.startsWith('..')||path.isAbsolute(relative)||!path.basename(dir).startsWith('minnade-v2-test-'))throw Error('UNSAFE_TEMP_PATH');
+    fs.rmSync(dir,{recursive:true,force:true});
+    report.temporaryClusterRemoved=true;
     fs.writeFileSync(
       path.join(root, "docs/v2-rc-fresh-result.json"),
       JSON.stringify(report, null, 2) + "\n",

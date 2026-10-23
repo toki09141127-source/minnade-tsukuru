@@ -1,0 +1,115 @@
+{
+  "complete": true,
+  "scope": "local RC build + staging",
+  "checks": [
+    {
+      "name": "A synthetic confirmed users login through actual UI",
+      "pass": true
+    },
+    {
+      "name": "B Free Creator creates room through consent UI",
+      "pass": true
+    },
+    {
+      "name": "C Member consent and human post UI",
+      "pass": true
+    },
+    {
+      "name": "E production log search and own-post filter",
+      "pass": true
+    },
+    {
+      "name": "D Core application and Creator approval through RC APIs",
+      "pass": true
+    },
+    {
+      "name": "C ledger-backed synthetic image attachment",
+      "pass": true
+    },
+    {
+      "name": "F synthetic greeting completes through RC worker",
+      "pass": true
+    },
+    {
+      "name": "L/O Core synthetic AI consumes Creator shared credit",
+      "pass": true
+    },
+    {
+      "name": "H Member invocation and cross-room AI reads denied",
+      "pass": true
+    },
+    {
+      "name": "I AI proposal requires human review and saves through UI",
+      "pass": true
+    },
+    {
+      "name": "G AI-forbidden room has no identity/task/provider call",
+      "pass": true
+    },
+    {
+      "name": "S Owner AI stop rejects AI but preserves human creation",
+      "pass": true
+    },
+    {
+      "name": "D kicked Member loses posting permission",
+      "pass": true
+    },
+    {
+      "name": "J forced publication works with AI stopped and duplicate invocation",
+      "pass": true
+    },
+    {
+      "name": "K published Work opens public production log",
+      "pass": true
+    },
+    {
+      "name": "L system AI never charges manual credits",
+      "pass": true
+    },
+    {
+      "name": "UI home six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI rooms six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI pricing six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI room six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI work six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI log six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "UI billing six widths and axe",
+      "pass": true
+    },
+    {
+      "name": "Browser no uncaught/hydration/5xx errors",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "realAiCalls": 0,
+  "widths": [
+    320,
+    375,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "axeViolations": 0,
+  "flagsRestored": true,
+  "browserClosed": true
+}

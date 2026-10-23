@@ -1,0 +1,42 @@
+{
+  "complete": true,
+  "checkedAt": "2026-10-23T18:13:55.966Z",
+  "applicationSource": "1523476c801ccbddabd5257714da6bc5a727c80d",
+  "sameApplicationAsHostedPreview": true,
+  "typecheck": {
+    "pass": true,
+    "command": "node node_modules/typescript/bin/tsc --noEmit"
+  },
+  "relevantLint": {
+    "pass": true,
+    "command": "node node_modules/eslint/bin/eslint.js scripts/rc scripts/admin/behavior.cjs --max-warnings 0"
+  },
+  "build": {
+    "pass": true,
+    "evidence": "v2-rc-build-result.json",
+    "repeated": false,
+    "reason": "Application source unchanged"
+  },
+  "diffCheck": {
+    "pass": true
+  },
+  "evidence": [
+    "v2-rc-fresh-result.json",
+    "v2-rc-regression-result.json",
+    "v2-rc-integrated-local.json",
+    "v2-rc-integrated-preview.json",
+    "v2-rc-preview-payment.json",
+    "v2-rc-preview-lifecycle.json",
+    "v2-rc-preview-schedule.json",
+    "v2-rc-preview-security.json",
+    "v2-rc-preview-ui.json",
+    "v2-rc-preview-scenarios.json",
+    "v2-rc-preview-mobile-actions.json",
+    "v2-rc-preview-console.json",
+    "v2-rc-deletion.json",
+    "v2-rc-staging-metadata.json",
+    "v2-rc-build-result.json",
+    "v2-rc-cleanup.json"
+  ],
+  "productionChanges": "NONE"
+}

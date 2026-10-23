@@ -33,6 +33,10 @@ if (fs.existsSync(".staging-private/v2rc-e2e.json"))
       (u) => u.password,
     ),
   );
+for (const name of fs.existsSync('.staging-private/v2rc-fixtures') ? fs.readdirSync('.staging-private/v2rc-fixtures') : []) {
+ const f=JSON.parse(fs.readFileSync('.staging-private/v2rc-fixtures/'+name));
+ for(const u of f.users||[])for(const k of ['password','token','accessToken','refreshToken'])if(u[k])secretValues.push(u[k]);
+}
 let files = 0,
   hits = 0,
   bundleFiles = 0;

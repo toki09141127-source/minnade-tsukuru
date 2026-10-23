@@ -32,4 +32,9 @@ module.exports=async function({db,report}){
  await db.query("UPDATE buffer_reviews SET excluded=true WHERE room_id=$1",[room]);
  assert.equal(await candidate(),undefined);ok("V2 Buffer opt-out removes candidate immediately");
 
+ const legacy=(await db.query("SELECT mvp_create_room($1,$2,$3::jsonb) id",[ids[0],randomUUID(),JSON.stringify({title:"TEST RC legacy",category:"小説",concept:"架空のMVP互換性検収です。",time_limit_hours:24,is_adult:false,work_type:"room",ai_level:"forbidden",enable_core_approval:true,enable_core_invite:false})])).rows[0].id;
+ await db.query("INSERT INTO buffer_reviews(room_id,excluded,reviewed_hash,pii_clear,reviewed_at) VALUES($1,false,buffer_source_hash($1),true,now())",[legacy]);
+ const lc=(await db.query("SELECT buffer_candidates() c")).rows[0].c.find(x=>x.targetId===legacy&&x.kind==="new_room");
+ assert.equal(lc.seatsAvailable,45);ok("legacy MVP retains 45 supporter recruitment seats");
+
 };
