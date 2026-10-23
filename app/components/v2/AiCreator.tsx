@@ -3,6 +3,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { v2Request } from "@/lib/v2/client";
 import type { AiItem, AiKind, AiOutput } from "@/lib/ai/safety";
 import type { Block } from "@/lib/v2/domain";
+import RoomAiSettings from "./RoomAiSettings";
+import { classNames } from "@/lib/billing/domain";
 import styles from "@/app/components/v2/v2.module.css";
 type Output = {
   id: string;
@@ -27,13 +29,7 @@ type State = {
     trigger_type: string;
   }[];
 };
-const kinds: Record<AiKind, string> = {
-  question: "質問する",
-  idea: "アイデアの候補",
-  organize: "整理する",
-  summarize: "まとめを更新",
-  draft_assist: "ドラフトの提案",
-};
+const kinds = classNames;
 const triggers: Record<string, string> = {
   manual: "Creator/Coreからの依頼",
   greeting: "はじめの挨拶",
@@ -65,7 +61,7 @@ export default function AiCreator({
   onAccepted: () => void;
 }) {
   const [state, setState] = useState<State | null>(null),
-    [kind, setKind] = useState<AiKind>("question"),
+    [kind, setKind] = useState<string>("question"),
     [text, setText] = useState(""),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -121,7 +117,18 @@ export default function AiCreator({
       await v2Request("ai", {
         roomId,
         requestId: request.current.id,
-        kind,
+        kind:
+          (
+            {
+              minutes: "summarize",
+              long_log: "organize",
+              characters: "organize",
+              worldbuilding: "organize",
+              premium_draft: "draft_assist",
+              final_edit: "draft_assist",
+            } as Record<string, string>
+          )[kind] ?? kind,
+        taskClass: kind,
         text,
       });
       setText("");
@@ -231,6 +238,7 @@ export default function AiCreator({
       className={styles.panel + " " + styles.aiPanel}
       aria-labelledby="ai-title"
     >
+      <RoomAiSettings roomId={roomId} />
       <h2 id="ai-title">
         <span aria-hidden="true">✦ </span>AI Creator{" "}
         <span className={styles.badge}>AI</span>

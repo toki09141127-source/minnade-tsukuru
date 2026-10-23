@@ -73,6 +73,14 @@ export default function MyPage() {
         <span className="eyebrow">YOUR CREATIVE SPACE</span>
         <h1>マイページ</h1>
         <p>つくる途中も、完成したあとも。あなたの制作をここから。</p>
+        <div className="actions">
+          <Link href="/billing" className="btnGhost">
+            プランとAI利用枠
+          </Link>
+          <Link href="/pricing" className="btnGhost">
+            プランを比較する
+          </Link>
+        </div>
       </header>
       {user === undefined ? (
         <p role="status">読み込んでいます…</p>

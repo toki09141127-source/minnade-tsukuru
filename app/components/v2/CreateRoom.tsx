@@ -1,8 +1,10 @@
 "use client";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { CONSENT_TEXT, GENRES, type Genre } from "@/lib/v2/domain";
 import { v2Request } from "@/lib/v2/client";
+import { billingRequest } from "@/lib/billing/client";
+import type { BillingState } from "@/lib/billing/domain";
 import styles from "./v2.module.css";
 const subscribeReady = () => () => {};
 export default function CreateRoom() {
@@ -26,6 +28,19 @@ export default function CreateRoom() {
     [consent, setConsent] = useState(false),
     [busy, setBusy] = useState(false),
     [error, setError] = useState("");
+  const [billing, setBilling] = useState<BillingState | null>(null),
+    [profileId, setProfileId] = useState("");
+  useEffect(() => {
+    let live = true;
+    void billingRequest<BillingState>()
+      .then((r) => {
+        if (live) setBilling(r);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (busy) return;
@@ -41,6 +56,7 @@ export default function CreateRoom() {
         hours,
         customDeadline,
         ai,
+        profileId,
       });
       if (request.current?.payload !== payload)
         request.current = {
@@ -59,6 +75,7 @@ export default function CreateRoom() {
         capacity: capacity === "custom" ? customCapacity : Number(capacity),
         deadline: request.current.deadline,
         aiLevel: ai,
+        profileId: ai !== "forbidden" && profileId ? profileId : null,
         consent,
       });
       router.push("/rooms/" + result.data);
@@ -219,6 +236,28 @@ export default function CreateRoom() {
                 AI
                 Creatorは同じルームの文章を外部AI（OpenAI）へ送り、制作を整理・提案します。個人情報・秘密情報は入力しないでください。AIが人間の代わりに決定することはありません。
               </p>
+            )}
+          </section>
+          <section className={styles.formSection}>
+            <h2>保存したAIプロフィール</h2>
+            <p>Proで保存したAI設定を新しいルームへ引き継げます。</p>
+            <label>
+              AIプロフィール
+              <select
+                value={profileId}
+                disabled={billing?.plan !== "pro" || ai === "forbidden"}
+                onChange={(e) => setProfileId(e.target.value)}
+              >
+                <option value="">標準のAI Creator</option>
+                {billing?.profiles.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {billing?.plan !== "pro" && (
+              <p>保存済みの設定は保持され、Proで再利用できます。</p>
             )}
           </section>
           <section className={styles.formSection}>

@@ -89,6 +89,9 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+            <Link href="/pricing" className="navBtn optionalNav desktopNav">
+              プラン
+            </Link>
             <Link href="/profile" className="navBtn optionalNav desktopNav">
               プロフィール
             </Link>

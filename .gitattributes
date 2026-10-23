@@ -8,3 +8,13 @@ supabase/migrations/202610230044_ai_creator.sql -text
 supabase/migrations/202610230045_ai_publication.sql -text
 supabase/migrations/202610230046_ai_control_scope.sql -text
 supabase/migrations/202610230047_ai_bounded_publication.sql -text
+
+supabase/migrations/202610230048_billing_foundation.sql -text
+
+supabase/migrations/202610230049_ai_credit_settings.sql -text
+
+supabase/migrations/202610230050_billing_deletion_fence.sql -text
+
+supabase/migrations/202610230051_billing_retry_state.sql -text
+
+supabase/migrations/202610230052_billing_period_timing.sql -text
