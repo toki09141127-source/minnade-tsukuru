@@ -206,6 +206,12 @@ export default function Billing({
                 。新しいクレジットの付与を停止しています。
               </p>
             )}
+            {["past_due", "unpaid", "incomplete"].includes(state.status) &&
+              state.plan === "free" && (
+                <p className={s.notice}>
+                  支払いを確認できないため無料プランで利用中です。「支払い方法・請求書」から状況を確認してください。人間の制作は続けられます。
+                </p>
+              )}
             <h3>AIクレジット</h3>
             <div className={s.row}>
               <span className={s.usage}>
@@ -307,27 +313,30 @@ export default function Billing({
                 >
                   テスト決済で手続きを確認
                 </button>
-                {state.plan !== "free" && (
-                  <>
-                    <button onClick={() => void operation("portal")}>
-                      支払い方法・請求書
-                    </button>
-                    <button
-                      onClick={() =>
-                        void operation(state.cancelAtEnd ? "resume" : "cancel")
-                      }
-                    >
-                      {state.cancelAtEnd
-                        ? "解約予約を取り消す"
-                        : "次回更新で解約"}
-                    </button>
-                    {state.nextPlan && !state.cancelAtEnd && (
-                      <button onClick={() => void operation("resume")}>
-                        プラン変更予約を取り消す
+                {state.cycle !== null &&
+                  !["free", "canceled"].includes(state.status) && (
+                    <>
+                      <button onClick={() => void operation("portal")}>
+                        支払い方法・請求書
                       </button>
-                    )}
-                  </>
-                )}
+                      <button
+                        onClick={() =>
+                          void operation(
+                            state.cancelAtEnd ? "resume" : "cancel",
+                          )
+                        }
+                      >
+                        {state.cancelAtEnd
+                          ? "解約予約を取り消す"
+                          : "次回更新で解約"}
+                      </button>
+                      {state.nextPlan && !state.cancelAtEnd && (
+                        <button onClick={() => void operation("resume")}>
+                          プラン変更予約を取り消す
+                        </button>
+                      )}
+                    </>
+                  )}
               </div>
             </fieldset>
           </section>
