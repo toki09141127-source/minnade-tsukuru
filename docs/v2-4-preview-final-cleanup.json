@@ -1,0 +1,15 @@
+{
+  "complete": true,
+  "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+  "syntheticUsers": 4,
+  "newSyntheticUsers": 0,
+  "refreshSessionsRevoked": 4,
+  "cookieFilesRemoved": 1,
+  "cookieFilesRemaining": 0,
+  "browsersClosed": true,
+  "forwardersStopped": true,
+  "protectionUnchanged": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "note": "Test contexts/listeners exited through finally blocks. Synthetic refresh sessions revoked; short-lived access JWTs are not falsely claimed immediately revoked. Minimal synthetic identities and billing fixtures retained."
+}

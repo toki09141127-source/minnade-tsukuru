@@ -1,0 +1,19 @@
+{
+  "complete": true,
+  "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+  "pendingOperations": 0,
+  "pendingEvents": 0,
+  "plan": "pro",
+  "status": "active",
+  "cycle": "month",
+  "cancellationScheduled": true,
+  "nextPlanAtTermEnd": "free",
+  "activeLease": false,
+  "aiGenerationEnabled": false,
+  "newSyntheticUsers": 0,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "transaction": "READ ONLY / ROLLBACK",
+  "note": "Cancellation records next_plan=free; current Pro access remains until period end."
+}

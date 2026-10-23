@@ -22,6 +22,7 @@ const secretValues = [
 ]
   .map((k) => ctx.env[k])
   .filter((v) => v && v.length > 15);
+if(fs.existsSync(".staging-private/v24-preview-access.json")) secretValues.push(...require("./preview-scope.cjs").access().cookies.map(c=>c.value));
 let files = 0,
   hits = 0,
   bundleFiles = 0;

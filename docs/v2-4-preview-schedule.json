@@ -1,0 +1,47 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Existing synthetic cancellation resumes without new customer",
+      "pass": true
+    },
+    {
+      "name": "Hosted Plus-to-Pro UI upgrade activates only after paid test webhook",
+      "pass": true
+    },
+    {
+      "name": "Corrected Hosted downgrade creates and tags schedule in separate calls",
+      "pass": true
+    },
+    {
+      "name": "Same operation replay succeeds without duplicate schedule",
+      "pass": true
+    },
+    {
+      "name": "Stripe test canonical schedule maps to the exact request",
+      "pass": true
+    },
+    {
+      "name": "Hosted yearly change stays scheduled until renewal",
+      "pass": true
+    },
+    {
+      "name": "Cancel releases schedule and preserves current paid access",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+  "browserMetrics": {
+    "app401": 0,
+    "hydrationErrors": 0,
+    "ignoredExternalConsoleErrors": 4
+  },
+  "webhooks": {
+    "forwarded": 7,
+    "success": 5,
+    "retryable": 2
+  }
+}

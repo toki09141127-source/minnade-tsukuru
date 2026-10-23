@@ -94,13 +94,21 @@
       "pass": true
     },
     {
-      "name": "No uncaught errors or HTTP 5xx",
+      "name": "No app console/hydration/uncaught/HTTP 5xx or authentication loops",
       "pass": true
     }
   ],
   "violations": [],
   "productionChanges": "NONE",
   "liveBilling": "OFF",
-  "previewUrl": "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app",
-  "sourceCommit": "5c37a3259092822d3b7faef81784e063d87df198"
+  "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+  "browserMetrics": {
+    "app401": 0,
+    "hydrationErrors": 0,
+    "ignoredExternalConsoleErrors": 7,
+    "appConsoleErrors": 0,
+    "uncaught": 0,
+    "http5xx": 0
+  }
 }

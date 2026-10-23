@@ -1,6 +1,6 @@
 # V2.4 acceptance
 
-Status: PARTIAL — original Hosted acceptance executed; Stripe schedule bug fixed; corrected Preview READY, exact-host access approval and targeted regression pending.
+Status: COMPLETE — final corrected Hosted acceptance PASS; bounded V2.4 staging / Stripe test-mode scope. Confirmed 2026-10-23 17:02 JST.
 Scope: develop/v2, C:/dev/minnade/minnade-tsukuru-v2; staging fwqucffxdmbdczspkcyr; Stripe test sandbox verified by user and test API. Production Changes NONE. Live Billing OFF.
 
 ## Evidence already complete
@@ -30,15 +30,24 @@ P1 found by real Hosted Test Clock: creating a Stripe subscription schedule with
 
 Fix efebbb4: create with from_subscription only; assign metadata while updating phases. After a partial failure, replay the same idempotency key and require the exact existing schedule ID before adopting an untagged schedule. Foreign requests remain denied. Unit 32 PASS, typecheck/lint/build PASS. Real Stripe Test Clock + fixed localhost build + actual staging: 16 PASS (v2-4-schedule-recovery-lifecycle.json), including same pending operation recovery, downgrade, profile retention/lock/restore, new versus existing room snapshots, payment failure/grace UI/recovery, yearly renewal and billing stop before Auth deletion. This result is LOCAL transport, not Hosted, even where inherited check labels contain Hosted. No Auth deletion was executed.
 
-Corrected Preview: https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app — READY, source efebbb4, staging-only, existing environment unchanged. **USER APPROVAL REQUIRED:** new exact-host Cookie acquisition/use and signed test webhook forwarding. The user's permission was limited to the then-current Preview and forbade reuse on another Preview. Old access was not reused. Approval question sent after the corrected deployment became concrete.
+Corrected Preview: https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app — READY, source efebbb4, staging-only. The user explicitly approved this corrected latest host; a fresh exact-host Secure/HttpOnly Cookie was acquired with a two-hour client lifetime. No old-host access was reused. Latest deployment listing, app HTML/client staging URL, enabled test-only billing boundary, sandbox identity and four active test prices were reverified before mutations.
 
-Prepared next step: after approval, update the exact URL guard in preview-scope.cjs, obtain new access, run preview-schedule --preview with existing synthetic paid users (no extra user needed), browser --preview with app console/hydration/auth-loop metrics, final secret scan and cleanup. Recheck latest environment before any test mutation. The one runtime source change is Stripe schedule construction; prior unchanged UI/security/DB evidence is retained with its actual source/URL.
+Final corrected Hosted evidence (31 checks):
+- v2-4-preview-schedule.json: 7 PASS. Existing synthetic Plus monthly user resumed, upgraded through the UI to Pro after paid signed test webhook (2,000 credits), scheduled downgrade, replayed the same request without duplication, verified canonical schedule metadata, scheduled annual change without early activation, and cancelled while current Pro access remained. No new customer or test user created.
+- v2-4-preview-ui.json: 24 PASS, six widths 320/375/390/768/1024/1440 and 10 loaded axe states with zero violations. App console errors, hydration, uncaught exceptions and HTTP5xx were zero; no auth loop/broken redirect. Seven deliberately blocked external console/resource messages are distinguished from app errors. Loaded 320px billing screenshot visually checked.
+- v2-4-preview-secret-scan.json: 23 deployed HTML/JS assets, existing secret values and the temporary Cookie value found 0 times.
+- v2-4-preview-settled.json: final READ ONLY/ROLLBACK verification: pending/uncertain operations 0, pending events 0, active lease false, Pro active/monthly, cancellation scheduled with next_plan=free, AI generation flag false.
+- Seven signed official CLI events reached this host; five succeeded and two were retryable under concurrent lease contention. The final mapped account had 11 processed events and no pending event/operation. These counts are not represented as seven immediate HTTP200 responses.
+
+A first targeted attempt stopped before submitting an upgrade because getByLabel exact matching included option text in the implicit label. Only the test selector was fixed to identify the unique plan/cycle combobox by known options. Its failed report is retained in v2-4-preview-schedule-first-attempt.json and superseded by the complete report. The final settlement assertion was also aligned with the existing cancellation representation next_plan=free; no application or DB change was needed.
+
+The only application change since the original 77 Hosted checks is efebbb4's Stripe schedule adapter fix. Unchanged Checkout/security/DB/credit evidence is reused with its original URL/source; it is not relabelled as fresh corrected-Preview execution. Final-turn changes are test scripts and evidence/docs only. Relevant script lint and diff checks passed. Typecheck/build/unit32/MVP21-suite evidence remains applicable because runtime code, dependencies and migrations did not change.
 
 ## Scenario evidence A–O
 - A Pricing: initial Hosted UI 24, monthly/yearly and six widths.
 - B/C/D Plus/Pro/yearly: initial Hosted Checkout 12, real test payment/signature/credit/cycle/paid settings.
-- E/F Cancel/upgrade: initial Hosted cancel; corrected real-provider local lifecycle 16; final corrected Hosted schedule/upgrade regression pending.
-- G Downgrade: initial Hosted detected the bug, fixed local real-provider lifecycle and profile UI PASS; corrected Hosted pending.
+- E/F Cancel/upgrade: initial Hosted cancel; corrected real-provider local lifecycle 16; final corrected Hosted schedule/upgrade 7 PASS.
+- G Downgrade: initial Hosted detected the bug, fixed local real-provider lifecycle and profile UI PASS; corrected Hosted schedule 7 PASS.
 - H Payment failure: actual Stripe failed renewal/grace/recovery in corrected local lifecycle; initial Hosted expired-grace states are explicit UI mocks. Free transition timing is isolated DB evidence, not accelerated production time.
 - I Creator/Core: prior real staging synthetic AI plus initial Hosted Core permissions; isolated DB verifies plan inheritance. No member pool billing.
 - J Credits: isolated PostgreSQL reservation/settlement/failure release/concurrent last-credit/duplicate ledger checks, real staging synthetic AI settlement. Prior tests reused because no DB/credit logic changed.
@@ -48,7 +57,7 @@ Prepared next step: after approval, update the exact URL guard in preview-scope.
 - O Security: initial Hosted 9 signature/duplicate/out-of-order/stale/unknown/missing-map/auth checks, plus existing unit and DB concurrency evidence. No live event submitted.
 
 ## Cleanup and safety
-Initial exact-host Cookie client lifetime capped at 2 hours, Secure/HttpOnly/host-only. Raw headers were handled in memory, no cookie values in terminal/docs/screenshots/logs/Git. Exact temporary cookie/HTML/header files removed. Browser contexts and Stripe/local relay processes closed. Four newly created synthetic users' refresh sessions revoked and temporary tokens removed from private fixture files; expired access JWTs are not falsely claimed server-revoked. Synthetic identities/minimal billing fixtures retained for repeatable test evidence, not physically deleted through account deletion. New Preview access has not yet been acquired.
+Initial exact-host Cookie client lifetime capped at 2 hours, Secure/HttpOnly/host-only. Raw headers were handled in memory, no cookie values in terminal/docs/screenshots/logs/Git. Exact temporary cookie/HTML/header files removed. Browser contexts and Stripe/local relay processes closed. Four newly created synthetic users' refresh sessions revoked and temporary tokens removed from private fixture files; expired access JWTs are not falsely claimed server-revoked. Synthetic identities/minimal billing fixtures retained for repeatable test evidence, not physically deleted through account deletion. Final corrected Preview cleanup is complete: fresh Cookie removed, four reused synthetic users’ refresh sessions revoked, contexts/listeners/relay closed, matching test processes 0. No new synthetic users were created in this final turn. v2-4-preview-final-cleanup.json records the bounded cleanup; retained synthetic fixtures are not production accounts.
 Production Changes NONE / Live Billing OFF / real OpenAI calls 0 / migrations unchanged / no push or main merge.
 
 ## Honest limits
@@ -57,3 +66,6 @@ Test Clock advances Stripe billing; SQL boundary tests isolate wall-clock expiry
 No real Android/iPhone device or assistive-technology certification in V2.4. Automated Chromium widths/axe are separate evidence.
 No production/live billing/tax/refund/retention legal decision, no main merge or production migration. Existing Buffer/V2 migration-number collision remains a future integration prerequisite.
 Webhook acceptance uses official Stripe CLI forwarding with signatures; persistent webhook delivery, retries/alerts and live rollout are not claimed.
+
+## V2.5 handoff
+V2.4 staging/test acceptance has no remaining blocker and V2.5 planning/implementation can start on develop/v2 under a separate task. V2.5 is not implemented or automatically registered by this acceptance. Production/live billing remains unauthorized and unvalidated. Preserve the V2.2 real OpenAI 429 issue (no retries), existing migration-number collision, and separate live delivery/tax/legal/real-device prerequisites. If V2.5 depends on real model execution or production release, those prerequisites must be resolved within its scope.

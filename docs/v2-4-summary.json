@@ -1,7 +1,7 @@
 {
   "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
-  "status": "PARTIAL",
-  "hosted": "Corrected Preview READY; new exact-host access approval and targeted regression pending",
+  "status": "COMPLETE",
+  "hosted": "Corrected latest Preview: targeted real test lifecycle and UI acceptance PASS; earlier unchanged evidence retained with original provenance",
   "productionChanges": "NONE",
   "liveBilling": "OFF",
   "results": {
@@ -73,12 +73,90 @@
   "latestPreview": {
     "url": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
     "state": "READY",
-    "acceptanceComplete": false
+    "acceptanceComplete": true
   },
   "cleanup": {
-    "cookieFiles": 0,
-    "newSyntheticRefreshSessionsRevoked": 4,
+    "complete": true,
+    "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+    "syntheticUsers": 4,
+    "newSyntheticUsers": 0,
+    "refreshSessionsRevoked": 4,
+    "cookieFilesRemoved": 1,
+    "cookieFilesRemaining": 0,
+    "browsersClosed": true,
     "forwardersStopped": true,
-    "browsersClosed": true
+    "protectionUnchanged": true,
+    "productionChanges": "NONE",
+    "liveBilling": "OFF",
+    "note": "Test contexts/listeners exited through finally blocks. Synthetic refresh sessions revoked; short-lived access JWTs are not falsely claimed immediately revoked. Minimal synthetic identities and billing fixtures retained."
+  },
+  "completedAt": "2026-10-23T08:02:00Z",
+  "correctedHosted": {
+    "url": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+    "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+    "scheduleChecks": 7,
+    "uiChecks": 24,
+    "totalChecks": 31,
+    "complete": true,
+    "axeViolations": 0,
+    "widths": [
+      320,
+      375,
+      390,
+      768,
+      1024,
+      1440
+    ],
+    "browserMetrics": {
+      "app401": 0,
+      "hydrationErrors": 0,
+      "ignoredExternalConsoleErrors": 7,
+      "appConsoleErrors": 0,
+      "uncaught": 0,
+      "http5xx": 0
+    },
+    "secretAssets": 23,
+    "secretValueHits": 0,
+    "webhooks": {
+      "forwarded": 7,
+      "success": 5,
+      "retryable": 2
+    },
+    "settled": {
+      "complete": true,
+      "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+      "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+      "pendingOperations": 0,
+      "pendingEvents": 0,
+      "plan": "pro",
+      "status": "active",
+      "cycle": "month",
+      "cancellationScheduled": true,
+      "nextPlanAtTermEnd": "free",
+      "activeLease": false,
+      "aiGenerationEnabled": false,
+      "newSyntheticUsers": 0,
+      "productionChanges": "NONE",
+      "liveBilling": "OFF",
+      "transaction": "READ ONLY / ROLLBACK",
+      "note": "Cancellation records next_plan=free; current Pro access remains until period end."
+    }
+  },
+  "v25Ready": true,
+  "v25Started": false,
+  "knownIssues": [
+    "V2.2 real OpenAI 429 unresolved; zero retries and not a V2.4 blocker",
+    "Production/live billing not authorized or validated",
+    "Existing Buffer/V2 migration-number collision to resolve before future integration",
+    "Durable webhook transport, tax/legal, real devices remain separate rollout prerequisites"
+  ],
+  "finalTurn": {
+    "applicationChanges": false,
+    "migrationChanges": false,
+    "newSyntheticUsers": 0,
+    "scriptLint": "PASS",
+    "priorRuntimeChecksReused": true,
+    "push": false,
+    "productionDeploy": false
   }
 }

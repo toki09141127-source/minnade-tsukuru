@@ -10,6 +10,7 @@ const d = JSON.parse(fs.readFileSync("docs/v2-4-preview-deployment.json")),
 assert.equal(access.url, d.url);
 assert.equal(d.target, "preview");
 assert.equal(s.projectRef, ctx.ref);
+require("./preview-scope.cjs").access();
 const cookie = access.cookies.map((c) => c.name + "=" + c.value).join("; "),
   values = [
     "OPENAI_API_KEY",
@@ -20,9 +21,11 @@ const cookie = access.cookies.map((c) => c.name + "=" + c.value).join("; "),
     "STAGING_DATABASE_URL",
   ]
     .map((k) => ctx.env[k])
-    .filter((v) => v && v.length > 15);
+    .filter((v) => v && v.length > 15).concat(access.cookies.map(c=>c.value));
 const result = {
   scope: "deployed Preview HTML and referenced client scripts",
+  previewUrl:d.url,
+  sourceCommit:d.sourceCommit,
   assetCount: 0,
   secretValueHits: 0,
   complete: false,

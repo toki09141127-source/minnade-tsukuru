@@ -1,0 +1,17 @@
+{
+  "complete": false,
+  "checks": [
+    {
+      "name": "Existing synthetic cancellation resumes without new customer",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "previewUrl": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
+  "failure": {
+    "code": "CHECK_FAILED",
+    "message": "Hosted regression failed; no raw values retained"
+  }
+}

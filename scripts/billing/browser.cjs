@@ -25,6 +25,8 @@ const fs = require("fs"),
   };
   try {
     h = await require("./harness.cjs")();
+    out.previewUrl=h.hosted?h.base:undefined;
+    out.sourceCommit=h.hosted?JSON.parse(fs.readFileSync("docs/v2-4-preview-deployment.json")).sourceCommit:undefined;
     const p = await h.page(h.f.users[0]);
     const axe = fs.readFileSync(
       ".staging-private/ui-tools/node_modules/axe-core/axe.min.js",

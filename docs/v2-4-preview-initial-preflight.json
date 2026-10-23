@@ -1,0 +1,13 @@
+{
+  "complete": true,
+  "url": "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app",
+  "target": "preview",
+  "appLoginVerified": true,
+  "stagingClientVerified": true,
+  "productionClientHits": 0,
+  "testPaymentsEnabled": true,
+  "stripeTestPricesVerified": 4,
+  "accountMatches": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF"
+}
