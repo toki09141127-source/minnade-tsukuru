@@ -1,0 +1,16 @@
+{
+  "complete": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "syntheticSessionRevocations": 5,
+  "temporaryFilesRemoved": 1,
+  "webhookForwarderStarted": false,
+  "shortLivedAccessJwtImmediateRevocationClaimed": false,
+  "initialFlagsRestored": true,
+  "exactSyntheticOwnerModerator": true,
+  "activeSyntheticSessions": 0,
+  "activeSyntheticRefreshTokens": 0,
+  "fixtureRetention": "Five synthetic identities, three rooms, three reports and immutable audits retained; no Auth deletion",
+  "cookieFilesRemaining": 0,
+  "protectionUnchanged": true
+}

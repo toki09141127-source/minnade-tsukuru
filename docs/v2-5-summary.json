@@ -1,0 +1,23 @@
+{
+  "status": "COMPLETE",
+  "scope": "staging / Hosted Preview",
+  "sourceCommit": "79a15d706cbded925a552351a1c69bf6ecb03502",
+  "counts": {
+    "v2-5-regression-local-result": 317,
+    "v2-4-unit-result": 32,
+    "v2-5-staging-metadata": 16,
+    "v2-5-local-ui": 22,
+    "v2-5-preview-ui": 22,
+    "v2-5-preview-scenarios": 10,
+    "v2-5-preview-mobile-actions": 5
+  },
+  "totalChecks": 424,
+  "mvpSuites": 21,
+  "typecheck": "PASS (application source unchanged)",
+  "lint": "PASS",
+  "build": "PASS",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "realOpenAiCalls": 0,
+  "cleanup": "PASS"
+}

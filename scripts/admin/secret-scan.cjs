@@ -28,6 +28,12 @@ if (fs.existsSync(".staging-private/v25-preview-access.json"))
       .access()
       .cookies.map((c) => c.value),
   );
+if (fs.existsSync(".staging-private/v25-e2e.json"))
+  secretValues.push(
+    ...JSON.parse(fs.readFileSync(".staging-private/v25-e2e.json")).users.map(
+      (u) => u.password,
+    ),
+  );
 let files = 0,
   hits = 0,
   bundleFiles = 0;

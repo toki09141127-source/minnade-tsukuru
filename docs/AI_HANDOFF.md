@@ -1743,3 +1743,14 @@ USER APPROVAL REQUIRED: 最新ユーザーの「現在のPreview限定・他Prev
 ローカルbuild＋実staging UI22 PASS、10管理領域/6幅(320/375/390/768/1024/1440)、axe0。モバイル一覧はカード表示。非表示/再表示・通報・停止/解除・Owner権限付与剥奪・CSRF拒否・取得失敗の非0表示を実操作。OriginとNext内部URLの差による正規POST拒否を修正済み。負例403と意図的503は通常consoleと区別する検収へ改善。
 Preview設定はADMIN_ENABLEDと検証済みstaging service key/test Stripe keyを対象projectのpreview環境だけへ設定。CLIの取得結果では秘密変数の一致が検証できないため、秘密値を比較済みと偽らず、明示設定の証跡＋接続先・OFF設定を記録。AI OFF/退会worker OFF維持。secret scan960ファイル/105client assetsヒット0、既存migrationhash不変。
 次: V2.5 Hosted Preview配信とexact-host一時Cookie承認、残るHosted検収・cleanup・最終判定。現状PARTIAL。今回 production変更NONE / live OFF / 実OpenAI再送0 / pushなし。
+
+### V2.5 COMPLETE — Hosted最終検収（2026-10-23 JST）
+実装79a15d7のstaging Preview https://minnade-tsukuru-staging-6jtg2klwo-sonetokiyas-projects.vercel.app はREADY。ユーザーの当該URL限定Cookie承認後にhost-only/Secure/HttpOnly/最大2時間のアクセスを利用。Protection不変、他Preview/production流用なし。
+Hosted UI22、追加API/実staging10、375px実操作5 PASS。隔離DB317（既存213+運営104）、billing unit32、metadata16、local UI22、Hosted37 = 424 checks＋MVP21suite。6幅320/375/390/768/1024/1440、全管理領域/確認dialog axe0。通常console/hydration/uncaught/5xx0、負例403と意図的503は別計数。型/実装lint/buildと追加script lint/diff PASS。
+停止中post/upload/join拒否→解除後成功、AI OFF中の人間投稿と公開fallback、Upload OFF中の既存公開添付閲覧、公開log hide/添付拒否、Creator停止時の公開作品保持、退会受付OFFでjob追加0、通報却下とhidden独立、Hosted同時hide/restoreの単一成功/409/監査1件を確認。375pxの投稿・アップロード停止復旧、ルーム参加停止復旧、Enter/Escape/focus復帰も成功。
+テスト訂正: hidden対象への新規通報は既存admissionが正しく拒否。公開対象の受付後hideへ順序訂正。モバイルselectorを実ラベルへ直し未完了分だけ再検収。runtime app・適用済みmigrationの追加変更なし。
+秘密走査: Hosted26資産hit0、repo/105client assetsも既知secret・Cookie・合成password hit0。最新件数v2-5-secret-scan.json。053〜055を含む適用済みmigration hash不変。
+cleanup: Cookieファイル残0、合成5名のrefresh session終了、有効auth.sessions/refresh token各0、検収browser/local server終了。V2.5ではStripe forwarder/listener未起動。短期access JWTの即時失効とは言わない。5合成人物・3ルーム・3通報・監査を保持。全停止設定は開始時と一致、AI/退会受付/worker OFF維持。
+AI_TASK done、V2_5_ACCEPTANCE COMPLETE。Known Issues: 実OpenAI429（再送0）、MFA/step-up未強制、自由記述PII検出の限界、発行済み署名URL短期残存、実機/無人cron/管理Auth-SMTPログ未検収。Bufferはstaging未接続でproduction操作なし。
+変更: scripts/adminのPreview取得/範囲/秘密走査/検収/cleanup、harness、docs/v2-5-*.json、V2_5_ACCEPTANCE/SPEC、ADMIN_OPERATIONS_RUNBOOK、AI_TASK/HANDOFF。develop/v2へ最終検収をローカルcommit。push/main mergeなし。Production DB/Auth/Storage/migration/deploy Changes NONE、Live Billing OFF。
+次: V2全体の統合検収・本番移行準備へ進める。Buffer/V2の040採番衝突・移行順、実運営Owner bootstrap、停止/復旧、live課金運用条件を別途確定する。本番反映は今回のCOMPLETEに含めない。

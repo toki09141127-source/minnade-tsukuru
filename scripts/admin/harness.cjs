@@ -173,13 +173,13 @@ module.exports = async function () {
     browserMetrics,
     close: async () => {
       await browser.close();
-      if (server && server.exitCode === null) {
+      if (server && server.exitCode === null && server.signalCode === null) {
         server.kill();
         await Promise.race([
           new Promise((resolve) => server.once("exit", resolve)),
           new Promise((resolve) => setTimeout(resolve, 5000)),
         ]);
-        if (server.exitCode === null)
+        if (server.exitCode === null && server.signalCode === null)
           throw Error("LOCAL_SERVER_CLEANUP_REQUIRED");
       }
     },

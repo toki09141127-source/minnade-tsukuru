@@ -1,0 +1,12 @@
+{
+  "complete": true,
+  "bootstrapOnly": true,
+  "host": "minnade-tsukuru-staging-6jtg2klwo-sonetokiyas-projects.vercel.app",
+  "hostOnly": true,
+  "secure": true,
+  "httpOnly": true,
+  "effectiveLifetimeSeconds": 7200,
+  "rawHeadersSaved": false,
+  "valuesPrinted": false,
+  "protectionUnchanged": true
+}

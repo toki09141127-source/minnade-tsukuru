@@ -1,6 +1,6 @@
 # V2.5 運営管理画面仕様
 
-Status: implementation / acceptance in progress. Staging only. 未検収項目はCOMPLETEに含めない。
+Status: COMPLETE（staging / Hosted Preview）。証跡と限界はV2_5_ACCEPTANCE.md。本番適用は別の移行検収が必要。
 
 ## 境界
 - develop/v2、Supabase fwqucffxdmbdczspkcyr、minnade-tsukuru-staging Preview専用。
@@ -13,7 +13,7 @@ Status: implementation / acceptance in progress. Staging only. 未検収項目�
 054: 既存投稿・参加・添付/Storage・作成・公開・退会/AIの停止ガード。既存の厳密な退会/モデレーションcapabilityを再利用。旧service運営RPCへの権限を撤回。
 055: 必要な列だけを返す上限26件の管理投影。UIは25件と次頁有無を表示。
 
-/api/adminは検証済みBearerとDB roleを両方確認。変更は同一Origin、JSON、8KB以下、明示確認、理由・500文字以内のメモ必須。DBが操作ごとにactive role/退会/利用停止を再照合。変更は1時間以内に発行されたJWTを要求する。更新番号によるCASとrequest UUIDで変更・監査・メモを同一transactionに格納。失敗時に成功監査を残さず、秘匿された失敗分類を別記録。失敗試行も30変更/分、読み取り120/分の上限へ計上。
+/api/adminは検証済みBearerとDB roleを両方確認。変更は同一Origin、JSON、8KB以下、明示確認、理由・500文字以内のメモ必須。DBが操作ごとにactive role/退会/利用停止を再照合。変更は1時間以内に発行されたJWTを要求する。これはtoken freshnessであり、password再入力やMFAを証明しない。更新番号によるCASとrequest UUIDで変更・監査・メモを同一transactionに格納。失敗時に成功監査を残さず、秘匿された失敗分類を別記録。失敗試行も30変更/分、読み取り120/分の上限へ計上。
 
 DB停止と書込は共有/排他lockで順序を定める。先に許可されたDB transactionは完了し、その後にOFFが確定する。OFF確定後の新規書込は拒否。外部送信済みStorage/Stripe/Auth/AI要求を取消済みとみなさない。退会は既存pause/外部副作用checkpointを維持し、started/unknownの未完了副作用があれば再開を拒否する。
 

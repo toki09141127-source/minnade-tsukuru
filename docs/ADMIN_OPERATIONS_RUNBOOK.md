@@ -25,3 +25,16 @@ AI停止: 既存epoch stopで未完了taskを無効化し、人間の作成を�
 
 ## 検収後
 一時Preview Cookie/認証sessionを終了し、browser/local server/forwarderを停止。テストのため変更した停止状態は開始時へ戻す。残す合成fixtureと削除しない監査を記録。秘密値はログ/docs/Gitへ出さない。
+
+## PII・著作権・法的照会
+個人情報の公開疑いは対象だけを先に非表示にし、公開範囲と短期URLの残存を確認する。PII本文を監査メモへ複製しない。発行済み署名URLには最大5分の残存があり得る。必要なインシデント対応は担当者判断とする。
+著作権・違法性・法執行機関からの照会は管理画面で自動判定しない。対象ID・確認時刻・理由を記録し、判断が確定するまでhideを維持する。AIによるBAN/削除、本文改変、返金・課金変更は行わない。
+
+## Upload incident
+Ownerがアップロードだけを止める。新規追加の拒否と既存公開添付の必要範囲の閲覧を確認する。漏えい疑いの投稿は別途hideする。Storage物理削除やbucket公開への切替で回避しない。原因・未完了ledger・orphan cleanupの状態を確認し、理由付きで再開する。
+
+## Session freshnessの限界
+JWT発行時刻チェックは直近のpassword入力を保証せず、refresh後も有効となり得る。MFA/step-up・端末管理は本番移行時に別途確定する。
+
+## 検収証跡
+V2_5_ACCEPTANCE.mdとv2-5-*.jsonを確認する。production手順としてそのまま実行しない。検収用の合成Owner/Moderatorを実運営アカウントに流用しない。
