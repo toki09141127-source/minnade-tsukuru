@@ -21,6 +21,7 @@ export async function POST(req: Request) {
       { headers: { "Cache-Control": "no-store" } },
     );
   } catch (e) {
+    await adminEvent(e instanceof BillingError&&e.code==='SIGNATURE_INVALID'?'invalid_webhook':e instanceof BillingError&&e.code==='CUSTOMER_UNMAPPED'?'webhook_unmapped':'webhook_failed');
     // Never return/log provider payload, email, signature, URLs, or request raw data.
     return NextResponse.json(
       { received: false },
@@ -34,3 +35,5 @@ export async function POST(req: Request) {
     );
   }
 }
+
+async function adminEvent(kind:string){if(process.env.ADMIN_ENABLED==='true'){await import('@/lib/admin/server').then(m=>m.adminEvent(kind)).catch(()=>{});}}

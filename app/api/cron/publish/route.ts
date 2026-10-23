@@ -15,10 +15,14 @@ export async function GET(req: Request) {
       if(v2Enabled())await import('@/lib/ai/worker').then(m=>m.scheduleAi()).catch(()=>{})
       const {data,error}=await supabaseAdmin.rpc('mvp_publish_due')
       if(error) return NextResponse.json({ok:false,error:'公開処理に失敗しました'}, {status:503})
+      await adminEvent('cron_publish_ok')
       return NextResponse.json({ok:true,updated:data})
     }
     return NextResponse.json({ok:false,error:'現在この機能は利用できません。時間をおいてお試しください。'}, {status:503,headers:{'Cache-Control':'no-store'}})
   } catch {
+    await adminEvent('cron_failed')
     return NextResponse.json({ ok: false, error: '公開処理に失敗しました' }, { status: 503 })
   }
 }
+
+async function adminEvent(kind:string){if(process.env.ADMIN_ENABLED==='true'){await import('@/lib/admin/server').then(m=>m.adminEvent(kind)).catch(()=>{});}}

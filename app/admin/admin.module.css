@@ -1,0 +1,263 @@
+.shell {
+  max-width: 1184px;
+  margin: 24px auto;
+  padding: 0 16px;
+  color: #18223a;
+  overflow-wrap: anywhere;
+}
+.shell h1 {
+  font-size: 28px;
+}
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+.nav a,
+.shell button {
+  border: 1px solid #8794ac;
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-height: 44px;
+  color: #18223a;
+  background: white;
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+}
+.nav a[aria-current="page"] {
+  background: #18223a;
+  color: white;
+}
+.shell button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.shell :focus-visible {
+  outline: 3px solid #305ec5;
+  outline-offset: 3px;
+}
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px;
+  margin: 20px 0;
+}
+.bar label {
+  min-width: 130px;
+  flex: 1;
+}
+.shell label {
+  display: block;
+  font-weight: 600;
+}
+.shell input:not([type="checkbox"]),
+.shell select,
+.shell textarea {
+  display: block;
+  box-sizing: border-box;
+  max-width: 100%;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid #8794ac;
+  border-radius: 6px;
+  background: white;
+  color: #18223a;
+  font: inherit;
+  margin-top: 6px;
+}
+.shell textarea {
+  min-height: 90px;
+}
+.table {
+  overflow: auto;
+  max-width: 100%;
+  border: 1px solid #c7cfdd;
+  border-radius: 10px;
+}
+.table table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+}
+.table th,
+.table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px;
+  border-bottom: 1px solid #dce1ea;
+  min-width: 100px;
+  max-width: 260px;
+  overflow-wrap: anywhere;
+}
+.table th {
+  background: #edf1f8;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 12px;
+}
+.card,
+.detail {
+  border: 1px solid #c7cfdd;
+  border-radius: 10px;
+  padding: 16px;
+  margin: 12px 0;
+  background: #fff;
+}
+.card strong {
+  display: block;
+  font-size: 28px;
+}
+.shell dl {
+  margin: 0;
+}
+.shell dt {
+  font-size: 13px;
+  color: #49566c;
+  font-weight: 600;
+  margin-top: 12px;
+}
+.shell dd {
+  margin: 4px 0;
+}
+.error {
+  padding: 16px;
+  background: #fff0f0;
+  border: 1px solid #bd3030;
+  border-radius: 8px;
+  color: #831919;
+}
+.muted {
+  color: #49566c;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+.dialog {
+  max-width: min(560px, calc(100vw - 32px));
+  max-height: 85vh;
+  overflow: auto;
+  border: 1px solid #8794ac;
+  border-radius: 14px;
+  padding: 24px;
+  color: #18223a;
+  background: white;
+}
+.dialog::backdrop {
+  background: #18223a99;
+}
+.dialog label {
+  margin: 14px 0;
+}
+.danger {
+  background: #831919 !important;
+  color: white !important;
+}
+.content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 420px;
+  overflow: auto;
+}
+.tag {
+  font-size: 13px;
+  border-radius: 20px;
+  background: #edf1f8;
+  padding: 4px 10px;
+}
+.shell a {
+  color: #224b9b;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0;
+}
+@media (max-width: 600px) {
+  .shell {
+    padding: 0 12px;
+  }
+  .shell h1 {
+    font-size: 24px;
+  }
+  .nav a {
+    flex: 1;
+    text-align: center;
+  }
+  .bar label {
+    flex-basis: 42%;
+  }
+  .dialog {
+    padding: 16px;
+  }
+  .table th,
+  .table td {
+    padding: 10px;
+  }
+  .footer {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 600px) {
+  .table {
+    overflow: visible;
+    border: 0;
+  }
+  .table table,
+  .table tbody,
+  .table tr {
+    display: block;
+    width: 100%;
+  }
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+  .table caption {
+    display: block;
+    text-align: left;
+    margin-bottom: 12px;
+  }
+  .table tr {
+    border: 1px solid #c7cfdd;
+    border-radius: 10px;
+    margin: 12px 0;
+    background: white;
+    box-sizing: border-box;
+  }
+  .table td {
+    display: grid;
+    grid-template-columns: minmax(80px, 30%) minmax(0, 1fr);
+    gap: 10px;
+    min-width: 0;
+    max-width: none;
+    box-sizing: border-box;
+  }
+  .table td:before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #49566c;
+  }
+  .table td:last-child {
+    border-bottom: 0;
+  }
+  .table .actions {
+    margin: 0;
+    min-width: 0;
+  }
+}

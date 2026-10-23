@@ -1,0 +1,71 @@
+{
+  "complete": true,
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "checks": [
+    {
+      "name": "staging target",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_users",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_audit",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_notes",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_subjects",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_suspensions",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_room_controls",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_report_reviews",
+      "pass": true
+    },
+    {
+      "name": "RLS and no direct access admin_security_events",
+      "pass": true
+    },
+    {
+      "name": "caller-only admin RPC v25_admin_read",
+      "pass": true
+    },
+    {
+      "name": "caller-only admin RPC v25_admin_action",
+      "pass": true
+    },
+    {
+      "name": "AI remains OFF",
+      "pass": true
+    },
+    {
+      "name": "deletion worker remains OFF",
+      "pass": true
+    },
+    {
+      "name": "three migration manifest entries",
+      "pass": true
+    },
+    {
+      "name": "synthetic fixture identity",
+      "pass": true
+    },
+    {
+      "name": "exact synthetic Owner and Moderator",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE"
+}

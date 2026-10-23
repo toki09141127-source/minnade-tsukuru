@@ -1,32 +1,29 @@
 # AI_TASK
 
 ## Status
-done
+in_progress
 
 ## Objective
-V2.4 Free/Plus/Pro・課金・AI creditをstaging/test modeだけで実装し検収する。
+V2.5 運営管理画面・基盤を develop/v2 / staging / Hosted Previewで実装・検収する。
 
 ## Context
-添付37f0808bの要件。develop/v2、開始HEAD3cc489a、clean。既存047まで不変。V2.2実AI429は再送しない。
+添付66dbe3b8の要件。開始HEAD b794e0e、worktree clean。V2.4 COMPLETE。最新migration052。staging fwqucffxdmbdczspkcyr、production joedeuyrzimqyjapqpyhは操作禁止。V2.2実OpenAI429は再送しない。
 
 ## Tasks
-1. done: billing/credit/room entitlement/AI profile設計とDB実装（048〜052 staging）
-2. done: Stripe test adapter/Webhook/ライフサイクル/退会整合
-3. done: Pricing/Billing/Usage/Customization UI
-4. done: unit/DB/security/concurrency/staging/Hosted Preview/回帰
-5. done: SPEC/ACCEPTANCE/CREDIT/HANDOFFとV2 branch commit（実装・検収記録、最終結果はHosted後に追記）
+1. done: 既存moderation/退会/RPC/flagsと接続するadmin権限・DB停止設計
+2. done: 053以降の追加migration、Owner/Moderator、監査・CAS・冪等性・停止ガード
+3. done: /admin・/api/admin、9管理画面、確認操作・安全なメタデータ投影
+4. done: 隔離DB/競合/権限/プライバシー/回帰、staging合成E2E
+5. in_progress: Hosted Preview、responsive/axe、秘密走査、cleanup、最終判定・docs・V2 commit
 
 ## Do not
-production DB/migration/deploy/payment、live mode、実カード、main merge、Buffer混在、秘密出力、既存差分破棄。
+production DB/Auth/Storage/moderation/flags/deploy/migration、live Stripe、production本文/PII閲覧、main merge、既存SQL改変、秘密出力、実OpenAI再送。
 
 ## Validation
-添付Definition of Done。合成providerと実Stripe testを区別し、未検収をPASSにしない。
+添付A〜PとDefinition of Done。Owner/Moderator/一般userをDBとHosted実操作で照合。停止と同時書込・退会副作用の境界を検証。未確認はPASSにしない。
 
 ## Expected output
-V2.4結果・証拠・残件。Production Changes NONE / Live Billing OFF。
+V2_5_ADMIN_SPEC、V2_5_ACCEPTANCE、ADMIN_PERMISSION_MATRIX、ADMIN_OPERATIONS_RUNBOOK、AI_HANDOFF。Production Changes NONE / Live Billing OFF。
 
 ## Updated at
-2026-10-23 17:02 JST
-
-## Current checkpoint
-V2.4 COMPLETE (staging / Stripe test mode). Latest corrected Preview 8531792ul / source efebbb4: schedule regression 7 + UI 24 PASS, six widths and axe 0. Original Hosted77 and unchanged DB/credit/Checkout/security evidence retained with source/URL. Pending operations/events 0. Fresh exact-host Cookie deleted, four reused synthetic refresh sessions revoked, listener/relay/browser stopped, test processes 0. No new test users, application or migration changes in the final acceptance turn. Production NONE / Live OFF / OpenAI retries 0 / no push. V2.5 can start as a separate task; V2.2 real-AI429 and future production prerequisites remain explicit Known Issues.
+2026-10-23 JST

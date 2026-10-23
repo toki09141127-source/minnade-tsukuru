@@ -11,6 +11,8 @@ async function actor(req:Request){
  return error?null:data.user?.id??null
 }
 export async function GET(req:Request){
+ if(process.env.V2_ENABLED==='true'&&process.env.NEXT_PUBLIC_SUPABASE_URL==='https://fwqucffxdmbdczspkcyr.supabase.co')return NextResponse.json({error:'運営コンソールを利用してください'},{status:410,headers:{'Cache-Control':'no-store'}})
+
  try{
   const user=await actor(req);if(!user)return reply({error:'ログインしてください'},401)
   if(process.env.MVP_REPORT_QUEUE_ENABLED!=='true')return reply({error:'通報管理は準備中です'},503)
@@ -25,6 +27,8 @@ export async function GET(req:Request){
  }catch{return reply({error:'一覧を確認できませんでした'},503)}
 }
 export async function POST(req:Request){
+ if(process.env.V2_ENABLED==='true'&&process.env.NEXT_PUBLIC_SUPABASE_URL==='https://fwqucffxdmbdczspkcyr.supabase.co')return NextResponse.json({error:'運営コンソールを利用してください'},{status:410,headers:{'Cache-Control':'no-store'}})
+
  try{
   const user=await actor(req);if(!user)return reply({error:'ログインしてください'},401)
   if(process.env.MVP_REPORT_QUEUE_ENABLED!=='true')return reply({error:'通報管理は準備中です'},503)

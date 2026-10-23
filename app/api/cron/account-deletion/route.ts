@@ -50,8 +50,11 @@ export async function POST(req: Request) {
       }),
     ),
   );
+  await adminEvent(state==='completed'?'cron_deletion_ok':'cron_failed');
   return NextResponse.json(
     { ok: state === "completed", state },
     { status: state === "completed" ? 200 : 202, headers },
   );
 }
+
+async function adminEvent(kind:string){if(process.env.ADMIN_ENABLED==='true'){await import('@/lib/admin/server').then(m=>m.adminEvent(kind)).catch(()=>{});}}

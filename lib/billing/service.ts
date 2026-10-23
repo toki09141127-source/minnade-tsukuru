@@ -92,7 +92,7 @@ export async function receiveBilling(
     p_created: new Date(event.created * 1000).toISOString(),
     p_hash: event.hash,
   });
-  if (claim.duplicate) return;
+  if (claim.duplicate) {await adminEvent('webhook_duplicate');return;}
   try {
     // Current provider state is fetched AFTER obtaining the account lease; event delivery order never decides access.
     if (claim.deleting) await provider.cancelAll(event.customer, claim.account);
@@ -110,3 +110,5 @@ export async function receiveBilling(
     }).catch(() => {});
   }
 }
+
+async function adminEvent(kind:string){if(process.env.ADMIN_ENABLED==='true'){await import('@/lib/admin/server').then(m=>m.adminEvent(kind)).catch(()=>{});}}

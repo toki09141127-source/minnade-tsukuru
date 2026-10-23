@@ -18,3 +18,6 @@ supabase/migrations/202610230050_billing_deletion_fence.sql -text whitespace=bla
 supabase/migrations/202610230051_billing_retry_state.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 
 supabase/migrations/202610230052_billing_period_timing.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+supabase/migrations/202610230053_admin_foundation.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+supabase/migrations/202610230054_admin_write_guards.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+supabase/migrations/202610230055_admin_read_models.sql -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

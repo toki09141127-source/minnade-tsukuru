@@ -1,0 +1,9 @@
+{
+  "complete": true,
+  "productionChanges": "NONE",
+  "sensitiveVariables": "explicitly set from validated staging configuration; raw pulled values not used as evidence",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "aiEnabled": false,
+  "liveBilling": "OFF",
+  "adminEnabled": true
+}

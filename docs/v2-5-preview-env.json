@@ -1,0 +1,11 @@
+{
+  "project": "minnade-tsukuru-staging",
+  "environment": "preview",
+  "updated": [
+    "ADMIN_ENABLED",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "STRIPE_TEST_SECRET_KEY"
+  ],
+  "complete": true,
+  "productionChanges": "NONE"
+}

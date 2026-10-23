@@ -1732,3 +1732,14 @@ USER APPROVAL REQUIRED: 最新ユーザーの「現在のPreview限定・他Prev
 検収後、今回Cookie一時ファイル削除・残数0、今回再利用した合成4名のrefresh sessions終了、browser/relay/Stripe listener停止、該当test process0。新規合成ユーザー0。短期access JWTの即時失効を偽っていない。合成identity/最小課金fixtureは再現用に保持。Production DB/deploy/migration変更NONE、live billing OFF、push/main mergeなし。
 変更: scripts/billing/{preview-scope,preview-schedule,browser,preview-secrets,secret-scan}.cjs と docs/AI_TASK.md、V2_4_ACCEPTANCE.md、AI_HANDOFF.md、v2-4-*検収記録。runtimeアプリ・package・migrationは変更なし。関連script lint PASS。AI_TASK done / V2.4 COMPLETEへ確定。旧途中失敗結果は残し、最終結果による解消を記録。
 次: V2.5は別タスクとして着手可能。実AI429はV2.2 Known Issue。本番/live課金、恒常Webhook、税込/法務/返金・実機、既存Buffer/V2 migration採番衝突は将来公開の別前提であり、今回承認・検収した扱いにしない。V2.5の自動実装は開始しない。既存許可に従いdevelop/v2へ最終検収記録をローカルcommitする。
+
+### V2.5開始（2026-10-23 JST）
+添付66dbe3b8でDB/権限/UI/staging/Hosted検収とdevelop/v2 commitを承認。開始b794e0e clean、最新migration052。既存V2.1〜V2.4仕様/検収、moderation/退会pause/fence/公開runbook、Next同梱route/clientガイドを確認。既存Service Role中心の運営経路とV2のcaller RPCを調査中。production joedeuyrzimqyjapqpyhは触れず、staging fwqucffxdmbdczspkcyrのみ。実OpenAI再送0。AI_TASK in_progress。
+設計: 独立Owner/Moderator台帳、callerをDBで判定する限定RPC、版数とrequest UUID、変更とimmutable auditを同一transactionにする。新DB停止は既存env停止に追加し、退会pause・AI epoch stopを再利用。既存の意図したOFF状態をmigrationや検収終了時に勝手にONにしない。旧admin経路の迂回も検査対象。詳細PII/prompt/provider payloadを管理APIへ返さない。
+
+### V2.5実装・staging適用（2026-10-23 JST）
+053〜055をstaging fwqucffxdmbdczspkcyrにのみ適用、hashをv2-5-staging-migrationsへ記録。Owner/Moderator・caller RPC・immutable audit・CAS/冪等性・失敗も含むrate・feature停止・限定投影を実装。旧service moderation経路はV2で410、旧operator AI迂回は拒否。既存退会capability/AIepoch/pause/公開処理を再利用。
+隔離PostgreSQLで317 checks（既存V2.1〜2.4 213 + V2.5 104）PASS。hide/suspend/report競合、featureOFF対write、AI CAS、退会checkpoint対pauseを含む。MVP21suite/Stripe unit32/型/対象lint/build PASS。staging RLS/ACL/OFF維持16 PASS。staging最小合成5名・2ルーム・2通報、公開/非表示・停止ユーザー・AI失敗・grace・退会待ちfixture作成。fixture作成時の名義長・UUID型・RPC引数の問題はテスト補助コードを修正し、同じ合成identityを再利用して完了。本番行・秘密値の取得なし。
+ローカルbuild＋実staging UI22 PASS、10管理領域/6幅(320/375/390/768/1024/1440)、axe0。モバイル一覧はカード表示。非表示/再表示・通報・停止/解除・Owner権限付与剥奪・CSRF拒否・取得失敗の非0表示を実操作。OriginとNext内部URLの差による正規POST拒否を修正済み。負例403と意図的503は通常consoleと区別する検収へ改善。
+Preview設定はADMIN_ENABLEDと検証済みstaging service key/test Stripe keyを対象projectのpreview環境だけへ設定。CLIの取得結果では秘密変数の一致が検証できないため、秘密値を比較済みと偽らず、明示設定の証跡＋接続先・OFF設定を記録。AI OFF/退会worker OFF維持。secret scan960ファイル/105client assetsヒット0、既存migrationhash不変。
+次: V2.5 Hosted Preview配信とexact-host一時Cookie承認、残るHosted検収・cleanup・最終判定。現状PARTIAL。今回 production変更NONE / live OFF / 実OpenAI再送0 / pushなし。

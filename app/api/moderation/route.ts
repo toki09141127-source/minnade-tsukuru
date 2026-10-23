@@ -2,6 +2,7 @@ import { limitAction } from '@/lib/apiGuards'
 import { NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase/admin'
 export async function POST(req: Request) {
+  if(process.env.V2_ENABLED==='true'&&process.env.NEXT_PUBLIC_SUPABASE_URL==='https://fwqucffxdmbdczspkcyr.supabase.co') return NextResponse.json({error:'運営コンソールを利用してください'}, {status:410,headers:{'Cache-Control':'no-store'}})
   try {
     const auth=req.headers.get('authorization') ?? ''
     if(!auth.startsWith('Bearer ')) return NextResponse.json({error:'ログインしてください'}, {status:401})
