@@ -26,9 +26,7 @@ module.exports = async function () {
     assert.equal(d.project, "minnade-tsukuru-staging");
     assert.equal(d.state, "READY");
     base = d.url;
-    access = JSON.parse(
-      fs.readFileSync(".staging-private/v24-preview-access.json"),
-    );
+    access = require("./preview-scope.cjs").access();
     assert.equal(access.url, base);
   } else {
     const env = {
@@ -93,12 +91,17 @@ module.exports = async function () {
       executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe",
     });
   const errors = [],
-    http500 = [];
+    http500 = [],
+    consoleErrors = [],
+    browserMetrics = { app401:0, hydrationErrors:0, ignoredExternalConsoleErrors:0 };
   const page = async (user) => {
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1000 },
     });
-    if (access) await context.addCookies(access.cookies);
+    if (access) {
+      await context.addCookies(access.cookies);
+      for (const c of await context.cookies(base)) {assert.equal(c.domain,new URL(base).hostname);assert.ok(c.secure && c.httpOnly);}
+    }
     const p = await context.newPage();
     p.setDefaultTimeout(40000);
     await p.route("**/*", (r) =>
@@ -107,7 +110,9 @@ module.exports = async function () {
         : r.abort(),
     );
     p.on("pageerror", () => errors.push("UNCAUGHT"));
+    p.on("console",m=>{if(m.type()!=="error")return;const text=m.text();if(/hydration|hydrating|server rendered html/i.test(text))browserMetrics.hydrationErrors++;let origin;try{origin=new URL(m.location().url).origin;}catch{}if(origin===base&&!/Failed to load resource.*(?:401|ERR_BLOCKED|ERR_FAILED)/i.test(text))consoleErrors.push("APP_CONSOLE_ERROR");else browserMetrics.ignoredExternalConsoleErrors++;});
     p.on("response", (r) => {
+      if(new URL(r.url()).origin===base&&r.status()===401)browserMetrics.app401++;
       if (r.status() >= 500)
         http500.push({ path: new URL(r.url()).pathname, status: r.status() });
     });
@@ -131,6 +136,8 @@ module.exports = async function () {
     browser,
     errors,
     http500,
+    consoleErrors,
+    browserMetrics,
     close: async () => {
       await browser.close();
       if (server) server.kill();

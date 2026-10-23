@@ -50,11 +50,15 @@
       "pass": true
     },
     {
-      "name": "retry resumes own schedule after create/update partial failure",
+      "name": "retry proves untagged schedule ownership through identical idempotency key",
       "pass": true
     },
     {
       "name": "different operation cannot overwrite existing schedule",
+      "pass": true
+    },
+    {
+      "name": "untagged external schedule cannot be adopted by another operation",
       "pass": true
     },
     {

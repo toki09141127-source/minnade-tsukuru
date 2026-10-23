@@ -89,6 +89,8 @@ const fs = require("fs"),
       .getByRole("link", { name: "Proの手続きを確認", exact: true })
       .click();
     await p.getByRole("heading", { name: "Pro", exact: true }).waitFor();
+    await p.waitForURL(h.base + "/billing?plan=pro&cycle=year");
+    await p.getByRole("progressbar",{name:"AIクレジット使用量"}).waitFor();
     ok("Pricing links to current account billing");
     phase = "billing";
     await widths("billing");
@@ -163,7 +165,11 @@ const fs = require("fs"),
     ok("Anonymous private billing API denied");
     assert.equal(h.errors.length, 0);
     assert.equal(h.http500.length, 0);
-    ok("No uncaught errors or HTTP 5xx");
+    assert.equal(h.consoleErrors.length,0,"APP_CONSOLE");
+    assert.equal(h.browserMetrics.hydrationErrors,0,"HYDRATION");
+    assert.ok(h.browserMetrics.app401<=1,"AUTH_LOOP");
+    out.browserMetrics={...h.browserMetrics,appConsoleErrors:h.consoleErrors.length,uncaught:h.errors.length,http5xx:h.http500.length};
+    ok("No app console/hydration/uncaught/HTTP 5xx or authentication loops");
     out.complete = true;
   } catch (e) {
     out.failure = {

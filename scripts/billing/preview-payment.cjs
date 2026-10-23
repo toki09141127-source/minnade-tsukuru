@@ -37,7 +37,7 @@ const fs = require("fs"),
       rt.ctx.env.SUPABASE_SERVICE_ROLE_KEY,
       { auth: { persistSession: false, autoRefreshToken: false } },
     );
-    for (const plan of ["plus", "pro"]) {
+    for (const [plan,cycle] of [["plus","month"],["pro","year"]]) {
       phase = plan + " fixture";
       const email =
           "v24-hosted-" + crypto.randomUUID().slice(0, 8) + "@example.invalid",
@@ -87,7 +87,7 @@ const fs = require("fs"),
       };
       const p = await h.page(u);
       await p.unroute("**/*");
-      await p.goto(rt.base + "/billing?plan=" + plan);
+      await p.goto(rt.base + "/billing?plan=" + plan + "&cycle=" + cycle);
       await p.getByRole("heading", { name: "Free", exact: true }).waitFor();
       ok(plan + " Free current-plan page");
       phase = plan + " checkout";
@@ -121,6 +121,8 @@ const fs = require("fs"),
       }
       const state = (await call("/api/billing")).body;
       assert.equal(state.plan, plan);
+      assert.equal(state.cycle, cycle);
+      assert.equal(state.status,"active");
       assert.equal(state.credits.granted, plan === "plus" ? 500 : 2000);
       await p.getByRole("button", { name: "状態を更新", exact: true }).click();
       await p
@@ -129,7 +131,11 @@ const fs = require("fs"),
           exact: true,
         })
         .waitFor();
-      ok(plan + " signed webhook activates hosted plan and monthly credits");
+      ok(plan + " " + cycle + " signed webhook activates hosted plan and monthly credits");
+      await p.addScriptTag({content:fs.readFileSync(".staging-private/ui-tools/node_modules/axe-core/axe.min.js","utf8")});
+      const violations=await p.evaluate(async()=> (await window.axe.run(document,{runOnly:{type:"tag",values:["wcag2a","wcag2aa","wcag21a","wcag21aa"]}})).violations.length);
+      assert.equal(violations,0,"RETURN_AXE");
+      ok(plan+" Checkout return axe A/AA");
       phase = plan + " settings";
       const room = await call("/api/v2/create", {
         requestId: crypto.randomUUID(),
@@ -181,11 +187,16 @@ const fs = require("fs"),
         await new Promise((r) => setTimeout(r, 1000));
       }
       assert.equal((await call("/api/billing")).body.cancelAtEnd, true);
+      assert.equal((await call("/api/billing")).body.plan,plan);
+      await p.getByRole("button", { name: "状態を更新", exact: true }).click();
+      await p.getByRole("button", { name: "解約予約を取り消す", exact: true }).waitFor();
       ok(
         plan + " management schedules cancellation without losing paid access",
       );
     }
     assert.ok(rt.counts.success > 0);
+    assert.equal(h.errors.length,0,"UNCAUGHT");
+    assert.equal(h.http500.length,0,"HTTP_5XX");
     out.webhooks = rt.counts;
     out.complete = true;
   } catch (e) {

@@ -29,4 +29,4 @@ V2.4結果・証拠・残件。Production Changes NONE / Live Billing OFF。
 2026-10-23 JST
 
 ## Current checkpoint
-実装commit7f89628、修正5c37a32。DB213、unit31、実Stripe16＋clock11、local UI24＋支払状態4＋共同制作UI28、型/lint/build・MVP回帰PASS。最終Preview 4wqvksxt4（deploy JSONで状態確認）。新Preview限定Cookie/Webhook転送の承認待ち（USER APPROVAL REQUIRED）。Production NONE / Live OFF。
+旧Preview 4wqvksxt4でHosted77 checks PASS。ただし降格予約の実Stripe P1を追加検出し、efebbb4で修正。unit32・型/lint/build、修正済みlocal build＋実Stripe Test Clock16 PASS。DB213など変更のない既存証跡を再利用。新Preview8531792ul READY。USER APPROVAL REQUIRED: 新URL限定のCookie取得・実操作・署名test Webhook転送（具体的URLを提示済み）。旧Cookie削除・4合成refresh session終了・forwarder/browser停止済み。新Previewへ流用なし。最終Hosted重点再検証前につきPARTIAL。Production NONE / Live OFF / OpenAI再送0。

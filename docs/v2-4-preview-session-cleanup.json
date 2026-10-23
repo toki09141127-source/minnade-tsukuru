@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "syntheticUsers": 4,
+  "refreshSessionsRevoked": 4,
+  "alreadyExpired": 0,
+  "tokensRemovedFromFixtureFiles": true,
+  "cookiesRemaining": 0,
+  "productionChanges": "NONE",
+  "note": "Existing short-lived access JWT validity is not claimed revoked; refresh sessions and browser contexts are closed."
+}

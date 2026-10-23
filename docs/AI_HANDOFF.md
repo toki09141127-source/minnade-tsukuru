@@ -1715,3 +1715,12 @@ develop/v2 / C:/dev/minnade/minnade-tsukuru-v2、HEAD3cc489a cleanを確認。�
 追加source commit 5c37a32: 猶予切れでFree表示になっても支払い確認/解約の入口を残す。4 UI状態テストPASS。共同制作UI28回帰PASS、最新source build PASS。最終Preview 4wqvksxt4を配信、旧9sfb8v7a2は検収対象から除外。USER APPROVAL REQUIRED: この最終URL限定のCookie取得・一時保存・自動UIと署名Webhook転送（完了後削除）。質問済み、まだ実行していない。旧Preview承認を流用しない。独立検証は完了、Hostedを合格扱いせずV2.4 PARTIAL / AI_TASK in_progress維持。
 
 最終集計訂正: local UIはJSONのcheck単位で24件（6幅/axe10状態はその内訳）。上記25件表記を訂正した。合計401 check＋既存MVP21suite（集計JSON参照）、全実行済み項目PASS。検証記録commit e7a50e2。最終Preview READY、Hosted実操作は承認待ちで未実行。新Cookieファイルなし、テスト用listener/browser/serverは終了。push/main merge/production操作なし。次は最終URL限定の承認回答を確認して用意したHosted scriptsを実行し、実績に応じてAI_TASK/Acceptanceを更新する。
+
+
+### V2.4 Hosted検収・Stripe予約作成の修正（2026-10-23 JST）
+承認済み4wqvksxt4だけの短期CookieをSecure/HttpOnly/host-onlyで取得、値を出力せず検収。Plus月払い/Pro年払いCheckout→署名Webhook→設定/解約12、UI24、支払状態mock4、署名/重複/順序逆転/未知mapping9、配信23資産の秘密混入0を確認。Hosted降格でfrom_subscriptionとmetadataの併用をStripeが拒否するP1を発見。旧31unitはprovider制約を模擬していなかった。作成時はfrom_subscriptionのみ、更新でmetadataを設定。同一idempotency keyから同一schedule IDが返る場合だけ未記名予約を再開し、他操作を拒否。commit efebbb4、unit32/型/lint/build PASS。実Stripe Test Clock＋修正済みlocal buildの降格/復帰/年周期/実支払失敗/退会前停止の追加検証PASS。これは新HostedでのPASSではない。production/live/実OpenAI呼出なし。新Preview配信と検収へ続行、AI_TASK in_progress。
+
+### V2.4修正版Preview READY・新host許可待ち（2026-10-23 JST）
+source efebbb4をstagingだけへ配信: https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app、READY。旧4wqvksxt4のHostedは77 checks、秘密混入23資産0。修正済みlocal production build＋実Stripe Test Clock16 PASSはHosted検収とは区別。unit32/型/lint/build/対象script lint/DBメタデータ22/diff PASS。アプリ変更はlib/billing/stripe.tsのみ、migration追加・変更なし。
+USER APPROVAL REQUIRED: 最新ユーザーの「現在のPreview限定・他Previewへ流用禁止」に従い、新URL限定Cookieと署名test Webhook転送の許可を具体的URL付きで質問。新Cookie取得なし。旧3一時ファイル削除、browser/relay/CLI listener/local server終了、今回合成4名のrefresh session revokeとfixture内token除去済み。ユーザー・customerの物理削除なし。
+次: 許可受領後にpreview-scope.cjsのexact hostを新URLへ更新→環境事前確認→preview-schedule --preview（既存合成ユーザー再利用）→browser --preview（console/hydration/401 loop含む）→secret scan→cleanup→判定。既存77とDB/AI検証を無条件に再実行しない。新Hostedが未実行なのでAI_TASK in_progress / V2.4 PARTIALを維持。本番NONE、live OFF、実OpenAI呼出0、push/main mergeなし。

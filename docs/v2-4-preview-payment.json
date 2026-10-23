@@ -1,0 +1,62 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "plus Free current-plan page",
+      "pass": true
+    },
+    {
+      "name": "plus Checkout redirects without granting plan",
+      "pass": true
+    },
+    {
+      "name": "plus month signed webhook activates hosted plan and monthly credits",
+      "pass": true
+    },
+    {
+      "name": "plus Checkout return axe A/AA",
+      "pass": true
+    },
+    {
+      "name": "plus settings editable with correct paid-field lock",
+      "pass": true
+    },
+    {
+      "name": "plus management schedules cancellation without losing paid access",
+      "pass": true
+    },
+    {
+      "name": "pro Free current-plan page",
+      "pass": true
+    },
+    {
+      "name": "pro Checkout redirects without granting plan",
+      "pass": true
+    },
+    {
+      "name": "pro year signed webhook activates hosted plan and monthly credits",
+      "pass": true
+    },
+    {
+      "name": "pro Checkout return axe A/AA",
+      "pass": true
+    },
+    {
+      "name": "pro settings editable with correct paid-field lock",
+      "pass": true
+    },
+    {
+      "name": "pro management schedules cancellation without losing paid access",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "webhooks": {
+    "forwarded": 8,
+    "success": 4,
+    "retryable": 4
+  },
+  "previewUrl": "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "5c37a3259092822d3b7faef81784e063d87df198"
+}

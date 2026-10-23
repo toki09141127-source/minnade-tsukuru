@@ -1,0 +1,25 @@
+{
+  "scope": "real Stripe test clocks + signed webhook to approved Hosted Preview; synthetic users only",
+  "checks": [
+    {
+      "name": "Test-clock Pro activated by signed Hosted webhook",
+      "pass": true
+    },
+    {
+      "name": "Hosted Pro saved profile reused in new room",
+      "pass": true
+    }
+  ],
+  "complete": false,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "failure": {
+    "phase": "downgrade clock",
+    "code": "ERR_ASSERTION",
+    "message": "Verification failed; provider details omitted"
+  },
+  "previewUrl": "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "5c37a32",
+  "diagnosedCause": "Stripe forbids metadata together with from_subscription",
+  "fixedBy": "efebbb4; corrected Hosted regression pending"
+}

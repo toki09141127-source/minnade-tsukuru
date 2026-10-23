@@ -4,11 +4,9 @@ const fs = require("fs"),
   cp = require("child_process"),
   assert = require("node:assert/strict");
 module.exports = async () => {
-  const ctx = require("../staging/safety.cjs").load(),
+  const ctx = require("./preview-scope.cjs").deployment().ctx,
     d = JSON.parse(fs.readFileSync("docs/v2-4-preview-deployment.json")),
-    access = JSON.parse(
-      fs.readFileSync(".staging-private/v24-preview-access.json"),
-    );
+    access = require("./preview-scope.cjs").access();
   assert.equal(d.target, "preview");
   assert.equal(d.project, "minnade-tsukuru-staging");
   assert.equal(access.url, d.url);
@@ -31,6 +29,9 @@ module.exports = async () => {
         }
         buf.push(x);
       }
+      const raw = Buffer.concat(buf);
+      const event = JSON.parse(raw.toString("utf8"));
+      if (event.livemode !== false || Date.parse(access.expiresAt) <= Date.now()) { res.writeHead(403).end(); return; }
       const r = await fetch(d.url + "/api/billing/webhook", {
         method: "POST",
         headers: {
@@ -38,7 +39,7 @@ module.exports = async () => {
           "stripe-signature": String(req.headers["stripe-signature"] || ""),
           "Content-Type": "application/json",
         },
-        body: Buffer.concat(buf),
+        body: raw,
         signal: AbortSignal.timeout(55000),
         redirect: "error",
       });

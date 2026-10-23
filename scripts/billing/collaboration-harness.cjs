@@ -26,9 +26,7 @@ module.exports = async function () {
     assert.equal(d.project, "minnade-tsukuru-staging");
     assert.equal(d.state, "READY");
     base = d.url;
-    access = JSON.parse(
-      fs.readFileSync(".staging-private/v24-preview-access.json"),
-    );
+    access = require("./preview-scope.cjs").access();
     assert.equal(access.url, base);
   } else {
     const env = {

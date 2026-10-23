@@ -1,66 +1,16 @@
-// Requires explicit approval for this exact V2.4 Preview and temporary access method before execution.
-/* eslint-disable @typescript-eslint/no-require-imports -- Node-only verification and release tooling. */
-const fs = require("fs"),
-  cp = require("child_process");
-const d = JSON.parse(fs.readFileSync("docs/v2-4-preview-deployment.json")),
-  cli = fs.readFileSync(".staging-private/vercel-cli-path.txt", "utf8").trim();
-if (
-  d.target !== "preview" ||
-  d.project !== "minnade-tsukuru-staging" ||
-  d.url !==
-    "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app"
-)
-  throw Error("SCOPE");
-const h = ".staging-private/v24-preview-access-headers.txt",
-  b = ".staging-private/v24-preview-login.html";
-const r = cp.spawnSync(
-  process.execPath,
-  [
-    cli,
-    "curl",
-    "/login",
-    "--deployment",
-    d.url,
-    "--scope",
-    "sonetokiyas-projects",
-    "--",
-    "--silent",
-    "--show-error",
-    "--header",
-    "x-vercel-set-bypass-cookie: true",
-    "--dump-header",
-    h,
-    "--output",
-    b,
-  ],
-  { encoding: "utf8", windowsHide: true, timeout: 30000 },
-);
-if (r.status !== 0) throw Error("CLI_AUTHENTICATED_PREVIEW_FAILED");
-const headers = fs.readFileSync(h, "utf8"),
-  matches = [
-    ...headers.matchAll(/^set-cookie:\s*([^=;\s]+)=([^;\r\n]*)([^\r\n]*)/gim),
-  ];
-const cookies = matches
-  .filter((m) => m[1] === "_vercel_jwt")
-  .map((m) => ({
-    name: m[1],
-    value: m[2],
-    domain: new URL(d.url).hostname,
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "Lax",
-  }));
-if (!cookies.length) throw Error("PREVIEW_AUTH_COOKIE_NOT_RETURNED");
-fs.writeFileSync(
-  ".staging-private/v24-preview-access.json",
-  JSON.stringify({ url: d.url, cookies }),
-);
-console.log(
-  JSON.stringify({
-    authorizedCliAccess: true,
-    cookieCount: cookies.length,
-    appLoginPage: fs.readFileSync(b, "utf8").includes("メールアドレス"),
-    valuesPrinted: false,
-  }),
-);
+/* eslint-disable @typescript-eslint/no-require-imports -- Explicitly approved short-lived Preview-only access. */
+const fs=require('fs'),cp=require('child_process'),assert=require('node:assert/strict');
+const {d}=require('./preview-scope.cjs').deployment();const cli=fs.readFileSync('.staging-private/vercel-cli-path.txt','utf8').trim();
+const body='.staging-private/v24-preview-login.html';
+try{
+ const r=cp.spawnSync(process.execPath,[cli,'curl','/login','--deployment',d.url,'--scope','sonetokiyas-projects','--','--silent','--show-error','--header','x-vercel-set-bypass-cookie: true','--dump-header','-','--output',body],{encoding:'utf8',windowsHide:true,timeout:30000,maxBuffer:2e6});
+ assert.equal(r.status,0,'PREVIEW_ACCESS_FAILED');
+ const matches=[...r.stdout.matchAll(/^set-cookie:\s*([^=;\s]+)=([^;\r\n]*)([^\r\n]*)/gim)].filter(m=>m[1]==='_vercel_jwt');assert.equal(matches.length,1,'COOKIE_MISSING');
+ const m=matches[0],attrs=m[3];assert.match(attrs,/;\s*secure(?:;|$)/i,'COOKIE_SECURE');assert.match(attrs,/;\s*httponly(?:;|$)/i,'COOKIE_HTTP_ONLY');
+ const domain=attrs.match(/;\s*domain=([^;]+)/i)?.[1];assert.ok(!domain||domain.toLowerCase()===new URL(d.url).hostname,'COOKIE_DOMAIN_SCOPE');
+ const path=attrs.match(/;\s*path=([^;]+)/i)?.[1]||'/';assert.equal(path,'/');
+ const now=Date.now();let end=now+2*3600000;const maxAge=attrs.match(/;\s*max-age=(\d+)/i)?.[1],expires=attrs.match(/;\s*expires=([^;]+)/i)?.[1];if(maxAge)end=Math.min(end,now+Number(maxAge)*1000);if(expires&&Number.isFinite(Date.parse(expires)))end=Math.min(end,Date.parse(expires));try{const p=JSON.parse(Buffer.from(m[2].split('.')[1],'base64url'));if(p.exp)end=Math.min(end,p.exp*1000);}catch{}assert.ok(end>now,'COOKIE_EXPIRED');
+ const cookies=[{name:m[1],value:m[2],domain:new URL(d.url).hostname,path:'/',httpOnly:true,secure:true,sameSite:'Lax',expires:Math.floor(end/1000)}];
+ fs.writeFileSync('.staging-private/v24-preview-access.json',JSON.stringify({url:d.url,cookies,createdAt:new Date(now).toISOString(),expiresAt:new Date(end).toISOString()}));
+ const proof={complete:true,bootstrapOnly:true,host:new URL(d.url).hostname,hostOnly:true,secure:true,httpOnly:true,effectiveLifetimeSeconds:Math.floor((end-now)/1000),rawHeadersSaved:false,valuesPrinted:false,protectionUnchanged:true};fs.writeFileSync('docs/v2-4-preview-access-proof.json',JSON.stringify(proof,null,2)+'\n');console.log(JSON.stringify(proof));
+}catch(e){console.log(JSON.stringify({failure:'PREVIEW_ACCESS_REJECTED',code:e.code,reason:(e.message||'').match(/^[A-Z_]+/)?.[0]||'CHECK_FAILED'}));process.exitCode=1;}finally{if(fs.existsSync(body))fs.unlinkSync(body);}

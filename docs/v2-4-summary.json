@@ -1,7 +1,7 @@
 {
-  "sourceCommit": "5c37a3259092822d3b7faef81784e063d87df198",
+  "sourceCommit": "efebbb49d9318ecf5f78781269ef5bc04ff65c8c",
   "status": "PARTIAL",
-  "hosted": "READY; exact Preview access approval pending",
+  "hosted": "Corrected Preview READY; new exact-host access approval and targeted regression pending",
   "productionChanges": "NONE",
   "liveBilling": "OFF",
   "results": {
@@ -11,7 +11,7 @@
     },
     "unit-result": {
       "complete": true,
-      "checks": 31
+      "checks": 32
     },
     "staging-result": {
       "complete": true,
@@ -57,5 +57,28 @@
     "exitCode": 0,
     "productionChanges": "NONE"
   },
-  "secrets": 0
+  "secrets": 0,
+  "initialHosted": {
+    "url": "https://minnade-tsukuru-staging-4wqvksxt4-sonetokiyas-projects.vercel.app",
+    "sourceCommit": "5c37a32",
+    "checks": 77,
+    "completeForExecutedChecks": true,
+    "scheduleBugDetected": true
+  },
+  "correctedRealProviderLocal": {
+    "file": "v2-4-schedule-recovery-lifecycle.json",
+    "checks": 16,
+    "complete": true
+  },
+  "latestPreview": {
+    "url": "https://minnade-tsukuru-staging-8531792ul-sonetokiyas-projects.vercel.app",
+    "state": "READY",
+    "acceptanceComplete": false
+  },
+  "cleanup": {
+    "cookieFiles": 0,
+    "newSyntheticRefreshSessionsRevoked": 4,
+    "forwardersStopped": true,
+    "browsersClosed": true
+  }
 }
