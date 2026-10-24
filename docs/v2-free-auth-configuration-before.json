@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-24T05:39:10.241Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "siteUrl": "https://minnade-tsukuru.vercel.app",
+  "redirects": [
+    "http://localhost:3002/**",
+    "http://localhost:3000/**",
+    "https://minnade-tsukuru.vercel.app/**"
+  ],
+  "customSmtpEnabled": true,
+  "smtpCredentialValueRead": false,
+  "recoveryTemplate": "Existing branded Japanese ConfirmationURL link; no confirm landing yet",
+  "observedVia": "Supabase Dashboard read-only",
+  "providerIncident": {
+    "url": "https://status.supabase.com/incidents/01M5J8ZQ04EZXAYF10Q75MGC1T",
+    "state": "Monitoring",
+    "affected": "Management API/Project Creation; no project Auth outage established"
+  },
+  "productionChanged": false
+}

@@ -29,6 +29,8 @@ export function createFinalDeletionPreparation(
   };
   return {
     async prepare(job) {
+      // Verify billing stop before anonymization or irreversible storage effects.
+      if (prepareBilling) await prepareBilling(job);
       await rpc("mvp_prepare_deletion", args(job));
       await deletionCheckpoint(client, job, "after_prepare");
       const candidates = await rpc(

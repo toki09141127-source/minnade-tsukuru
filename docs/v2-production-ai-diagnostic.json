@@ -1,0 +1,51 @@
+{
+  "scope": "one provider diagnostic on existing synthetic staging context; DB read only",
+  "startedAt": "2026-10-23T19:10:05.321Z",
+  "calls": 1,
+  "totalCallsIncludingPrior": 3,
+  "complete": false,
+  "productionChanges": "NONE",
+  "rawOutputSaved": false,
+  "httpStatus": 200,
+  "completed": true,
+  "tokens": {
+    "input": 687,
+    "output": 215
+  },
+  "estimatedUsd": 0.0006188000000000001,
+  "outputContract": {
+    "messageSafe": true,
+    "draftSafe": true,
+    "nonDraftTextEmpty": true,
+    "lists": {
+      "unresolved": {
+        "isArray": true,
+        "count": 1,
+        "unsafeItems": 0,
+        "tooManyRefs": 0,
+        "unknownRefs": 0,
+        "nonHighlightedRefs": 0
+      },
+      "nextActions": {
+        "isArray": true,
+        "count": 1,
+        "unsafeItems": 0,
+        "tooManyRefs": 0,
+        "unknownRefs": 0,
+        "nonHighlightedRefs": 0
+      },
+      "highlightNotes": {
+        "isArray": true,
+        "count": 1,
+        "unsafeItems": 0,
+        "tooManyRefs": 0,
+        "unknownRefs": 0,
+        "nonHighlightedRefs": 1
+      }
+    }
+  },
+  "failure": {
+    "code": "INVALID_OUTPUT"
+  },
+  "finishedAt": "2026-10-23T19:10:11.827Z"
+}

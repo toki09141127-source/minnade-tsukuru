@@ -1,0 +1,23 @@
+{
+  "scope": "AI source-constraint fix only; Hosted staging browser/API, real provider tested separately",
+  "complete": false,
+  "checks": [
+    {
+      "name": "stopped AI visible; request disabled",
+      "pass": true
+    },
+    {
+      "name": "human log/draft controls remain accessible without writes",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "preview": "https://minnade-tsukuru-staging-gt5g3hmxp-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "eafb75ec5f374d2dbdb2655d81576d4efe772c6d",
+  "failure": {
+    "code": "CHECK_FAILED",
+    "label": "ASSERTION_OR_UI_TIMEOUT"
+  },
+  "browserClosed": true
+}

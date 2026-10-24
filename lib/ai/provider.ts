@@ -183,6 +183,8 @@ export class SyntheticProvider implements AiProvider {
 }
 export function aiConfigured() {
   return (
+    process.env.VERCEL_ENV !== "production" &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL !== "https://joedeuyrzimqyjapqpyh.supabase.co" &&
     process.env.AI_ENABLED === "true" &&
     ((process.env.AI_PROVIDER === "openai" && !!process.env.OPENAI_API_KEY) ||
       (process.env.AI_PROVIDER === "synthetic" &&

@@ -1,0 +1,38 @@
+{
+  "preview": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+  "deploymentId": "dpl_5q2zPWdTTBPFqHqittqCTEjru6Tz",
+  "observedAt": "2026-10-23T21:48:24.048Z",
+  "userApproved": [
+    "exact-host temporary cookie",
+    "iPhone share link",
+    "two staging Auth callback URLs"
+  ],
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "callbackUrls": [
+    "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app/auth/callback",
+    "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app/auth/callback?next=reset-password"
+  ],
+  "redirectCountBefore": 6,
+  "redirectCountAfter": 8,
+  "siteUrlUnchanged": true,
+  "share": "REPLACED by approved b7zdudurb share; old link revoked by Vercel Hobby replacement",
+  "shareValueSaved": false,
+  "cookie": {
+    "hostOnly": true,
+    "secure": true,
+    "httpOnly": true,
+    "maximumLifetimeSeconds": 7200,
+    "deletedAfterHostedCheck": true
+  },
+  "syntheticBrowserClosed": true,
+  "webhookForwarding": "NOT STARTED",
+  "iphoneDiagnosticRetry": "FAIL: AUTH-01 by human report",
+  "hostedEvidence": "v2-auth-callback-preview-result.json",
+  "rootCause": "UNCONFIRMED",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "realOpenAICalls": 0,
+  "physicalDiagnosticRetry": "FAIL: AUTH-01 by iPhone report",
+  "newEvidence": "v2-recovery-link-reuse-evidence.json",
+  "supersededAt": "2026-10-23T22:13:49.025Z"
+}

@@ -1,4 +1,5 @@
-import { adminCaller, adminJson, adminStatus } from "@/lib/admin/server";
+import { adminCaller, adminJson, adminStatus, adminSameOrigin } from "@/lib/admin/server";
+import { aiConfigured } from "@/lib/ai/provider";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export async function GET(req: Request) {
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
       ["overview", "system", "ai"].includes(q.get("section") || "overview")
     )
       data.detail.startup = {
-        ai: process.env.AI_ENABLED === "true",
+        ai: aiConfigured(),
         deletion_intake: process.env.MVP_ACCOUNT_REQUESTS_ENABLED === "true",
         deletion_worker: process.env.MVP_ACCOUNT_FINALIZE_ENABLED === "true",
         forced_publish: process.env.MVP_DRAFTS_ENABLED === "true",
@@ -44,20 +45,7 @@ export async function POST(req: Request) {
   try {
     const auth = await adminCaller(req);
     if (auth.response) return auth.response;
-    const rawOrigin = req.headers.get("origin");
-    let sameOrigin = false;
-    try {
-      const origin = new URL(rawOrigin || "");
-      sameOrigin =
-        origin.origin === rawOrigin &&
-        origin.host === req.headers.get("host") &&
-        (process.env.VERCEL
-          ? origin.protocol === "https:" &&
-            origin.hostname === process.env.VERCEL_URL
-          : origin.protocol === "http:" &&
-            ["127.0.0.1", "localhost"].includes(origin.hostname));
-    } catch {}
-    if (!sameOrigin || req.headers.get("sec-fetch-site") === "cross-site")
+    if (!adminSameOrigin(req))
       return adminJson({ error: "ORIGIN_REJECTED" }, 403);
     if (
       !req.headers.get("content-type")?.startsWith("application/json") ||

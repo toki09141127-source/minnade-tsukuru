@@ -1,0 +1,19 @@
+{
+  "at": "2026-10-24T06:11:24.296Z",
+  "source": "Production Supabase Dashboard Auth log metadata only",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "testAccountFirstVerify": {
+    "timeJST": "2026-10-24 14:41:27",
+    "status": 303,
+    "targetEmailMatchedInMemory": true
+  },
+  "nearbyInvalidVerify": {
+    "timeJST": "2026-10-24 14:41:37",
+    "status": 403,
+    "exactAccountAttribution": false
+  },
+  "firstConsumer": "UNCONFIRMED",
+  "cause": "First verification succeeded and issued code; subsequent link/session return failed. Prefetch/browser-state attribution remains unconfirmed.",
+  "rawLogsSaved": false,
+  "productionChanges": "NONE"
+}

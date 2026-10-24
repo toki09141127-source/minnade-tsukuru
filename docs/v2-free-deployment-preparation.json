@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-24T05:39:40.102Z",
+  "target": "production",
+  "project": "prj_ve0GfqaxCLAoywfjAn0vcbWoxVw1",
+  "ai": "OFF",
+  "liveBilling": "OFF",
+  "aliasPromoted": false,
+  "complete": true,
+  "sourceManifestSHA256": "0418fb2302c49a8cd391010fac3fd59ed5b9b6538b7e27f03a2150f2068635cb",
+  "sourceFiles": 213,
+  "applicationBytesMatchFrozenSource": true,
+  "deploymentMetadataChanges": [
+    "Production project identity",
+    "Preserve existing daily publish cron only"
+  ],
+  "productionCredentialsMatched": true,
+  "publicKey": "Existing production anon JWT retained; local file uses a separate publishable key",
+  "preparedOnly": true,
+  "deploymentCreated": false
+}

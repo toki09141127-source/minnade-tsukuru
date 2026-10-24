@@ -1,0 +1,44 @@
+{
+  "scope": "AI source-constraint fix only; Hosted staging browser/API, real provider tested separately",
+  "complete": true,
+  "checks": [
+    {
+      "name": "stopped AI visible; request disabled",
+      "pass": true
+    },
+    {
+      "name": "human log/draft controls remain accessible without writes",
+      "pass": true
+    },
+    {
+      "name": "completed work still renders",
+      "pass": true
+    },
+    {
+      "name": "Preview access does not grant application authorization",
+      "pass": true
+    },
+    {
+      "name": "AI stop remains enforced server-side",
+      "pass": true
+    },
+    {
+      "name": "no application error, hydration failure, 5xx or authentication loop",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "preview": "https://minnade-tsukuru-staging-gt5g3hmxp-sonetokiyas-projects.vercel.app",
+  "sourceCommit": "eafb75ec5f374d2dbdb2655d81576d4efe772c6d",
+  "browser": {
+    "uncaught": 0,
+    "appConsoleErrors": 0,
+    "http500": 0,
+    "hydrationErrors": 0,
+    "app401": 0,
+    "excludedExternalConsole": 3
+  },
+  "syntheticCreatorSessionsSignedOut": true,
+  "browserClosed": true
+}

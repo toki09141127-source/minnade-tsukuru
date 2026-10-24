@@ -1,0 +1,61 @@
+{
+  "scope": "remaining real provider contracts + bounded system publication; draft user credit gate is retained, no Hosted real-AI claim",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "startedAt": "2026-10-23T19:21:01.114Z",
+  "apiCalls": 2,
+  "maxCalls": 2,
+  "priorCalls": 6,
+  "totalCallLimit": 8,
+  "complete": true,
+  "checks": [
+    {
+      "name": "real draft response + read-only DB validator; not saved or accepted as a user draft",
+      "pass": true
+    },
+    {
+      "name": "forced publish organization real response/schema + staging finish",
+      "pass": true
+    },
+    {
+      "name": "cross-room outsider denied before publication",
+      "pass": true
+    },
+    {
+      "name": "one completed snapshot after real publication assistance",
+      "pass": true
+    },
+    {
+      "name": "feature stop blocks new claims",
+      "pass": true
+    }
+  ],
+  "usage": [
+    {
+      "scenario": "draft assist contract only (manual credit limit retained)",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "inputTokens": 2718,
+      "outputTokens": 422,
+      "durationMs": 3884,
+      "estimatedUsd": 0.0017624,
+      "contextChars": 2611
+    },
+    {
+      "scenario": "forced publish organization",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 2693,
+      "outputTokens": 375,
+      "durationMs": 2873,
+      "estimatedUsd": 0.0016771999999999998,
+      "contextChars": 2614
+    }
+  ],
+  "productionChanges": "NONE",
+  "paymentConfigurationChanged": false,
+  "manualDraftBlockedByCredits": true,
+  "totalCallsIncludingPrior": 8,
+  "estimatedTotalUsd": 0.0034395999999999997,
+  "originalAiStopRestored": true,
+  "testSessionsSignedOut": true,
+  "finishedAt": "2026-10-23T19:21:18.021Z"
+}

@@ -1,0 +1,21 @@
+{
+  "scope": "PRODUCTION READ ONLY; encrypted backup outside repository",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "startedAt": "2026-10-23T18:31:14.920Z",
+  "complete": true,
+  "database": {
+    "bytes": 2454288,
+    "sha256": "06e85f50a46e6058da3fc8105369ea6c272a963dd95f3390a7b5dffb891dc49e"
+  },
+  "roles": {
+    "bytes": 5652,
+    "sha256": "1801868f35b698508c88a866d8b1bb931530eb638bde48dff7772ad54764bd29"
+  },
+  "serverVersion": "17.6",
+  "tableCount": 78,
+  "storageObjectCount": 19,
+  "storageBytes": 6270619,
+  "databaseChanged": false,
+  "consistency": "DB repeatable-read snapshot; Storage metadata before/after equal; no production writes paused; cross-service atomic recovery point not guaranteed",
+  "finishedAt": "2026-10-23T18:34:08.741Z"
+}

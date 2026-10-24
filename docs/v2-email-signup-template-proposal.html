@@ -1,0 +1,12 @@
+{{ if eq .RedirectTo "https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app/auth/callback" }}
+<h2>みんつく：メールアドレスの確認</h2>
+<p>ご自身で申し込んだ場合は、登録・再設定を始めた端末の同じブラウザで下の確認画面を開いてください。</p>
+<p><a href="https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app/auth/confirm#signup_token={{ .TokenHash }}">メール確認の画面を開く</a></p>
+<p>確認画面のボタンを押して手続きを続けてください。メールのリンクは他の人へ送らないでください。</p>
+<p>心当たりがない場合は、このメールを無視してください。</p>
+{{ else }}
+<h2>Confirm your email address</h2>
+
+<p>Follow the link below to confirm this email address and finish signing up.</p>
+<p><a href="{{ .ConfirmationURL }}">Confirm email address</a></p>
+{{ end }}

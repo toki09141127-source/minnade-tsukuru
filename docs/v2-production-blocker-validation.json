@@ -1,0 +1,50 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "typecheck",
+      "pass": true
+    },
+    {
+      "name": "relevant-lint",
+      "pass": true
+    },
+    {
+      "name": "scripts/rc/production-boundary-unit.cjs",
+      "pass": true
+    },
+    {
+      "name": "scripts/rc/unit.cjs",
+      "pass": true
+    },
+    {
+      "name": "scripts/billing/unit.cjs",
+      "pass": true
+    },
+    {
+      "name": "scripts/ai/unit.cjs",
+      "pass": true
+    },
+    {
+      "name": "docs/account-deletion-adapter-check.cjs",
+      "pass": true
+    },
+    {
+      "name": "docs/account-deletion-db-check.cjs",
+      "pass": true
+    },
+    {
+      "name": "docs/deletion-retention-check.cjs",
+      "pass": true
+    },
+    {
+      "name": "docs/deletion-preflight-check.cjs",
+      "pass": true
+    },
+    {
+      "name": "build",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE"
+}

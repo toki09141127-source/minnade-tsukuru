@@ -1,0 +1,12 @@
+{
+  "complete": false,
+  "scope": "Hosted diagnostic UI only; no real email or session exchange",
+  "checks": [],
+  "authRequestsBlocked": 0,
+  "productionChanges": "NONE",
+  "url": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+  "failure": "HOSTED_DIAGNOSTIC_CHECK_FAILED",
+  "browserClosed": true,
+  "cookieDeleted": true,
+  "observedAt": "2026-10-23T21:46:51.669Z"
+}

@@ -1,0 +1,11 @@
+{
+  "mode": "status",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "at": "2026-10-24T05:42:34.588Z",
+  "complete": true,
+  "guardedTables": 0,
+  "activeCron": 2,
+  "deletionPaused": false,
+  "buffer": false,
+  "ownerTablePresent": false
+}

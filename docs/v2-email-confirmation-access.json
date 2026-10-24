@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-24T06:31:32.893Z",
+  "preview": "https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "explicitApproval": true,
+  "hostedChecks": 5,
+  "hostedComplete": true,
+  "authRequests": 0,
+  "cookieDeleted": true,
+  "browserClosed": true,
+  "signupTemplateSavedAndReloadMatched": true,
+  "recoveryTemplateSavedAndReloadMatched": true,
+  "templatesConditionalOnExactRedirectTo": true,
+  "callbacksAdded": 2,
+  "totalCallbacksAfter": 12,
+  "siteUrlChanged": false,
+  "smtpChanged": false,
+  "sharedLink": "ACTIVE for exact Preview; old share replaced after approved Hobby confirmation",
+  "physicalSignup": "PENDING",
+  "physicalRecovery": "PENDING",
+  "productionChanges": "NONE",
+  "shareLinkValueRead": false,
+  "shareLinkSaved": false,
+  "shareCleanup": "PENDING physical-device verification",
+  "forwardingStarted": false,
+  "templateSHA256": {
+    "signup": "c87192bda55791a656cf4bd0ba02a7bf88f99729bb41b4307193abb899376009",
+    "recovery": "4e1ff0776aaae45f778acdfd00505d6b09ea485a41aa1fb883731de29867eb5e"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "complete": true,
+  "scope": "Exact disposable iPhone account only; read-only counts",
+  "humanLogout": "PASS",
+  "activeAuthSessions": 0,
+  "activeRefreshTokens": 0,
+  "existingAccessJwtImmediateRevocation": "Not claimed; token expiry still applies",
+  "cookieFileDeleted": true,
+  "shareStopped": true,
+  "shareEvidence": "Vercel UI Only people with access",
+  "forwardingProcessesRemaining": 0,
+  "productionChanges": "NONE",
+  "observedAt": "2026-10-23T22:19:53.003Z"
+}

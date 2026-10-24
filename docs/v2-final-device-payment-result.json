@@ -1,0 +1,59 @@
+{
+  "complete": true,
+  "dateJst": "2026-10-24",
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "evidence": "Direct human reports plus read-only staging DB and exact-customer Stripe connector verification",
+  "android": {
+    "testPaymentReturn": "PASS human report",
+    "plus500Displayed": "PASS human report",
+    "sessionAfterReload": "PASS human report",
+    "stripeSubscriptions": 1,
+    "stripeLivemode": false,
+    "stripeStatus": "active",
+    "stripeCycle": "month",
+    "stripeUnitAmountJpy": 780,
+    "stripeIdMatchesDatabase": true,
+    "databasePlan": "plus",
+    "databaseStatus": "active",
+    "checkoutOperations": 1,
+    "checkoutOperationStatus": "complete",
+    "processedEventCount": 1
+  },
+  "iphone": {
+    "testPaymentReturn": "PASS human report",
+    "plus500Displayed": "PASS human report",
+    "sessionAfterReload": "PASS human report",
+    "stripeSubscriptions": 1,
+    "stripeLivemode": false,
+    "stripeStatus": "active",
+    "stripeCycle": "month",
+    "stripeUnitAmountJpy": 780,
+    "stripeIdMatchesDatabase": true,
+    "databasePlan": "plus",
+    "databaseStatus": "active",
+    "checkoutOperations": 1,
+    "checkoutOperationStatus": "complete",
+    "processedEventCount": 1
+  },
+  "bothAccountsCreditVerification": {
+    "currentPaidPeriodRowsPerAccount": 1,
+    "grantedPerAccount": 500,
+    "consumedOrReservedPerAccount": 0,
+    "unprocessedDatabaseEventsPerAccount": 0,
+    "earlierFreePeriodPreservedSeparately": true,
+    "noDuplicateSubscriptionOrCurrentPeriodGrantObserved": true
+  },
+  "webhookDelivery": {
+    "forwarded": 6,
+    "success": 2,
+    "retryable": 4,
+    "note": "Both accounts converged via one processed canonical-state event each. Four deliveries were retryable; their exact cause is unconfirmed because raw payload/logs were not retained. This is not a claim that all six deliveries succeeded.",
+    "extraCheckoutCreated": false,
+    "manualEventReplay": false
+  },
+  "paymentWindowStopped": true,
+  "paymentWindowCookieRemoved": true,
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "accountDeletion": "Separate human acceptance pending"
+}

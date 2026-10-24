@@ -1,0 +1,659 @@
+{
+  "scope": "Private local PostgreSQL restore of actual production public/auth/storage/migration schemas; no hosted Auth/Storage API emulation",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "checks": [
+    {
+      "name": "TABLE_COUNT_auth_audit_log_entries",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_custom_oauth_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_flow_state",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_identities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_instances",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_amr_claims",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_challenges",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_factors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_recovery_code_sets",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_recovery_codes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_authorizations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_client_states",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_clients",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_consents",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_one_time_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_refresh_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_saml_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_saml_relay_states",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_schema_migrations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_scim_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_scim_users",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sessions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sso_domains",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sso_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_users",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_webauthn_challenges",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_webauthn_credentials",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_actors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_capabilities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_checkpoints",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_control",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_effects",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_prepared",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_deletion_jobs",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_deletion_retention",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_departed_authors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_attachment_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_control",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_queue",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_reviews",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_scheduler_config",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_scheduler_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_test_authorization",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_decisions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_event_members",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_events",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_moderation_actions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_moderation_operators",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_mvp_moderation_capabilities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_mvp_rate_limits",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_novel_drafts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_likes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_publication_reviews",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_posts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_profiles",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_public_profiles",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_report_intake",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_report_resolutions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_reports",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_creation_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_exclusions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_join_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_like_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_likes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_members",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_pre_archive_notes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_rooms",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_work_drafts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets_analytics",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets_vectors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_migrations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_objects",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_s3_multipart_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_s3_multipart_uploads_parts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_vector_indexes",
+      "pass": true
+    },
+    {
+      "name": "POLICIES_MATCH",
+      "pass": true
+    },
+    {
+      "name": "TABLE_EFFECTIVE_ACL_AND_RLS_MATCH",
+      "pass": true
+    },
+    {
+      "name": "CONSTRAINTS_MATCH",
+      "pass": true
+    },
+    {
+      "name": "FUNCTION_TRIGGER_INDEX_DEFINITIONS_MATCH",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_0",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_1",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_2",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_3",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_4",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_5",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_6",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_7",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_8",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_9",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_10",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_11",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_12",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_13",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_14",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_15",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_16",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_17",
+      "pass": true
+    },
+    {
+      "name": "STORAGE_OBJECT_HASH_18",
+      "pass": true
+    },
+    {
+      "name": "V2 tables present",
+      "pass": true
+    },
+    {
+      "name": "Admin remains unassigned",
+      "pass": true
+    },
+    {
+      "name": "Old rooms keep legacy mode",
+      "pass": true
+    },
+    {
+      "name": "Auth deletion guards retained",
+      "pass": true
+    },
+    {
+      "name": "059 changes required consent without backfilling original profiles",
+      "pass": true
+    }
+  ],
+  "complete": false,
+  "limitations": [
+    "Vault root encryption keys, external OAuth/SMTP credentials, Supabase service configuration and hosted service versions require separate operator recovery",
+    "DPAPI backup key requires this Windows account/profile; off-device recovery not yet demonstrated",
+    "Role membership grantor is the isolated restore administrator; membership options are retained and restored roles cannot log in",
+    "Unavailable managed extensions use inert local type/contracts; no scheduler, network, Vault root key or hosted Auth/Storage service recovery is certified"
+  ],
+  "unavailableManagedExtensions": [
+    "pg_cron",
+    "http",
+    "supabase_vault",
+    "pg_net"
+  ],
+  "platformContracts": [
+    "http",
+    "pg_net",
+    "pg_cron",
+    "vault"
+  ],
+  "currentPhase": "final rehearsal checks",
+  "aclNormalization": "pg_restore preserves archive owners; null ACL expanded with acldefault and compared via aclexplode including grantor/grantee/options; raw explicit owner-default and null are equivalent",
+  "constraintNormalization": "PostgreSQL 18 table NOT NULL catalog entries omitted from comparison with PostgreSQL 17 pg_constraint; archived NOT NULL DDL remains applied",
+  "structureCount": 396,
+  "tableCount": 78,
+  "storageObjectCount": 19,
+  "backupSha256": "06e85f50a46e6058da3fc8105369ea6c272a963dd95f3390a7b5dffb891dc49e",
+  "restoreComplete": true,
+  "productionAppliedHash": {
+    "pass": true,
+    "count": 38,
+    "combinedSha256": "62c7f4e7fec1494b4080a901ccd0adf5e05cec7ac2718bae978a206b0c9657ed"
+  },
+  "skippedHistoricalMigrations": [
+    36,
+    40,
+    41
+  ],
+  "maintenanceHookRehearsal": true,
+  "localMaintenancePrincipal": "Isolated restore administrator added to local allowlist only; production SQL unchanged",
+  "migrationRehearsal": [
+    {
+      "number": 42,
+      "file": "202610230042_v2_membership.sql",
+      "sha256": "5c4898e0e58c9548caefbe13aeba210a90a7856d270f80ffe89dfb85c357e53a",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 2
+    },
+    {
+      "number": 43,
+      "file": "202610230043_v2_creation_log.sql",
+      "sha256": "37d1d5c79c7755a015b6a3728260c4574ce26558cc6ead03ffbd288bac378ed4",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 3
+    },
+    {
+      "number": 44,
+      "file": "202610230044_v2_publication.sql",
+      "sha256": "ebeb044fdedaf552ae6272a67e95767ce24802d138418caa74f7e3a11c8f4701",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 3
+    },
+    {
+      "number": 45,
+      "file": "202610230045_v2_publication_withdrawal.sql",
+      "sha256": "76358fa99c18aa00f458e7f9e02bf24aee9a3a7c4ef7e8713e4e9af2fda8e0db",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 3
+    },
+    {
+      "number": 46,
+      "file": "202610230046_ai_creator.sql",
+      "sha256": "508af940a5a7461b923c514a24a6a76abd8e1a12fe397cd63200bc4a6ba0118b",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 6
+    },
+    {
+      "number": 47,
+      "file": "202610230047_ai_publication.sql",
+      "sha256": "fdddf9763ff1dadd4442a18713cadcd39b316fafe2912f829e819e977a426193",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 7
+    },
+    {
+      "number": 48,
+      "file": "202610230048_ai_control_scope.sql",
+      "sha256": "a7c0762eb0c028b59236c0dc67bab44f35d12e2b1fd3b303a0ce2b75eb39e7af",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 7
+    },
+    {
+      "number": 49,
+      "file": "202610230049_ai_bounded_publication.sql",
+      "sha256": "72da871b19ea5215da2c210cbfa4f765f97578852db34bc452f9546a49d903a2",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 7
+    },
+    {
+      "number": 50,
+      "file": "202610230050_billing_foundation.sql",
+      "sha256": "cf530be811d39113ddd2f3c25c7a74d8a3fa03d1238774286ee63078a8f42ffe",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 14
+    },
+    {
+      "number": 51,
+      "file": "202610230051_ai_credit_settings.sql",
+      "sha256": "b1800a658176e4b9aeeaa686c6994d834eaffec069c8292753f96d1f05de9db7",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 14
+    },
+    {
+      "number": 52,
+      "file": "202610230052_billing_deletion_fence.sql",
+      "sha256": "9622ec6719d619b2468736362b64911488af00d716d1c56e6538517eb210d75e",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 14
+    },
+    {
+      "number": 53,
+      "file": "202610230053_billing_retry_state.sql",
+      "sha256": "e09feb63978689a1aac452c0e15f2805064742cafa2f3460e48b93afc09f49a4",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 14
+    },
+    {
+      "number": 54,
+      "file": "202610230054_billing_period_timing.sql",
+      "sha256": "599a0253f03b30c7cf43953b4d08c629bd82771fe0dbaeffabc5cdddf65df03a",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 14
+    },
+    {
+      "number": 55,
+      "file": "202610230055_admin_foundation.sql",
+      "sha256": "b28707276cee2cc5a26956678a279eca58870b6b2828406099bc397964067cf0",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 22
+    },
+    {
+      "number": 56,
+      "file": "202610230056_admin_write_guards.sql",
+      "sha256": "9809fce6d3b0026b706a5696b6e684d1f53a0cd7d5c1ef9b037fca17358ebc52",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 22
+    },
+    {
+      "number": 57,
+      "file": "202610230057_admin_read_models.sql",
+      "sha256": "9ca46b5c57bc9aefc6f7fa3997574fbe2ed926fb2bbb4bf7efe199831db7bc64",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 22
+    },
+    {
+      "number": 58,
+      "file": "202610240058_v2_buffer_capacity.sql",
+      "sha256": "f33c473401238e214df43d05cffb9d919e4a1ba10d4351649dcff89abda5e026",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 22
+    },
+    {
+      "number": 59,
+      "file": "202610240059_v2_release_consent.sql",
+      "sha256": "a43671c978a33cb1405936cbc3e643c4596eefe92939563a3afcf1de03821331",
+      "pass": true,
+      "legacyRowsAndOriginalColumnHashesUnchanged": true,
+      "legacyRpcSignaturesUnchanged": true,
+      "newTableRlsAndWriteBoundary": true,
+      "newTables": 22
+    }
+  ],
+  "rehearsalComplete": true,
+  "failure": {
+    "error": "PRIVATE_OPERATION_FAILED",
+    "code": "ERR_ASSERTION"
+  },
+  "failedAt": "final rehearsal checks",
+  "serverStopped": true,
+  "plaintextRestoreRemoved": true
+}

@@ -699,6 +699,18 @@
       "requiredOnFresh": true,
       "purpose": "V2 capacity-aware Buffer recruitment; legacy 45-slot semantics preserved",
       "dependency": "main029-041 and V2 042-057"
+    },
+    {
+      "file": "202610240059_v2_release_consent.sql",
+      "legacyFile": null,
+      "number": 59,
+      "source": "V2 RC release blocker",
+      "sha256": "a43671c978a33cb1405936cbc3e643c4596eefe92939563a3afcf1de03821331",
+      "productionApplied": false,
+      "stagingHistory": "incremental RC059 applied; no consent backfill; production not applied",
+      "requiredOnFresh": true,
+      "purpose": "Explicit 2026-10-24 terms/privacy reconsent; no profile backfill",
+      "dependency": "001-058"
     }
   ]
 }

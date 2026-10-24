@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-24T05:44:30.763Z",
+  "productionChanged": false,
+  "accountPresent": true,
+  "emailConfirmed": true,
+  "confirmationSentAt": "2026-10-24T05:41:02.023Z",
+  "signInRecorded": false,
+  "sessions": 0,
+  "auditEvents": [],
+  "humanReported": "Confirmation link could not be verified; signup return FAIL",
+  "columns": [
+    {
+      "table_name": "audit_log_entries",
+      "column_name": "created_at"
+    },
+    {
+      "table_name": "audit_log_entries",
+      "column_name": "payload"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "auth_code_issued_at"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "authentication_method"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "code_challenge_method"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "created_at"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "updated_at"
+    },
+    {
+      "table_name": "flow_state",
+      "column_name": "user_id"
+    }
+  ],
+  "flows": [
+    {
+      "method": "unknown",
+      "pkceMethod": "s256",
+      "createdAt": "2026-10-24T05:41:02.003Z",
+      "codeIssuedAt": "2026-10-24T05:41:27.652Z"
+    }
+  ],
+  "finding": "Email marked confirmed; no session/sign-in observed at initial check. Failure is the return/session stage, first consumer of verify link unknown.",
+  "prefetchAttribution": "UNCONFIRMED",
+  "passwordLoginFollowup": {
+    "observedAt": "2026-10-24T05:47:58.287Z",
+    "humanReported": "completed",
+    "confirmed": true,
+    "signed_in": true,
+    "sessions": 1,
+    "mailBrowserNotSpecified": true
+  },
+  "releaseDecision": "NO-GO: signup email callback failed; normal password login does not clear this gate"
+}

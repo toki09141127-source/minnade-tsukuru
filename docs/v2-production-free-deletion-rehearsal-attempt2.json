@@ -1,0 +1,16 @@
+{
+  "complete": false,
+  "checks": [
+    {
+      "name": "Real intake and lease fence Free account; no external effects",
+      "pass": true
+    }
+  ],
+  "scope": "production Free adapter + actual staging schema, rollback only",
+  "productionChanges": "NONE",
+  "externalEffects": 0,
+  "failure": {
+    "code": "P0001",
+    "check": "WORKER_ONLY"
+  }
+}

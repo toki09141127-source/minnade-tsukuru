@@ -1,0 +1,32 @@
+{
+  "observedAt": "2026-10-23T22:04:10.648Z",
+  "stagingOnly": true,
+  "preview": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+  "humanCode": "AUTH-01",
+  "humanRecovery": "FAIL",
+  "latestEmailRouting": {
+    "expectedStagingProject": true,
+    "expectedPreviewCallback": true,
+    "recoveryType": true,
+    "linkFollowedByAgent": false
+  },
+  "readOnlyMetadata": {
+    "recoverySentAt": "2026-10-23T21:49:34.302Z",
+    "codeIssuedAt": "2026-10-23T21:49:53.303Z",
+    "newSessionAfterRequest": false
+  },
+  "authLogCategories": {
+    "firstVerifyAtJST": "06:49:53",
+    "firstStatus": 303,
+    "firstActorMatchesDisposable": true,
+    "rejectedAccessAtJST": "06:50:25",
+    "rejectedCategory": "invalid_or_expired",
+    "rejectedStatus": 403
+  },
+  "finding": "The link was accepted before the reported invalid/expired rejection; the source of the first access is not proven",
+  "prefetchAttribution": "UNCONFIRMED",
+  "rawLogsSaved": false,
+  "credentialsOrUrlsSaved": false,
+  "emailSentByAgent": false,
+  "productionChanges": "NONE"
+}

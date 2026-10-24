@@ -1,0 +1,33 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Real intake and lease fence Free account; no external effects",
+      "pass": true
+    },
+    {
+      "name": "Production Free/UI OFF adapter confirms once and replays safely on real schema",
+      "pass": true
+    },
+    {
+      "name": "Billing confirmation precedes profile preparation and Auth removal",
+      "pass": true
+    },
+    {
+      "name": "Actual V2 preparation preserves contribution/FK/Storage readiness contract",
+      "pass": true
+    },
+    {
+      "name": "AI profiles cleared while Auth remains intact",
+      "pass": true
+    },
+    {
+      "name": "Flags, fixture profile and job state restored by rollback",
+      "pass": true
+    }
+  ],
+  "scope": "production Free adapter + actual staging schema, rollback only",
+  "productionChanges": "NONE",
+  "externalEffects": 0,
+  "rolledBack": true
+}

@@ -1884,3 +1884,177 @@ Cookie削除、browser/forwarder終了、14合成アカウントsessions/refresh
 主変更: .gitattributes、canonical migration filenames/058、Buffer Preview write guard、synthetic provider exact-host boundary、scripts/rc/*、scripts/admin/behavior.cjs、legacy installer guard、docs/V2_RC_*とv2-rc-*証跡/TASK/HANDOFF。旧local runnerの一括置換は自動承認レビューに拒否されたため、置換せず追加RC runnerで完遂。
 
 Known Issues: 実OpenAI429、Android/iPhone RC実機、managed extension新規install/別端末restore、Auth/SMTPログ、live Stripe OFF。production allowlist/Owner指定/最新backup復元/移行リハーサル/価格credit/課金法務は別ゲート。次は本番移行前最終検収。新機能追加freeze。RC branch/tagとpush結果は最終Git記録参照。
+
+## V2本番移行前の最終検収・途中記録（2026-10-24 JST）
+本番変更NONE。RC release/v2-rc1 / 開始HEAD a4cbb24。最新本番暗号化backupと隔離restore/rehearsalは範囲限定PASS（docs/v2-production-*-result.json）。本番Owner候補は本人が選択済み、権限付与なし。実AIはGreeting PASS後にINVALID_OUTPUT。1回の診断で未Highlight投稿のHighlight参照を検出。validatorを緩めず、生成schemaに参照allowlistを追加。ローカルAI59件、型、関連lint PASS。実AI再検収・build・修正版Previewは残る。
+両端末のlogin/Home/Rooms/Pricing/My Page/reloadと文章・画像投稿、Core申請は本人報告PASS。専用staging roomの申請1件を合成Creatorのauthenticated RPCで承認。次のHighlight/Draft/AI停止案内/Work/logを依頼中。共有リンクは固定Preview限定、検収中のため保持し終了時失効。秘密値はdocsへ保存しない。旧MVP・本番停止フラグ・Live課金は変更しない。
+
+### 同フェーズ更新: AI修正・実機（2026-10-24 JST）
+AI blocker fixをeafb75eへcommit（4 files）。push/main merge/production deployなし。新staging Preview gt5g3hmxp READY、新host限定Cookie承認受領・短期取得。実機確認中の旧RC固定Previewを保持。実AI8回で終了: 6種限定応答、Draftは残credit1のため出力/DB validatorのみ。台帳変更なし。AI control復元/検収session signout。原価は各1サンプルで価格/creditの最終判断は不足。
+両端末Highlight/Draft保存/AI停止表示を本人報告PASS。最初の作品URLは過去の運営検収で非表示だったため、非表示を維持して今回の公開合成作品へ訂正。完了報告だけで誤PASSにせず作品/ログのみ再依頼。logout/login、Stripe test画面から戻る、退会説明も確認依頼中。新Preview初回fixture失敗を保持して再検収。
+
+修正版Preview再検収6 checks PASS。AI停止のUI/API、人間log/draft、公開作品、401拒否、console/hydration/5xx/認証loop0。関連HTML/assets18件秘密一致0。初回失敗は非表示fixture選択が原因、非表示解除なし。修正版Cookie削除、検収browser終了、合成Creator session signout。Webhook転送は今回は開始していない。実機用旧共有リンクは確認が続いているため維持。
+
+## 両端末の追加回答反映・共有終了（2026-10-24 JST、最新）
+本人がAndroid Chrome/iPhone Safariのlogout→login、Plus月払いStripe test表示と入力欄、支払わず戻る、退会保持/匿名化説明、訂正後TEST作品/制作ログの完了を報告。今回依頼した実機操作は全PASSとしてdevice acceptance/final acceptance/readiness/known issues/TASKへ反映。決済送信・退会確定は依頼どおり実施せず、実機の決済確定/退会完遂/email returnは未検収のまま。
+実機用固定deployment dpl_Har9vYnUeGSiWa7gcMSDp4buzsRAの共有をOnly people with accessへ戻し、保存完了をUI確認。新しい共有tokenの発行なし、秘密値の出力/保存なし。以前の新Preview Cookie削除・browser終了は維持。利用者端末のCookieや通常ログインsessionの遠隔消去は未実施。
+コード/DB/migration変更なし、今回commit/push/deployなし。HEAD eafb75e / release/v2-rc1、既存差分保持。今回の文書JSON整合性・diff checkで検証し、変更のないアプリtestsは再実行しない。NO-GO維持: production gate/Free billing退会接続、無料法務、Owner bootstrap、追加検収/復旧運用が残る。AI_TASKはin_progress。次は本番gateと退会整合性を一体でローカル修正・境界検証する（本番反映しない）。
+
+## 3134adb2 blocker解消・無料規約採用（2026-10-24 JST、進行中）
+本人の具体的承認後、本番Freeの厳密なproject/環境/モード/schema/V2/Admin条件、独立した管理Origin検査をローカル実装。本人認証・DB role・監査は維持し、AIとStripeは本番禁止のまま。退会billing処理をUIフラグから分離、旧MVPのmissing RPCだけ互換許容、V2期待時・provider不整合・確認失敗は閉じる。billing停止確認を最終prepare/Storageより先行させ、Auth直前にも再確認。受付transaction内の既存名義整理を変更したという意味ではない。
+
+52境界checks、RC8/billing32/AI59、退会関連4 suites、型・関連lint・build PASS。実staging Owner bootstrapとFree退会の各6 checksはtransaction内で検証し全行ROLLBACK。Owner付与・実Auth/Storage削除なし。失敗したfixture/型/claim条件の初回証跡は保持。38本番適用migration hash不変。
+
+本人が3134adb2無料法務案を採用。Terms/Privacyを2026-10-24へ改訂し、共同作品/使用済添付保持、通常名義匿名化、個別PII申立て、監査等の定期必要性確認、AI/有料OFFを明記。059は同意RPC/guardのみ変更、既存同意の自動更新なし。staging適用済み、local/staging9 checks PASS。改訂後の型・lint・build PASS。本番は未適用。既存の旧Previewでは新同意を記録できないため、修正版Previewを準備する。
+
+既存暗号化backupを再利用して059まで隔離復元・migration rehearsalを補完。042〜059の18件、合計106 checks PASS、既存78表fingerprint/旧RPC/ACL/RLS照合。隔離server停止・復号平文削除確認。新たな本番backup/DB接続なし。schema58はfoundationの設定値で、059適用の証明を代替しない。
+
+Git release/v2-rc1 / HEAD eafb75eの未commit修正。main ff1fe59は本番基準402719bのancestorで、相互に分岐した変更ではない。既存差分を保全。今回production/commit/push/main merge/live billing/OpenAI呼出しNONE。残件は新Previewの関連画面と再同意、両実機の決済確定・メール復帰、少なくとも1台の退会完遂。現判定NO-GOを維持し、未検収をPASSにしない。
+
+### 修正版Previewと実機検収の準備
+最新jrvv8pum3 / dpl_hH9sCXbf5bnCkPzjDq34atMq274z READY。配信用source digest c6e6147d2379deef21f03cd8bdc254c7536c812488977b437445da1937133214、HEAD eafb75e + 未commit差分210ファイル。8s3klk6rtは再同意差分説明を追加する前の中間Previewで検収不使用。stagingだけ配信、AI_ENABLED=false、退会appフラグはこのdeploymentだけ準備。DBの停止は変更なし。
+
+local UI→実staging合成ownerの新同意9 checks PASS、3チェック未選択/全選択のみ送信、profile日時/版、reload、5幅横崩れなし、axe0。Hosted文面と保存済み同意5 checks、人間log/draft/work・AI停止・401・console/hydration/5xx/認証loop0の6 checks PASS。配信26素材・ローカル1171対象（bundle106）の秘密一致0。通常利用者の同意の代理保存なし。
+
+本人が新host限定Cookie、Shareable Link、staging Auth callback2件の追加を承認。Cookieはhost-only Secure/HttpOnly・最大2h、値の出力なし。Auth redirect URLは4→6、Site URLは維持。Hobbyの1共有リンク制限による旧共有の置換を追加確認し、本人承認後に最新RCへ置換。Dashboard「Anyone with the link」を確認。リンク値はチャット/docs/Gitへ残さず、Vercel共有画面を本人へ引き渡した。画面のCopy Linkから両端末へ送る手順。
+
+使い捨て検収アカウント2件はstagingで未登録と確認し、本人に新規登録・同じ端末で確認メール・再読込を依頼中。対象対応はGit外v2-rc-final-device.jsonに保持。パスワード/認証リンクは受け取らない。まだ決済/退会は依頼していない。署名Webhook転送未開始。
+
+読取preflight: hosted billing exact-staging/test有効、admin未認証401、AI=false/deletion_intake=false/deletion_worker=false。既存requested退会15件、active lease0、関連DB cron0。今回の2件以外はclaim/retryしない。実機退会窓で他job不変・元の停止への復元を必ず検証し、無条件に全workerを再開しない。
+
+自動検収の終了時に最新host用Cookieファイルを削除、合成Auth session signout・browser/localhost server終了を確認。署名Webhook転送は未開始。本人のメール復帰・決済・退会検収は継続中のため、承認済みShareable Linkと2callbackは保持し、完了後に共有停止する。共有token/パスワードの遠隔取得・保存なし。今回最終の追加script lintとgit diff --check PASS。AI_TASKはin_progress。本番判定NO-GO、本人の両端末新規登録/同じブラウザへの確認メール復帰の結果待ち。
+
+### 最新RCの実機メール復帰・iPhone切り分け（2026-10-24 05:50 JST）
+本人報告: Androidは新規登録・確認メール・login/reload成功。iPhoneはメールクリック後「認証リンクを確認できませんでした」。本人の「OKということにする」はリスク受容の意向として扱い、成功した検収へ書き換えない。最新ラウンドはAndroid PASS / iPhone FAIL、旧基本導線のPASSは保持。
+
+承認済みstaging fwqucffxdmbdczspkcyrの指定使い捨て2アカウントだけ、BEGIN READ ONLY / ROLLBACKでAuth metadataを確認。両方存在・email confirmed・送信記録あり。Androidはsign-inあり、iPhoneはsign-inなし。token/password/raw log/user本文は取得していない。メール確認自体は完了しており、戻り先でのsession確立失敗を切り分ける。現時点で別browser・期限切れ・PKCE不一致・networkを断定できない。SDKのPKCE設定とcallbackの既存initialize/getSession/getUser確認を読取レビューし、認証境界は変更していない。
+
+iPhoneの通常Safariで登録時パスワードによるloginを1回だけ依頼中。新規登録・再送・resetは依頼せず、自動確認/メール送信/パスワード変更なし。通常loginの成功だけでemail returnをPASSにしない。決済確定前に最新host限定Cookieとtest署名forwardingを再準備する必要があり、まだ支払操作を依頼していない。
+
+変更は検収文書/JSONのみ（v2-final-device-email-result.json追加、window/TASK/final acceptance/readiness/known issues/本記録更新）。アプリ/DB/Auth/設定変更なし、commit/push/deploy/OpenAI/live/production NONE。Cookie削除・forward未開始を維持、実機用共有は継続中。本番NO-GO、AI_TASK in_progress。
+
+### 実機ログイン復帰・test決済窓開始（2026-10-24 05:55 JST）
+iPhone通常Safari login成功を本人報告、指定2アカウントREAD ONLY照合でも両方sign-inあり。メール自動復帰の初回FAILと通常loginのPASSを区別する。決済前baselineは両方billing account/subscriptionなし、processed event0。本人から次の検収へ進行指示。
+
+最新jrvv8pum3 READYをVercelで再照合。既存host限定承認内でSecure/HttpOnly/host-only最大2hのCookieを再取得。hosted plans=test可能、admin未認証401、DB AI/intake/worker OFF、pending退会15件のまま。Stripe接続先はtest sandbox acct_1USz6gLZaDd1Edb0に一致。live key拒否を維持。
+
+device-payment-window.cjsを追加、既存listenerに任意の対象顧客フィルターを追加。指定2人のbilling mappingに一致するtest eventだけ最新hostへ転送。生payload/secret/URLは出力保存せず、署名付きunsupported probe200でHosted secret一致を確認（billing mutationなし）。45分以内・Cookie期限前に自動終了、手動--stopも可能。終了時CLI/HTTP停止とCookie削除。proofはv2-final-device-payment-window.json。今回窓の期限2026-10-24 06:40 JST、exec session 89061。対象script構文/lint PASS。
+
+本人へAndroid→iPhoneで各1回のPlus月払いテスト決済→アプリreturn→状態更新→Plus/500credit→reloadを依頼。実カード使用禁止、未反映時は新決済を作らず結果報告。まだ実機決済PASSではない。アプリ/本番/DB schema/運営停止変更なし、commit/push/deploy/OpenAI/live NONE。実機検収中のため共有とtest転送を期限内で維持。
+
+### 両実機test決済完遂・Android退会窓（2026-10-24 06:13 JST）
+本人が両端末決済完遂・Plus500表示・reloadのsession維持を報告。Stripe connectorのexact customer読取で各契約1件、livemode=false/active/month/780JPY、DB subscription ID一致。READ ONLY DBでPlus/active、checkout操作各1件complete、processed event各1、current paid period各1行500・consumed/reserved0・pending event0。Free時の50credit履歴は別期間で、合算550の現利用枠とは扱わない。証跡v2-final-device-payment-result.json。
+
+転送6件のうち2成功/4retryable、4件の正確な原因はrawを保持しないため未確定。二重課金/現期間二重付与は観測なし、全6配送成功とはしない。再決済/手動event replayなし。旧payment windowを--stop、exec89061終了・Cookie削除を確認。
+
+Android使い捨てだけ退会検収を準備。新規対象のstaff/所有room/post/upload/既存job0、全体active lease/unknown effect/関連cron0。device-retirement-window.cjs追加、構文/lint PASS。DB read専用接続で監視し、別transactionで既存全26job（pending15+完了済11）をFOR UPDATE NOWAITで保護。監査付き合成Owner RPCでstaging deletion_worker/intakeだけ一時ON。schema/ジョブ/名義の直接変更なし。アプリの本人操作で作られる対象jobだけが通常API内で処理され、runnerはrequest/claim/cronを呼ばない。
+
+新host Cookieは同じ承認範囲で再取得し、退会対象の既知test customerだけ署名転送。06:13〜06:33 JST、exec93853。対象completed/needs_review/運営停止/他job変化/期限で停止、intake/workerを先に元のOFFへ戻し、他job lock ROLLBACK、CLI/HTTP停止・合成Owner local session終了・Cookie削除。lifecycleはv2-final-device-retirement-window.json、private対象対応はGit外。既存worktree差分保持。
+
+本人へAndroidの確認checkbox→退会申請1回→完了表示→再読込で編集不可→旧パスワードlogin拒否を依頼中。iPhoneは残す。対象の作品/投稿/添付が0なので今回は有料契約停止/退会UI/Auth終端の検収であり、保持の既存合成E2Eを再検証したと主張しない。production/live/commit/push/deploy/OpenAIなし。AIはOFF。現在NO-GO/in_progress、結果待ち。
+
+### Android実機退会完遂・復元確認（2026-10-24 06:23 JST）
+本人から全手順完了の回答。退会完了表示・再読込後編集不可・旧password login拒否を実機PASSとして記録。runnerは06:15:34 JSTにtarget completedを観測して終了。06:18 READ ONLY照合でjob completed、Auth/profile/public profile/AI profile各0、billing canceled/deletion confirmed/owner NULL、Auth admin取得404 user_not_found。Stripe connectorでもexact test customerの契約1件・expected ID一致・livemode=false/canceledを確認。解約通知1件は転送1/成功1/retryable0。
+
+全original flags一致（AI/退会受付/worker OFF）、他26jobの件数とfull-row fingerprint不変、active lease0を確認。停止flagsを先に復元してから保護lockをROLLBACK。exec93853終了、Stripe CLI/local forwarding server停止、合成Owner local session signout、一時Cookieとlockファイル削除。iPhoneのtest契約と人間session・実機Share/2callbackはメール復帰検収待ちのため保持しており、全cleanup完了とはしない。
+
+v2-final-device-retirement-result.jsonに人間/DB/Auth/Stripeの証拠を統合。window/cleanup/email結果/TASK/final acceptance/readiness/known issuesを更新。退会runnerの終了proofが開始時のintakeEnabled/workerEnabled=trueを残す記録不備だけ修正し、終了時の確認済み値を保存するようにした。アプリ動作・DB schemaは変更なし。既存PASSを無意味に再実行せず、script構文・限定lint・JSON整合性・diff checkで検証する。
+
+残る実機確認はiPhoneメール復帰。同じ通常Safariでresetメール1回→新password→旧拒否→新login/reloadの手順を依頼済み。秘密値/認証URLは受け取らない。初回signup callback FAILを通常login成功で上書きしない。NO-GO/in_progress維持、production/live/commit/push/deploy/OpenAI呼出しNONE。次はメール復帰結果の照合とiPhone test契約/session/共有の最終cleanup。
+
+
+### 06:48 JST 診断用Previewの承認反映（最新）
+本人がi8kvltx12限定のCookie/Share/2callbackを承認。staging Authの戻り先だけ2件追加し6→8、Site URL維持。旧共有を置き換え、新hostの共有をUI確認。短期Cookieはhost-only/Secure/HttpOnly/最大2時間、秘密値をチャット/ログ/docs/Gitへ残さず、Hosted確認後にファイル削除・browser終了。共有リンク値はdocsへ記録せずVercelのCopy Link画面を本人へ引き渡した。iPhoneの1回のreset結果（成功またはAUTH-xx）待ちのため共有は有効。webhook転送は開始していない。
+
+Hostedの明示リンク拒否AUTH-01・ブラウザ情報なしAUTH-05・sessionなしAUTH-07の3ケース、320/390/1440幅PASS、実Auth送信0・uncaught/console/hydration/5xx0。最初はURLのerror拒否をSDKの期限切れ分類AUTH-02と期待したfixture誤りで失敗。callbackDestinationが早期拒否する既存仕様に合わせAUTH-01へ訂正、初回証跡を保持。アプリの認証判定は変更なし。これは診断表示の検収で、iPhoneの根本原因修正・メール復帰PASSではない。NO-GO/in_progress維持。証跡: v2-auth-callback-diagnostic-access.json / v2-auth-callback-preview-result.json。production/live/commit/push/実OpenAI呼出しNONE。
+
+今回の追加変更: lib/authCallbackStatus.ts、app/auth/callback/page.tsx（確認コードのみ）、docs/release-ui-check.cjs、scripts/rc/auth-callback-{browser,test-network,preview}.cjs、関連証跡JSON/TASK/final acceptance/readiness/known issues。ローカル実SDK+合成Authの別タブ成功/情報欠落/不一致/期限切れ4ケース、UI26/型/lint/build PASS。別タブであることだけを原因と断定しない。実メール2通のstaging/旧host/reset戻り先一致、READ ONLYで2回ともコード発行あり、現sessionはpassword方式。秘密値・URL原文は出力保存しない。
+
+iPhone test契約は追加の短い署名転送窓で解約し、通知1/1成功・DB canceledを確認。元のAndroid/iPhone両test契約canceled、旧Share停止、転送終了、他26退会job不変、元のAI/intake/worker OFFを維持。iPhoneアカウント/通常sessionは診断継続用に保持。今後は本人の確認コードに合わせ必要範囲だけ修正・再検収し、完了後に新共有を停止する。本番へ進めない。
+
+終了前検証: 診断用scripts3ファイルの限定lint PASS、関連JSON18件のparse PASS、git diff --check PASS。host限定Cookie不在を再確認。release/v2-rc1 / eafb75eの既存差分を保持。iPhone診断の本人回答が必要なためin_progressを維持。
+
+
+### 2026-10-24 07:13 JST 再設定確認画面の適用（最新、過去の承認待ちより優先）
+i8kvltx12で本人報告AUTH-01。06:49:53のverify303と06:50:25の無効/期限切れ403、コード発行後の新sessionなしを照合。最初のアクセスがメール先読みか本人操作かは未確定。原文・IP・認証URLは保存しない（v2-recovery-link-reuse-evidence.json）。
+
+回復メールに明示ボタンの確認画面を追加。tokenはfragmentからメモリだけへ移し、URL/DOM/storage/logへ残さず、設定済みAuth・recovery・同一host callbackを固定。開いただけではverifyせず、クリック1回で既存PKCEへ進む。callbackのinitialize/getSession/getUser必須条件を維持し、既知error_codeだけ固定AUTHコードへ分類。
+
+新Preview b7zdudurb / dpl_AXZpuWpZ84qhme9QNVXe3fdUCZYx READY。source eafb75e+未commit、SHA256 0418fb2302c49a8cd391010fac3fd59ed5b9b6538b7e27f03a2150f2068635cb。本人承認後に新host限定Cookie・共有置換・staging callback2件（8→10）・exact RedirectTo限定のReset password本文を適用。保存/再読込をUI確認、他hostは既存ConfirmationURL。i8共有は置換で失効。新共有値を出力/保存せずCopy Link画面を引き渡した。
+
+検証: offline UI32/URL境界21/型/限定lint/build PASS、実SDK+合成Auth5ケース（先読みcontext送信0、本人クリックverify1/PKCE交換1、challenge一致）、320/390/1440幅/axe0 PASS。テストfixtureの旧ES5 transpileではiterable処理が失敗しES2022へ訂正、アプリ認証は緩和なし。Hosted4ケース/3幅/axe0、Auth送信/console/hydration/uncaught/5xx各0 PASS。秘密検査1206 files/107 bundlesの既知secret一致0。自動検収Cookie削除/browser終了。転送・実OpenAIは開始していない。
+
+iPhoneの新メール条件分岐・確認画面→明示ボタン→password変更→旧拒否→新login/reloadは本人結果待ち。実機PASSに先取りしない。本番NO-GO、AI_TASK in_progress維持。両test契約canceled、Android退会PASS、既存停止は維持。共有と2callback/限定templateだけ実機待ちで保持し、終了後共有停止。production DB/Auth/deploy/migration・Live課金・commit/push/main merge NONE。
+
+証跡: v2-recovery-confirmation-access.json / v2-recovery-confirmation-preview-result.json / V2_AUTH_RECOVERY_PREFETCH_REVIEW.md。主変更: app/auth/confirm/page.tsx、lib/emailConfirmation.ts、lib/authCallbackStatus.ts、app/auth/callback/page.tsx、関連UI/browser検証scriptsと証跡。次はiPhone1回の本人検収・必要なら最新メール構造だけ安全に照合し、最終cleanupと無料公開可否を再判定する。
+
+
+### 2026-10-24 07:21 JST 最終実機PASS・検収終了（この節を最新判定とする）
+本人がb7zdudurbの再設定確認画面→明示ボタン→新password設定→logout→旧拒否→新login/reloadを全完了。新sign-inをREAD ONLYで確認。その後の本人logoutとsessions0/有効refresh0を照合。初回signup/旧resetのFAILは履歴保持、signup自動復帰を再検収したとはしない。
+
+Vercel共有をOnly people with accessへ戻して保存をUI確認。自動検収Cookieなし、browser終了、一時forward/retirement/diagnostic process0、両test契約canceled。既存AI/intake/worker OFF。端末に残る発行済みaccess JWTの即時失効やブラウザCookie遠隔削除を主張しない。stagingのexact b7 callback2件と条件付きReset templateは承認済み設定として保持。
+
+判定: **FREE V2 CONDITIONAL GO / Mode B**、Full V2 NO-GO。必要条件は本番実施承認・検収source固定、移行直前の整合backup、042〜059の依存順移行/段階別確認、本人Owner監査付きbootstrap、別承認の本番host Auth設定とsignup/recovery smoke、監視/復旧担当。AIとLive BillingはOFFを維持。詳細v2-production-free-final-verdict.json。今回production/commit/push/deploy/main merge/実OpenAI NONE。
+
+検証は既存PASSを再利用し、今回はJSON整合性・diff check・38既適用migration hash一致・READ ONLYの限定metadataのみ追加。残るAI/有料法務/Live/原価は有効化の別ゲート。未確認のmanaged復旧/別端末鍵/段階HTTPを成功扱いしない。本番移行の具体的承認へはMode B限定で進める。
+
+
+### 2026-10-24 14:42:34 JST 無料V2本番反映の承認受領・切替前準備（最新）
+本人が無料V2 production反映、コード固定、直前backup、指定Owner、登録/再設定メール確認、条件成立時042〜059 migration/deployを明示承認。AI/Live Billing OFF。push/main merge/AI ON/Live ONは対象外。既存差分を保持しrelease/v2-rc1 / eafb75eのまま。
+
+本番はまだ変更していない。停止/migration/Owner付与/deploy/Auth設定変更は全て未実行。現在は旧MVPを継続。preflightの36 public tables、V2/admin未導入、退会pending/lease/unfinished effects各0、Buffer送信OFF・scheduler ON・active cron2、指定Owner存在を読取確認。
+
+検収済みb7の213files/hash 0418fb2302c49a8cd391010fac3fd59ed5b9b6538b7e27f03a2150f2068635cbと一致する非公開固定コピーを作成。配信準備コピーは本番project metadataと従来publish cronのみを変更、アプリバイト一致。production deployは未開始。Vercel本番接続URL/service key一致。remote公開keyは同一refのanon JWT、localはpublishable形式で文字列は異なるがremote Auth health200。管理APIの環境変数値比較は根拠にせず、公式CLI env pullで確認。平文一時env削除、秘密設定はDPAPI由来AES鍵で非公開保存。AI/Stripe credentialなし。
+
+新規operational scripts free-release-context/free-release/free-release-deploy/free-release-auth-window/free-release-auth-rehearsalを作成。既存backup/rehearsalにcutover/maintenance明示オプション追加。新public tableへの停止guardを各migration COMMIT前に付ける。各hashと既存column fingerprint、新表RLS/direct DML拒否を照合。未検証/成否不明journalからの継続を拒否。Ownerは指定UUIDだけ、roleと監査を同一transactionで登録する手順（未実行）。
+
+既存暗号化backupの隔離restoreで18migration/106checks PASS。停止guard付きmigrationもPASS。指定Owner/使い捨てAuth/profileのみ、期限付き許可窓を別11checksで検証し、他signup/update/email変更/delete/一般room更新/期限切れ拒否を確認。すべて隔離transaction ROLLBACK、server停止・平文clone削除。Managed Auth/SMTPや本人の本番検収を代替する証拠ではない。proof: v2-free-maintenance-and-auth-rehearsal.json。最初のローカルSQL文字列置換で$$が$になる不備、隔離管理role差、テスト用rooms存在しない列を修正。失敗証跡を保持しPASSへ上書きしない。production SQL/migration本体・アプリコードは今回未変更。
+
+本番Dashboard読取でSite URL=canonical本番、既存redirect3件、custom SMTP ONを確認。password値は見ていない。既存RecoveryはConfirmationURL直結、検収済み確認画面向けのexact RedirectTo条件案をv2-production-recovery-template-proposal.htmlへ保存（未適用）。同hostは既存redirect範囲であり新host/権限拡張なし。旧本文も保存、本文中に実token/keyなし。
+
+Supabase公式statusはManagement API/Project Creation incident Monitoring。Dashboard設定取得と本番Auth healthは成功、当該projectのAuth障害とは断定しない。URL: https://status.supabase.com/incidents/01M5J8ZQ04EZXAYF10Q75MGC1T 。実行前に影響を再確認する。
+
+本番停止に先行して、本人へiPhone Safariで検収用+v2prod20261024の登録→確認メール→login/reloadを依頼。新credential入力/登録送信はbrowser操作規則により本人操作。2026-10-24 14:42:34時点のexact email読取metadataではまだaccount0。SMTPが実送信できるとは未判定。不要な長時間停止を避けるためこの結果を待ってからstop→fresh cutover backup→restore→042-059→Owner→staged production deploy/verify→alias/Recovery template→本人reset→公開条件判定へ進む。追加の包括的な本番承認は不要。
+
+残件: 本人の本番登録メール検収、停止直前のin-flight確認と整合backup、042〜059本番適用、Owner実付与/権限検収、本番配信/メール案適用/実機reset、段階HTTP/退会/運営smoke、既存運営停止を保持した解除判断。現時点の判定は切替未実施・検収待ちでありCOMPLETEではない。Auth窓は生成/隔離テストのみで本番適用なし。新CLI production準備のみPASS、syntax/限定lint0errors/0warnings、git diff check PASS。commit/push/deployなし。
+
+
+### 2026-10-24 14:50:59 JST 本番登録メールの実機FAILにより切替停止（最新）
+本人が本番の確認メールで「認証リンクを確認できない」と報告。指定使い捨てアカウントのREAD ONLY照合でemail confirmed=true、PKCE s256/code発行あり、初回検査のsign-inなし/session0。その後本人の通常password login完了とDB sign-inあり/session1を確認。通常login成功をメールcallback PASSにしない。再送・再設定・本人credential代理入力は行っていない。実際にメールを開いたbrowser/webviewは本人回答に記載なく未確認。先読み/再使用/ブラウザ状態差を原因と断定しない。
+
+検収済みRCの確認画面はrecovery限定で、signupのメール経路には適用されない。新しいV2 migrationだけで登録メールの失敗が直るとは判断しない。本番移行の条件が不成立のためNO-GO。production停止/042〜059/Owner bootstrap/deploy/Auth設定は未実行。旧MVPを継続し、不要なmaintenanceを開始していない。本人が作った検収accountと通常sessionは存在するため、ユーザーによる本番操作も皆無とは表現しない。AI/Live OFF、commit/push/deployなし。
+
+証拠: v2-free-production-signup-failure.json / v2-free-production-release-status.json。従来のMode B conditional GOはv2-pre-release-conditional-go.jsonへ保存し、現final verdictを本番signup FAILのNO-GOへ更新。コード固定、106+11隔離検証、production env照合、配信コピー準備の完了は保持。直前backupは実際の切替時に新規取得が必要で、過去snapshotを直前backup扱いしない。次はsignupメール復帰の原因特定/必要修正/同一端末実機再検収後にsourceを再固定し、承認済み移行へ戻る。
+
+
+### 2026-10-24 登録メール復帰修正を開始
+最新の本人指示で、登録・resetの再検収PASS後のみ承認済み本番移行を再開。既存6ファイルをGit外へ保全し、signupに明示確認画面を追加。PKCE/initialize/getSession/getUser維持。既存signup callback失敗の根本原因は未確定、先読み起因と断定しない。最初の一括上書き案は既存差分保護の自動レビューで拒否され未実行。原本退避・文脈一致検査付きの限定編集で進行。production変更NONE。
+
+
+### 2026-10-24 登録・再設定の確認画面を統合、実メール再検収待ち
+app/auth/confirm/page.tsx と lib/emailConfirmation.ts にsignupの明示確認を追加。signup_token / recovery_tokenを厳密に1つだけ許可、認証host・callbackは固定、fragment消去・メモリ保持・1回だけnavigation、PKCE/initialize/getSession/getUserは変更なし。既存recovery APIも維持。既存未commit6ファイルはGit外へ保全し文脈一致付き編集。
+
+本番Authログread-only: 対象検収emailをメモリ内で照合した14:41:27のverify303を確認。14:41:37以降に403無効/期限切れがあるが、それらの個別account対応/最初のconsumerは未確定。rawログ/secret/IP保存なし。元のcallback FAILをPASSへ変更しない。
+
+検証: 境界33、UI36、実SDK+合成Auth10（signup/recovery各5）PASS。scannerではverify/token0、明示クリックでverify1/code交換1、欠落/不一致/期限切れ拒否、3幅320/390/1440・axe0。型/lint/build/diff PASS。実メール/physical Safariは未検収。新scripts/rc/email-confirmation-browser.cjs・email-confirmation-preview.cjsを追加、旧証跡維持。docs/v2-email-*に新証跡・before/案を記録。
+
+staging Preview e0p20zw5t READY、213files SHA256 42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5。AI_ENABLED=false/BILLING_ENABLED=false/V2_RC_SYNTHETIC_AI=false/STAGING_TEST=trueをdeployment runtime/buildへ明示。production変更・commit/pushなし。
+
+USER APPROVAL REQUIRED: 新host限定の短期Cookie、Shareable Link置換、staging callback2件、登録/resetメールのexact RedirectTo分岐2本文。本人へ一括質問済み。過去の他Preview流用禁止とbrowser操作規則による新認証先/アクセス確認であり、本番移行の包括承認を再要求するものではない。設定未適用・Cookie未取得。本文は新host以外の旧本文を維持、復元用before保存済み。承認後Hosted検収→iPhoneで新規登録/確認/reloadとreset/旧拒否/新login/reload→cleanup。全条件成立後にsourceを再固定し承認済み無料V2移行へ。以前の固定source 0418fb...は修正前のため、そのまま配信しない。
+
+参考: Supabase公式 https://supabase.com/docs/guides/auth/auth-email-templates#email-prefetching と https://github.com/supabase/auth/blob/master/internal/api/verify.go 。本番先読み起因を断定する根拠ではない。
+
+
+### 2026-10-24 e0p20zw5tの4件承認を適用、実機再検収へ
+本人が新Preview限定Cookie・Share置換・staging callback2件・登録/resetの条件付きメール本文変更を明示承認。host-only Secure/HttpOnly最大7200秒のCookieでHosted5ケースPASS（診断3+登録/再設定の明示確認2）、320/390/1440幅・axe0、実Auth通信0・console/hydration/500/uncaught各0。Cookie削除・検収browser終了を確認。秘密値/認証URL/rawログ保存なし。
+
+Supabase staging fwqucffxdmbdczspkcyrだけに2本文を保存。UIの全文を改行正規化して案と照合、保存後のreloadでも一致。登録/再設定のRedirectToが新hostに完全一致するときだけ確認画面へ、旧hostの本文維持。Subject/Site URL/SMTP/期限/PKCEは変更なし。callback2件を追加し10→12。最初の複数URL setValueは入力拒否で未保存、UI pasteで2行として入力・保存・一覧確認。
+
+Vercel dpl_5mSi6oH2ZBMoLWYWc3j5JEmhw8PKをUIで確認し、Anyone with the linkへ。Hobby既存1リンク失効のConfirmは今回の明示的な置換承認の範囲で実行。Copy Link利用可能を確認、値は読取/保存しない。実機検収のため共有画面を保持。共有は結果後に停止する。
+
+検収用の未使用メール1件をREAD ONLY確認し、Git外v2-email-device.jsonへ対応を保存。DB AI/intake/worker OFF維持。本人に通常Safariで新規登録→確認画面のボタン→通常password loginなしの復帰/reload、続けてreset→旧password拒否→新login/reloadを依頼。新credential/同意/登録送信は本人操作。現在はphysical signup/reset PENDING、NO-GO。forwarder未起動、本番DB/設定/Owner/deploy変更NONE、commit/pushなし。
+証跡: v2-email-confirmation-preview-result.json / v2-email-confirmation-access.json / v2-email-device-readiness.json。
+
+
+### 2026-10-24 V2 FREE LAUNCHの最新承認（f42d38a4）
+本人が最終実機未検収を明示受容。commit/push/main統合、production migration/deploy、TEST限定smoke/退会、24h監視を承認。AI/Live/synthetic production OFFを維持。過去の実機待ちNO-GOとpush禁止はこの範囲で置換。重大な技術/security/data integrity問題は停止する。最新Preview213filesを再固定中、既存162差分を保持。059は採用済み無料規約再同意のため対象に含む。新しい本番変更はまだない。

@@ -1,0 +1,34 @@
+{
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "cookieFileRemoved": true,
+  "syntheticBrowserSessionsClosed": true,
+  "syntheticAuthSessionsSignedOut": true,
+  "localAppServerStopped": true,
+  "webhookForwarding": "STOPPED including short iPhone subscription-cleanup forwarding window",
+  "shareLink": "STOPPED on jrvv8pum3: Only people with access verified in Dashboard",
+  "humanSessions": "Android deleted; iPhone human logout confirmed by read-only sessions 0 / active refresh tokens 0",
+  "testSubscriptions": "Android and iPhone Stripe test subscriptions both canceled; iPhone cancellation webhook 1/1 and DB canceled confirmed",
+  "originalStagingFlagsRestored": true,
+  "otherDeletionJobsUnchanged": 26,
+  "productionChanges": "NONE",
+  "diagnosticPreview": {
+    "url": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+    "cookieFileRemoved": true,
+    "browserClosed": true,
+    "shareLink": "STOPPED by replacement with b7zdudurb; b7 also now STOPPED",
+    "callbackUrlsAdded": 2,
+    "webhookForwarding": "NOT STARTED"
+  },
+  "updatedAt": "2026-10-23T22:21:43.749Z",
+  "fixedPreview": {
+    "url": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app",
+    "cookieFileRemoved": true,
+    "browserClosed": true,
+    "shareLink": "STOPPED",
+    "humanSession": "LOGGED OUT; 0 sessions, 0 active refresh tokens",
+    "callbackUrls": "2 exact approved entries retained; no wildcards",
+    "recoveryTemplate": "Exact b7 reset RedirectTo condition retained as approved staging config; other recovery flows unchanged",
+    "webhookForwarding": "NOT STARTED"
+  },
+  "accessJwtImmediateRevocation": "Not claimed; existing issued JWT expiry still applies"
+}

@@ -3,7 +3,7 @@ const fs = require("fs"),
   http = require("http"),
   cp = require("child_process"),
   assert = require("node:assert/strict");
-module.exports = async () => {
+module.exports = async ({ allowEvent } = {}) => {
   const ctx = require("./preview-scope.cjs").deployment().ctx,
     d = JSON.parse(fs.readFileSync("docs/v2-rc-preview-deployment.json")),
     access = require("./preview-scope.cjs").access();
@@ -34,6 +34,8 @@ module.exports = async () => {
       const raw = Buffer.concat(buf);
       const event = JSON.parse(raw.toString("utf8"));
       if (event.livemode !== false || Date.parse(access.expiresAt) <= Date.now()) { res.writeHead(403).end(); return; }
+      // Human device windows may restrict delivery to their designated test customers.
+      if (allowEvent && !(await allowEvent(event))) { res.writeHead(200).end(); return; }
       const r = await fetch(d.url + "/api/billing/webhook", {
         method: "POST",
         headers: {

@@ -1,0 +1,29 @@
+{
+  "readOnly": true,
+  "accounts": [
+    {
+      "device": "android",
+      "email_confirmed": true,
+      "signed_in": true,
+      "plan": null,
+      "status": null,
+      "cycle": null,
+      "provider": null,
+      "subscription_exists": false,
+      "processed_events": 0
+    },
+    {
+      "device": "iphone",
+      "email_confirmed": true,
+      "signed_in": true,
+      "plan": null,
+      "status": null,
+      "cycle": null,
+      "provider": null,
+      "subscription_exists": false,
+      "processed_events": 0
+    }
+  ],
+  "productionChanges": "NONE",
+  "observedAt": "2026-10-23T20:54:55.051Z"
+}

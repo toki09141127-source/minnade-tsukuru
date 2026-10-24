@@ -1,0 +1,66 @@
+{
+  "scope": "real OpenAI + actual staging synthetic fixture; no Hosted real-AI claim",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "startedAt": "2026-10-23T19:18:20.337Z",
+  "apiCalls": 3,
+  "maxCalls": 5,
+  "priorCalls": 3,
+  "totalCallLimit": 8,
+  "complete": false,
+  "checks": [
+    {
+      "name": "simple @AI real response/schema + staging finish",
+      "pass": true
+    },
+    {
+      "name": "summary real response/schema + staging finish",
+      "pass": true
+    },
+    {
+      "name": "long log organization real response/schema + staging finish",
+      "pass": true
+    }
+  ],
+  "usage": [
+    {
+      "scenario": "simple @AI",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 773,
+      "outputTokens": 220,
+      "durationMs": 2720,
+      "estimatedUsd": 0.0006612,
+      "contextChars": 412
+    },
+    {
+      "scenario": "summary",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 777,
+      "outputTokens": 217,
+      "durationMs": 2534,
+      "estimatedUsd": 0.0006580000000000001,
+      "contextChars": 412
+    },
+    {
+      "scenario": "long log organization",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 2713,
+      "outputTokens": 368,
+      "durationMs": 4351,
+      "estimatedUsd": 0.0016740000000000001,
+      "contextChars": 2611
+    }
+  ],
+  "productionChanges": "NONE",
+  "paymentConfigurationChanged": false,
+  "totalCallsIncludingPrior": 6,
+  "failure": {
+    "code": "CHECK_FAILED",
+    "check": "RPC_V24_AI_REQUEST"
+  },
+  "originalAiStopRestored": true,
+  "testSessionsSignedOut": true,
+  "finishedAt": "2026-10-23T19:18:41.232Z"
+}

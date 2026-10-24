@@ -1,0 +1,6 @@
+{
+  "complete": true,
+  "scope": "staging build; callback diagnostics",
+  "aiEnabled": false,
+  "productionChanges": "NONE"
+}

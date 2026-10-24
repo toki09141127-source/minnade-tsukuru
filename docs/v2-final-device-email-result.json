@@ -1,0 +1,95 @@
+{
+  "observedAt": "2026-10-23T20:50:21Z",
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "evidence": "Human device report plus read-only Auth metadata for the two designated disposable staging accounts",
+  "android": {
+    "signupEmailReturnLoginReload": "PASS by human report",
+    "accountExists": true,
+    "emailConfirmed": true,
+    "previousSignInRecorded": true
+  },
+  "iphone": {
+    "signup": "Account created; email confirmed",
+    "emailReturn": "FAIL by human report",
+    "displayedError": "認証リンクを確認できませんでした",
+    "accountExists": true,
+    "emailConfirmed": true,
+    "previousSignInRecorded": false,
+    "browserUsedToOpenEmail": "UNKNOWN",
+    "rootCause": "UNCONFIRMED; generic callback failure does not identify PKCE/session/network cause",
+    "ordinaryPasswordLogin": "PASS by human report in Safari; later read-only metadata confirms sign-in",
+    "loginFollowUpEvidence": "v2-final-device-payment-baseline.json",
+    "emailReturnFailureOverwrittenByLoginSuccess": false,
+    "recoveryRetry": {
+      "result": "FAIL",
+      "attemptsReported": 2,
+      "sameBrowserDifferentTab": true,
+      "browser": "iPhone Safari",
+      "displayedError": "認証リンクを確認できない",
+      "passwordChangeCompleted": false,
+      "emailResendsByAgent": 0
+    },
+    "recoveryEmailRouting": {
+      "messagesChecked": 2,
+      "expectedStagingAuthHost": true,
+      "expectedPreviewRedirect": true,
+      "resetDestination": true,
+      "rawLinksSaved": false
+    },
+    "readOnlyFlowEvidence": {
+      "scope": "exact disposable iPhone only",
+      "recoveryFlowsCreated": 2,
+      "authCodeIssuedForBoth": true,
+      "observedCurrentSessionMethod": "password",
+      "conclusion": "Link issuance confirmed; callback/session failure cause still unknown"
+    },
+    "diagnosticPreview": {
+      "url": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+      "approved": true,
+      "configured": true,
+      "result": "FAIL",
+      "code": "AUTH-01"
+    },
+    "confirmationFix": {
+      "preview": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app",
+      "approved": true,
+      "configured": true,
+      "hostedResult": "PASS: 4 cases, 3 widths, axe 0, real Auth calls 0",
+      "physicalResult": "PASS by human report",
+      "evidence": "v2-recovery-confirmation-access.json",
+      "physicalEvidence": {
+        "result": "PASS by human report",
+        "preview": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app",
+        "browser": "iPhone Safari",
+        "confirmationScreen": true,
+        "explicitContinue": true,
+        "newPasswordSaved": true,
+        "logout": true,
+        "oldPasswordRejected": true,
+        "newPasswordLogin": true,
+        "reloadSessionMaintained": true,
+        "agentPasswordOrTokenCollected": false,
+        "reportedAt": "2026-10-23T22:21:43.749Z",
+        "followUpLogout": "PASS by human report and read-only zero sessions / zero active refresh tokens",
+        "metadataEvidence": "v2-final-iphone-recovery-verification.json",
+        "cleanupEvidence": "v2-final-iphone-session-cleanup.json"
+      },
+      "signupRetest": "NOT RUN; previous signup callback failure retained as historical evidence"
+    }
+  },
+  "acceptance": "PASS for required email return via recovery on fixed Preview; historical signup and recovery failures retained",
+  "nextAction": "Device recovery accepted; share and test sessions closed. Production auth configuration and signup/recovery smoke are rollout conditions, not performed.",
+  "query": {
+    "transaction": "BEGIN READ ONLY / ROLLBACK",
+    "scope": "Exact two disposable staging email addresses",
+    "returned": "Existence and confirmation/sign-in/sent boolean metadata only",
+    "tokensPasswordsOrRawLogsRead": false,
+    "automaticEmailConfirmation": false,
+    "emailSent": false
+  },
+  "productionChanges": "NONE",
+  "physicalPaymentCompletion": "PASS Android and iPhone in later round; v2-final-device-payment-result.json",
+  "physicalAccountDeletionCompletion": "PASS Android in later round; v2-final-device-retirement-result.json",
+  "updatedAt": "2026-10-23T22:21:43.749Z"
+}

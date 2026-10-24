@@ -1,0 +1,55 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Old consent prompts; merely viewing does not consent",
+      "pass": true
+    },
+    {
+      "name": "New retention and initial free-release changes shown; no prechecked consent",
+      "pass": true
+    },
+    {
+      "name": "Reconsent action visible with no horizontal overflow at five widths",
+      "pass": true
+    },
+    {
+      "name": "Reconsent dialog accessibility checks: zero violations",
+      "pass": true
+    },
+    {
+      "name": "Only all explicit checks allow authenticated consent submission",
+      "pass": true
+    },
+    {
+      "name": "Matching Terms/Privacy versions and dates persist after reload",
+      "pass": true
+    },
+    {
+      "name": "Published document contains adopted wording /terms",
+      "pass": true
+    },
+    {
+      "name": "Published document contains adopted wording /terms?tab=privacy",
+      "pass": true
+    },
+    {
+      "name": "No app console, hydration, uncaught or 5xx error",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "humanConsentModified": false,
+  "scope": "localhost app with staging synthetic user",
+  "syntheticAccountLabel": "RC owner fixture",
+  "widths": [
+    320,
+    375,
+    390,
+    768,
+    1440
+  ],
+  "axeViolations": [],
+  "syntheticSessionSignedOut": true,
+  "browserAndLocalServerClosed": true
+}

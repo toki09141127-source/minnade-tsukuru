@@ -1,0 +1,53 @@
+{
+  "observedAt": "2026-10-23T22:13:49.025Z",
+  "preview": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app",
+  "deploymentId": "dpl_AXZpuWpZ84qhme9QNVXe3fdUCZYx",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "userApproved": [
+    "exact-preview temporary cookie",
+    "replace iPhone share link",
+    "two staging callbacks",
+    "recovery template limited by exact RedirectTo"
+  ],
+  "template": {
+    "saved": true,
+    "reloadedAndVerified": true,
+    "subjectUnchanged": true,
+    "condition": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/callback?next=reset-password",
+    "landing": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/confirm",
+    "tokenTransport": "fragment placeholder only; no actual value in records",
+    "otherRecoveryRedirects": "original ConfirmationURL and copy",
+    "actualEmailRendering": "PASS by human report: new confirmation screen and explicit button used; no raw email/token copied",
+    "source": "v2-staging-recovery-template-proposal.html",
+    "rollback": "v2-staging-recovery-template-before.html"
+  },
+  "callbackUrls": [
+    "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/callback",
+    "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/callback?next=reset-password"
+  ],
+  "redirectCountBefore": 8,
+  "redirectCountAfter": 10,
+  "siteUrlUnchanged": true,
+  "share": {
+    "state": "STOPPED; Only people with access verified in Vercel UI",
+    "previousI8Link": "REPLACED under approval; Hobby revocation confirmation",
+    "secretValueSaved": false
+  },
+  "cookie": {
+    "hostOnly": true,
+    "secure": true,
+    "httpOnly": true,
+    "maximumLifetimeSeconds": 7200,
+    "deletedAfterHostedCheck": true
+  },
+  "syntheticBrowserClosed": true,
+  "webhookForwarding": "NOT STARTED",
+  "physicalIphone": "PASS by human report",
+  "hostedEvidence": "v2-recovery-confirmation-preview-result.json",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "realOpenAICalls": 0,
+  "updatedAt": "2026-10-23T22:21:43.749Z",
+  "humanSessionCleanup": "PASS: read-only sessions 0 and active refresh tokens 0 after human logout",
+  "cleanupEvidence": "v2-final-iphone-session-cleanup.json"
+}

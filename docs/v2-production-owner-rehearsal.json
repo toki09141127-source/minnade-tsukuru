@@ -1,0 +1,32 @@
+{
+  "complete": true,
+  "scope": "staging synthetic bootstrap transaction, rolled back",
+  "checks": [
+    {
+      "name": "Verified synthetic identity receives Owner plus atomic audit inside transaction",
+      "pass": true
+    },
+    {
+      "name": "Replay does not duplicate role or audit",
+      "pass": true
+    },
+    {
+      "name": "DB role verifies active caller and recent token",
+      "pass": true
+    },
+    {
+      "name": "No application role can directly bootstrap or self-promote",
+      "pass": true
+    },
+    {
+      "name": "Audit immutable even inside rehearsal",
+      "pass": true
+    },
+    {
+      "name": "No role or audit row persists; sequence gaps may remain",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "rolledBack": true
+}

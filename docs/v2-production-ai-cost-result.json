@@ -1,0 +1,101 @@
+{
+  "updatedAt": "2026-10-23T19:32:28.729Z",
+  "model": "gpt-4.1-mini-2025-04-14",
+  "currency": "USD",
+  "rates": {
+    "inputPerMillion": 0.4,
+    "outputPerMillion": 1.6
+  },
+  "calls": 8,
+  "samples": [
+    {
+      "scenario": "greeting",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 572,
+      "outputTokens": 99,
+      "durationMs": 2551,
+      "estimatedUsd": 0.0003872,
+      "contextChars": 238
+    },
+    {
+      "scenario": "simple @AI",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 773,
+      "outputTokens": 220,
+      "durationMs": 2720,
+      "estimatedUsd": 0.0006612,
+      "contextChars": 412
+    },
+    {
+      "scenario": "summary",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 777,
+      "outputTokens": 217,
+      "durationMs": 2534,
+      "estimatedUsd": 0.0006580000000000001,
+      "contextChars": 412
+    },
+    {
+      "scenario": "long log organization",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 2713,
+      "outputTokens": 368,
+      "durationMs": 4351,
+      "estimatedUsd": 0.0016740000000000001,
+      "contextChars": 2611
+    },
+    {
+      "scenario": "draft assist contract only (manual credit limit retained)",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "inputTokens": 2718,
+      "outputTokens": 422,
+      "durationMs": 3884,
+      "estimatedUsd": 0.0017624,
+      "contextChars": 2611
+    },
+    {
+      "scenario": "forced publish organization",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 2693,
+      "outputTokens": 375,
+      "durationMs": 2873,
+      "estimatedUsd": 0.0016771999999999998,
+      "contextChars": 2614
+    }
+  ],
+  "samplesPerScenario": 1,
+  "diagnosticCostUsd": 0.0006188000000000001,
+  "measuredCostUsd": 0.0074388,
+  "unmeasuredCalls": 1,
+  "allInvoiceCostKnown": false,
+  "manualCostPerCredit": {
+    "question": 0.0006612,
+    "summary": 0.0006580000000000001,
+    "organize": 0.0003348,
+    "draft": 0.00008811999999999999
+  },
+  "sampleOnlyMonthlyManualCosts": [
+    {
+      "credits": 50,
+      "usd": 0.03306
+    },
+    {
+      "credits": 500,
+      "usd": 0.3306
+    },
+    {
+      "credits": 2000,
+      "usd": 1.3224
+    }
+  ],
+  "systemAt24PerDayFor30DaysOneRoomUsd": 1.2075839999999998,
+  "warning": "Single samples, short 412-character and 2611-character context. Not a cost ceiling, statistical average or total invoice. Excludes infrastructure, FX, tax, failures and multiple rooms.",
+  "pricingRecommendation": "BLOCKED BY INSUFFICIENT DATA",
+  "creditRecommendation": "Not classified as safe; system-AI aggregate room/month budget requires decision",
+  "productionChanges": "NONE"
+}

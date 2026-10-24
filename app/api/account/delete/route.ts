@@ -91,17 +91,10 @@ export async function POST(req: Request) {
           createAccountDeletionPorts(
             supabaseAdmin,
             createFinalDeletionPreparation(supabaseAdmin, async (job) => {
-              if (
-                process.env.V2_ENABLED === "true" &&
-                process.env.NEXT_PUBLIC_SUPABASE_URL ===
-                  "https://fwqucffxdmbdczspkcyr.supabase.co" &&
-                process.env.VERCEL_ENV !== "production"
-              ) {
                 const { prepareBillingDeletion } = await import(
                   "@/lib/billing/deletion"
                 );
                 await prepareBillingDeletion(supabaseAdmin, job);
-              }
             }),
           ),
         );

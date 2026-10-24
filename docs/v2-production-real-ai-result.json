@@ -1,0 +1,38 @@
+{
+  "scope": "real OpenAI + actual staging synthetic fixture; no Hosted real-AI claim",
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "startedAt": "2026-10-23T18:43:10.930Z",
+  "apiCalls": 2,
+  "maxCalls": 6,
+  "complete": false,
+  "checks": [
+    {
+      "name": "greeting real response/schema + staging finish",
+      "pass": true
+    }
+  ],
+  "usage": [
+    {
+      "scenario": "greeting",
+      "model": "gpt-4.1-mini-2025-04-14",
+      "modelTier": "cheap",
+      "inputTokens": 572,
+      "outputTokens": 99,
+      "durationMs": 2551,
+      "estimatedUsd": 0.0003872,
+      "contextChars": 238
+    }
+  ],
+  "productionChanges": "NONE",
+  "paymentConfigurationChanged": false,
+  "providerFailure": {
+    "code": "INVALID_OUTPUT"
+  },
+  "failure": {
+    "code": "CHECK_FAILED",
+    "check": "REAL_PROVIDER_FAILED"
+  },
+  "originalAiStopRestored": true,
+  "testSessionsSignedOut": true,
+  "finishedAt": "2026-10-23T18:43:27.665Z"
+}

@@ -1,0 +1,18 @@
+{
+  "complete": true,
+  "scope": "existing iPhone disposable test subscription cleanup",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "db": {
+    "status": "canceled",
+    "plan": "plus"
+  },
+  "webhooks": {
+    "forwarded": 1,
+    "success": 1,
+    "retryable": 0
+  },
+  "cookieRemoved": true,
+  "forwardingStopped": true,
+  "endedAt": "2026-10-23T21:35:14.048Z"
+}

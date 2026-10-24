@@ -1,0 +1,30 @@
+{
+  "complete": true,
+  "scope": "localhost Chromium with installed Supabase SDK; mocked Auth, no email sent",
+  "checks": [
+    {
+      "name": "new-tab-success",
+      "pass": true,
+      "codeExchanges": 1
+    },
+    {
+      "name": "missing-verifier",
+      "pass": true,
+      "codeExchanges": 0
+    },
+    {
+      "name": "mismatch",
+      "pass": true,
+      "codeExchanges": 1
+    },
+    {
+      "name": "expired",
+      "pass": true,
+      "codeExchanges": 1
+    }
+  ],
+  "productionChanges": "NONE",
+  "remoteAuthRequests": 0,
+  "browserClosed": true,
+  "localServerStopped": true
+}

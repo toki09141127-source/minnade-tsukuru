@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-10-24T05:50:59.370Z",
+  "decision": "NO-GO — production signup email return failed",
+  "productionExecutionAuthorized": true,
+  "scope": "Free V2; AI and Live Billing OFF",
+  "sourceFrozen": true,
+  "sourceSHA256": "0418fb2302c49a8cd391010fac3fd59ed5b9b6538b7e27f03a2150f2068635cb",
+  "sourceFiles": 213,
+  "productionMutationsByAgent": "NONE",
+  "humanProductionTest": "Disposable account created, email confirmed, password login successful",
+  "migration042to059": "NOT RUN",
+  "ownerBootstrap": "NOT RUN",
+  "productionDeploy": "NOT RUN",
+  "maintenance": "NOT STARTED; old MVP continues",
+  "freshCutoverBackup": "NOT RUN; wait until actual cutover",
+  "previousBackupRestore": "106 checks and 18 migrations PASS; not a fresh cutover backup",
+  "maintenanceAuthWindow": "11 isolated checks PASS; not applied",
+  "signupCallback": "FAIL by human report",
+  "passwordLogin": "PASS by human and DB metadata",
+  "rootCause": "UNCONFIRMED; email confirmed/code issued but no session at failed callback; later password login succeeds",
+  "ai": "OFF",
+  "liveBilling": "OFF",
+  "commit": false,
+  "push": false,
+  "deploy": false,
+  "next": [
+    "Diagnose and fix signup email return without weakening PKCE/getUser",
+    "Retest corrected signup and recovery on iPhone, then freeze exact corrected source",
+    "Only after Auth gate passes begin fresh cutover backup, production migrations, audited Owner and staged deploy"
+  ]
+}

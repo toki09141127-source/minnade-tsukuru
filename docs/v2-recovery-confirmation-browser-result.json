@@ -1,0 +1,41 @@
+{
+  "complete": true,
+  "scope": "localhost Chromium with installed Supabase SDK; mocked Auth, no email sent",
+  "checks": [
+    {
+      "name": "new-tab-success",
+      "pass": true,
+      "codeExchanges": 1,
+      "verificationVisits": 0
+    },
+    {
+      "name": "prefetch-then-confirm",
+      "pass": true,
+      "codeExchanges": 1,
+      "verificationVisits": 1
+    },
+    {
+      "name": "missing-verifier",
+      "pass": true,
+      "codeExchanges": 0,
+      "verificationVisits": 0
+    },
+    {
+      "name": "mismatch",
+      "pass": true,
+      "codeExchanges": 1,
+      "verificationVisits": 0
+    },
+    {
+      "name": "expired",
+      "pass": true,
+      "codeExchanges": 1,
+      "verificationVisits": 0
+    }
+  ],
+  "productionChanges": "NONE",
+  "remoteAuthRequests": 0,
+  "confirmationAxeViolations": [],
+  "browserClosed": true,
+  "localServerStopped": true
+}

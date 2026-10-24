@@ -1,0 +1,11 @@
+{
+  "complete": false,
+  "checks": [],
+  "scope": "production Free adapter + actual staging schema, rollback only",
+  "productionChanges": "NONE",
+  "externalEffects": 0,
+  "failure": {
+    "code": "P0001",
+    "check": "ACCOUNT_SUSPENDED"
+  }
+}

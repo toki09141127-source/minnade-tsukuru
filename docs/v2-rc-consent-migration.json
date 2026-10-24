@@ -1,0 +1,9 @@
+{
+  "projectRef": "fwqucffxdmbdczspkcyr",
+  "file": "202610240059_v2_release_consent.sql",
+  "sha256": "a43671c978a33cb1405936cbc3e643c4596eefe92939563a3afcf1de03821331",
+  "state": "applied",
+  "productionChanges": "NONE",
+  "appliedAt": "2026-10-23T20:11:02.736Z",
+  "noConsentBackfill": true
+}

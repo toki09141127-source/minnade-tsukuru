@@ -1,0 +1,129 @@
+{
+  "at": "2026-10-24T12:51:21.301Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "vercelProject": "prj_ve0GfqaxCLAoywfjAn0vcbWoxVw1",
+  "productionDomain": "https://minnade-tsukuru.vercel.app",
+  "source": {
+    "sha256": "42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5",
+    "files": 213,
+    "matchedApprovedPreview": true,
+    "frozenOutsideGit": true
+  },
+  "facts": {
+    "role": "postgres",
+    "db": "postgres",
+    "public_tables": 36,
+    "v2_absent": true,
+    "admin_absent": true,
+    "pending_deletion": 0,
+    "active_deletion_leases": 0,
+    "unfinished_effects": 0,
+    "deletion_paused": false,
+    "buffer_enabled": false,
+    "buffer_scheduler_enabled": true,
+    "active_crons": 2,
+    "owner_exists": 1,
+    "buffer_uncertain": 0
+  },
+  "appliedHashCount": 38,
+  "pending": [
+    {
+      "number": 42,
+      "file": "202610230042_v2_membership.sql",
+      "sha256": "5c4898e0e58c9548caefbe13aeba210a90a7856d270f80ffe89dfb85c357e53a"
+    },
+    {
+      "number": 43,
+      "file": "202610230043_v2_creation_log.sql",
+      "sha256": "37d1d5c79c7755a015b6a3728260c4574ce26558cc6ead03ffbd288bac378ed4"
+    },
+    {
+      "number": 44,
+      "file": "202610230044_v2_publication.sql",
+      "sha256": "ebeb044fdedaf552ae6272a67e95767ce24802d138418caa74f7e3a11c8f4701"
+    },
+    {
+      "number": 45,
+      "file": "202610230045_v2_publication_withdrawal.sql",
+      "sha256": "76358fa99c18aa00f458e7f9e02bf24aee9a3a7c4ef7e8713e4e9af2fda8e0db"
+    },
+    {
+      "number": 46,
+      "file": "202610230046_ai_creator.sql",
+      "sha256": "508af940a5a7461b923c514a24a6a76abd8e1a12fe397cd63200bc4a6ba0118b"
+    },
+    {
+      "number": 47,
+      "file": "202610230047_ai_publication.sql",
+      "sha256": "fdddf9763ff1dadd4442a18713cadcd39b316fafe2912f829e819e977a426193"
+    },
+    {
+      "number": 48,
+      "file": "202610230048_ai_control_scope.sql",
+      "sha256": "a7c0762eb0c028b59236c0dc67bab44f35d12e2b1fd3b303a0ce2b75eb39e7af"
+    },
+    {
+      "number": 49,
+      "file": "202610230049_ai_bounded_publication.sql",
+      "sha256": "72da871b19ea5215da2c210cbfa4f765f97578852db34bc452f9546a49d903a2"
+    },
+    {
+      "number": 50,
+      "file": "202610230050_billing_foundation.sql",
+      "sha256": "cf530be811d39113ddd2f3c25c7a74d8a3fa03d1238774286ee63078a8f42ffe"
+    },
+    {
+      "number": 51,
+      "file": "202610230051_ai_credit_settings.sql",
+      "sha256": "b1800a658176e4b9aeeaa686c6994d834eaffec069c8292753f96d1f05de9db7"
+    },
+    {
+      "number": 52,
+      "file": "202610230052_billing_deletion_fence.sql",
+      "sha256": "9622ec6719d619b2468736362b64911488af00d716d1c56e6538517eb210d75e"
+    },
+    {
+      "number": 53,
+      "file": "202610230053_billing_retry_state.sql",
+      "sha256": "e09feb63978689a1aac452c0e15f2805064742cafa2f3460e48b93afc09f49a4"
+    },
+    {
+      "number": 54,
+      "file": "202610230054_billing_period_timing.sql",
+      "sha256": "599a0253f03b30c7cf43953b4d08c629bd82771fe0dbaeffabc5cdddf65df03a"
+    },
+    {
+      "number": 55,
+      "file": "202610230055_admin_foundation.sql",
+      "sha256": "b28707276cee2cc5a26956678a279eca58870b6b2828406099bc397964067cf0"
+    },
+    {
+      "number": 56,
+      "file": "202610230056_admin_write_guards.sql",
+      "sha256": "9809fce6d3b0026b706a5696b6e684d1f53a0cd7d5c1ef9b037fca17358ebc52"
+    },
+    {
+      "number": 57,
+      "file": "202610230057_admin_read_models.sql",
+      "sha256": "9ca46b5c57bc9aefc6f7fa3997574fbe2ed926fb2bbb4bf7efe199831db7bc64"
+    },
+    {
+      "number": 58,
+      "file": "202610240058_v2_buffer_capacity.sql",
+      "sha256": "f33c473401238e214df43d05cffb9d919e4a1ba10d4351649dcff89abda5e026"
+    },
+    {
+      "number": 59,
+      "file": "202610240059_v2_release_consent.sql",
+      "sha256": "a43671c978a33cb1405936cbc3e643c4596eefe92939563a3afcf1de03821331"
+    }
+  ],
+  "gitAutoDeploy": {
+    "linked": true,
+    "provider": "github",
+    "productionBranch": "main"
+  },
+  "authHealth": 200,
+  "productionChanges": "NONE",
+  "complete": true
+}

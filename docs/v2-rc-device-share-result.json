@@ -1,0 +1,17 @@
+{
+  "deploymentId": "dpl_Har9vYnUeGSiWa7gcMSDp4buzsRA",
+  "host": "minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "scope": "exact immutable RC deployment only",
+  "requestedTtlSeconds": 86400,
+  "created": true,
+  "uiAnyoneWithLink": false,
+  "exactHostCopied": true,
+  "openedStaging": true,
+  "userDeviceResults": "All requested device rounds PASS by user report; payment/deletion completion/email return excluded",
+  "tokenStoredInDocs": false,
+  "productionChanges": "NONE",
+  "cleanup": "Completed: exact deployment share changed to Only people with access; no replacement share link created",
+  "uiOnlyPeopleWithAccess": true,
+  "revokedAt": "2026-10-23T19:38:05.958Z",
+  "existingUserDeviceCookies": "Not inspected or deleted remotely; no claim of clearing user browser storage"
+}

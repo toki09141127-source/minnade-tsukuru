@@ -1,0 +1,348 @@
+{
+  "scope": "Private local PostgreSQL restore of actual production public/auth/storage/migration schemas; no hosted Auth/Storage API emulation",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "checks": [
+    {
+      "name": "TABLE_COUNT_auth_audit_log_entries",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_custom_oauth_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_flow_state",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_identities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_instances",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_amr_claims",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_challenges",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_factors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_recovery_code_sets",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_mfa_recovery_codes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_authorizations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_client_states",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_clients",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_oauth_consents",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_one_time_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_refresh_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_saml_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_saml_relay_states",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_schema_migrations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_scim_tokens",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_scim_users",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sessions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sso_domains",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_sso_providers",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_users",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_webauthn_challenges",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_auth_webauthn_credentials",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_actors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_capabilities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_checkpoints",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_control",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_effects",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_prepared",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_mvp_private_deletion_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_deletion_jobs",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_deletion_retention",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_account_departed_authors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_attachment_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_control",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_queue",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_reviews",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_scheduler_config",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_scheduler_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_buffer_test_authorization",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_decisions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_event_members",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_events",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_moderation_actions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_moderation_operators",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_mvp_moderation_capabilities",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_mvp_rate_limits",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_novel_drafts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_likes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_publication_reviews",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_post_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_posts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_profiles",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_public_profiles",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_report_intake",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_report_resolutions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_reports",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_creation_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_exclusions",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_join_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_like_requests",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_likes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_members",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_room_pre_archive_notes",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_rooms",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_public_work_drafts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets_analytics",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_buckets_vectors",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_migrations",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_objects",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_s3_multipart_uploads",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_s3_multipart_uploads_parts",
+      "pass": true
+    },
+    {
+      "name": "TABLE_COUNT_storage_vector_indexes",
+      "pass": true
+    },
+    {
+      "name": "POLICIES_MATCH",
+      "pass": true
+    }
+  ],
+  "complete": false,
+  "limitations": [
+    "Vault root encryption keys, external OAuth/SMTP credentials, Supabase service configuration and hosted service versions require separate operator recovery",
+    "DPAPI backup key requires this Windows account/profile; off-device recovery not yet demonstrated",
+    "Role membership grantor is the isolated restore administrator; membership options are retained and restored roles cannot log in",
+    "Unavailable managed extensions use inert local type/contracts; no scheduler, network, Vault root key or hosted Auth/Storage service recovery is certified"
+  ],
+  "unavailableManagedExtensions": [
+    "pg_cron",
+    "http",
+    "supabase_vault",
+    "pg_net"
+  ],
+  "platformContracts": [
+    "http",
+    "pg_net",
+    "pg_cron",
+    "vault"
+  ],
+  "currentPhase": "restore verification",
+  "failure": {
+    "error": "TABLE_ACL_AND_RLS_MATCH"
+  },
+  "failedAt": "restore verification",
+  "serverStopped": true,
+  "plaintextRestoreRemoved": true
+}

@@ -1,0 +1,14 @@
+{
+  "complete": true,
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "hostedBillingExactStagingBoundary": true,
+  "testPaymentsAvailable": true,
+  "adminUnauthenticated": 401,
+  "deletionCurrentlyEnabled": false,
+  "dbAiEnabled": false,
+  "dbDeletionIntake": false,
+  "dbDeletionWorker": false,
+  "pendingDeletionJobs": 15,
+  "productionChanges": "NONE",
+  "readOnly": true
+}

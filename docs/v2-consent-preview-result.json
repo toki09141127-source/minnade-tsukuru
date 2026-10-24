@@ -1,0 +1,32 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Previously accepted synthetic consent does not prompt again",
+      "pass": true
+    },
+    {
+      "name": "Matching Terms/Privacy versions and dates persist after reload",
+      "pass": true
+    },
+    {
+      "name": "Published document contains adopted wording /terms",
+      "pass": true
+    },
+    {
+      "name": "Published document contains adopted wording /terms?tab=privacy",
+      "pass": true
+    },
+    {
+      "name": "No app console, hydration, uncaught or 5xx error",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE",
+  "humanConsentModified": false,
+  "scope": "exact-approved Hosted Preview",
+  "syntheticAccountLabel": "RC owner fixture",
+  "consentAlreadyAccepted": true,
+  "syntheticSessionSignedOut": true,
+  "browserAndLocalServerClosed": true
+}

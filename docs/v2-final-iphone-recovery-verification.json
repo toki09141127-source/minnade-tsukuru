@@ -1,0 +1,17 @@
+{
+  "readOnly": true,
+  "transaction": "BEGIN READ ONLY / ROLLBACK",
+  "scope": "exact disposable iPhone account only; no password/token/IP/raw logs",
+  "emailConfirmed": true,
+  "lastSignInAt": "2026-10-23T22:16:14.845Z",
+  "recoverySentAt": null,
+  "activeSessions": 1,
+  "originalPauses": {
+    "aiOff": true,
+    "deletionIntakeOff": true,
+    "deletionWorkerOff": true
+  },
+  "physicalRecoveryResult": "PASS by user report; no automated old/new password attempt",
+  "productionChanges": "NONE",
+  "observedAt": "2026-10-23T22:18:36.317Z"
+}

@@ -1,0 +1,12 @@
+{
+  "remoteAnon": {
+    "format": "jwt",
+    "ref": "joedeuyrzimqyjapqpyh",
+    "role": "anon"
+  },
+  "localAnon": {
+    "format": "publishable"
+  },
+  "equalAfterTrim": false,
+  "remoteAuthHealth": 200
+}

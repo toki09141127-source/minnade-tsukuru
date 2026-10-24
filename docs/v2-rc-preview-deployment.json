@@ -1,13 +1,20 @@
 {
-  "url": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "at": "2026-10-24T06:13:17.324Z",
+  "url": "https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app",
   "project": "minnade-tsukuru-staging",
   "projectId": "prj_Qo1OsPU4tdgA2fluqzbAr1kTk6Dy",
-  "scope": "sonetokiyas-projects",
   "target": "preview",
-  "sourceCommit": "1523476c801ccbddabd5257714da6bc5a727c80d",
+  "scope": "sonetokiyas-projects",
   "state": "READY",
-  "aiGenerationEnabled": true,
+  "flags": {
+    "AI_ENABLED": "false",
+    "BILLING_ENABLED": "false",
+    "V2_RC_SYNTHETIC_AI": "false",
+    "STAGING_TEST": "true"
+  },
+  "sourceFiles": 213,
+  "sourceSHA256": "42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5",
   "productionChanges": "NONE",
-  "deploymentId": "dpl_Har9vYnUeGSiWa7gcMSDp4buzsRA",
-  "observedAt": "2026-10-23T17:36:14.394Z"
+  "deploymentId": "dpl_5mSi6oH2ZBMoLWYWc3j5JEmhw8PK",
+  "observedAt": "2026-10-24T06:14:27.988Z"
 }

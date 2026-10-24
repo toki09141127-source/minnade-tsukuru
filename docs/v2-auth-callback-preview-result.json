@@ -1,0 +1,47 @@
+{
+  "complete": true,
+  "scope": "Hosted diagnostic UI only; no real email or session exchange",
+  "checks": [
+    {
+      "name": "explicit-link-rejection",
+      "code": "AUTH-01",
+      "pass": true,
+      "widths": [
+        320,
+        390,
+        1440
+      ]
+    },
+    {
+      "name": "missing-browser-state",
+      "code": "AUTH-05",
+      "pass": true,
+      "widths": [
+        320,
+        390,
+        1440
+      ]
+    },
+    {
+      "name": "missing-session",
+      "code": "AUTH-07",
+      "pass": true,
+      "widths": [
+        320,
+        390,
+        1440
+      ]
+    }
+  ],
+  "authRequestsBlocked": 0,
+  "productionChanges": "NONE",
+  "url": "https://minnade-tsukuru-staging-i8kvltx12-sonetokiyas-projects.vercel.app",
+  "phase": "missing-session",
+  "uncaught": 0,
+  "serverErrors": 0,
+  "consoleErrors": 0,
+  "hydrationErrors": 0,
+  "browserClosed": true,
+  "cookieDeleted": true,
+  "observedAt": "2026-10-23T21:47:23.263Z"
+}

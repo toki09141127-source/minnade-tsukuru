@@ -1,0 +1,49 @@
+{
+  "active": false,
+  "device": "android",
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "automaticTargetRequest": false,
+  "automaticTargetClaim": false,
+  "rawLogsSaved": false,
+  "preflight": {
+    "staff": 0,
+    "rooms": 0,
+    "posts": 0,
+    "uploads": 0,
+    "existing_jobs": 0,
+    "active_leases": 0,
+    "unresolved": 0,
+    "crons": 0
+  },
+  "protectedExistingJobs": 26,
+  "otherJobsRowLocked": true,
+  "startedAt": "2026-10-23T21:13:16.095Z",
+  "endsAt": "2026-10-23T21:33:16.095Z",
+  "intakeEnabled": false,
+  "workerEnabled": false,
+  "finalFlagsEvidence": "v2-final-device-retirement-result.json: allOriginalFlagsRestored=true; original intake/worker OFF",
+  "workerCronInvoked": false,
+  "target": {
+    "auth_count": 0,
+    "stage": "completed",
+    "active_lease": null,
+    "billing": {
+      "status": "canceled",
+      "deleting": true,
+      "confirmed": true,
+      "ownerAbsent": true
+    }
+  },
+  "webhooks": {
+    "forwarded": 1,
+    "success": 1,
+    "retryable": 0
+  },
+  "stopReason": "target_completed",
+  "flagsRestored": true,
+  "otherJobsUnchanged": true,
+  "endedAt": "2026-10-23T21:15:34.646Z",
+  "cookieFileRemoved": true
+}

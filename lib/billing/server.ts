@@ -1,9 +1,10 @@
 import "server-only";
 import { createClient } from "@supabase/supabase-js";
 import { v2Enabled } from "@/lib/v2/server";
+import { stagingEnvironment } from "@/lib/v2/environment";
 import { BillingError } from "./domain";
 export function billingBoundary() {
-  return v2Enabled() && process.env.VERCEL_ENV !== "production";
+  return v2Enabled() && stagingEnvironment();
 }
 export function billingEnabled() {
   return (

@@ -1,0 +1,42 @@
+{
+  "complete": true,
+  "checks": [
+    {
+      "name": "Old consent cannot authorize protected writes",
+      "pass": true
+    },
+    {
+      "name": "Migration does not backfill consent",
+      "pass": true
+    },
+    {
+      "name": "Wrong version or missing adult attestation rejected",
+      "pass": true
+    },
+    {
+      "name": "Wrong version or missing adult attestation rejected",
+      "pass": true
+    },
+    {
+      "name": "Wrong version or missing adult attestation rejected",
+      "pass": true
+    },
+    {
+      "name": "Explicit new consent unlocks current contract",
+      "pass": true
+    },
+    {
+      "name": "Only authenticated callers attest; service cannot impersonate consent",
+      "pass": true
+    },
+    {
+      "name": "Departing/inactive account cannot re-enable writes with consent",
+      "pass": true
+    },
+    {
+      "name": "Staging 059 applied with existing consent rows unchanged",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE"
+}

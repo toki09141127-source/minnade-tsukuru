@@ -1,0 +1,22 @@
+{
+  "active": false,
+  "preview": "https://minnade-tsukuru-staging-jrvv8pum3-sonetokiyas-projects.vercel.app",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "customerScope": "Two designated disposable device accounts only",
+  "rawEventsSaved": false,
+  "secretsPrinted": false,
+  "startedAt": "2026-10-23T20:55:39.617Z",
+  "endsAt": "2026-10-23T21:40:39.619Z",
+  "bothDeviceLoginsVerified": true,
+  "signedHostedProbe": "PASS ignored event; no billing mutation",
+  "testAccountVerified": true,
+  "webhooks": {
+    "forwarded": 6,
+    "success": 2,
+    "retryable": 4
+  },
+  "stopReason": "requested",
+  "endedAt": "2026-10-23T21:09:31.103Z",
+  "cookieFileRemoved": true
+}

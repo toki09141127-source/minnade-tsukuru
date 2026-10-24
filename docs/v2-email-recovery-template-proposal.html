@@ -1,0 +1,20 @@
+{{ if eq .RedirectTo "https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app/auth/callback?next=reset-password" }}
+<h2>みんつく：パスワードの再設定</h2>
+<p>ご自身で申し込んだ場合は、登録・再設定を始めた端末の同じブラウザで下の確認画面を開いてください。</p>
+<p><a href="https://minnade-tsukuru-staging-e0p20zw5t-sonetokiyas-projects.vercel.app/auth/confirm#recovery_token={{ .TokenHash }}">再設定の確認画面を開く</a></p>
+<p>確認画面のボタンを押して手続きを続けてください。メールのリンクは他の人へ送らないでください。</p>
+<p>心当たりがない場合は、このメールを無視してください。</p>
+{{ else }}
+{{ if eq .RedirectTo "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/callback?next=reset-password" }}
+<h2>みんつく：パスワードの再設定</h2>
+<p>ご自身でパスワード再設定を申し込んだ場合は、申し込みに使ったブラウザで下の確認画面を開いてください。</p>
+<p><a href="https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app/auth/confirm#recovery_token={{ .TokenHash }}">再設定の確認画面を開く</a></p>
+<p>画面の「再設定を続ける」を押すと、新しいパスワードを設定できます。</p>
+<p>心当たりがない場合は、このメールを無視してください。メールのリンクは他の人へ送らないでください。</p>
+{{ else }}
+<h2>Reset your password</h2>
+<p>We received a request to reset your password. Follow the link below to choose a new one.</p>
+<p><a href="{{ .ConfirmationURL }}">Reset password</a></p>
+<p>If you didn't request this, you can safely ignore this email.</p>
+{{ end }}
+{{ end }}

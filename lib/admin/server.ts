@@ -1,10 +1,10 @@
 import "server-only";
 import { v2Enabled, v2Client } from "@/lib/v2/server";
 import { NextResponse } from "next/server";
-import { billingAdmin } from "@/lib/billing/server";
+import { createClient } from "@supabase/supabase-js";
+import { freeProductionRelease } from "@/lib/v2/environment";
 export const adminEnabled = () =>
   v2Enabled() &&
-  process.env.VERCEL_ENV !== "production" &&
   process.env.ADMIN_ENABLED === "true";
 export const adminJson = (data: unknown, status = 200) =>
   NextResponse.json(data, {
@@ -14,6 +14,20 @@ export const adminJson = (data: unknown, status = 200) =>
       "X-Content-Type-Options": "nosniff",
     },
   });
+export function adminSameOrigin(req: Request) {
+  try {
+    const raw = req.headers.get("origin");
+    const origin = new URL(raw || "");
+    if (origin.origin !== raw || origin.host !== req.headers.get("host") ||
+        req.headers.get("sec-fetch-site") === "cross-site") return false;
+    if (!process.env.VERCEL)
+      return origin.protocol === "http:" && ["127.0.0.1", "localhost"].includes(origin.hostname) &&
+        process.env.VERCEL_ENV !== "production";
+    return origin.protocol === "https:" &&
+      (origin.hostname === process.env.VERCEL_URL ||
+        (freeProductionRelease() && origin.origin === "https://minnade-tsukuru.vercel.app"));
+  } catch { return false; }
+}
 export async function adminCaller(req: Request) {
   if (!adminEnabled())
     return { response: adminJson({ error: "ADMIN_UNAVAILABLE" }, 503) };
@@ -49,6 +63,8 @@ export function adminStatus(error: string) {
 export async function adminEvent(kind: string) {
   if (!adminEnabled()) return;
   try {
-    await billingAdmin().rpc("v25_record_event", { p_kind: kind });
+    await createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { auth: { persistSession: false, autoRefreshToken: false } })
+      .rpc("v25_record_event", { p_kind: kind });
   } catch {}
 }

@@ -262,10 +262,12 @@ export default function TermsConsentGate() {
             <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
               <li>初期MVPは18歳以上の方が対象です</li>
               <li>共同制作物の権利と外部利用制限</li>
-              <li>AI利用作品の取扱い</li>
+              <li>無料V2の初回公開ではAI生成と有料契約を停止します</li>
               <li>二次創作・既存IP利用に関するルール</li>
               <li>強制公開（forced_publish）などの重要仕様</li>
-              <li>個人情報・利用者情報の取扱い</li>
+              <li>退会後も共同作品・使用済み添付を保持し、通常の公開名義を匿名化します</li>
+              <li>本文に記載した個人情報の申立ては個別に確認します</li>
+              <li>通報・監査・バックアップの保持は、運営者が定期的に必要性を確認します</li>
             </ul>
           </div>
 

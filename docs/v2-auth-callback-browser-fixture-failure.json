@@ -1,0 +1,24 @@
+{
+  "complete": false,
+  "scope": "localhost Chromium with installed Supabase SDK; mocked Auth, no email sent",
+  "checks": [
+    {
+      "name": "new-tab-success",
+      "pass": true,
+      "codeExchanges": 1
+    },
+    {
+      "name": "missing-verifier",
+      "pass": true,
+      "codeExchanges": 0
+    }
+  ],
+  "productionChanges": "NONE",
+  "remoteAuthRequests": 0,
+  "failure": "OFFLINE_CALLBACK_BROWSER_FAILED",
+  "phase": "mismatch:callback",
+  "serverErrorCategories": [],
+  "visibleStatus": "AUTH-09",
+  "browserClosed": true,
+  "localServerStopped": true
+}

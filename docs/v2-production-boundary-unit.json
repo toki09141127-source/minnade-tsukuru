@@ -1,0 +1,215 @@
+{
+  "complete": true,
+  "scope": "Local VM mocks; no network/production changes",
+  "checks": [
+    {
+      "name": "Free production retirement confirms without Stripe even with UI OFF",
+      "pass": true
+    },
+    {
+      "name": "Installed schema is detected even without UI/schema flag",
+      "pass": true
+    },
+    {
+      "name": "Old MVP accepts only missing RPC",
+      "pass": true
+    },
+    {
+      "name": "Expected V2 schema missing fails closed 3",
+      "pass": true
+    },
+    {
+      "name": "Expected V2 schema missing fails closed 4",
+      "pass": true
+    },
+    {
+      "name": "Expected V2 schema missing fails closed 5",
+      "pass": true
+    },
+    {
+      "name": "RPC failure never skips retirement: 42501",
+      "pass": true
+    },
+    {
+      "name": "RPC failure never skips retirement: PGRST301",
+      "pass": true
+    },
+    {
+      "name": "RPC failure never skips retirement: PGRST000",
+      "pass": true
+    },
+    {
+      "name": "RPC failure never skips retirement: BILLING_OPERATION_UNCERTAIN",
+      "pass": true
+    },
+    {
+      "name": "Unknown/mixed environment rejected before RPC 10",
+      "pass": true
+    },
+    {
+      "name": "Unknown/mixed environment rejected before RPC 11",
+      "pass": true
+    },
+    {
+      "name": "Unknown/mixed environment rejected before RPC 12",
+      "pass": true
+    },
+    {
+      "name": "Unknown/mixed environment rejected before RPC 13",
+      "pass": true
+    },
+    {
+      "name": "Production customer blocked even with confirmation false",
+      "pass": true
+    },
+    {
+      "name": "Production customer blocked even with confirmation true",
+      "pass": true
+    },
+    {
+      "name": "Free account absent needs no provider",
+      "pass": true
+    },
+    {
+      "name": "Confirmation replay is idempotent",
+      "pass": true
+    },
+    {
+      "name": "Malformed provider state rejected 18",
+      "pass": true
+    },
+    {
+      "name": "Malformed provider state rejected 19",
+      "pass": true
+    },
+    {
+      "name": "Malformed provider state rejected 20",
+      "pass": true
+    },
+    {
+      "name": "Malformed provider state rejected 21",
+      "pass": true
+    },
+    {
+      "name": "Test provider cancellation precedes confirmation",
+      "pass": true
+    },
+    {
+      "name": "Provider failure never confirms retirement",
+      "pass": true
+    },
+    {
+      "name": "Confirmation failure is resumable",
+      "pass": true
+    },
+    {
+      "name": "Billing failure prevents preparation and storage",
+      "pass": true
+    },
+    {
+      "name": "Billing verified before preparation and again before Auth receipt",
+      "pass": true
+    },
+    {
+      "name": "Retirement hook survives UI OFF: app/api/account/delete/route.ts",
+      "pass": true
+    },
+    {
+      "name": "Retirement hook survives UI OFF: app/api/cron/account-deletion/route.ts",
+      "pass": true
+    },
+    {
+      "name": "Production AI blocked even if accidentally enabled: synthetic",
+      "pass": true
+    },
+    {
+      "name": "Production AI blocked even if accidentally enabled: openai",
+      "pass": true
+    },
+    {
+      "name": "Explicit Free production configuration opens human and admin gates only",
+      "pass": true
+    },
+    {
+      "name": "Missing/mismatched release condition denied: V2_ENABLED",
+      "pass": true
+    },
+    {
+      "name": "Missing/mismatched release condition denied: V2_RELEASE_MODE",
+      "pass": true
+    },
+    {
+      "name": "Missing/mismatched release condition denied: V2_SCHEMA_VERSION",
+      "pass": true
+    },
+    {
+      "name": "Missing/mismatched release condition denied: VERCEL_ENV",
+      "pass": true
+    },
+    {
+      "name": "Missing/mismatched release condition denied: NEXT_PUBLIC_SUPABASE_URL",
+      "pass": true
+    },
+    {
+      "name": "Admin flag remains independent",
+      "pass": true
+    },
+    {
+      "name": "Old production V2 flag alone cannot enable release",
+      "pass": true
+    },
+    {
+      "name": "Staging cannot be used by a production deployment",
+      "pass": true
+    },
+    {
+      "name": "Production Stripe remains unavailable",
+      "pass": true
+    },
+    {
+      "name": "Exact production alias accepted with matching Host",
+      "pass": true
+    },
+    {
+      "name": "Cross-origin/spoofed admin request refused 42",
+      "pass": true
+    },
+    {
+      "name": "Cross-origin/spoofed admin request refused 43",
+      "pass": true
+    },
+    {
+      "name": "Cross-origin/spoofed admin request refused 44",
+      "pass": true
+    },
+    {
+      "name": "Cross-origin/spoofed admin request refused 45",
+      "pass": true
+    },
+    {
+      "name": "Production admin unauthenticated caller is 401",
+      "pass": true
+    },
+    {
+      "name": "Production admin invalid session is 401",
+      "pass": true
+    },
+    {
+      "name": "Production admin authenticated non-staff is 403",
+      "pass": true
+    },
+    {
+      "name": "Production admin retains DB-authorized caller and correct AI stopped state",
+      "pass": true
+    },
+    {
+      "name": "Production admin telemetry is independent of disabled payments",
+      "pass": true
+    },
+    {
+      "name": "38 production-applied migration hashes unchanged locally",
+      "pass": true
+    }
+  ],
+  "productionChanges": "NONE"
+}

@@ -1,0 +1,66 @@
+{
+  "updatedAt": "2026-10-23T22:21:43.749Z",
+  "preview": "https://minnade-tsukuru-staging-ouzrmgsei-sonetokiyas-projects.vercel.app",
+  "applicationSource": "1523476c801ccbddabd5257714da6bc5a727c80d",
+  "evidence": "Direct user completion reports; not an automated observation or proof of unrequested destructive/payment steps",
+  "android": {
+    "basicNavigation": "PASS",
+    "textAndImagePost": "PASS",
+    "coreApplication": "PASS shared application, one device",
+    "highlight": "PASS human report",
+    "draftSaveReload": "PASS human report",
+    "aiStoppedUi": "PASS human report",
+    "workAndLog": "PASS human report; corrected publicly visible synthetic work",
+    "logoutLogin": "PASS human report",
+    "stripeTestScreenAndReturn": "PASS human report; test label/card fields checked, no payment submitted",
+    "accountDeletionExplanation": "PASS human report; retention/anonymization explanation only",
+    "physicalTestCheckout": "PASS; Plus active and 500 credits, DB/Stripe scoped verification",
+    "emailReturn": "PASS by human report",
+    "accountDeletionCompletion": "PASS human report + DB/Auth/Stripe verification"
+  },
+  "iphone": {
+    "basicNavigation": "PASS",
+    "textAndImagePost": "PASS",
+    "coreApplication": "PASS shared application, one device",
+    "highlight": "PASS human report",
+    "draftSaveReload": "PASS human report",
+    "aiStoppedUi": "PASS human report",
+    "workAndLog": "PASS human report; corrected publicly visible synthetic work",
+    "logoutLogin": "PASS human report",
+    "stripeTestScreenAndReturn": "PASS human report; test label/card fields checked, no payment submitted",
+    "accountDeletionExplanation": "PASS human report; retention/anonymization explanation only",
+    "physicalTestCheckout": "PASS; Plus active and 500 credits, DB/Stripe scoped verification",
+    "emailReturn": "PASS recovery on b7zdudurb; initial signup callback FAIL retained, signup retest NOT RUN",
+    "accountDeletionCompletion": "NOT RUN; at least one device requirement met by Android",
+    "recoveryAcceptance": {
+      "result": "PASS by human report",
+      "preview": "https://minnade-tsukuru-staging-b7zdudurb-sonetokiyas-projects.vercel.app",
+      "browser": "iPhone Safari",
+      "confirmationScreen": true,
+      "explicitContinue": true,
+      "newPasswordSaved": true,
+      "logout": true,
+      "oldPasswordRejected": true,
+      "newPasswordLogin": true,
+      "reloadSessionMaintained": true,
+      "agentPasswordOrTokenCollected": false,
+      "reportedAt": "2026-10-23T22:21:43.749Z",
+      "followUpLogout": "PASS by human report and read-only zero sessions / zero active refresh tokens",
+      "metadataEvidence": "v2-final-iphone-recovery-verification.json",
+      "cleanupEvidence": "v2-final-iphone-session-cleanup.json"
+    }
+  },
+  "creatorCoreApproval": {
+    "pendingRequests": 1,
+    "approved": 1,
+    "authenticatedCreator": true
+  },
+  "remaining": [
+    "Production signup/recovery smoke after approved exact-host configuration; not staging completion",
+    "Production deployment/migration and Owner grant require separate release authorization"
+  ],
+  "productionChanges": "NONE",
+  "requestedDeviceChecks": "ALL PASS by user report",
+  "correctedWork": "5a1b5a36-f2be-4f3d-8167-7e2f4801a4a5",
+  "evidenceRoundSeparation": "Earlier basic UI evidence is unchanged. Final payment/deletion evidence belongs to jrvv8pum3; recovery fix evidence belongs to b7zdudurb."
+}

@@ -1,0 +1,42 @@
+{
+  "complete": true,
+  "observedAt": "2026-10-23T21:18:32.298Z",
+  "device": "android",
+  "readOnlyVerification": true,
+  "authenticatedApiUserNotFound": true,
+  "allOriginalFlagsRestored": true,
+  "otherJobsUnchanged": true,
+  "otherJobsCount": 26,
+  "state": {
+    "stage": "completed",
+    "auth_rows": 0,
+    "profile_rows": 0,
+    "public_profile_rows": 0,
+    "ai_profile_rows": 0,
+    "active_job_leases": 0,
+    "billing": {
+      "status": "canceled",
+      "deleting": true,
+      "confirmed": true,
+      "ownerAbsent": true
+    }
+  },
+  "humanReported": {
+    "completion": "PASS",
+    "profileEditingAfterReload": "DENIED PASS",
+    "oldPasswordLogin": "REJECTED PASS"
+  },
+  "stripeTestVerification": {
+    "source": "Stripe connector; exact mapped disposable customer in acct_1USz6gLZaDd1Edb0",
+    "subscriptionCount": 1,
+    "hasMore": false,
+    "expectedSubscriptionMatched": true,
+    "livemode": false,
+    "status": "canceled"
+  },
+  "retainedContent": "No room/post/upload in this disposable account; prior RC content-retention E2E remains separate",
+  "productionChanges": "NONE",
+  "liveBilling": "OFF",
+  "cookieFileAbsent": true,
+  "forwardLockAbsent": true
+}

@@ -1,0 +1,10 @@
+{
+  "complete": false,
+  "scope": "staging synthetic bootstrap transaction, rolled back",
+  "checks": [],
+  "productionChanges": "NONE",
+  "failure": {
+    "code": "42P08",
+    "check": "ASSERTION"
+  }
+}
