@@ -1,0 +1,9 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
+const x=require('./free-release-context.cjs');
+try{x.assert.equal(process.argv[2],x.REF);const journal=x.read('v2-free-production-migrations.json');x.assert.equal(journal.entries.length,18);x.assert.ok(journal.entries.every(e=>e.state==='applied'&&e.legacyFingerprintUnchanged));
+const dir=x.path.join(x.P.privateDir,'v2-free-vercel-context'),project=JSON.parse(x.fs.readFileSync(x.path.join(dir,'.vercel/project.json')));x.assert.equal(project.projectId,x.PROJECT);
+const flags={V2_ENABLED:'true',V2_RELEASE_MODE:'free',V2_SCHEMA_VERSION:'58',ADMIN_ENABLED:'true',AI_ENABLED:'false',BILLING_ENABLED:'false',STAGING_TEST:'false',V2_RC_SYNTHETIC_AI:'false'};
+for(const [name,value]of Object.entries(flags)){x.cli(['env','add',name,'--environment','production','--value',value,'--yes','--no-sensitive','--force','--cwd',dir]);console.log('PRODUCTION_FLAG '+name+'='+value)}
+const temporary=x.path.join(dir,'verified.env');try{x.cli(['env','pull',temporary,'--environment','production','--yes','--cwd',dir]);const vars=require('dotenv').parse(x.fs.readFileSync(temporary));for(const [name,value]of Object.entries(flags))x.assert.equal(vars[name],value);x.assert.equal(vars.NEXT_PUBLIC_SUPABASE_URL,x.env().NEXT_PUBLIC_SUPABASE_URL);x.assert.equal(vars.SUPABASE_SERVICE_ROLE_KEY,x.env().SUPABASE_SERVICE_ROLE_KEY);x.assert.equal(Object.entries(vars).filter(([k,v])=>v&&/OPENAI|STRIPE.*(?:KEY|SECRET)/.test(k)).length,0);x.privateSave('v2-free-production-env.aes',vars);}finally{if(x.fs.existsSync(temporary))x.fs.unlinkSync(temporary)}
+x.save('v2-free-project-flags.json',{at:new Date().toISOString(),project:x.PROJECT,target:'production',flags,verified:true,complete:true,aiOrStripeCredentials:0});console.log('PRODUCTION_FLAGS_VERIFIED');
+}catch(e){console.log(JSON.stringify(x.P.publicFailure(e)));process.exitCode=1}

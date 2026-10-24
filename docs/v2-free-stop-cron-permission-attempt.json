@@ -1,0 +1,10 @@
+{
+  "mode": "stop",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "at": "2026-10-24T12:58:34.436Z",
+  "complete": false,
+  "failure": {
+    "error": "PRIVATE_OPERATION_FAILED",
+    "code": "42501"
+  }
+}

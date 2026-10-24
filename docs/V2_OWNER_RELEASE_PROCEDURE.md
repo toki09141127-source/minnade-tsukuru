@@ -1,6 +1,6 @@
 # Production Owner preparation
 
-2026-10-24. DESIGNATED; procedure rehearsal PASS. Production role grant NOT RUN.
+2026-10-24. Production Owner bootstrap and moderation compatibility applied; TEST moderation/authorization PASS.
 
 本人指定済みID: `820ed99a-286e-4f96-95da-a66988139415`。追加の候補列挙・再選択なし。検収用identityは本番へコピーしない。
 
@@ -8,7 +8,7 @@
 1. 本番ref、対象UUID、Auth/profileの存在・退会/利用停止なし、055〜057の適用hashを確認する。メールで自動検索して権限を付けない。
 2. 管理UIはOFFのまま、短いtransactionとlock timeoutでadmin_usersをロック。対象の既存roleが想定外なら停止する。
 3. admin_usersへ対象UUID/role=owner/active=trueを一度だけ登録し、同一transactionでadmin_auditへrequest UUID、actor/target UUID、bootstrap、before/after、operational理由、手順hashを記録する。監査失敗ならCOMMITしない。既存の同一Ownerなら役割・監査を増やさない。公開RPC/Service RoleからbootstrapできるGRANTを加えない。
-4. READ BACKで対象Ownerと監査1件を照合後に確定する。DB所有者の接続記録を私的運用記録に残す。旧moderation_operatorsを追加してV2権限を迂回する必要はない。
+4. READ BACKで対象Ownerと監査1件を照合後に確定する。DB所有者の接続記録を私的運用記録に残す。既存mvp_moderateはmoderation_operatorsも照合するため、指定Ownerの同台帳登録と監査を同一transactionで行う。055により旧RPCのauthenticated/service_role直接実行はREVOKE済みであり、V2の本人/role/version/監査検査は必須のまま。2026-10-24の本番smokeで初期化漏れを発見し、本人の2件限定承認後に実OwnerとTEST Ownerへ補完、TEST資格は検収後削除済み。
 5. 一般公開前の検収窓だけADMIN_ENABLEDを有効化し、本人ログインでOwner一覧/限定停止/監査、ModeratorのOwner操作拒否、一般利用者403をTEST対象のみで確認する。失敗なら直ちに管理入口をOFFへ戻す。既存のAI/退会/Buffer停止を自動解除しない。
 6. 失敗時は管理OFFを維持。監査を消去せず、DB所有者による明示的な取消・再確認手順を別承認で行う。唯一のOwnerが退会する前には後継と運用担当を決定する。
 

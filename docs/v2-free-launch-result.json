@@ -1,0 +1,38 @@
+{
+  "at": "2026-10-24T13:48:36.302Z",
+  "releaseMode": "FREE V2 / HUMAN COLLABORATION FIRST",
+  "productionGo": true,
+  "gitFinalization": "PENDING",
+  "deployment": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
+  "productionDomain": "https://minnade-tsukuru.vercel.app",
+  "migrations": "042-059 applied (18); prior 38 hashes unchanged",
+  "smoke": "PASS",
+  "securityRls": "PASS",
+  "accountDeletion": "PASS",
+  "admin": "PASS after approved compatibility bootstrap",
+  "ai": "OFF",
+  "syntheticAi": "OFF",
+  "liveBilling": "OFF",
+  "pricing": "準備中",
+  "buffer": {
+    "send": false,
+    "scheduler": true
+  },
+  "physicalEmail": "Known Risk accepted; not PASS",
+  "openai": "Not called; real API remains separate Known Issue",
+  "monitor": {
+    "automationId": "v2-24",
+    "status": "ACTIVE",
+    "untilJst": "2026-10-25T22:45:00+09:00",
+    "firstAlerts": []
+  },
+  "rollbackPerformed": false,
+  "incidentsResolved": [
+    "Owner bootstrap lacked legacy moderation lookup; exact two-target audited correction approved and TEST privilege removed"
+  ],
+  "backupLimitations": [
+    "Managed Auth/SMTP full-service recovery not certified",
+    "DPAPI recovery tied to current Windows profile",
+    "Off-device backup recovery unproven"
+  ]
+}

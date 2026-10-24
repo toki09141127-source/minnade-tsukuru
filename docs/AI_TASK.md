@@ -28,10 +28,10 @@ AI/Live Billing ON、force push、既存差分破棄、秘密値/本文/IP/raw l
 本番適用/未適用、Owner/認証/公開状態、保全/復旧、未確認部分をHANDOFFへ記録。
 
 ## Updated at
-2026-10-24T12:51:45.553Z
+2026-10-24T13:48:36.307Z
 
 ## Current result
-V2 FREE LAUNCH進行中。旧NO-GOの実機待ちは最新本人指示で解除。最新e0p20zw5tの213files/source hashを固定、適用済38件と未適用042-059を照合する。本番はまだ旧MVP、migration/Owner/deploy未実施。移行・smokeの未実施項目はPASSにしない。
+Production GO / general writes OPEN。migration042-059、production deploy、Owner、メール本文、smoke/security/RLS/退会/TEST cleanup PASS。AI/Live OFF・既存Buffer停止維持。実機signup/resetは受容Known Risk。main/push/tag仕上げ中。毎時監視v2-24 ACTIVE（10/25 22:45 JSTまで）。
 
 ## Historical progress（以下の結果待ちは当時の記録）
 最新: b7zdudurbの再設定確認画面を本人承認後にstaging限定適用。Cookie/共有置換/2callback/限定Reset template保存済み。Hosted4ケース・3幅・axe0/実Auth通信0 PASS、Cookie削除/browser終了。実メール描画とiPhoneの新password→旧拒否→新login/reloadは本人結果待ち、NO-GO維持。i8 AUTH-01のverify303→403を観測したが先読み起因は未確定。詳細はHANDOFF最新節。

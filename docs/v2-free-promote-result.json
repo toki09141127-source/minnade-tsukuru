@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-24T13:20:33.679Z",
+  "mode": "promote",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "complete": true,
+  "deploymentId": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
+  "state": "READY",
+  "canonicalAlias": "https://minnade-tsukuru.vercel.app",
+  "generalWrites": "STOPPED"
+}

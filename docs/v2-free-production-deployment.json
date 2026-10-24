@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-24T13:17:13.824Z",
+  "target": "production",
+  "project": "prj_ve0GfqaxCLAoywfjAn0vcbWoxVw1",
+  "ai": "OFF",
+  "liveBilling": "OFF",
+  "aliasPromoted": false,
+  "complete": true,
+  "sourceManifestSHA256": "42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5",
+  "sourceFiles": 213,
+  "applicationBytesMatchFrozenSource": true,
+  "deploymentMetadataChanges": [
+    "Production project identity",
+    "Preserve existing daily publish cron only"
+  ],
+  "productionCredentialsMatched": true,
+  "publicKey": "Existing production anon JWT retained; local file uses a separate publishable key",
+  "url": "https://minnade-tsukuru-hmntud9do-sonetokiyas-projects.vercel.app",
+  "flags": {
+    "V2_ENABLED": "true",
+    "V2_RELEASE_MODE": "free",
+    "V2_SCHEMA_VERSION": "58",
+    "ADMIN_ENABLED": "true",
+    "AI_ENABLED": "false",
+    "BILLING_ENABLED": "false",
+    "STAGING_TEST": "false",
+    "V2_RC_SYNTHETIC_AI": "false"
+  },
+  "state": "READY",
+  "deploymentId": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
+  "observedAt": "2026-10-24T13:19:22.192Z"
+}

@@ -1,0 +1,44 @@
+{
+  "at": "2026-10-24T13:25:49.971Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "3f950e2c-e393-41f3-90f4-b3d974ba4cb4",
+  "checks": [
+    {
+      "name": "FOREIGN_ROOM_AND_DRAFT_DENIED",
+      "pass": true
+    },
+    {
+      "name": "MEMBER_HIGHLIGHT_CORE_KICK_AND_KICKED_REJOIN_DENIED",
+      "pass": true
+    },
+    {
+      "name": "SUSPENDED_WRITES_REJECTED",
+      "pass": true
+    },
+    {
+      "name": "HIDDEN_WORK_PUBLIC_LEAK_DENIED",
+      "pass": true
+    },
+    {
+      "name": "DIRECT_PLAN_ADMIN_AUDIT_STORAGE_PRIVILEGE_DENIED",
+      "pass": true
+    },
+    {
+      "name": "NEW_TABLE_RLS_AND_GRANT_BOUNDARIES",
+      "pass": true
+    },
+    {
+      "name": "BUFFER_STATE_AND_NO_EXTERNAL_DISPATCH",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "phase": "BUFFER_STATE_AND_NO_EXTERNAL_DISPATCH",
+  "privateRlsTables": 4,
+  "newRlsTables": 22,
+  "finishedAt": "2026-10-24T13:39:42.135Z",
+  "resolvedAttempt": {
+    "initialHide503": "Owner bootstrap compatibility fixed with explicit user approval",
+    "newTableCount": "Replaced guessed public count with exact canonical names: 22 public + 4 private"
+  }
+}

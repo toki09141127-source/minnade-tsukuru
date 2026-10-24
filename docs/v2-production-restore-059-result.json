@@ -449,10 +449,11 @@
   "currentPhase": "final rehearsal checks",
   "aclNormalization": "pg_restore preserves archive owners; null ACL expanded with acldefault and compared via aclexplode including grantor/grantee/options; raw explicit owner-default and null are equivalent",
   "constraintNormalization": "PostgreSQL 18 table NOT NULL catalog entries omitted from comparison with PostgreSQL 17 pg_constraint; archived NOT NULL DDL remains applied",
-  "structureCount": 396,
+  "structureCount": 435,
   "tableCount": 78,
   "storageObjectCount": 19,
-  "backupSha256": "06e85f50a46e6058da3fc8105369ea6c272a963dd95f3390a7b5dffb891dc49e",
+  "backupSha256": "e988132ba63c08f1166116ec6bc0786442d533416170cdb7b463c7926b8bf995",
+  "localMaintenanceGuardRemoved": 39,
   "restoreComplete": true,
   "productionAppliedHash": {
     "pass": true,
@@ -698,6 +699,55 @@
       }
     ],
     "scope": "Actual isolated production clone; all fixture rows and window DDL rolled back; no hosted Auth request"
+  },
+  "productionTestWindow": {
+    "complete": true,
+    "checks": [
+      {
+        "name": "Only exact synthetic Auth identity can sign up through normal triggers",
+        "pass": true
+      },
+      {
+        "name": "Other Auth creation denied",
+        "pass": true
+      },
+      {
+        "name": "Synthetic email cannot escape allowlist",
+        "pass": true
+      },
+      {
+        "name": "Direct test ownership and linked test rows allowed",
+        "pass": true
+      },
+      {
+        "name": "Anonymization of registered test rows remains possible",
+        "pass": true
+      },
+      {
+        "name": "Existing non-test row denied even for service role",
+        "pass": true
+      },
+      {
+        "name": "Attaching a test UUID cannot seize a non-test row",
+        "pass": true
+      },
+      {
+        "name": "Non-test deletion denied",
+        "pass": true
+      },
+      {
+        "name": "Primary-key reassignment denied",
+        "pass": true
+      },
+      {
+        "name": "Registered synthetic deletion permitted; production deletion fences still run",
+        "pass": true
+      },
+      {
+        "name": "Storage restricted to registered test-room namespaces",
+        "pass": true
+      }
+    ]
   },
   "rehearsalScope": "Actual encrypted production snapshot data; 18 missing application migrations; per-migration data fingerprints, legacy RPC signature compatibility, new RLS/direct-grant boundaries. No HTTP app flows or hosted service recovery. Managed network contracts inert.",
   "serverStopped": true,

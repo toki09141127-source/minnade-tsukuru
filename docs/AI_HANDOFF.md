@@ -2058,3 +2058,14 @@ Vercel dpl_5mSi6oH2ZBMoLWYWc3j5JEmhw8PKをUIで確認し、Anyone with the link�
 
 ### 2026-10-24 V2 FREE LAUNCHの最新承認（f42d38a4）
 本人が最終実機未検収を明示受容。commit/push/main統合、production migration/deploy、TEST限定smoke/退会、24h監視を承認。AI/Live/synthetic production OFFを維持。過去の実機待ちNO-GOとpush禁止はこの範囲で置換。重大な技術/security/data integrity問題は停止する。最新Preview213filesを再固定中、既存162差分を保持。059は採用済み無料規約再同意のため対象に含む。新しい本番変更はまだない。
+
+
+### 2026-10-24 無料V2 本番移行中（停止維持）
+本番042-059の18件を適用し、各file transaction/hash・既存78表元column fingerprint・新表RLS/direct DML拒否を照合。5段階のcatalog/索引/旧MVP HEAD4経路もPASS。Ownerは既承認UUIDのみへrole+auditを同時登録。現在一般書込は停止、cron2件pause、Buffer送信OFF/scheduler一時OFF、退会pause。
+直前backup: 78表/Storage19件、DB SHA e988132ba63c08f1166116ec6bc0786442d533416170cdb7b463c7926b8bf995。隔離restore/18migration106checks、Auth窓11と新TEST窓11 PASS。clone/server平文cleanup済み。新TEST窓は2時間・4架空IDとリンク行のみ、既存ユーザー行へのService Role更新も拒否する。Auth/RLS/GRANTを緩めない。
+停止初回はcron.job直接UPDATEが42501で全rollback。cron.alter_job正規管理関数へ変更して成功。旧隔離Auth fixtureは今回backupの既存検収メールと重複し23505になったため、localhost限定架空emailへ差替え再検証。本番データ不整合ではない。Vercel CLI65 envの旧位置引数は値解釈が変わっていたため--environment/--valueで修正中、配信前再取得照合必須。新しいdeploy/aliasはまだ未実施。
+コードfreeze commit 6cb898f。main/remoteは変更していない。AI/Live/synthetic generationはOFFで進める。staging用共有のcleanup、productionメール2本文、TESTsmoke/退会、main/tag、監視が残る。
+
+
+### 2026-10-24 22:44 JST 無料V2一般書込再開・本番検収PASS
+042-059適用済み、固定sourceをproduction READY/alias反映、AI/Live/synthetic OFF。一般書込OPEN、退会pause解除、元cron2/scheduler ON、Buffer送信OFF維持。TEST共同制作・公開・権限・26追加表RLS・退会保持/削除PASS。Owner旧資格台帳の接続漏れを発見し自動レビュー拒否後、本人の2件限定承認→rollback検証→監査付き補完→非表示/復帰PASS。TEST側Owner無効/資格削除/session0、実Owner1。初回監視alerts0、heartbeat v2-24を10/25 22:45 JSTまでACTIVE設定（旧24は存在せず新規作成）。本番メール2本文は別タブ全文readback一致、実機最終未検収は本人受容Known Risk。Auth/SMTP管理ログは自動監視外。main/push/tagの仕上げが残る。詳細docs/V2_FREE_LAUNCH_RESULT.md。

@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-24T13:21:35.588Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "3f950e2c-e393-41f3-90f4-b3d974ba4cb4",
+  "checks": [
+    {
+      "name": "TEST_LOGIN_PROFILE_AND_CURRENT_CONSENT",
+      "pass": true
+    }
+  ],
+  "complete": false,
+  "phase": "TEMP_TEST_OPERATOR_AUDITED",
+  "failure": {
+    "error": "PRIVATE_OPERATION_FAILED",
+    "code": "42P08"
+  }
+}

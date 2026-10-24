@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-24T13:16:59.170Z",
+  "project": "prj_ve0GfqaxCLAoywfjAn0vcbWoxVw1",
+  "target": "production",
+  "flags": {
+    "V2_ENABLED": "true",
+    "V2_RELEASE_MODE": "free",
+    "V2_SCHEMA_VERSION": "58",
+    "ADMIN_ENABLED": "true",
+    "AI_ENABLED": "false",
+    "BILLING_ENABLED": "false",
+    "STAGING_TEST": "false",
+    "V2_RC_SYNTHETIC_AI": "false"
+  },
+  "verified": true,
+  "complete": true,
+  "aiOrStripeCredentials": 0
+}

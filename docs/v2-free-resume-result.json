@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-24T13:44:15.845Z",
+  "mode": "resume",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "complete": true,
+  "deploymentId": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
+  "state": "READY",
+  "generalWrites": "OPEN",
+  "originalBufferStateRestored": true,
+  "deletionPaused": false,
+  "activeCron": 2,
+  "ai": "OFF",
+  "liveBilling": "OFF"
+}

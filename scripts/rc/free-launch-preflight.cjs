@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 // Authorized Free launch preparation; all remote inspection is read-only.
-const x=require('./free-release-context.cjs'),crypto=require('crypto'),cp=require('child_process');
+const x=require('./free-release-context.cjs'),crypto=require('crypto');
 const {fs,path,assert}=x;
 (async()=>{let db;try{
 const d=x.read('v2-email-confirmation-preview-deployment.json');assert.equal(d.state,'READY');assert.equal(d.projectId,'prj_Qo1OsPU4tdgA2fluqzbAr1kTk6Dy');

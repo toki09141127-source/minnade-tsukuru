@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-24T13:38:17.198Z",
+  "complete": true,
+  "directLegacyRpcDenied": true,
+  "missingCompatibilityEntryReproduced": true,
+  "existingVersionedOwnerHidePass": true,
+  "rehearsalRolledBack": true,
+  "designatedOwnerAndTemporaryTestOwnerLinked": true,
+  "auditAtomic": true,
+  "schemaOrGrantsChanged": false
+}

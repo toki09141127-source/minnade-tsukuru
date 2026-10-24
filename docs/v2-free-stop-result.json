@@ -1,0 +1,13 @@
+{
+  "mode": "stop",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "at": "2026-10-24T12:59:22.160Z",
+  "complete": true,
+  "legacyFingerprintSaved": true,
+  "guardedTables": 39,
+  "allCronPaused": true,
+  "deletionPaused": true,
+  "bufferAutoSendRemainsOff": true,
+  "originalStateEncrypted": true,
+  "generalWrites": "STOPPED"
+}

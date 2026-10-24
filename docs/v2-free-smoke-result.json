@@ -1,0 +1,62 @@
+{
+  "at": "2026-10-24T13:21:35.588Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "runId": "3f950e2c-e393-41f3-90f4-b3d974ba4cb4",
+  "checks": [
+    {
+      "name": "TEST_LOGIN_PROFILE_AND_CURRENT_CONSENT",
+      "pass": true
+    },
+    {
+      "name": "TEMP_TEST_OPERATOR_AUDITED",
+      "pass": true
+    },
+    {
+      "name": "V2_FREE_ROOM_CREATE_WITH_AI_OFF",
+      "pass": true
+    },
+    {
+      "name": "JOIN_CONSENT_REQUIRED_AND_MEMBER_ACCEPTED",
+      "pass": true
+    },
+    {
+      "name": "TEXT_POST_AND_MEMBER_HIGHLIGHT_DENIED",
+      "pass": true
+    },
+    {
+      "name": "ATTACHMENT_LEDGER_UPLOAD_BOUND_AND_UNUSED",
+      "pass": true
+    },
+    {
+      "name": "CORE_REQUEST_REJECT_THEN_APPROVE",
+      "pass": true
+    },
+    {
+      "name": "HIGHLIGHT_PUBLIC_APPROVAL_LOG_SEARCH_AND_DRAFT",
+      "pass": true
+    },
+    {
+      "name": "AI_AND_PAID_CHECKOUT_UNAVAILABLE",
+      "pass": true
+    },
+    {
+      "name": "FEATURE_STOP_POSTS_UPLOADS_AND_DELETION",
+      "pass": true
+    },
+    {
+      "name": "FORCED_PUBLISH_STOP_THEN_HUMAN_FALLBACK",
+      "pass": true
+    },
+    {
+      "name": "PUBLIC_WORK_LOG_ATTACHMENT_LIKE_REPORT",
+      "pass": true
+    },
+    {
+      "name": "ADMIN_SECTIONS_AND_REGULAR_USER_DENIAL",
+      "pass": true
+    }
+  ],
+  "complete": true,
+  "phase": "ADMIN_SECTIONS_AND_REGULAR_USER_DENIAL",
+  "finishedAt": "2026-10-24T13:24:49.337Z"
+}

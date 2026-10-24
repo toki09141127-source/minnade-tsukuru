@@ -1,0 +1,31 @@
+{
+  "at": "2026-10-24T13:41:29.990Z",
+  "compared": 51,
+  "unchanged": 49,
+  "changes": [
+    {
+      "table": "mvp_private.actors",
+      "before": 27,
+      "now": 28
+    },
+    {
+      "table": "mvp_private.deletion_control",
+      "before": 1,
+      "now": 1
+    }
+  ],
+  "excluded": "Only current synthetic row graph and approved Owner compatibility addition; Auth volatile metadata excluded",
+  "complete": true,
+  "explainedChanges": [
+    {
+      "table": "mvp_private.actors",
+      "reason": "Exact TEST retirement surrogate; excluding that one row restores original hash",
+      "pass": true
+    },
+    {
+      "table": "mvp_private.deletion_control",
+      "reason": "Expected changed_at from bounded pause/resume tests; pause remains true",
+      "pass": true
+    }
+  ]
+}

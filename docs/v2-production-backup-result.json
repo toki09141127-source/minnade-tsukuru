@@ -1,21 +1,35 @@
 {
   "scope": "PRODUCTION READ ONLY; encrypted backup outside repository",
   "projectRef": "joedeuyrzimqyjapqpyh",
-  "startedAt": "2026-10-23T18:31:14.920Z",
+  "startedAt": "2026-10-24T13:00:08.820Z",
   "complete": true,
+  "maintenanceBefore": {
+    "guards": 39,
+    "active_crons": 0,
+    "deletion_paused": true,
+    "buffer_enabled": false,
+    "scheduler_enabled": false
+  },
   "database": {
-    "bytes": 2454288,
-    "sha256": "06e85f50a46e6058da3fc8105369ea6c272a963dd95f3390a7b5dffb891dc49e"
+    "bytes": 2501023,
+    "sha256": "e988132ba63c08f1166116ec6bc0786442d533416170cdb7b463c7926b8bf995"
   },
   "roles": {
     "bytes": 5652,
-    "sha256": "1801868f35b698508c88a866d8b1bb931530eb638bde48dff7772ad54764bd29"
+    "sha256": "0f5f49cc878030514c264cc97fdf6abd5f50a74efe3a874e91366f74d9c59b62"
   },
   "serverVersion": "17.6",
   "tableCount": 78,
   "storageObjectCount": 19,
   "storageBytes": 6270619,
   "databaseChanged": false,
-  "consistency": "DB repeatable-read snapshot; Storage metadata before/after equal; no production writes paused; cross-service atomic recovery point not guaranteed",
-  "finishedAt": "2026-10-23T18:34:08.741Z"
+  "consistency": "DB repeatable-read snapshot under verified public/Auth users/Storage write guard; application cron, Buffer scheduler and deletion paused; Storage metadata before/after equal. Managed Auth sessions/service state outside guarded tables may still change; hosted recovery is not certified",
+  "maintenanceAfter": {
+    "guards": 39,
+    "active_crons": 0,
+    "deletion_paused": true,
+    "buffer_enabled": false,
+    "scheduler_enabled": false
+  },
+  "finishedAt": "2026-10-24T13:02:32.083Z"
 }

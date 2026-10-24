@@ -40,5 +40,6 @@ module.exports=async({db,report,meta})=>{
  report.rehearsalComplete=true;
  if(withConsent){const consent=(await db.query("SELECT pg_get_functiondef('mvp_accept_current_terms(text,text,boolean)'::regprocedure) d")).rows[0].d;assert.ok(consent.includes('2026-10-24')&&!consent.includes('2026-10-22'));report.checks.push({name:'059 changes required consent without backfilling original profiles',pass:true})}
  if(freeGuard)await require('./free-release-auth-rehearsal.cjs')(db,report);
+ if(freeGuard)await require('./free-launch-window-rehearsal.cjs')(db,report);
  report.rehearsalScope='Actual encrypted production snapshot data; '+selected.length+' missing application migrations; per-migration data fingerprints, legacy RPC signature compatibility, new RLS/direct-grant boundaries. No HTTP app flows or hosted service recovery. Managed network contracts inert.';
 };

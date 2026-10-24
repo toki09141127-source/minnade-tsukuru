@@ -1,0 +1,30 @@
+{
+  "phase": "55-57",
+  "at": "2026-10-24T13:13:10.929Z",
+  "complete": true,
+  "catalog": {
+    "functions": 18,
+    "tables": 10,
+    "indexes": 2,
+    "constraints": 217,
+    "triggers": 120
+  },
+  "http": [
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/login",
+      "status": 200
+    },
+    {
+      "route": "/rooms",
+      "status": 200
+    },
+    {
+      "route": "/profile",
+      "status": 200
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-24T13:44:15.771Z",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "signupSaved": true,
+  "recoverySaved": true,
+  "verified": "New Dashboard tab read-back normalized full HTML equals saved proposals for both templates; Save disabled",
+  "subjectSmtpExpiryPkceUnchanged": true,
+  "conditions": "Exact canonical production RedirectTo only; other paths retain old body",
+  "physicalSignupRecovery": "Known Risk accepted by f42d38a4; not marked PASS",
+  "complete": true
+}

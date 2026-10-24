@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-24T13:19:47.061Z",
+  "mode": "window",
+  "projectRef": "joedeuyrzimqyjapqpyh",
+  "complete": true,
+  "deploymentId": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
+  "state": "READY",
+  "expiresAt": "2026-10-24T15:19:55.852Z",
+  "syntheticUsers": 4,
+  "generalWrites": "STOPPED except exact registered TEST rows",
+  "ai": "OFF"
+}

@@ -3,7 +3,8 @@
 const assert=require('node:assert/strict');
 const OWNER='820ed99a-286e-4f96-95da-a66988139415';
 const EMAIL='minnadetsukuru.auth+v2prod20261024@gmail.com';
-function sql(expires,localPrincipal){
+function sql(expires,localPrincipal,email=EMAIL){
+ if(email!==EMAIL){assert.match(localPrincipal||"",/^restore_admin_[a-f0-9]{16}$/);assert.match(email,/^rehearsal-[a-f0-9-]{36}@example\.invalid$/);}
  assert.match(expires,/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/);
  if(localPrincipal)assert.match(localPrincipal,/^restore_admin_[a-f0-9]{16}$/);
  const admin="'postgres','supabase_admin'"+(localPrincipal?",'"+localPrincipal+"'":'');
@@ -14,10 +15,10 @@ BEGIN
  IF clock_timestamp()>='${expires}'::timestamptz OR TG_OP='DELETE' THEN RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='MVP_RELEASE_MAINTENANCE';END IF;
  IF TG_OP='UPDATE' AND NEW.id IS DISTINCT FROM OLD.id THEN RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='MVP_RELEASE_MAINTENANCE';END IF;
  IF TG_TABLE_SCHEMA='auth' AND TG_TABLE_NAME='users' THEN
-  allowed:=NEW.email='${EMAIL}' OR (TG_OP='UPDATE' AND NEW.id='${OWNER}'::uuid);
+  allowed:=NEW.email='${email}' OR (TG_OP='UPDATE' AND NEW.id='${OWNER}'::uuid);
   IF TG_OP='UPDATE' AND NEW.email IS DISTINCT FROM OLD.email THEN allowed:=false;END IF;
  ELSIF TG_TABLE_SCHEMA='public' AND TG_TABLE_NAME IN ('profiles','public_profiles') THEN
-  SELECT EXISTS(SELECT 1 FROM auth.users u WHERE u.id=NEW.id AND (u.id='${OWNER}'::uuid OR u.email='${EMAIL}')) INTO allowed;
+  SELECT EXISTS(SELECT 1 FROM auth.users u WHERE u.id=NEW.id AND (u.id='${OWNER}'::uuid OR u.email='${email}')) INTO allowed;
  ELSE allowed:=false;
  END IF;
  IF allowed IS DISTINCT FROM true THEN RAISE EXCEPTION USING ERRCODE='55000',MESSAGE='MVP_RELEASE_MAINTENANCE';END IF;
