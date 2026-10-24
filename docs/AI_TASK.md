@@ -15,7 +15,7 @@ in_progress
 3. 停止・定期実行pause・直前backup/隔離restore
 4. canonical042〜059を順番に適用、既存データ/RLS照合
 5. 指定UUIDへ監査付きOwner bootstrap
-6. AI/Live OFFの本番配信、本人の再設定メール検収、限定smoke
+6. AI/Live OFFの本番配信・限定smoke（実機の最終メール検収は最新承認によりKnown Riskとして受容）
 7. 条件成立後だけ一般受付再開、元の運営停止を保持
 
 ## Do not
@@ -28,10 +28,10 @@ AI/Live Billing ON、force push、既存差分破棄、秘密値/本文/IP/raw l
 本番適用/未適用、Owner/認証/公開状態、保全/復旧、未確認部分をHANDOFFへ記録。
 
 ## Updated at
-2026-10-24T13:48:36.307Z
+2026-10-24T13:56:12.693Z
 
 ## Current result
-Production GO / general writes OPEN。migration042-059、production deploy、Owner、メール本文、smoke/security/RLS/退会/TEST cleanup PASS。AI/Live OFF・既存Buffer停止維持。実機signup/resetは受容Known Risk。main/push/tag仕上げ中。毎時監視v2-24 ACTIVE（10/25 22:45 JSTまで）。
+Production GO / general writes OPEN。migration042-059、production deploy、Owner、メール本文、smoke/security/RLS/退会/TEST cleanup PASS。AI/Live OFF・既存Buffer停止維持。実機signup/resetは受容Known Risk。mainへff-only統合・push完了、正式tag v2.0.0で確定。毎時監視v2-24 ACTIVE（10/25 22:45 JSTまで）。
 
 ## Historical progress（以下の結果待ちは当時の記録）
 最新: b7zdudurbの再設定確認画面を本人承認後にstaging限定適用。Cookie/共有置換/2callback/限定Reset template保存済み。Hosted4ケース・3幅・axe0/実Auth通信0 PASS、Cookie削除/browser終了。実メール描画とiPhoneの新password→旧拒否→新login/reloadは本人結果待ち、NO-GO維持。i8 AUTH-01のverify303→403を観測したが先読み起因は未確定。詳細はHANDOFF最新節。

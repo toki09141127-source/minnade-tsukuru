@@ -1,0 +1,14 @@
+{
+  "sourceFilesMatchGit": 210,
+  "generated": [
+    "next-env.d.ts"
+  ],
+  "deployment": [
+    {
+      "id": "dpl_3ZS9FSUo4s9GC2hVbnbmQETn6GY2",
+      "url": "minnade-tsukuru-pc6i6iram-sonetokiyas-projects.vercel.app",
+      "state": "READY",
+      "commit": "ca1b58931ef39c6a8812aaae4a4963f2a103009a"
+    }
+  ]
+}

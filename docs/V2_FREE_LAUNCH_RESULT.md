@@ -1,8 +1,8 @@
 # Free V2 production release
 
-2026-10-24 22:44 JST: production general writes OPEN. FREE V2 / HUMAN COLLABORATION FIRST. Production GO for human collaboration; Git main/tag finalization pending.
+2026-10-24 22:44 JST: production general writes OPEN. FREE V2 / HUMAN COLLABORATION FIRST. V2 PRODUCTION COMPLETE / Production GO for human collaboration. mainへff-only統合・push済み。正式tag: v2.0.0。
 
-Approved release source: 6cb898f; frozen 213-file source hash 42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5. Production https://minnade-tsukuru.vercel.app ; deployment dpl_8DiUn6fztMFussje9XGAHgVRjbE5 READY.
+Approved release source: 6cb898f; frozen 213-file source hash 42465192f243d968c643972277ad9873390bebef543761b70fe76266c26cbef5. Production https://minnade-tsukuru.vercel.app ; initial deployment dpl_8DiUn6fztMFussje9XGAHgVRjbE5 READY; main commit ca1b58931ef39c6a8812aaae4a4963f2a103009a automatic deployment dpl_3ZS9FSUo4s9GC2hVbnbmQETn6GY2 READY and canonical alias matched. All 210 tracked app source files match the accepted source after text newline normalization (next-env.d.ts generated at build). Eleven canonical routes HTTP200.
 
 Canonical 042-059 (18 migrations) applied in five checked phases. Earlier 38 hashes unchanged. Fresh encrypted DB/Auth/Storage backup and isolated restore: 18 migrations/106 checks plus two bounded auth/write-window suites of 11 each PASS. Managed service recovery and off-device/other-Windows-profile recovery remain unproven.
 

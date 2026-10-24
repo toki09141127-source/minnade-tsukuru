@@ -1,8 +1,8 @@
 {
-  "at": "2026-10-24T13:48:36.302Z",
+  "at": "2026-10-24T13:56:12.693Z",
   "releaseMode": "FREE V2 / HUMAN COLLABORATION FIRST",
   "productionGo": true,
-  "gitFinalization": "PENDING",
+  "gitFinalization": "main and release/v2-rc1 pushed; final record/tag v2.0.0",
   "deployment": "dpl_8DiUn6fztMFussje9XGAHgVRjbE5",
   "productionDomain": "https://minnade-tsukuru.vercel.app",
   "migrations": "042-059 applied (18); prior 38 hashes unchanged",
@@ -34,5 +34,13 @@
     "Managed Auth/SMTP full-service recovery not certified",
     "DPAPI recovery tied to current Windows profile",
     "Off-device backup recovery unproven"
-  ]
+  ],
+  "release": "COMPLETE",
+  "releaseCodeCommit": "ca1b58931ef39c6a8812aaae4a4963f2a103009a",
+  "sourceFreezeCommit": "6cb898f",
+  "releaseTag": "v2.0.0",
+  "gitDeployment": "dpl_3ZS9FSUo4s9GC2hVbnbmQETn6GY2",
+  "canonicalAliasVerified": true,
+  "finalHttpRoutes": 11,
+  "complete": true
 }

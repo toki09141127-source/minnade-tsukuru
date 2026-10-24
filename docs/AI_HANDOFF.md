@@ -2069,3 +2069,9 @@ Vercel dpl_5mSi6oH2ZBMoLWYWc3j5JEmhw8PKをUIで確認し、Anyone with the link�
 
 ### 2026-10-24 22:44 JST 無料V2一般書込再開・本番検収PASS
 042-059適用済み、固定sourceをproduction READY/alias反映、AI/Live/synthetic OFF。一般書込OPEN、退会pause解除、元cron2/scheduler ON、Buffer送信OFF維持。TEST共同制作・公開・権限・26追加表RLS・退会保持/削除PASS。Owner旧資格台帳の接続漏れを発見し自動レビュー拒否後、本人の2件限定承認→rollback検証→監査付き補完→非表示/復帰PASS。TEST側Owner無効/資格削除/session0、実Owner1。初回監視alerts0、heartbeat v2-24を10/25 22:45 JSTまでACTIVE設定（旧24は存在せず新規作成）。本番メール2本文は別タブ全文readback一致、実機最終未検収は本人受容Known Risk。Auth/SMTP管理ログは自動監視外。main/push/tagの仕上げが残る。詳細docs/V2_FREE_LAUNCH_RESULT.md。
+
+
+### 2026-10-24 22:55 JST V2 PRODUCTION COMPLETE
+main/releaseをca1b589へ通常pushし、Git本番deployment dpl_3ZS9FSUo4s9GC2hVbnbmQETn6GY2 READY/canonical一致、11画面HTTP200。固定sourceからアプリ変更なし（Git210files一致、generated next-envのみ除外）。正式tag v2.0.0。AI_TASK done。初回監視alerts0、v2-24 ACTIVE。production rollbackなし。管理初期化漏れ以外の失敗は検収補助コードのversion0、表数、生成ファイル/大画像比較の扱いを修正し、実データ不整合・公開漏洩なし。追加の型/build/広範テストはアプリ不変のため既存PASSを再利用、今回ops構文/lint/diff/秘密混入0を検証。次は実機signup/reset、24h監視結果、独立backup復旧、AI/Liveの別release検討。最新の正本はdocs/V2_FREE_LAUNCH_RESULT.md。
+
+最終Git byte検査: main checkoutで既存indexのLFが原本CRLFへ自動復元されずcanonical hash不一致を検出。全対象を「改行以外一致」かつ既記録SHA256に一致する原本だけへ復元し、-text属性下でそのbytesをGitへ格納する。SQL内容/hash manifest変更・本番再適用なし。Git blobからも59本hash一致を確認してからtag/pushする。

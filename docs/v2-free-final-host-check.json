@@ -1,0 +1,54 @@
+{
+  "at": "2026-10-24T13:54:05.940Z",
+  "deploymentId": "dpl_3ZS9FSUo4s9GC2hVbnbmQETn6GY2",
+  "canonicalAliasMatches": true,
+  "production": true,
+  "http": [
+    {
+      "route": "/",
+      "status": 200
+    },
+    {
+      "route": "/login",
+      "status": 200
+    },
+    {
+      "route": "/rooms",
+      "status": 200
+    },
+    {
+      "route": "/works",
+      "status": 200
+    },
+    {
+      "route": "/mypage",
+      "status": 200
+    },
+    {
+      "route": "/profile",
+      "status": 200
+    },
+    {
+      "route": "/pricing",
+      "status": 200
+    },
+    {
+      "route": "/terms",
+      "status": 200
+    },
+    {
+      "route": "/privacy",
+      "status": 200
+    },
+    {
+      "route": "/guidelines",
+      "status": 200
+    },
+    {
+      "route": "/auth/confirm",
+      "status": 200
+    }
+  ],
+  "complete": true,
+  "paidPurchaseUnavailable": true
+}

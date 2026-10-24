@@ -1,5 +1,17 @@
 # V2 RC known issues / boundaries
 
+## 最新: 2026-10-24 V2 PRODUCTION COMPLETE / V2 FREE LAUNCH
+
+本人f42d38a4の明示承認により、最終実機signup/reset未完了をKnown Riskとして受容し、本番反映を完了。AI・Live Billing・synthetic productionはOFF。一般書込OPEN、Owner1、退会ON、Buffer送信の意図的OFF・元scheduler/cronを維持。042-059の18migration、既存hash/backup/restore、本番共同制作smoke・Security・26追加表RLS・退会保持/削除・Admin・Buffer状態確認PASS。
+
+Owner初期化の既存資格台帳との接続漏れは、本人の2件限定承認後に監査付き補完し非表示/復帰PASS。TEST Owner無効化/資格除去/session0、実Ownerのみ保持。RLS・GRANT・関数定義の変更なし。
+
+main/release/v2-rc1: ca1b589へff-only統合・push、正式tag v2.0.0。Git自動本番deployment READY/canonical一致、主要11経路200、Pricing準備中。初回monitor alerts0、heartbeat v2-24が10/25 22:45 JSTまでACTIVE。詳細・復旧条件・証跡はV2_FREE_LAUNCH_RESULT.md。
+
+未解決Known Risk: 最新本番Android/iPhoneの登録・再設定メール復帰は未再検収でPASSではない。メール2本文は本番保存/readback済み。Real OpenAI verification pending（過去の限定応答試験を否定する意味ではなく、本番機能ONの検収は未完）；Live Billing not enabled。Managed Auth/SMTPログ自動収集、別端末でのbackup復旧、常時有人監視は未提供。AI/有料法務・価格・Stripe live運用は有効化時の別ゲート。
+
+以下は移行前の履歴。古いNO-GO/本番未変更の記述を現在の状態として使用しない。
+
 ## 現在の判定
 FREE V2 CONDITIONAL GO（AI OFF / Live Billing OFF）。iPhone再設定全手順・本人logout PASS、検収共有/Cookie/転送/session終了。初回signup callbackは未再検収として残し、本番のsignup/recovery smokeを切替条件とする。V2_PRODUCTION_FINAL_ACCEPTANCE.md参照。
 
