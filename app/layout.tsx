@@ -7,7 +7,7 @@ import TermsConsentGate from "@/components/TermsConsentGate";
 import ScrollButtons from "@/components/ScrollButtons";
 import type { Metadata } from "next";
 
-const ICON_VERSION = "2026-03-05";
+const ICON_VERSION = "2026-11-25";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://minnade-tsukuru.vercel.app"),
